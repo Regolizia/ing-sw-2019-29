@@ -4,12 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>it.polimi.ingsw</groupId>
-    <artifactId>ing-sw-2019-29</artifactId>
+    <groupId> it.polimi.ingsw</groupId>
+    <artifactId>Ing-sw-2019-29</artifactId>
     <version>1.0-SNAPSHOT</version>
 
 
-    <!-- da aggiungere per creare il server locale sonarQube -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.language>java</sonar.language>
@@ -83,5 +82,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>
