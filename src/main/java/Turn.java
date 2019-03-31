@@ -1,14 +1,35 @@
 public class Turn {
-protected boolean firstAction;
-    protected boolean secondAction;
-    Player pGoal;
-    Spawnpoint sGoal;
-
+private boolean firstAction;
+private boolean secondAction;
+private GameModel model;
+private Player pGoal;
+private Spawnpoint sGoal;
 
 
     public Turn(Player player){
         firstAction=true;
         secondAction=false;
+    }
+
+    public void playerTurn(Player player, Action action, boolean terminator){
+        if (firstAction==true)
+        {
+            getAction(player,action);
+            firstAction=false; secondAction=true;
+        }
+        if (secondAction==true){
+            getAction(player,action);
+            secondAction=false;
+        }
+        if(secondAction==false&&firstAction==false&&!terminator)
+            endTurn(player);
+        if(secondAction==false&&firstAction==false&&terminator)
+        {
+            //terminator's actions
+
+            endTurn(player);
+        }
+
     }
 
 
@@ -23,6 +44,14 @@ protected boolean firstAction;
                 case "attack": attack(player);
                                 break;
 
+                case "pick up weapon":pickUpWeapon();
+                                break;
+
+                case "pick up power-up":pickUpPower();
+                                break;
+
+                case"run":run(player);
+                                break;
                 default: }
         }
     };
@@ -45,7 +74,7 @@ protected boolean firstAction;
     public Player getTarget(Player player){
 
         //todo check on distance
-        //todo multiple target
+        //todo multiple target , override???
         Player target=new Player();
 
         return target;
@@ -62,14 +91,20 @@ protected boolean firstAction;
     }
 
 
-
+    public void endTurn(Player player){
+        reload(player);
+        player=model.nextPlayer(player);
+        replaceAmmoTiles();
+        replaceWeapons();
+    };
     public void replaceAmmoTiles(){}
     public void replaceWeapons(){}
-    public void pickUpPowerUp(){}
+    public void pickUpPower(){ }
+    public void pickUpWeapon(){}
     public void chooseCard(){}
     public void keepCard(){}//ex showCard()
     public void trowCard(){}
-    public void recharge(){}
+    public void run(Player player){}
     public void giveMark(){}
     public void multipleKill(){}
     public void death(){}

@@ -2,20 +2,23 @@ public class Mode {
     protected enum mode {
         classic,
         domination,
-        terminator
+        terminatorClassic,
+        terminatorDomination
     };
 
     mode usedMode;
 
 
-    public Mode(String choosenMode){
+    public Mode(String choosenMode, boolean terminator){
 
-        if(choosenMode=="classic")
+        if(choosenMode=="classic"&&!terminator)
             usedMode=mode.classic;
-        if(choosenMode=="domination")
+        if(choosenMode=="domination"&&!terminator)
             usedMode=mode.domination;
-        if(choosenMode=="terminator")
-            usedMode=mode.terminator;
+        if(choosenMode=="classic"&&terminator)
+            usedMode=mode.terminatorClassic;
+        if(choosenMode=="domination"&&terminator)
+            usedMode=mode.terminatorDomination;
     }
     //to do multiple games options
     public String getMode(){
@@ -23,8 +26,10 @@ public class Mode {
             return "classic";
         if(usedMode==mode.domination)
             return "domination";
-        if(usedMode==mode.classic)
-            return "domination";
+        if(usedMode==mode.terminatorClassic)
+            return "tClassic";
+        if(usedMode==mode.terminatorDomination)
+            return "tDomination";
     return "";
     }
 }
