@@ -52,7 +52,7 @@ private Spawnpoint sGoal;
                 case "pick up power-up":pickUpPower();
                                 break;
 
-                case"run":run(player);
+                case"adrenaline.Run":run(player);
                                 break;
                 default: }
         }

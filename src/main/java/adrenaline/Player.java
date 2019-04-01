@@ -11,7 +11,7 @@ public class Player {
 
     public void setToken(Player player){}
 
-    public String getToken(Player player){return "";} //token
+    public String getToken(Player player){return "";} //adrenaline.Token
 
 
 }
