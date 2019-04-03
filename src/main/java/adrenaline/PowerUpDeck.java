@@ -19,7 +19,7 @@ public class PowerUpDeck extends Deck {
 
 
 
-    
+
     public PowerUpDeck() {
         deck = new LinkedList<PowerUpCard>();
 
