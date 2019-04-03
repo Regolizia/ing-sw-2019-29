@@ -7,6 +7,8 @@ private GameModel model;
 private Player pGoal;
 private Spawnpoint sGoal;
 
+Action action=new Action(){};
+WeaponCard weapon=new WeaponCard();
 
     public Turn(Player player){
         firstAction=true;
@@ -24,12 +26,12 @@ private Spawnpoint sGoal;
             secondAction=false;
         }
         if(secondAction==false&&firstAction==false&&!terminator)
-            endTurn(player);
+            //endTurn(player);
         if(secondAction==false&&firstAction==false&&terminator)
         {
             //terminator's actions
 
-            endTurn(player);
+            //endTurn(player);
         }
 
     }
@@ -40,75 +42,47 @@ private Spawnpoint sGoal;
         {
             switch(action.getName()){
 
-                case "reload": reload(player);
+                case "reload": action.reload(player);
                                 break;
 
-                case "attack": attack(player);
+                case "attack": //weapon=player.getWeapon(player);
+                        action.shoot(player,weapon);
                                 break;
 
-                case "pick up weapon":pickUpWeapon();
-                                break;
+                case "grab": action.grabHere(player);
+                                action.grabThere( player);
 
-                case "pick up power-up":pickUpPower();
-                                break;
 
-                case"adrenaline.Run":run(player);
+                case"adrenaline.Run":action.run(player);
                                 break;
                 default: }
         }
     };
     public void getUltimaAzioneTerminator(){}
-    public void reload(Player player){}
-    //human target
-    public void attack(Player player){
-        pGoal=getTarget(player);
-        if(pGoal.getLife(pGoal)==0)
-            kill(player,pGoal);
-    }
-    //adrenaline.Spawnpoint target
-    public void attackSpawn(Player player){
-        sGoal=getTargetSpawn(player);
-        if(sGoal.getLife(sGoal)==0)
-            sGoal.conquer(player,sGoal);
-    }
 
 
-    public Player getTarget(Player player){
-
-        //todo check on distance
-        //todo multiple target , override???
-        Player target=new Player();
-
-        return target;
-    }
 
 
-    public Spawnpoint getTargetSpawn(Player player){
-
-        //todo check on distance
-        //todo multiple target
-        Spawnpoint target=new Spawnpoint();
-
-        return target;
-    }
 
 
+
+/*
     public void endTurn(Player player){
-        reload(player);
-        player=model.nextPlayer(player);
+        action.
+        //player=model.nextPlayer(player);
         replaceAmmoTiles();
         replaceWeapons();
     };
     public void replaceAmmoTiles(){}
     public void replaceWeapons(){}
-    public void pickUpPower(){ }
-    public void pickUpWeapon(){}
+
+
     public void chooseCard(){}
     public void keepCard(){}//ex showCard()
     public void trowCard(){}
-    public void run(Player player){}
+
     public void giveMark(){}
     public void multipleKill(){}
     public void death(){}
-    public void kill(Player player,Player pGoal){}
+    public void kill(Player player,Player pGoal){}*/
 }

@@ -13,6 +13,14 @@ public class Player {
 
     public String getToken(Player player){return "";} //adrenaline.Token
 
+    public void /*locations*/getLocation(Player player){}
+
+    public void  setPos(Player player){}
+
+    public void /*pos*/ getPos(Player player){}
+    public void /*card*/getCard(Player player){}
+    public void /*weapon card*/getWeapon(Player player){};
+
 
 }
 
