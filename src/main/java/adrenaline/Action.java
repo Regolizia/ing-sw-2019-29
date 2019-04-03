@@ -6,7 +6,9 @@ public class Action {
 
 public String getName(){ return "";}
 
-public void Shoot(Player player, WeaponCard weapon)
+
+
+public void shoot(Player player, WeaponCard weapon)
 {
     // /*/ref options list*/ checkPayment(Player player, WeaponCard weapon);  checkPayment is in WeaponCard
     // /*/ref possible target list*/ canAim(Player player, // ref options list );
@@ -17,10 +19,26 @@ public void Shoot(Player player, WeaponCard weapon)
 
 }
 
-public void Run(Player player /*,finalPosition*/){
+public void run(Player player /*,finalPosition*/){
     player.getLocation(player);
     // CHECK IF CAN RUN
     //DO RUN
-    // RETURN NEW POS
+    player.setPos(player);
 }
+
+public void grabHere(Player player){
+    player.getLocation(player);
+    // do move
+    player.setPos(player);
+}
+
+public void grabThere(Player player /*,finalPosition*/){
+        player.getLocation(player);
+        // CHECK IF CAN MOVE
+        //DO MOVE
+        //SET POS
+        player.setPos(player);
+        //DO MOVE
+        player.getCard(player);
+    }
 }
