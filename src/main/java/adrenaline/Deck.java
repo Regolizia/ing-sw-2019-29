@@ -15,11 +15,8 @@ public class Deck {
 
 
 
-    /**
-     * 
-     */
-    public void shuffleCards() {
-        // TODO implement here
+        public void shuffleCards(LinkedList list) {
+       Collections.shuffle(list);
     }
 
     /**
