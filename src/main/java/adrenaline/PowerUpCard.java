@@ -1,10 +1,10 @@
 package adrenaline;
 
 public class PowerUpCard {
-    public enum Color {
+    public enum PColor {
         RED, YELLOW, GREEN
     }
-    public Color color;
+    public PColor color;
 
 
     public PowerUpCard(){
