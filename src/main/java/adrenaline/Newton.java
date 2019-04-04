@@ -5,7 +5,7 @@ public class Newton extends PowerUpCard {
     /**
      * Default constructor
      */
-    public Newton() {
+    public Newton(CubeColor color) {
     }
 
 }

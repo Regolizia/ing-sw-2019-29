@@ -5,7 +5,7 @@ public class Teleporter  extends PowerUpCard {
     /**
      * Default constructor
      */
-    public Teleporter() {
+    public Teleporter(CubeColor color) {
     }
 
 }

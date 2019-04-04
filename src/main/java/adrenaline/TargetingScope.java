@@ -5,7 +5,7 @@ public class TargetingScope  extends PowerUpCard {
     /**
      * Default constructor
      */
-    public TargetingScope() {
+    public TargetingScope(CubeColor color) {
     }
 
 }

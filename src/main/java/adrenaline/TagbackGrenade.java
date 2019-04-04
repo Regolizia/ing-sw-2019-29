@@ -5,7 +5,7 @@ public class TagbackGrenade extends PowerUpCard {
     /**
      * Default constructor
      */
-    public TagbackGrenade() {
+    public TagbackGrenade(CubeColor color) {
     }
 
 }
