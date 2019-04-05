@@ -1,23 +1,19 @@
 package adrenaline;
 
-public class PowerUpCard {
+public class PowerUpCard extends Card {
 
-    public static enum CubeColor {
-        RED, YELLOW, BLUE;
-    }
-    public CubeColor color;
-
+    public AmmoCube.CubeColor color;
 
     public PowerUpCard(){
 
     }
 
-    public PowerUpCard(CubeColor c){
+    public PowerUpCard(AmmoCube.CubeColor c){
         this.color = c;
     }
 
 
-    public CubeColor getColor(){
+    public AmmoCube.CubeColor getColor(){
         return this.color;
 }
 

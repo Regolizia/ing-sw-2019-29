@@ -5,12 +5,12 @@ import java.util.*;
 /**
  * 
  */
-public class WeaponsDeck extends Deck {
+public class WeaponDeck extends Deck {
 
    private LinkedList<WeaponCard> deck;
 
 
-    public WeaponsDeck() {
+    public WeaponDeck() {
         deck =  new LinkedList<WeaponCard>();
 
         deck.add(new Cyberblade());
