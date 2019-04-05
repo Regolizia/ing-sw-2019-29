@@ -1,5 +1,10 @@
 package adrenaline;
 
+import adrenaline.powerups.Newton;
+import adrenaline.powerups.TagbackGrenade;
+import adrenaline.powerups.TargetingScope;
+import adrenaline.powerups.Teleporter;
+
 import java.util.*;
 
 /**
@@ -18,18 +23,18 @@ public class PowerUpDeck extends Deck {
         deck = new LinkedList<PowerUpCard>();
 
         for (int i = 0; i <= 1; i++) {
-            deck.add(new Newton(PowerUpCard.CubeColor.RED));
-            deck.add(new TagbackGrenade(PowerUpCard.CubeColor.RED));
-            deck.add(new TargetingScope(PowerUpCard.CubeColor.RED));
-            deck.add(new Teleporter(PowerUpCard.CubeColor.RED));
-            deck.add(new Newton(PowerUpCard.CubeColor.YELLOW));
-            deck.add(new TagbackGrenade(PowerUpCard.CubeColor.YELLOW));
-            deck.add(new TargetingScope(PowerUpCard.CubeColor.YELLOW));
-            deck.add(new Teleporter(PowerUpCard.CubeColor.YELLOW));
-            deck.add(new Newton(PowerUpCard.CubeColor.BLUE));
-            deck.add(new TagbackGrenade(PowerUpCard.CubeColor.BLUE));
-            deck.add(new TargetingScope(PowerUpCard.CubeColor.BLUE));
-            deck.add(new Teleporter(PowerUpCard.CubeColor.BLUE));
+            deck.add(new Newton(AmmoCube.CubeColor.RED));
+            deck.add(new TagbackGrenade(AmmoCube.CubeColor.RED));
+            deck.add(new TargetingScope(AmmoCube.CubeColor.RED));
+            deck.add(new Teleporter(AmmoCube.CubeColor.RED));
+            deck.add(new Newton(AmmoCube.CubeColor.YELLOW));
+            deck.add(new TagbackGrenade(AmmoCube.CubeColor.YELLOW));
+            deck.add(new TargetingScope(AmmoCube.CubeColor.YELLOW));
+            deck.add(new Teleporter(AmmoCube.CubeColor.YELLOW));
+            deck.add(new Newton(AmmoCube.CubeColor.BLUE));
+            deck.add(new TagbackGrenade(AmmoCube.CubeColor.BLUE));
+            deck.add(new TargetingScope(AmmoCube.CubeColor.BLUE));
+            deck.add(new Teleporter(AmmoCube.CubeColor.BLUE));
         }
     }
 
