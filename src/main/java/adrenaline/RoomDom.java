@@ -23,7 +23,19 @@ public class RoomDom {
         room = new int[x][y];
     }
 
+/*  NON SO SE SERVE, STESSO CODICE ANCHE IN ROOM
 
+    public void addPlayer(Player p){
+        players.add(p);
+    }
+    public void addSpawnpoint(Spawnpoint s){
+        spawnpoints.add(s);
+    }
+    public void addAmmoTile(AmmoTile t){
+        tiles.add(t);
+    }
+
+*/
 
 
 

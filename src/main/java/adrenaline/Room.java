@@ -24,7 +24,15 @@ public class Room {
     }
 
 
-
+    public void addPlayer(Player p){
+        players.add(p);
+    }
+    public void addSpawnpoint(Spawnpoint s){
+        spawnpoints.add(s);
+    }
+    public void addAmmoTile(AmmoTile t){
+        tiles.add(t);
+    }
 
 
 }

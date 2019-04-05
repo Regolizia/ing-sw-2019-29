@@ -6,13 +6,17 @@ public class GameModel {
     Player next=new Player();
     protected int playerCount;
   //  protected String[] players = new String[5];;
-    protected String mode;
-    protected Map mapUsed=new Map();
+
+    public static enum Mode {
+        DEATHMATCH, DOMINATION;
+    }
+    protected Mode mode;
+    protected Map mapUsed;
 
 
-    public GameModel(Map map,String m){
-        mapUsed=map;
-        mode=m;
+    public GameModel(Mode m) {
+        mapUsed = new Map(m);
+        mode = m;
     }
 
 
