@@ -7,6 +7,10 @@ import java.util.*;
  */
 public class GameBoard {
 
+    protected LinkedList<Door> doors;
+
+
+
     /**
      * Default constructor
      */

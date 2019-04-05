@@ -3,21 +3,21 @@ package adrenaline;
 import java.util.*;
 
 /**
- * 
+ *
  */
-public class Room {
+public class RoomDom {
 
     public int [][] room;
     public LinkedList<AmmoTile> tiles;
     public LinkedList<Player> players;
-    public LinkedList<Spawnpoint> spawnpoints;
+    public LinkedList<SpawnpointDom> spawnpoints;
 
     /**
      * Default constructor
      */
-    public Room(int x, int y) {
+    public RoomDom(int x, int y) {
 
-        spawnpoints = new LinkedList<Spawnpoint>();
+        spawnpoints = new LinkedList<SpawnpointDom>();
         players = new LinkedList<Player>();
         tiles = new LinkedList<AmmoTile>();
         room = new int[x][y];
