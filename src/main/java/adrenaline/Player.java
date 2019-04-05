@@ -2,6 +2,13 @@ package adrenaline;
 
 public class Player {
 
+ int ammoBox[];
+
+
+    public Player(){
+        ammoBox = new int[]{1, 1, 1};
+    }
+
 
     public int getLife(Player player){
 
@@ -19,7 +26,10 @@ public class Player {
 
     public void /*pos*/ getPos(Player player){}
     public void /*card*/getCard(Player player){}
-    public void /*weapon card*/getWeapon(Player player){};
+    public void /* WeaponCard*/ getWeapon(Player player){
+
+        //return weapon;
+    };
 
 
 }
