@@ -2,7 +2,7 @@ package adrenaline;
 
 public class Action {
 
-
+WeaponCard weapon;
 
 public String getName(){ return "";}
 
@@ -41,4 +41,12 @@ public void grabThere(Player player /*,finalPosition*/){
         //DO MOVE
         player.getCard(player);
     }
-}
+    public void reload(Player player)
+    {
+        /*weapon=*/player.getWeapon(player);
+
+
+    }
+
+    }
+
