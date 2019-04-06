@@ -2,9 +2,6 @@ package adrenaline;
 
 import java.util.*;
 
-/**
- * 
- */
 public class Door {
 
     private Room room1;

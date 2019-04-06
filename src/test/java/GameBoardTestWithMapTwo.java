@@ -3,12 +3,13 @@ import org.junit.jupiter.api.Test;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
-public class GameBoardTestWithMapOne {
+
+public class GameBoardTestWithMapTwo {
 
     @Test
     public void testConstructor() {
 
-        Map map = new MapOne(DEATHMATCH);
+        Map map = new MapTwo(DEATHMATCH);
     }
 
 }

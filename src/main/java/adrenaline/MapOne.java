@@ -39,9 +39,9 @@ public class MapOne extends Map {
         (gameboard).addDoor(new Door(gameboard.getRoom(1), 3, 1,gameboard.getRoom(3), 1, 1));
         (gameboard).addDoor(new Door(gameboard.getRoom(2), 2, 1,gameboard.getRoom(3), 1, 2));
 
-            (gameboard).getRoom(0).addSpawnpoint(new Spawnpoint(3, 1));
-            (gameboard).getRoom(1).addSpawnpoint(new Spawnpoint(1, 1));
-            (gameboard).getRoom(3).addSpawnpoint(new Spawnpoint(1, 2));
+            (gameboard).getRoom(0).addSpawnpoint(new Spawnpoint(3, 1)); //BLUE
+            (gameboard).getRoom(1).addSpawnpoint(new Spawnpoint(1, 1)); //RED
+            (gameboard).getRoom(3).addSpawnpoint(new Spawnpoint(1, 2)); //YELLOW
 
 
     }

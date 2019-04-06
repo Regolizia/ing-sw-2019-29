@@ -12,16 +12,6 @@ public class Map {
     }
 
     public Map(GameModel.Mode m) {
-        if (m.equals(DEATHMATCH)) {
-
-            //DEATHMATCH MAP
-
-        }
-        else{
-
-            //DOMINATION MAP
-
-        };
 
     }
 

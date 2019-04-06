@@ -21,7 +21,6 @@ public class DominationBoard extends GameBoard {
         rooms.add(r);
     }
 
-
     public RoomDom getRoom(int i) {
         return rooms.get(i);
     }
@@ -30,11 +29,6 @@ public class DominationBoard extends GameBoard {
      * 
      */
     //public void skulls;
-
-    /**
-     * 
-     */
-   // public void spawnpoints_tracks;
 
     /**
      * 
