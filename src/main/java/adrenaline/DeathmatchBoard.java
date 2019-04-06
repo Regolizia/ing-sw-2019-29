@@ -14,16 +14,13 @@ public class DeathmatchBoard extends GameBoard {
      * Default constructor
      */
     public DeathmatchBoard() {
+        super();
         rooms = new LinkedList<Room>();
-        doors = new LinkedList<Door>();
     }
 
 
     public void addRoom(Room r){
         rooms.add(r);
-    }
-    public void addDoor(Door d){
-        doors.add(d);
     }
 
     public Room getRoom(int i){
