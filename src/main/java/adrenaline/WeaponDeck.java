@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class WeaponDeck extends Deck {
 
-   private LinkedList<WeaponCard> deck;
+   public LinkedList<WeaponCard> deck;
 
 
     public WeaponDeck() {
@@ -38,5 +38,8 @@ public class WeaponDeck extends Deck {
         deck.add(new Zx_2());
     }
 
+    public LinkedList<WeaponCard> getList(){
+        return deck;
+    }
 
 }
