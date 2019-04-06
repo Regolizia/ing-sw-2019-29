@@ -24,10 +24,8 @@ public class GameBoard {
         return this.getRoom(i);
     }
 
-    public RoomDom getRoomDom(int i) {
-        return this.getRoomDom(i);
+    public void addRoom(Room r){
     }
-
 
 
     public void addDoor(Door d){

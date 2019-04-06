@@ -9,21 +9,21 @@ public class DeathmatchBoard extends GameBoard {
 
 
 
-    private LinkedList<Room> rooms;
+    private LinkedList<RoomDeath> rooms;
     /**
      * Default constructor
      */
     public DeathmatchBoard() {
         super();
-        rooms = new LinkedList<Room>();
+        rooms = new LinkedList<RoomDeath>();
     }
 
 
-    public void addRoom(Room r){
+    public void addRoom(RoomDeath r){
         rooms.add(r);
     }
 
-    public Room getRoom(int i){
+    public RoomDeath getRoom(int i){
        return rooms.get(i);
     }
 

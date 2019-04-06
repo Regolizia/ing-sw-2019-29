@@ -21,10 +21,6 @@ public class DominationBoard extends GameBoard {
         rooms.add(r);
     }
 
-    public RoomDom getRoomDom(int i){
-        return rooms.get(i);
-    }
-
     /**
      * 
      */

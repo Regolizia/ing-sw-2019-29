@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class SpawnpointDom extends spawnpoint {
+public class SpawnpointDom extends Spawnpoint {
 
     /**
      * Default constructor
@@ -16,12 +16,12 @@ public class SpawnpointDom extends spawnpoint {
     /**
      * 
      */
-    public void owner;
+    //public void owner;
 
     /**
      * 
      */
-    public void damageR;
+   // public void damageR;
 
     /**
      * 

@@ -23,6 +23,8 @@ public class Room {
         room = new int[x][y];
     }
 
+    public void addSpawnpoint(Spawnpoint s){
+    }
 
     public void addPlayer(Player p){
         players.add(p);
