@@ -2,11 +2,16 @@ package adrenaline;
 
 public class Player {
 
+   int track[];
+
  int ammoBox[];
 
 
     public Player(){
+
         ammoBox = new int[]{1, 1, 1};
+        track=new int[]{0,0,0,0,0,0,0,0,0,0,0,0};
+
     }
 
 
@@ -15,6 +20,15 @@ public class Player {
         return 0;
     }
 
+    public int checkDamage(Player player){
+
+        if(track[2]==1&&track[5]==0)
+            return 1;       //better Grab
+        if(track[5]==0)
+            return 2;       //better Shoot (and Grab)
+        return 0;
+
+    };
 
     public void setToken(Player player){}
 
