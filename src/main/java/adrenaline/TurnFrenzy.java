@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class TurnFrenzy extends turn {
+public class TurnFrenzy extends Turn {
 
     /**
      * Default constructor

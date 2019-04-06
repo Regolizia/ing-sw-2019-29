@@ -16,6 +16,6 @@ public class BotCard extends Deck {
     /**
      * 
      */
-    public void owner;
+    //public void owner;
 
 }

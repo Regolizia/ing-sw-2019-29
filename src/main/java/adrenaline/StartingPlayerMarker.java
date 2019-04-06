@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class StartingPlayerMarker extends player {
+public class StartingPlayerMarker extends Player {
 
     /**
      * Default constructor
@@ -16,7 +16,7 @@ public class StartingPlayerMarker extends player {
     /**
      * 
      */
-    public void owner;
+   // public void owner;
 
 
 

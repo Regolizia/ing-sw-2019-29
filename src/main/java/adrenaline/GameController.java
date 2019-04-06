@@ -14,12 +14,12 @@ public class GameController implements Observer {
     /**
      * 
      */
-    public void model;
+    //public void model;
 
     /**
      * 
      */
-    public void view;
+   // public void view;
 
 
 

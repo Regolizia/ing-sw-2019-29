@@ -10,6 +10,12 @@ private Spawnpoint sGoal;
 Action action=new Action(){};
 WeaponCard weapon=new WeaponCard();
 
+    /**
+     * Default constructor
+     */
+    public Turn() {
+    }
+
     public Turn(Player player){
         firstAction=true;
         secondAction=false;

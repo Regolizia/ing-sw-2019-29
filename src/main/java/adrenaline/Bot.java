@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * 
  */
-public class Bot extends player {
+public class Bot extends Player {
 
     /**
      * Default constructor

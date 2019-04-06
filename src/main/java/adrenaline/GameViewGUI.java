@@ -3,7 +3,7 @@ package adrenaline;
 /**
  * 
  */
-public class GameViewGUI implements Observer, Observable, Observer {
+public class GameViewGUI implements Observer, Observable {
 
     /**
      * Default constructor
@@ -32,11 +32,5 @@ public class GameViewGUI implements Observer, Observable, Observer {
         // TODO implement here
     }
 
-    /**
-     * 
-     */
-    public void update() {
-        // TODO implement here
-    }
 
 }

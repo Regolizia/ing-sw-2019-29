@@ -15,10 +15,10 @@ public class GameBoardTest {
         GameBoard g1;
 
         g1 = new DominationBoard();
-        assertTrue(c1 instanceof DominationBoard);
+        assertTrue(g1 instanceof DominationBoard);
 
         g1 = new DeathmatchBoard();
-        assertTrue(c1 instanceof DeathmatchBoard);
+        assertTrue(g1 instanceof DeathmatchBoard);
 
     }
 
