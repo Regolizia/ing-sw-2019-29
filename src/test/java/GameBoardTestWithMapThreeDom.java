@@ -1,13 +1,13 @@
 import adrenaline.*;
 import org.junit.jupiter.api.Test;
 
-import static adrenaline.GameModel.Mode.DEATHMATCH;
+import static adrenaline.GameModel.Mode.DOMINATION;
 
 public class GameBoardTestWithMapThreeDom {
     @Test
     public void testConstructor() {
 
-        Map map = new MapThree(DEATHMATCH);
+        Map map = new MapThree(DOMINATION);
     }
 
 }
