@@ -26,7 +26,10 @@ public class GameBoard {
 
     public void addRoom(Room r){
     }
-
+    public void addRoom(RoomDeath r){
+    }
+    public void addRoom(RoomDom r){
+    }
 
     public void addDoor(Door d){
         doors.add(d);

@@ -28,6 +28,12 @@ public class MapOne extends Map {
         (gameboard).addRoom(new RoomDeath(2,1));//WHITE  (getRoom(2))
         (gameboard).addRoom(new RoomDeath(1,2));//YELLOW  (getRoom(3))
 
+        // TOREMOVE
+        gameboard.getRoom(0);
+        gameboard.getRoom(1);
+        gameboard.getRoom(2);
+        gameboard.getRoom(3);
+
         (gameboard).addDoor(new Door(gameboard.getRoom(0), 1, 1,gameboard.getRoom(1), 1, 1));
         (gameboard).addDoor(new Door(gameboard.getRoom(0), 3, 1,gameboard.getRoom(1), 3, 1));
         (gameboard).addDoor(new Door(gameboard.getRoom(2), 1, 1,gameboard.getRoom(1), 2, 1));
