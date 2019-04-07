@@ -12,7 +12,9 @@ public class WeaponDeckTest {
     @Test
     public void testConstructor() {
 
+        Deck deckClass = new Deck();
         WeaponDeck deckTest = new WeaponDeck();
+        deckClass.shuffleCards(deckTest.getList());
 
         int sum =0;
 
