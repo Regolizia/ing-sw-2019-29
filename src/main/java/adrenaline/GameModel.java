@@ -10,13 +10,19 @@ public class GameModel {
     public static enum Mode {
         DEATHMATCH, DOMINATION;
     }
+    public static enum Bot {
+        BOT, NOBOT;
+    }
     protected Mode mode;
     protected Map mapUsed;
+    protected Bot bot;
 
 
-    public GameModel(Mode m) {
+    public GameModel(Mode m, Map ma, Bot b) {
+        //TODO CHANGE INTO MAP1 MAP2 ETC...
         mapUsed = new Map(m);
         mode = m;
+        bot = b;
     }
 
 

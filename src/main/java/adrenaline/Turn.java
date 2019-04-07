@@ -1,5 +1,7 @@
 package adrenaline;
 
+import static adrenaline.GameModel.Bot.*;
+
 public class Turn {
 private boolean firstAction;
 private boolean secondAction;
@@ -8,7 +10,7 @@ private Player pGoal;
 private Spawnpoint sGoal;
 
 Action action=new Action(){};
-WeaponCard weapon=new WeaponCard();
+WeaponCard weapon=new WeaponCard(); //
 
     /**
      * Default constructor
@@ -21,20 +23,26 @@ WeaponCard weapon=new WeaponCard();
         secondAction=false;
     }
 
-    public void playerTurn(Player player, Action action, boolean terminator){
-        if (firstAction==true)
-        {
-            getAction(player,action);
-            firstAction=false; secondAction=true;
+        // it imports gameplay's bot choice
+    public void playerTurn(Player player, Action action, GameModel.Bot bot) {
+        if (firstAction) {
+            getAction(player, action);
+            firstAction = false;
+            secondAction = true;
         }
-        if (secondAction==true){
-            getAction(player,action);
-            secondAction=false;
+        if (secondAction) {
+            getAction(player, action);
+            secondAction = false;
         }
-        if(secondAction==false&&firstAction==false&&!terminator)
+        if (!secondAction && !firstAction) {
+            if (bot.equals(NOBOT)) {
+            }
+
             //endTurn(player);
-        if(secondAction==false&&firstAction==false&&terminator)
-        {
+
+            if (bot.equals(BOT)) {
+            }
+
             //terminator's actions
 
             //endTurn(player);
@@ -44,7 +52,7 @@ WeaponCard weapon=new WeaponCard();
 
 
     public void getAction(Player player, Action action){
-        if (firstAction==true)
+        if (firstAction)
         {
             switch(action.getName()){
 
@@ -59,12 +67,12 @@ WeaponCard weapon=new WeaponCard();
                                 action.grabThere( player);
 
 
-                case"adrenaline.Run":action.run(player);
+                case"adrenaline.Run": action.run(player);
                                 break;
                 default: }
         }
     };
-    public void getUltimaAzioneTerminator(){}
+    public void getBotLastAction(){}
 
 
 
