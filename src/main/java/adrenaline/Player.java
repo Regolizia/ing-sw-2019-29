@@ -4,42 +4,45 @@ import java.util.LinkedList;
 
 public class Player {
 
-  public Figure.PlayerColor track[];
-  public int ammoBox[];
-  int x;
-  int y;
-  public LinkedList<WeaponCard> hand;
-  public LinkedList<PowerUpCard> powerups;
+  private Figure.PlayerColor track[];
+  private int ammoBox[];
+  private int x;
+  private int y;
+  private Figure.PlayerColor color;
+  private int spwX,spwY;
 
-    public Player(){
+  private LinkedList<WeaponCard> hand;
+  private LinkedList<PowerUpCard> powerups;
+
+
+
+    public Player(int spwX,int spwY, Figure.PlayerColor player){
 
         ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
-        track= new Figure.PlayerColor[]{null,null,null,null,null,null,null,null,null,null,null,null};
-        // WE CAN ALSO CHOOSE TO PUT "NONE" VALUE IN ENUM AND SET IT HERE. WITH NULL WE CANNOT USE SWITCH CASE
-
+        track= new Figure.PlayerColor[]{Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
+                ,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
+                ,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE};
+        // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
+        color=player;
+        this.spwX=spwX;
+        this.spwY=spwY;
         // they are lists because we need to add and remove easily
         hand = new LinkedList<WeaponCard>();
         powerups = new LinkedList<PowerUpCard>();
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
-    // MAYBE WE DON'T NEED PLAYER(), WE HAVE TO PUT IT SOMEWHERE
 
-    // what does it do?
-    public int getLife(Player player){
-
-        return 0;
-    }
 
     public int checkDamage(Player player){
 
-        if(track[2]!=null && track[5]==null)
+        if(track[2]!=Figure.PlayerColor.NONE && track[5]==Figure.PlayerColor.NONE)
             return 1;       //better Grab
-        if(track[5]!=null)
+        if(track[5]!=Figure.PlayerColor.NONE)
             return 2;       //better Shoot (and Grab)
         return 0;
     };
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean canGrabPowerUp(){
         return(powerups.get(2)==null);
     }
@@ -48,22 +51,43 @@ public class Player {
         return(hand.get(2)==null);
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   // public void setToken(Player player){}
+
+   // public String getToken(Player player){return "";} //adrenaline.Token
+
+ //________________________to controll player's position____________________________________________________//
+    public void setPos(int x, int y,Player player){
+        this.x=x;
+        this.y=y;
+    }
+
+    public int getPosX(Player player){
+        return x;
+    }
+
+    public int getPosY(Player player){
+        return y;
+    }
+//_________________________________________________________________________________________________________//
 
 
-    public void setToken(Player player){}
 
-    public String getToken(Player player){return "";} //adrenaline.Token
+    public void pickWeaponCard(Player player, int x, int y){
+        //metod to find the card in that position
 
-    public void /*locations*/getLocation(Player player){}
 
-    public void  setPos(Player player){}
+    }
 
-    public void /*pos*/ getPos(Player player){}
-    public void /*card*/getCard(Player player){}
-    public void /* WeaponCard*/ getWeapon(Player player){
+    public WeaponCard getWeaponCard(Player player){
+        //metod to find the card in that position
+        //shows a list of owned card
+        //return only a card
+        WeaponCard card=new WeaponCard();
+        return card;
+    }
 
-        //return weapon;
-    };
 
 
 }
