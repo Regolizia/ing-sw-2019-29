@@ -2,20 +2,24 @@ package adrenaline;
 
 public class PowerUpCard extends Card {
 
-    public AmmoCube.CubeColor color;
+    private AmmoCube.CubeColor color;
 
     public PowerUpCard(){
 
     }
 
     public PowerUpCard(AmmoCube.CubeColor c){
+
         this.color = c;
     }
 
 
-    public AmmoCube.CubeColor getColor(){
-        return this.color;
-}
+    public AmmoCube.CubeColor getPowerUpColor(){
+                return this.color;
+    }
+    public void setPowerUpColor(AmmoCube.CubeColor c){
+        this.color = c;
+    }
 
     //useless
     //public void setColor(PowerUpCard card, Color c){

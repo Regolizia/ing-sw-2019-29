@@ -14,9 +14,9 @@ public class AmmoCube {
         BASE, OP1, OP2, ALT;
     }
 
-    public CubeColor color;
-    public Effect effect;
-    public boolean paid;
+    private CubeColor color;
+    private Effect effect;
+    private boolean paid;
 
 
     /**
@@ -29,6 +29,28 @@ public class AmmoCube {
         this.effect = e;
         this.paid = p;
     }
+
+    public CubeColor getCubeColor(){
+        return color;
+    }
+    public void setCubeColor(CubeColor c){
+        this.color = c;
+    }
+
+    public Effect getEffect(){
+        return effect;
+    }
+    public void setEffect(Effect e){
+        this.effect = e;
+    }
+
+    public boolean getPaid(){
+        return paid;
+    }
+    public void setPaid(boolean b){
+        this.paid = b;
+    }
+
 
 
 }

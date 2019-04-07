@@ -8,7 +8,7 @@ public class Action {
         GRAB, RUN, SHOOT, ADRENALINEGRAB, ADRENALINESHOOT;
     }
 
-    public ActionType actionSelected;
+    private ActionType actionSelected;
 
 
 public void shoot(Player player, WeaponCard weapon)
@@ -70,8 +70,18 @@ public void reload(Player player)
     {
         /*weapon=*/player.getWeapon(player);
 
-
     }
     /*todo frenzyShoot frenzyRun frenzyGrab*/
+
+
+    public ActionType getActionSelected() {
+        return actionSelected;
+    }
+    public void setActionSelected(ActionType a){
+        this.actionSelected = a;
+    }
+
+
+
     }
 

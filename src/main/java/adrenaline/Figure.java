@@ -10,7 +10,7 @@ public class Figure {
     public static enum PlayerColor {
         PURPLE, YELLOW, BLUE, GREEN, GRAY;
     }
-    public PlayerColor color;
+    private PlayerColor color;
 
 
 
@@ -24,5 +24,14 @@ public class Figure {
      * 
      */
     //public player choose;
+
+
+    public PlayerColor getPlayerColor(){
+        return color;
+    }
+    public void setPlayerColor(PlayerColor c){
+        this.color = c;
+    }
+
 
 }
