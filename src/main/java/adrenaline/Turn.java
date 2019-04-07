@@ -1,6 +1,6 @@
 package adrenaline;
 
-import static adrenaline.GameModel.Bot.*;
+import static adrenaline.GameModel.Bot.*;// it imports gameplay's bot choice
 import static adrenaline.Action.ActionType.*;
 
 public class Turn {
@@ -11,20 +11,15 @@ private Player pGoal;
 private Spawnpoint sGoal;
 
 Action action;
-WeaponCard weapon; //
+WeaponCard weapon;
 
-    /**
-     * Default constructor
-     */
-    public Turn() {
-    }
 
     public Turn(Player player){
         firstAction=true;
         secondAction=false;
     }
 
-        // it imports gameplay's bot choice
+
     public void playerTurn(Player player, Action.ActionType actiontype, GameModel.Bot bot) {
         if (firstAction) {
             getAction(player, actiontype);
@@ -35,54 +30,47 @@ WeaponCard weapon; //
             getAction(player, actiontype);
             secondAction = false;
         }
-        if (!secondAction && !firstAction) {
-            if (bot.equals(NOBOT)) {
-            }
 
-            //endTurn(player);
-
-            if (bot.equals(BOT)) {
-            }
-
-            //terminator's actions
-
-            //endTurn(player);
-        }
+        System.out.println("recharge weapon?");
+            action.reload(player);
+        endTurn(player);
 
     }
 
 
     public void getAction(Player player, Action.ActionType actiontype){
-        if (firstAction)
+        if (firstAction&&player.equals(NOBOT))
         {
             switch(actiontype){
 
-                //case Action.ActionType.RELOAD : action.reload(player);
-                  //              break;
 
+                case RUN: int x=0,y=0; //adding a method to choose the coordinates
+                    action.run(player,x,y);
+                    break;
+
+                case SHOOT: //weapon=player.getWeapon(player);
+                    action.shoot(player, weapon);
+                    break;
+
+                case GRAB:
+                    //action.grabHere(player);
+                    //          action.grabThere( player);
+
+
+                default: }
+        }
+        if (firstAction&&player.equals(BOT))
+        {
+            switch(actiontype){
                 case RUN:
                     break;
 
                 case SHOOT: //weapon=player.getWeapon(player);
-                        action.shoot(player, weapon);
-                                break;
-
-                case GRAB:
-                    //action.grabHere(player);
-                      //          action.grabThere( player);
-
-                case ADRENALINEGRAB:
-                                break;
-                case ADRENALINESHOOT:
-                                break;
-
-                //case "adrenaline.Run": action.run(player);
-                  //              break;
-
+                    action.shoot(player, weapon);
+                    break;
                 default: }
         }
     };
-    public void getBotLastAction(){}
 
 
 
@@ -90,13 +78,13 @@ WeaponCard weapon; //
 
 
 
-/*
-    public void endTurn(Player player){
-        action.
-        //player=model.nextPlayer(player);
+
+  public void endTurn(Player player){
+       // player.nextPlayer(player); todo method to get next player
         replaceAmmoTiles();
         replaceWeapons();
     };
+
     public void replaceAmmoTiles(){}
     public void replaceWeapons(){}
 
@@ -108,5 +96,5 @@ WeaponCard weapon; //
     public void giveMark(){}
     public void multipleKill(){}
     public void death(){}
-    public void kill(Player player,Player pGoal){}*/
+    //public void kill(Player player,Player pGoal){}*/
 }
