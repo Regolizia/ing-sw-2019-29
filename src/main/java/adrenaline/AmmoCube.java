@@ -24,6 +24,11 @@ public class AmmoCube {
      */
     public AmmoCube() {
     }
+
+    public AmmoCube(CubeColor c) {
+        this.color = c;
+    }
+
     public AmmoCube(CubeColor c, Effect e, boolean p) {
         this.color = c;
         this.effect = e;
