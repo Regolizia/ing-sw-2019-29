@@ -12,7 +12,10 @@ public class SpawnpointDom extends Spawnpoint {
      */
     public SpawnpointDom() {
     }
-
+    public SpawnpointDom(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
     /**
      * 
      */

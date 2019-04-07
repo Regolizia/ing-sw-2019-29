@@ -25,6 +25,11 @@ public class MapFour extends Map {
             getGameBoard().addRoom(new RoomDeath(2,2));//YELLOW  (getRoom(3))
             getGameBoard().addRoom(new RoomDeath(1,1));//PURPLE  (getRoom(4))
             getGameBoard().addRoom(new RoomDeath(1,1));//GREEN  (getRoom(5))
+
+
+            getGameBoard().getRoom(0).addSpawnpoint(new Spawnpoint(2, 1)); //BLUE
+            getGameBoard().getRoom(1).addSpawnpoint(new Spawnpoint(1, 2)); //RED
+            getGameBoard().getRoom(3).addSpawnpoint(new Spawnpoint(2, 2)); //YELLOW
         }
         else{
 
@@ -36,6 +41,11 @@ public class MapFour extends Map {
             getGameBoard().addRoom(new RoomDom(2,2));//YELLOW  (getRoom(3))
             getGameBoard().addRoom(new RoomDom(1,1));//PURPLE  (getRoom(4))
             getGameBoard().addRoom(new RoomDom(1,1));//GREEN  (getRoom(5))
+
+
+            getGameBoard().getRoom(0).addSpawnpoint(new SpawnpointDom(2, 1)); //BLUE
+            getGameBoard().getRoom(1).addSpawnpoint(new SpawnpointDom(1, 2)); //RED
+            getGameBoard().getRoom(3).addSpawnpoint(new SpawnpointDom(2, 2)); //YELLOW
         };
 
         getGameBoard().addDoor(new Door(getGameBoard().getRoom(0), 1, 1,getGameBoard().getRoom(1), 1, 1));
@@ -47,9 +57,6 @@ public class MapFour extends Map {
         getGameBoard().addDoor(new Door(getGameBoard().getRoom(2), 2, 1,getGameBoard().getRoom(3), 1, 2));
         getGameBoard().addDoor(new Door(getGameBoard().getRoom(5), 1, 1,getGameBoard().getRoom(3), 2, 1));
 
-        getGameBoard().getRoom(0).addSpawnpoint(new Spawnpoint(2, 1)); //BLUE
-        getGameBoard().getRoom(1).addSpawnpoint(new Spawnpoint(1, 2)); //RED
-        getGameBoard().getRoom(3).addSpawnpoint(new Spawnpoint(2, 2)); //YELLOW
 
 
     }
