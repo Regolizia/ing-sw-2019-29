@@ -8,8 +8,8 @@ public class Player {
   public int ammoBox[];
   int x;
   int y;
-  public WeaponCard hand[];
-  public PowerUpCard powerups[];
+  public LinkedList<WeaponCard> hand;
+  public LinkedList<PowerUpCard> powerups;
 
     public Player(){
 
@@ -17,8 +17,9 @@ public class Player {
         track= new Figure.PlayerColor[]{null,null,null,null,null,null,null,null,null,null,null,null};
         // WE CAN ALSO CHOOSE TO PUT "NONE" VALUE IN ENUM AND SET IT HERE. WITH NULL WE CANNOT USE SWITCH CASE
 
-        hand = new WeaponCard[]{null,null,null};
-        powerups = new PowerUpCard[]{null,null,null};
+        // they are lists because we need to add and remove easily
+        hand = new LinkedList<WeaponCard>();
+        powerups = new LinkedList<PowerUpCard>();
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
@@ -37,11 +38,18 @@ public class Player {
         if(track[5]!=null)
             return 2;       //better Shoot (and Grab)
         return 0;
-
     };
 
+    public boolean canGrabPowerUp(){
+        return(powerups.get(2)==null);
+    }
 
-    
+    public boolean canGrabWeapon(){
+        return(hand.get(2)==null);
+    }
+
+
+
     public void setToken(Player player){}
 
     public String getToken(Player player){return "";} //adrenaline.Token
