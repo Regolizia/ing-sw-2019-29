@@ -17,31 +17,32 @@ public class MapOne extends Map {
     public MapOne(GameModel.Mode m) {
 
         if (m.equals(DEATHMATCH)) {
-        gameboard = new DeathmatchBoard();
+            setGameBoard(new DeathmatchBoard());
 
-        (gameboard).addRoom(new RoomDeath(3,1));//BLUE (getRoom(0))
-        (gameboard).addRoom(new RoomDeath(3,1));//RED  (getRoom(1))
-        (gameboard).addRoom(new RoomDeath(2,1));//WHITE  (getRoom(2))
-        (gameboard).addRoom(new RoomDeath(1,2));//YELLOW  (getRoom(3))
-                }
+            getGameBoard().addRoom(new RoomDeath(3,1));//BLUE (getRoom(0))
+            getGameBoard().addRoom(new RoomDeath(3,1));//RED  (getRoom(1))
+            getGameBoard().addRoom(new RoomDeath(2,1));//WHITE  (getRoom(2))
+            getGameBoard().addRoom(new RoomDeath(1,2));//YELLOW  (getRoom(3))
+        }
         else{
-        gameboard = new DominationBoard();
 
-        (gameboard).addRoom(new RoomDom(3,1));//BLUE (getRoom(0))
-        (gameboard).addRoom(new RoomDom(3,1));//RED  (getRoom(1))
-        (gameboard).addRoom(new RoomDom(2,1));//WHITE  (getRoom(2))
-        (gameboard).addRoom(new RoomDom(1,2));//YELLOW  (getRoom(3))
+            setGameBoard(new DominationBoard());
+
+            getGameBoard().addRoom(new RoomDom(3,1));//BLUE (getRoom(0))
+            getGameBoard().addRoom(new RoomDom(3,1));//RED  (getRoom(1))
+            getGameBoard().addRoom(new RoomDom(2,1));//WHITE  (getRoom(2))
+            getGameBoard().addRoom(new RoomDom(1,2));//YELLOW  (getRoom(3))
         };
 
-        (gameboard).addDoor(new Door(gameboard.getRoom(0), 1, 1,gameboard.getRoom(1), 1, 1));
-        (gameboard).addDoor(new Door(gameboard.getRoom(0), 3, 1,gameboard.getRoom(1), 3, 1));
-        (gameboard).addDoor(new Door(gameboard.getRoom(2), 1, 1,gameboard.getRoom(1), 2, 1));
-        (gameboard).addDoor(new Door(gameboard.getRoom(1), 3, 1,gameboard.getRoom(3), 1, 1));
-        (gameboard).addDoor(new Door(gameboard.getRoom(2), 2, 1,gameboard.getRoom(3), 1, 2));
+        getGameBoard().addDoor(new Door(getGameBoard().getRoom(0), 1, 1,getGameBoard().getRoom(1), 1, 1));
+        getGameBoard().addDoor(new Door(getGameBoard().getRoom(0), 3, 1,getGameBoard().getRoom(1), 3, 1));
+        getGameBoard().addDoor(new Door(getGameBoard().getRoom(2), 1, 1,getGameBoard().getRoom(1), 2, 1));
+        getGameBoard().addDoor(new Door(getGameBoard().getRoom(1), 3, 1,getGameBoard().getRoom(3), 1, 1));
+        getGameBoard().addDoor(new Door(getGameBoard().getRoom(2), 2, 1,getGameBoard().getRoom(3), 1, 2));
 
-            (gameboard).getRoom(0).addSpawnpoint(new Spawnpoint(3, 1)); //BLUE
-            (gameboard).getRoom(1).addSpawnpoint(new Spawnpoint(1, 1)); //RED
-            (gameboard).getRoom(3).addSpawnpoint(new Spawnpoint(1, 2)); //YELLOW
+        getGameBoard().getRoom(0).addSpawnpoint(new Spawnpoint(3, 1)); //BLUE
+        getGameBoard().getRoom(1).addSpawnpoint(new Spawnpoint(1, 1)); //RED
+        getGameBoard().getRoom(3).addSpawnpoint(new Spawnpoint(1, 2)); //YELLOW
 
 
     }

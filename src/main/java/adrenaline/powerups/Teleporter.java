@@ -9,7 +9,7 @@ public class Teleporter  extends PowerUpCard {
      * Default constructor
      */
     public Teleporter(AmmoCube.CubeColor color) {
-        this.color = color;
+        setPowerUpColor(color);
     }
 
 }

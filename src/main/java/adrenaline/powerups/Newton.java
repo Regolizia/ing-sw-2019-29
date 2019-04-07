@@ -9,7 +9,7 @@ public class Newton extends PowerUpCard {
      * Default constructor
      */
     public Newton(AmmoCube.CubeColor color) {
-        this.color = color;
+        setPowerUpColor(color);
     }
 
 }

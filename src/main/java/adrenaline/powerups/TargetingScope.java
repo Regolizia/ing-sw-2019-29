@@ -9,7 +9,7 @@ public class TargetingScope  extends PowerUpCard {
      * Default constructor
      */
     public TargetingScope(AmmoCube.CubeColor color) {
-        this.color = color;
+        setPowerUpColor(color);
     }
 
 }

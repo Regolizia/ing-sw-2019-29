@@ -9,7 +9,7 @@ public class TagbackGrenade extends PowerUpCard {
      * Default constructor
      */
     public TagbackGrenade(AmmoCube.CubeColor color) {
-        this.color = color;
+        setPowerUpColor(color);
     }
 
 }
