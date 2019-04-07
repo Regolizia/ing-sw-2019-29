@@ -26,6 +26,8 @@ public class Player {
         color=player;
         this.spwX=spwX;
         this.spwY=spwY;
+        x=spwX;
+        y=spwY;
         // they are lists because we need to add and remove easily
         hand = new LinkedList<WeaponCard>();
         powerups = new LinkedList<PowerUpCard>();
