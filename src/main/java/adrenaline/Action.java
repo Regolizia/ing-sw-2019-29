@@ -40,7 +40,7 @@ public void grab(Player player , int xF , int yF)
 
 
         // CHECK IF CAN MOVE: move only a square up/down or a square left/right
-        if(((player.getPosX(player)-xF==1)||(player.getPosX(player)-xF==-1))&& player.getPosY(player)-yF==0)
+        if((((player.getPosX(player)-xF==1)||(player.getPosX(player)-xF==-1))&& player.getPosY(player)-yF==0)||((player.getPosX(player)-xF==0)&&(player.getPosY(player)-yF==0)))
         {//check if there is a wall, if not
             player.setPos(xF,yF,player);
             //method to pickup the card
