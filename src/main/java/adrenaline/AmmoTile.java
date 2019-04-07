@@ -19,7 +19,7 @@ public class AmmoTile extends Tile {
     public AmmoTile() {
         ammoTile = new LinkedList<Object>();
     }
-    
+
     // AMMO + AMMO + AMMO
     public AmmoTile(int x, int y, AmmoCube a, AmmoCube.CubeColor ac, AmmoCube b, AmmoCube.CubeColor bc, AmmoCube c, AmmoCube.CubeColor cc) {
         this.x = x;

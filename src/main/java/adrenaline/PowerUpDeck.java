@@ -38,6 +38,10 @@ public class PowerUpDeck extends Deck {
         }
     }
 
+    public LinkedList<PowerUpCard> getPowerUpDeck(){
+        return deck;
+    }
+    //public void setPowerUpDeck(){    }
 
     /**
      * 

@@ -3,7 +3,7 @@ package adrenaline;
 public class GameModel {
 
 
-    Player next=new Player();
+    Player next = new Player();
     protected int playerCount;
   //  protected String[] players = new String[5];;
 

@@ -14,7 +14,9 @@ public class Player {
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
 
+    public Player(){
 
+    }
 
     public Player(int spwX,int spwY, Figure.PlayerColor player){
 

@@ -14,6 +14,10 @@ Action action;
 WeaponCard weapon;
 
 
+    public Turn(){
+
+    }
+
     public Turn(Player player){
         firstAction=true;
         secondAction=false;
