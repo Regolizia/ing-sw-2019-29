@@ -19,8 +19,9 @@ public class GameModel {
 
 
     public GameModel(Mode m, Map ma, Bot b) {
-        //TODO CHANGE INTO MAP1 MAP2 ETC...
+        //TODO CHANGE INTO MAP1 MAP2 ETC... SWITCHCASE MAYBE FOR MODES AND CHOESEN MAP
         mapUsed = new Map(m);
+
         mode = m;
         bot = b;
     }

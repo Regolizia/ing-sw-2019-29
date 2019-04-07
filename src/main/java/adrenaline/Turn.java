@@ -11,7 +11,7 @@ private Player pGoal;
 private Spawnpoint sGoal;
 
 Action action;
-WeaponCard weapon=new WeaponCard(); //
+WeaponCard weapon; //
 
     /**
      * Default constructor
