@@ -1,6 +1,7 @@
 package adrenaline;
 
 import static adrenaline.GameModel.Bot.*;
+import static adrenaline.Action.ActionType.*;
 
 public class Turn {
 private boolean firstAction;
@@ -9,7 +10,7 @@ private GameModel model;
 private Player pGoal;
 private Spawnpoint sGoal;
 
-Action action=new Action(){};
+Action action;
 WeaponCard weapon=new WeaponCard(); //
 
     /**
@@ -24,14 +25,14 @@ WeaponCard weapon=new WeaponCard(); //
     }
 
         // it imports gameplay's bot choice
-    public void playerTurn(Player player, Action action, GameModel.Bot bot) {
+    public void playerTurn(Player player, Action.ActionType actiontype, GameModel.Bot bot) {
         if (firstAction) {
-            getAction(player, action);
+            getAction(player, actiontype);
             firstAction = false;
             secondAction = true;
         }
         if (secondAction) {
-            getAction(player, action);
+            getAction(player, actiontype);
             secondAction = false;
         }
         if (!secondAction && !firstAction) {
@@ -51,24 +52,33 @@ WeaponCard weapon=new WeaponCard(); //
     }
 
 
-    public void getAction(Player player, Action action){
+    public void getAction(Player player, Action.ActionType actiontype){
         if (firstAction)
         {
-            switch(action.getName()){
+            switch(actiontype){
 
-                case "reload": action.reload(player);
+                //case Action.ActionType.RELOAD : action.reload(player);
+                  //              break;
+
+                case RUN:
+                    break;
+
+                case SHOOT: //weapon=player.getWeapon(player);
+                        action.shoot(player, weapon);
                                 break;
 
-                case "attack": //weapon=player.getWeapon(player);
-                        action.shoot(player,weapon);
+                case GRAB:
+                    //action.grabHere(player);
+                      //          action.grabThere( player);
+
+                case ADRENALINEGRAB:
+                                break;
+                case ADRENALINESHOOT:
                                 break;
 
-                case "grab": action.grabHere(player);
-                                action.grabThere( player);
+                //case "adrenaline.Run": action.run(player);
+                  //              break;
 
-
-                case"adrenaline.Run": action.run(player);
-                                break;
                 default: }
         }
     };

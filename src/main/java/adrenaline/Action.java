@@ -4,8 +4,11 @@ public class Action {
 
 //WeaponCard weapon;
 
-public String getName(){ return "";}
+    public static enum ActionType {
+        GRAB, RUN, SHOOT, ADRENALINEGRAB, ADRENALINESHOOT;
+    }
 
+    public ActionType actionSelected;
 
 
 public void shoot(Player player, WeaponCard weapon)
