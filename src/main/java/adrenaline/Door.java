@@ -18,10 +18,8 @@ public class Door {
     public Door(Room r1, int x1, int y1, Room r2, int x2, int y2) {
         this.room1 = r1;
         this.room2 = r2;
-        c1.setX(x1);
-        c1.setY(y1);
-        c2.setX(x2);
-        c2.setY(y2);
+        this.c1 = new Coordinates(x1,y1);
+        this.c2 = new Coordinates(x2,y2);
     }
 
     public Room getRoom1(){

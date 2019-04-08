@@ -37,7 +37,7 @@ public class AmmoTile extends Tile {
         return coordinates;
     }
     public void setPosition(int x, int y){
-        this.coordinates.setPosition(x,y);
+        this.coordinates.setCoordinates(x,y);
     }
 
     public LinkedList<Object> getAmmoTile(){

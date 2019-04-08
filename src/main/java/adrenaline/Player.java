@@ -60,7 +60,7 @@ public class Player {
 
  //________________________to control player's position____________________________________________________//
     public void setPlayerPosition(int x, int y){
-        this.coordinates.setPosition(x,y);
+        this.coordinates.setCoordinates(x,y);
     }
 
     public int getPlayerPositionX(){

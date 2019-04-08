@@ -16,14 +16,14 @@ public class Room {
      * Default constructor
      */
     public Room() {
-        size.setX(0);
-        size.setY(0);
+        this.size = new Coordinates();
     }
 
     public Room(int x, int y) {
-        players = new LinkedList<Player>();
-        tiles = new LinkedList<AmmoTile>();
-        size.setCoordinates(x,y);
+        this.players = new LinkedList<Player>();
+        this.tiles = new LinkedList<AmmoTile>();
+        this.size = new Coordinates(x,y);
+        setToken(99);
     }
 
     public void addSpawnpoint(Spawnpoint s){
