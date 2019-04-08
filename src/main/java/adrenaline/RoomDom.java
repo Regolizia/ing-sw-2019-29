@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class RoomDom extends Room{
 
-    public LinkedList<SpawnpointDom> spawnpoints;
+    private LinkedList<SpawnpointDom> spawnpoints;
 
     /**
      * Default constructor
@@ -18,7 +18,9 @@ public class RoomDom extends Room{
 
     }
 
-
+    public LinkedList<SpawnpointDom> getSpawnpoints(){
+        return spawnpoints;
+    }
     public void addSpawnpoint(SpawnpointDom s){
         spawnpoints.add(s);
     }

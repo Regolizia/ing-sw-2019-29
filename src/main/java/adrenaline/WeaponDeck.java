@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class WeaponDeck extends Deck {
 
-   public LinkedList<WeaponCard> deck;
+   private LinkedList<WeaponCard> deck;
 
 
     public WeaponDeck() {

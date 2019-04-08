@@ -42,47 +42,47 @@ public class WeaponDeckTest {
 
 
         for(int i =0;i<=20;i++){
-            if(deckTest.deck.get(i) instanceof Cyberblade)
+            if(deckTest.getList().get(i) instanceof Cyberblade)
                 Cyb++;
-            if(deckTest.deck.get(i) instanceof Electroscythe)
+            if(deckTest.getList().get(i) instanceof Electroscythe)
                 Ele++;
-            if(deckTest.deck.get(i) instanceof Flamethrower)
+            if(deckTest.getList().get(i) instanceof Flamethrower)
                 Fla++;
-            if(deckTest.deck.get(i) instanceof Furnace)
+            if(deckTest.getList().get(i) instanceof Furnace)
                 Fur++;
-            if(deckTest.deck.get(i) instanceof GrenadeLaucher)
+            if(deckTest.getList().get(i) instanceof GrenadeLaucher)
                 Gre++;
-            if(deckTest.deck.get(i) instanceof Heatseeker)
+            if(deckTest.getList().get(i) instanceof Heatseeker)
                 Hea++;
-            if(deckTest.deck.get(i) instanceof Hellion)
+            if(deckTest.getList().get(i) instanceof Hellion)
                 Hel++;
-            if(deckTest.deck.get(i) instanceof LockRifle)
+            if(deckTest.getList().get(i) instanceof LockRifle)
                 Loc++;
-            if(deckTest.deck.get(i) instanceof MachineGun)
+            if(deckTest.getList().get(i) instanceof MachineGun)
                 Mac++;
-            if(deckTest.deck.get(i) instanceof PlasmaGun)
+            if(deckTest.getList().get(i) instanceof PlasmaGun)
                 Pla++;
-            if(deckTest.deck.get(i) instanceof PowerGlove)
+            if(deckTest.getList().get(i) instanceof PowerGlove)
                 Pow++;
-            if(deckTest.deck.get(i) instanceof Railgun)
+            if(deckTest.getList().get(i) instanceof Railgun)
                 Rai++;
-            if(deckTest.deck.get(i) instanceof RocketLaucher)
+            if(deckTest.getList().get(i) instanceof RocketLaucher)
                 Roc++;
-            if(deckTest.deck.get(i) instanceof Shockwave)
+            if(deckTest.getList().get(i) instanceof Shockwave)
                 Shoc++;
-            if(deckTest.deck.get(i) instanceof Shotgun)
+            if(deckTest.getList().get(i) instanceof Shotgun)
                 Shot++;
-            if(deckTest.deck.get(i) instanceof Sledgehammer)
+            if(deckTest.getList().get(i) instanceof Sledgehammer)
                 Sle++;
-            if(deckTest.deck.get(i) instanceof Thor)
+            if(deckTest.getList().get(i) instanceof Thor)
                 Tho++;
-            if(deckTest.deck.get(i) instanceof TractorBeam)
+            if(deckTest.getList().get(i) instanceof TractorBeam)
                 Tra++;
-            if(deckTest.deck.get(i) instanceof VortexCannon)
+            if(deckTest.getList().get(i) instanceof VortexCannon)
                 Vor++;
-            if(deckTest.deck.get(i) instanceof Whisper)
+            if(deckTest.getList().get(i) instanceof Whisper)
                 Whi++;
-            if(deckTest.deck.get(i) instanceof Zx_2)
+            if(deckTest.getList().get(i) instanceof Zx_2)
                 Zx++;
         }
 

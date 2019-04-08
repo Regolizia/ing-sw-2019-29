@@ -5,7 +5,7 @@ import java.util.*;
 public class RoomDeath extends Room {
 
 
-    public LinkedList<Spawnpoint> spawnpoints;
+    private LinkedList<Spawnpoint> spawnpoints;
 
 
     /**
@@ -17,7 +17,9 @@ public class RoomDeath extends Room {
 
     }
 
-
+    public LinkedList<Spawnpoint> getSpawnpoints(){
+        return spawnpoints;
+    }
     public void addSpawnpoint(Spawnpoint s) {
         spawnpoints.add(s);
     }

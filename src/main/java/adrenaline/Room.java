@@ -8,8 +8,8 @@ import java.util.*;
 public class Room {
 
     private Coordinates size;
-    public LinkedList<AmmoTile> tiles;
-    public LinkedList<Player> players;
+    private LinkedList<AmmoTile> tiles;
+    private LinkedList<Player> players;
     private int token;
 
     /**
@@ -50,4 +50,12 @@ public class Room {
     public int getToken(){
         return this.token;
     }
+
+    public LinkedList<Player> getPlayers(){
+        return players;
+    }
+    public LinkedList<AmmoTile> getTiles(){
+        return tiles;
+    }
+
 }
