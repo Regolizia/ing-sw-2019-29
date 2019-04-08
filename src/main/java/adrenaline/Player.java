@@ -6,9 +6,9 @@ public class Player {
 
   private Figure.PlayerColor track[];
   private int ammoBox[];
-  private Position position;
+  private Coordinates coordinates;
   private Figure.PlayerColor color;
-  private Position respawnPosition;
+  private Coordinates respawnCoordinates;
 
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
@@ -16,8 +16,8 @@ public class Player {
     public Player(){
 
     }
-    // Position rsp is the spawnPosition chosen by the player
-    public Player(Position rsp, Figure.PlayerColor playercolor){
+    // Coordinates rsp is the spawnPosition chosen by the player
+    public Player(Coordinates rsp, Figure.PlayerColor playercolor){
 
         this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
         this.track= new Figure.PlayerColor[]{Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
@@ -25,8 +25,8 @@ public class Player {
                 ,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE};
         // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
         this.color=playercolor;
-        this.respawnPosition = rsp;
-        this.position = rsp;
+        this.respawnCoordinates = rsp;
+        this.coordinates = rsp;
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
@@ -60,29 +60,29 @@ public class Player {
 
  //________________________to control player's position____________________________________________________//
     public void setPlayerPosition(int x, int y){
-        this.position.setPosition(x,y);
+        this.coordinates.setPosition(x,y);
     }
 
     public int getPlayerPositionX(){
 
-        return position.getX();
+        return coordinates.getX();
     }
 
     public int getPlayerPositionY(){
-        return position.getY();
+        return coordinates.getY();
     }
 //_________________________________________________________________________________________________________//
 
 
     // I DON'T THINK IT SHOULD BE HERE
     public void pickWeaponCard(int x, int y){
-        //metod to find the card in that position
+        //metod to find the card in that coordinates
 
 
     }
 
     public WeaponCard getWeaponCard(Player player){
-        //metod to find the card in that position
+        //metod to find the card in that coordinates
         //shows a list of owned card
         //return only a card
         WeaponCard card=new WeaponCard();

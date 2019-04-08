@@ -1,7 +1,5 @@
 package adrenaline;
 
-import static adrenaline.PowerUpCard.*;
-import java.awt.*;
 import java.util.LinkedList;
 
 /**
@@ -9,7 +7,7 @@ import java.util.LinkedList;
  */
 public class AmmoTile extends Tile {
 
-    private Position position;
+    private Coordinates coordinates;
     private LinkedList<Object> ammoTile;
 
     /**
@@ -20,29 +18,29 @@ public class AmmoTile extends Tile {
     }
 
     // AMMO + AMMO + AMMO
-    public AmmoTile(Position p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc,  AmmoCube.CubeColor cc) {
-        this.position = p;
+    public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
+        this.coordinates = p;
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
         ammoTile.add(new AmmoCube(cc));
     }
     // POWERUP + AMMO + AMMO
-    public void ammoTileP(Position p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
-        this.position = p;
+    public void ammoTileP(Coordinates p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
+        this.coordinates = p;
         ammoTile.add(new PowerUpCard(pc));
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
     }
 
 
-    public Position getPosition(){
-        return position;
+    public Coordinates getCoordinates(){
+        return coordinates;
     }
     public void setPosition(int x, int y){
-        this.position.setPosition(x,y);
+        this.coordinates.setPosition(x,y);
     }
 
-    public LinkedList<> getAmmoTile(){
+    public LinkedList<Object> getAmmoTile(){
         return ammoTile;
     }
     /*public void setAmmoTile(come costruttore){

@@ -19,6 +19,8 @@ public class DominationBoard extends GameBoard {
     }
     public void addRoom(RoomDom r){
         rooms.add(r);
+        // The room's token is the index of the array
+        r.setToken(rooms.indexOf(r));
     }
 
     public RoomDom getRoom(int i) {

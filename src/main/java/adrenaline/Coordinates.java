@@ -1,6 +1,6 @@
 package adrenaline;
 
-public class Position {
+public class Coordinates {
 
     private int x;
     private int y;
@@ -21,7 +21,8 @@ public class Position {
     public void setY(int y) {
         this.y = y;
     }
-     public void setPosition(int x, int y){
+
+     public void setCoordinates(int x, int y){
         this.x = x;
         this.y = y;
      }
