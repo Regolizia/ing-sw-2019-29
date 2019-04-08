@@ -26,12 +26,12 @@ WeaponCard weapon;
 
     public void playerTurn(Player player, Action.ActionType actiontype, GameModel.Bot bot) {
         if (firstAction) {
-            getAction(player, actiontype);
+            getAction(player, actiontype, bot);
             firstAction = false;
             secondAction = true;
         }
         if (secondAction) {
-            getAction(player, actiontype);
+            getAction(player, actiontype, bot);
             secondAction = false;
         }
 
@@ -42,8 +42,8 @@ WeaponCard weapon;
     }
 
 
-    public void getAction(Player player, Action.ActionType actiontype){
-        if (firstAction&&player.equals(NOBOT))
+    public void getAction(Player player, Action.ActionType actiontype, GameModel.Bot bot){
+        if (firstAction && bot.equals(NOBOT))
         {
             switch(actiontype){
 
@@ -63,7 +63,7 @@ WeaponCard weapon;
 
                 default: }
         }
-        if (firstAction&&player.equals(BOT))
+        if (firstAction && bot.equals(BOT))
         {
             switch(actiontype){
                 case RUN:

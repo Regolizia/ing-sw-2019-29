@@ -36,12 +36,12 @@ public class GameBoard {
     }
 
 
-    /**
+   /* *//**
      * 
-     */
-    public void oneTileDistant() {
+     *//*
+    public LinkedList<PositionWithRoom> oneTileDistant() {
         // TODO implement here
-    }
+    }*/
 
     /**
      * 

@@ -7,10 +7,10 @@ import java.util.*;
  */
 public class AmmoCube {
 
-    public static enum CubeColor {
+    public enum CubeColor {
         RED, YELLOW, BLUE;
     }
-    public static enum Effect {
+    public enum Effect {
         BASE, OP1, OP2, ALT;
     }
 

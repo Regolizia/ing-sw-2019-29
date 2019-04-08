@@ -16,7 +16,7 @@ public class AmmoTile extends Tile {
      * Default constructor
      */
     public AmmoTile() {
-        ammoTile = new LinkedList<Object>();
+        ammoTile = new LinkedList<>();
     }
 
     // AMMO + AMMO + AMMO
@@ -27,7 +27,7 @@ public class AmmoTile extends Tile {
         ammoTile.add(new AmmoCube(cc));
     }
     // POWERUP + AMMO + AMMO
-    public void AmmoTileP(Position p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
+    public void ammoTileP(Position p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
         this.position = p;
         ammoTile.add(new PowerUpCard(pc));
         ammoTile.add(new AmmoCube(ac));
@@ -42,7 +42,7 @@ public class AmmoTile extends Tile {
         this.position.setPosition(x,y);
     }
 
-    public LinkedList<Object> getAmmoTile(){
+    public LinkedList<> getAmmoTile(){
         return ammoTile;
     }
     /*public void setAmmoTile(come costruttore){

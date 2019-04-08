@@ -7,7 +7,7 @@ import java.util.*;
  */
 public class Room {
 
-    public int [][] room;
+    private int [][] roomMatrix;
     public LinkedList<AmmoTile> tiles;
     public LinkedList<Player> players;
 
@@ -20,7 +20,7 @@ public class Room {
     public Room(int x, int y) {
         players = new LinkedList<Player>();
         tiles = new LinkedList<AmmoTile>();
-        room = new int[x][y];
+        roomMatrix = new int[x][y];
     }
 
     public void addSpawnpoint(Spawnpoint s){
@@ -34,5 +34,7 @@ public class Room {
         tiles.add(t);
     }
 
-
+    public int[][] getRoomMatrix(){
+        return this.roomMatrix;
+    }
 }
