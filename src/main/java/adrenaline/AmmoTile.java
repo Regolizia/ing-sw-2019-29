@@ -9,8 +9,7 @@ import java.util.LinkedList;
  */
 public class AmmoTile extends Tile {
 
-    private int x;
-    private int y;
+    private Position position;
     private LinkedList<Object> ammoTile;
 
     /**
@@ -21,35 +20,28 @@ public class AmmoTile extends Tile {
     }
 
     // AMMO + AMMO + AMMO
-    public AmmoTile(int x, int y, AmmoCube a, AmmoCube.CubeColor ac, AmmoCube b, AmmoCube.CubeColor bc, AmmoCube c, AmmoCube.CubeColor cc) {
-        this.x = x;
-        this.y = y;
+    public AmmoTile(Position p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc,  AmmoCube.CubeColor cc) {
+        this.position = p;
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
         ammoTile.add(new AmmoCube(cc));
     }
     // POWERUP + AMMO + AMMO
-    public AmmoTile(int x, int y, PowerUpCard p, AmmoCube.CubeColor pc, AmmoCube a, AmmoCube.CubeColor ac, AmmoCube b, AmmoCube.CubeColor bc) {
-        this.x = x;
-        this.y = y;
+    public void AmmoTileP(Position p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
+        this.position = p;
         ammoTile.add(new PowerUpCard(pc));
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
     }
 
 
-    public int getX(){
-        return x;
+    public Position getPosition(){
+        return position;
     }
-    public void setX(int x){
-        this.x = x;
+    public void setPosition(int x, int y){
+        this.position.setPosition(x,y);
     }
-    public int getY(){
-        return y;
-    }
-    public void setY(int y){
-        this.y = y;
-    }
+
     public LinkedList<Object> getAmmoTile(){
         return ammoTile;
     }

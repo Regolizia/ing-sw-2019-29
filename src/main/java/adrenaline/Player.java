@@ -6,10 +6,9 @@ public class Player {
 
   private Figure.PlayerColor track[];
   private int ammoBox[];
-  private int x;
-  private int y;
+  private Position position;
   private Figure.PlayerColor color;
-  private int spwX,spwY;
+  private Position respawnPosition;
 
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
@@ -17,28 +16,26 @@ public class Player {
     public Player(){
 
     }
+    // Position rsp is the spawnPosition chosen by the player
+    public Player(Position rsp, Figure.PlayerColor playercolor){
 
-    public Player(int spwX,int spwY, Figure.PlayerColor player){
-
-        ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
-        track= new Figure.PlayerColor[]{Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
+        this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
+        this.track= new Figure.PlayerColor[]{Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
                 ,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
                 ,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE};
         // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
-        color=player;
-        this.spwX=spwX;
-        this.spwY=spwY;
-        x=spwX;
-        y=spwY;
+        this.color=playercolor;
+        this.respawnPosition = rsp;
+        this.position = rsp;
         // they are lists because we need to add and remove easily
-        hand = new LinkedList<WeaponCard>();
-        powerups = new LinkedList<PowerUpCard>();
+        this.hand = new LinkedList<WeaponCard>();
+        this.powerups = new LinkedList<PowerUpCard>();
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
 
 
-    public int checkDamage(Player player){
+    public int checkDamage(){
 
         if(track[2]!=Figure.PlayerColor.NONE && track[5]==Figure.PlayerColor.NONE)
             return 1;       //better Grab
@@ -61,24 +58,24 @@ public class Player {
 
    // public String getToken(Player player){return "";} //adrenaline.Token
 
- //________________________to controll player's position____________________________________________________//
-    public void setPos(int x, int y,Player player){
-        this.x=x;
-        this.y=y;
+ //________________________to control player's position____________________________________________________//
+    public void setPlayerPosition(int x, int y){
+        this.position.setPosition(x,y);
     }
 
-    public int getPosX(Player player){
-        return x;
+    public int getPlayerPositionX(){
+
+        return position.getX();
     }
 
-    public int getPosY(Player player){
-        return y;
+    public int getPlayerPositionY(){
+        return position.getY();
     }
 //_________________________________________________________________________________________________________//
 
 
-
-    public void pickWeaponCard(Player player, int x, int y){
+    // I DON'T THINK IT SHOULD BE HERE
+    public void pickWeaponCard(int x, int y){
         //metod to find the card in that position
 
 
@@ -91,6 +88,7 @@ public class Player {
         WeaponCard card=new WeaponCard();
         return card;
     }
+
 
 
 
