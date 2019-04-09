@@ -19,11 +19,11 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
             CoordinatesWithRoom c = new CoordinatesWithRoom();
             c.setRoom(map.getGameBoard().getRoom(3));
             c.setCoordinates(1,2);
-            LinkedList<CoordinatesWithRoom> listThree = c.threeTilesDistant(g);
+            LinkedList<CoordinatesWithRoom> listOne = c.XTilesDistant(g,3);
 
-            for(int i=0;i<listThree.size();i++) {
-                System.out.printf(listThree.get(i).getX()+","+
-                        listThree.get(i).getY()+" Room:"+listThree.get(i).getRoom().getToken()+"\n");
+            for (int j = 0; j < listOne.size(); j++) {
+                System.out.printf(listOne.get(j).getX() + "," +
+                        listOne.get(j).getY() + " Room:" + listOne.get(j).getRoom().getToken() + "\n");
 
             }
 

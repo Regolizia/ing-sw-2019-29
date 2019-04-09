@@ -12,24 +12,22 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class OneTileDistanceTest {
 
 
-
     @Test
     public void testConstructor() {
         GameBoard g;
         Map map = new MapOne(DEATHMATCH);
-        g=map.getGameBoard();
+        g = map.getGameBoard();
         CoordinatesWithRoom c = new CoordinatesWithRoom();
-        c.setRoom(map.getGameBoard().getRoom(2));
-        c.setX(1);
+        c.setRoom(map.getGameBoard().getRoom(1));
+        c.setX(3);
         c.setY(1);
-        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> listTwo = c.XTilesDistant(g, 1);
 
-        for(int i=0;i<listOne.size();i++) {
-            System.out.printf(listOne.get(i).getX()+","+
-                    listOne.get(i).getY()+" Room:"+listOne.get(i).getRoom().getToken()+"\n");
+        for (int j = 0; j < listTwo.size(); j++) {
+            System.out.printf(listTwo.get(j).getX() + "," +
+                    listTwo.get(j).getY() + " Room:" + listTwo.get(j).getRoom().getToken() + "\n");
 
         }
-
 
 
     }

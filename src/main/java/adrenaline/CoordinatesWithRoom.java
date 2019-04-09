@@ -23,7 +23,7 @@ public class CoordinatesWithRoom extends Coordinates {
 
 
 
-
+/////////////////////////////////////////////////////////////////////////////
 
 
     public LinkedList<CoordinatesWithRoom> oneTileDistant(GameBoard g) {
@@ -62,87 +62,59 @@ public class CoordinatesWithRoom extends Coordinates {
     }
 
 
+///////////////////////////////////////////////
 
-    /**
-     *
-     */
-    public LinkedList<CoordinatesWithRoom> twoTilesDistant(GameBoard g) {
-
-        LinkedList<CoordinatesWithRoom> listTwo = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listOne = oneTileDistant(g);
-
-        for(int i=0;i<listOne.size();i++){
-            listTwo.addAll(listOne.get(i).oneTileDistant(g));
-        }
-        for(int i=listTwo.size()-1;i>=0;i--){
-            if(listTwo.get(i).getRoom().getToken()==this.getRoom().getToken() && listTwo.get(i).getX()==this.getX() && listTwo.get(i).getY()==this.getY()){
-                listTwo.remove(i);
+    public LinkedList<CoordinatesWithRoom> removeThisCell(LinkedList<CoordinatesWithRoom> list){
+        for(int i=list.size()-1;i>=0;i--) {
+            if (list.get(i).getRoom().getToken() == this.getRoom().getToken() && list.get(i).getX() == this.getX() && list.get(i).getY() == this.getY()) {
+                list.remove(i);
             }
         }
-        return listTwo;
+        return list;
     }
 
-    /**
-     *
-     */
-
-
-    public LinkedList<CoordinatesWithRoom> threeTilesDistant(GameBoard g) {
-
-    LinkedList<CoordinatesWithRoom> listThree = new LinkedList<>();
-    LinkedList<CoordinatesWithRoom> listTwo = twoTilesDistant(g);
-
-    for(int i=0;i<listTwo.size();i++){
-        listThree.addAll(listTwo.get(i).oneTileDistant(g));
-    }
-    for(int i=0;i<listThree.size();i++){
-        for (int j=i+1;j<listThree.size();j++){
-            if(listThree.get(i).getRoom()==listThree.get(j).getRoom()
-            && listThree.get(i).getX()==listThree.get(j).getX()
-            && listThree.get(i).getY()==listThree.get(j).getY()){
-                listThree.remove(j);
-                j--;
-            }
-        }
-    }
-        return listThree;
-    }
-
-
-    public LinkedList<CoordinatesWithRoom> fourTilesDistant(GameBoard g) {
-
-        LinkedList<CoordinatesWithRoom> listFour = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listThree = threeTilesDistant(g);
-
-        for (int i = 0; i < listThree.size(); i++) {
-            listFour.addAll(listThree.get(i).oneTileDistant(g));
-        }
-
-        for (int i = 0; i < listFour.size(); i++) {
-            if (listFour.get(i).getRoom().getToken() == this.getRoom().getToken() && listFour.get(i).getX() == this.getX() && listFour.get(i).getY() == this.getY()) {
-                listFour.remove(i);
-                i--;
-            }
-
-            for (int k = 0; k < listFour.size(); k++) {
-                for (int j = k + 1; j < listFour.size(); j++) {
-                    if (listFour.get(k).getRoom() == listFour.get(j).getRoom()
-                            && listFour.get(k).getX() == listFour.get(j).getX()
-                            && listFour.get(k).getY() == listFour.get(j).getY()) {
-                        listFour.remove(j);
-                        j--;
-                    }
+    public LinkedList<CoordinatesWithRoom> removeDuplicates(LinkedList<CoordinatesWithRoom> list){
+        for (int k = 0; k < list.size(); k++) {
+            for (int j = k + 1; j < list.size(); j++) {
+                if (list.get(k).getRoom() == list.get(j).getRoom()
+                        && list.get(k).getX() == list.get(j).getX()
+                        && list.get(k).getY() == list.get(j).getY()) {
+                    list.remove(j);
+                    j--;
                 }
             }
         }
-        return listFour;
+      return list;
+    }
+
+///////////////////////////////////////////////////////////////////////
+
+        public LinkedList<CoordinatesWithRoom> XTilesDistant(GameBoard g, int distance){
+
+        LinkedList<CoordinatesWithRoom> listTemp;
+        LinkedList<CoordinatesWithRoom> list =new LinkedList<>();
+        LinkedList<CoordinatesWithRoom> listTemp2;
+        list.add(this);
+
+        for(int i=1;i<=distance;i++){
+            listTemp = new LinkedList<>();
+            for(CoordinatesWithRoom element : list){
+                listTemp2 = element.oneTileDistant(g);
+                listTemp.addAll(listTemp2);
+            }
+            list.clear();
+            list = listTemp;
         }
+        list = this.removeDuplicates(list);
+        list = this.removeThisCell(list);
+        return list;
+    }
 
 
-   /*     /////
-        public LinkedList<CoordinatesWithRoom> insideTheRoom (GameBoard g){
 
-        }*/
+
 
 
 }
+
+

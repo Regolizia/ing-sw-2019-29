@@ -21,7 +21,7 @@ public class AmmoTile{
     // AMMO + AMMO + AMMO or POWERUP + AMMO + AMMO (ONE CUBECOLOR MEANS PICK POWERUP)
     public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
         this.coordinates = p;
-        LinkedList<AmmoCube> ammoTile = new LinkedList<>();
+        ammoTile = new LinkedList<>();
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
         ammoTile.add(new AmmoCube(cc));

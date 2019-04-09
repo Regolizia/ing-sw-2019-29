@@ -20,11 +20,11 @@ public class TwoTilesDistanceTest {
             c.setRoom(map.getGameBoard().getRoom(1));
             c.setX(2);
             c.setY(1);
-            LinkedList<CoordinatesWithRoom> listTwo = c.twoTilesDistant(g);
+            LinkedList<CoordinatesWithRoom> listOne = c.XTilesDistant(g,2);
 
-            for(int i=0;i<listTwo.size();i++) {
-                System.out.printf(listTwo.get(i).getX()+","+
-                        listTwo.get(i).getY()+" Room:"+listTwo.get(i).getRoom().getToken()+"\n");
+            for (int j = 0; j < listOne.size(); j++) {
+                System.out.printf(listOne.get(j).getX() + "," +
+                        listOne.get(j).getY() + " Room:" + listOne.get(j).getRoom().getToken() + "\n");
 
             }
 
