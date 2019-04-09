@@ -15,9 +15,9 @@ public class Bot extends Player {
 
     /**
      * 
-     */
+
     public void getPwerUp() {
         // TODO implement here
     }
-
+     */
 }

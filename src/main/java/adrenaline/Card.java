@@ -15,9 +15,6 @@ Player owner;
      */
     public Card() {}
 
-    public void setOwner(Player player, Card card){
-    owner=player;
 
-    }
 
 }

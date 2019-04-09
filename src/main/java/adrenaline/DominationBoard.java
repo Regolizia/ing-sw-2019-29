@@ -27,16 +27,6 @@ public class DominationBoard extends GameBoard {
         return rooms.get(i);
     }
 
-    /**
-     * 
-     */
-    //public void skulls;
 
-    /**
-     * 
-     */
-    public void getDom() {
-        // TODO implement here
-    }
 
 }

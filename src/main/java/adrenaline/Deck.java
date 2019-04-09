@@ -19,11 +19,6 @@ public class Deck {
        Collections.shuffle(list);
     }
 
-    /**
-     * 
-     */
-    public void pickUp() {
-        // TODO implement here
-    }
+
 
 }

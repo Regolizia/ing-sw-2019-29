@@ -11,9 +11,11 @@ public class Door {
 
     /**
      * Default constructor
+     *
+     *   public Door() {
+     *     }
      */
-    public Door() {
-    }
+
 
     public Door(Room r1, int x1, int y1, Room r2, int x2, int y2) {
         this.room1 = r1;

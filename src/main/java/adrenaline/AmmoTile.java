@@ -5,7 +5,7 @@ import java.util.LinkedList;
 /**
  * 
  */
-public class AmmoTile extends Tile {
+public class AmmoTile{
 
     private Coordinates coordinates;
     private LinkedList<Object> ammoTile;

@@ -56,7 +56,7 @@ public class Player {
 
    // public void setToken(Player player){}
 
-   // public String getToken(Player player){return "";} //adrenaline.Token
+   // public String getToken(Player player){return "";} //adrenaline.TokenCLI
 
  //________________________to control player's position____________________________________________________//
     public void setPlayerPosition(int x, int y){
@@ -93,7 +93,12 @@ public class Player {
         return card;
     }
 
-
+    public boolean canPickUpPowerUp(){
+        return (powerups.size()<=2);
+    }
+    public boolean canPickUpWeapon(){
+        return (hand.size()<=2);
+    }
 
 
 }
