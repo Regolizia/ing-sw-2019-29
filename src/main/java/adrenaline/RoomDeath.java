@@ -16,10 +16,10 @@ public class RoomDeath extends Room {
         spawnpoints = new LinkedList<Spawnpoint>();
 
     }
-
+/*
     public LinkedList<Spawnpoint> getSpawnpoints(){
         return spawnpoints;
-    }
+    }*/
     public void addSpawnpoint(Spawnpoint s) {
         spawnpoints.add(s);
     }

@@ -9,6 +9,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
         public void testConstructor() {
 
             Map map = new MapFour(DEATHMATCH);
+
         }
 
     }

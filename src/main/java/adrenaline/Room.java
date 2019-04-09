@@ -28,6 +28,10 @@ public class Room {
 
     public void addSpawnpoint(Spawnpoint s){
     }
+    public LinkedList<Spawnpoint> getSpawnpoints(){
+        LinkedList<Spawnpoint> n = new LinkedList<>();
+        return n;
+    }
 
     public void addPlayer(Player p){
         players.add(p);

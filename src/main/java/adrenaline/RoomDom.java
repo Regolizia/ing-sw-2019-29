@@ -17,10 +17,10 @@ public class RoomDom extends Room{
         spawnpoints = new LinkedList<SpawnpointDom>();
 
     }
-
+/*
     public LinkedList<SpawnpointDom> getSpawnpoints(){
         return spawnpoints;
-    }
+    }*/
     public void addSpawnpoint(SpawnpointDom s){
         spawnpoints.add(s);
     }
