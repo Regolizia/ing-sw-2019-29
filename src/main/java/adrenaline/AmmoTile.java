@@ -8,51 +8,39 @@ import java.util.LinkedList;
 public class AmmoTile{
 
     private Coordinates coordinates;
-    private LinkedList<Object> ammoTile;
+    private LinkedList<AmmoCube> ammoTile;
 
     /**
      * Default constructor
-     */
+
     public AmmoTile() {
         ammoTile = new LinkedList<>();
     }
+     */
 
-    // AMMO + AMMO + AMMO
+    // AMMO + AMMO + AMMO or POWERUP + AMMO + AMMO (ONE CUBECOLOR MEANS PICK POWERUP)
     public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
         this.coordinates = p;
+        LinkedList<AmmoCube> ammoTile = new LinkedList<>();
         ammoTile.add(new AmmoCube(ac));
         ammoTile.add(new AmmoCube(bc));
         ammoTile.add(new AmmoCube(cc));
     }
-    // POWERUP + AMMO + AMMO
-    public void ammoTileP(Coordinates p, AmmoCube.CubeColor pc, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc) {
-        this.coordinates = p;
-        ammoTile.add(new PowerUpCard(pc));
-        ammoTile.add(new AmmoCube(ac));
-        ammoTile.add(new AmmoCube(bc));
-    }
+
 
 
     public Coordinates getCoordinates(){
         return coordinates;
     }
-    public void setPosition(int x, int y){
+    public void setCoordinates(int x, int y){
         this.coordinates.setCoordinates(x,y);
     }
 
-    public LinkedList<Object> getAmmoTile(){
+    public LinkedList<AmmoCube> getAmmoTile(){
         return ammoTile;
     }
     /*public void setAmmoTile(come costruttore){
         this.y = y;
     }*/
-
-
-    /**
-     * 
-     */
-    public void isTaken() {
-        // TODO implement here
-    }
 
 }

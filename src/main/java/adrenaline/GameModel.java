@@ -1,11 +1,11 @@
 package adrenaline;
 
+import java.util.LinkedList;
+
 public class GameModel {
 
-
+    LinkedList<Player> players;
     Player next = new Player();
-    protected int playerCount;
-  //  protected String[] players = new String[5];;
 
     public static enum Mode {
         DEATHMATCH, DOMINATION;
@@ -21,7 +21,6 @@ public class GameModel {
     public GameModel(Mode m, Map ma, Bot b) {
         //TODO CHANGE INTO MAP1 MAP2 ETC... SWITCHCASE MAYBE FOR MODES AND CHOESEN MAP
         mapUsed = new Map(m);
-
         mode = m;
         bot = b;
     }
@@ -30,15 +29,17 @@ public class GameModel {
 
 
     public Player nextPlayer(Player player){
-
-
-      //  return next.getToken(next);*/   //todo list
+      //  return next.getToken(next);
         return next;
     }
+
+
+/*
 
   public void setTurn(){};
 
     public void getTurn(){
+*/
 
 
 
@@ -47,12 +48,3 @@ public class GameModel {
 
 
 
-
-
-
-
-
-
-
-
-}

@@ -18,8 +18,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
             g=map.getGameBoard();
             CoordinatesWithRoom c = new CoordinatesWithRoom();
             c.setRoom(map.getGameBoard().getRoom(3));
-            c.setX(1);
-            c.setY(2);
+            c.setCoordinates(1,2);
             LinkedList<CoordinatesWithRoom> listThree = c.threeTilesDistant(g);
 
             for(int i=0;i<listThree.size();i++) {

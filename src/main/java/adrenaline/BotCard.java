@@ -9,10 +9,10 @@ public class BotCard extends Deck {
 
     /**
      * Default constructor
-     */
+
     public BotCard() {
     }
-
+*/
     /**
      * 
      */

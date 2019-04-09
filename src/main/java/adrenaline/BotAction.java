@@ -9,8 +9,8 @@ public class BotAction extends Action {
 
     /**
      * Default constructor
-     */
+
     public BotAction() {
     }
-
+*/
 }
