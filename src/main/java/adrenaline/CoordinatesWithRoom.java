@@ -40,15 +40,15 @@ public class CoordinatesWithRoom extends Coordinates {
         if(y+1<=getRoom().getRoomSizeY())
             list.add(new CoordinatesWithRoom(x,y+1,getRoom()));
 
-        if(x-1>=0)
+        if(x-1>0)
             list.add(new CoordinatesWithRoom(x-1,y,getRoom()));
 
-        if(y-1>=0)
+        if(y-1>0)
             list.add(new CoordinatesWithRoom(x,y-1,getRoom()));
 
         // CHECKS IF CELL HAS A DOOR
         // SAME ROOM, SAME COORDINATES AS A ROOM IN THE DOOR CLASS, FOR BOTH SIDES
-        for(int i=0;i<=g.getDoors().size();i++) {
+        for(int i=0;i<g.getDoors().size();i++) {
             if ((getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken() && getX() == g.getDoors().get(i).getCoordinates1().getX() && getY() == g.getDoors().get(i).getCoordinates1().getY()))
                 list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(), g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
 
@@ -85,6 +85,8 @@ public class CoordinatesWithRoom extends Coordinates {
     /**
      *
      */
+
+
     public LinkedList<CoordinatesWithRoom> threeTilesDistant(GameBoard g) {
 
     LinkedList<CoordinatesWithRoom> listThree = new LinkedList<>();
@@ -93,9 +95,54 @@ public class CoordinatesWithRoom extends Coordinates {
     for(int i=0;i<listTwo.size();i++){
         listThree.addAll(listTwo.get(i).oneTileDistant(g));
     }
-
+    for(int i=0;i<listThree.size();i++){
+        for (int j=i+1;j<listThree.size();j++){
+            if(listThree.get(i).getRoom()==listThree.get(j).getRoom()
+            && listThree.get(i).getX()==listThree.get(j).getX()
+            && listThree.get(i).getY()==listThree.get(j).getY()){
+                listThree.remove(j);
+                j--;
+            }
+        }
+    }
         return listThree;
     }
+
+
+    public LinkedList<CoordinatesWithRoom> fourTilesDistant(GameBoard g) {
+
+        LinkedList<CoordinatesWithRoom> listFour = new LinkedList<>();
+        LinkedList<CoordinatesWithRoom> listThree = threeTilesDistant(g);
+
+        for (int i = 0; i < listThree.size(); i++) {
+            listFour.addAll(listThree.get(i).oneTileDistant(g));
+        }
+
+        for (int i = 0; i < listFour.size(); i++) {
+            if (listFour.get(i).getRoom().getToken() == this.getRoom().getToken() && listFour.get(i).getX() == this.getX() && listFour.get(i).getY() == this.getY()) {
+                listFour.remove(i);
+                i--;
+            }
+
+            for (int k = 0; k < listFour.size(); k++) {
+                for (int j = k + 1; j < listFour.size(); j++) {
+                    if (listFour.get(k).getRoom() == listFour.get(j).getRoom()
+                            && listFour.get(k).getX() == listFour.get(j).getX()
+                            && listFour.get(k).getY() == listFour.get(j).getY()) {
+                        listFour.remove(j);
+                        j--;
+                    }
+                }
+            }
+        }
+        return listFour;
+        }
+
+
+   /*     /////
+        public LinkedList<CoordinatesWithRoom> insideTheRoom (GameBoard g){
+
+        }*/
 
 
 }
