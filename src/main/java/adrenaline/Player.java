@@ -6,9 +6,9 @@ public class Player {
 
   private Figure.PlayerColor track[];
   private int ammoBox[];
-  private Coordinates coordinates;
+  private CoordinatesWithRoom coordinates;
   private Figure.PlayerColor color;
-  private Coordinates respawnCoordinates;
+  private CoordinatesWithRoom respawnCoordinates;
 
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
@@ -17,7 +17,7 @@ public class Player {
 
     }
     // Coordinates rsp is the spawnPosition chosen by the player
-    public Player(Coordinates rsp, Figure.PlayerColor playercolor){
+    public Player(CoordinatesWithRoom rsp, Figure.PlayerColor playercolor){
 
         this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
         this.track= new Figure.PlayerColor[]{Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE,Figure.PlayerColor.NONE
@@ -61,6 +61,10 @@ public class Player {
  //________________________to control player's position____________________________________________________//
     public void setPlayerPosition(int x, int y){
         this.coordinates.setCoordinates(x,y);
+    }
+    public void setPlayerPosition(int x, int y, Room r){
+        this.coordinates.setCoordinates(x,y);
+        this.coordinates.setRoom(r);
     }
 
     public int getPlayerPositionX(){
