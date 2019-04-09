@@ -21,8 +21,8 @@ public class RoomDom extends Room{
     public LinkedList<SpawnpointDom> getSpawnpoints(){
         return spawnpoints;
     }*/
-    public void addSpawnpoint(SpawnpointDom s){
-        spawnpoints.add(s);
+    public void addSpawnpoint(Spawnpoint s){
+        spawnpoints.add((SpawnpointDom) s);
     }
 
 

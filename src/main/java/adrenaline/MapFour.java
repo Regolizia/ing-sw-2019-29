@@ -9,11 +9,11 @@ public class MapFour extends Map {
 
     /**
      * Default constructor
-     */
+
     public MapFour() {
 
     }
-
+     */
     public MapFour(GameModel.Mode m) {
 
         if (m.equals(DEATHMATCH)) {

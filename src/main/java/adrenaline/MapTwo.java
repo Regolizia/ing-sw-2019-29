@@ -8,11 +8,11 @@ public class MapTwo extends Map{
 
     /**
      * Default constructor
-     */
+
     public MapTwo() {
 
     }
-
+     */
     public MapTwo(GameModel.Mode m) {
 
         if (m.equals(DEATHMATCH)) {

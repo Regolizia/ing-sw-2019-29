@@ -7,11 +7,11 @@ public class MapThree extends Map{
 
     /**
      * Default constructor
-     */
+
     public MapThree() {
 
     }
-
+     */
     public MapThree(GameModel.Mode m) {
 
         if (m.equals(DEATHMATCH)) {

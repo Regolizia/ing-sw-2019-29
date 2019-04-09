@@ -1,6 +1,4 @@
-import adrenaline.DeathmatchBoard;
-import adrenaline.GameBoard;
-import adrenaline.Room;
+import adrenaline.*;
 import org.junit.jupiter.api.Test;
 
 public class GameBoardRoomsTest {

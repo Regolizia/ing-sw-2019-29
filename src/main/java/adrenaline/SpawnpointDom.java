@@ -9,9 +9,10 @@ public class SpawnpointDom extends Spawnpoint {
 
     /**
      * Default constructor
-     */
+
     public SpawnpointDom() {
     }
+     */
     public SpawnpointDom(int x, int y){
         this.x = x;
         this.y = y;
