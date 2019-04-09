@@ -71,7 +71,7 @@ public class CoordinatesWithRoom extends Coordinates {
         LinkedList<CoordinatesWithRoom> listTwo = new LinkedList<>();
         LinkedList<CoordinatesWithRoom> listOne = oneTileDistant(g);
 
-        for(int i=0;i<=listOne.size();i++){
+        for(int i=0;i<listOne.size();i++){
             listTwo.addAll(listOne.get(i).oneTileDistant(g));
         }
         for(int i=listTwo.size()-1;i>=0;i--){
@@ -85,8 +85,16 @@ public class CoordinatesWithRoom extends Coordinates {
     /**
      *
      */
-    public void threeTilesDistant() {
-        // TODO implement here
+    public LinkedList<CoordinatesWithRoom> threeTilesDistant(GameBoard g) {
+
+    LinkedList<CoordinatesWithRoom> listThree = new LinkedList<>();
+    LinkedList<CoordinatesWithRoom> listTwo = twoTilesDistant(g);
+
+    for(int i=0;i<listTwo.size();i++){
+        listThree.addAll(listTwo.get(i).oneTileDistant(g));
+    }
+
+        return listThree;
     }
 
 

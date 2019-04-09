@@ -21,9 +21,10 @@ public class AmmoCube {
 
     /**
      * Default constructor
+     *  public AmmoCube() {
+     *     }
      */
-    public AmmoCube() {
-    }
+
 
     public AmmoCube(CubeColor c) {
         this.color = c;
