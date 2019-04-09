@@ -1,5 +1,6 @@
 package adrenaline;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Player {
@@ -12,6 +13,8 @@ public class Player {
 
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
+
+  private boolean[] pointsArray;
 
     public Player(){
 
@@ -30,9 +33,14 @@ public class Player {
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
+        this.pointsArray = new boolean[]{true,true,true,true,true,true};
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
+
+    public Figure.PlayerColor getColor(){
+        return color;
+    }
 
 
     public int checkDamage(){
@@ -43,6 +51,7 @@ public class Player {
             return 2;       //better Shoot (and Grab)
         return 0;
     };
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public boolean canGrabPowerUp(){
         return(powerups.get(2)==null);
@@ -59,16 +68,17 @@ public class Player {
    // public String getToken(Player player){return "";} //adrenaline.TokenCLI
 
  //________________________to control player's position____________________________________________________//
+
     public void setPlayerPosition(int x, int y){
         this.coordinates.setCoordinates(x,y);
     }
+
     public void setPlayerPosition(int x, int y, Room r){
         this.coordinates.setCoordinates(x,y);
         this.coordinates.setRoom(r);
     }
 
     public int getPlayerPositionX(){
-
         return coordinates.getX();
     }
 
@@ -86,7 +96,7 @@ public class Player {
     }
 
     public WeaponCard getWeaponCard(Player player){
-        //metod to find the card in that coordinates
+        //method to find the card in that coordinates
         //shows a list of owned card
         //return only a card
         WeaponCard card=new WeaponCard();
@@ -99,6 +109,27 @@ public class Player {
     public boolean canPickUpWeapon(){
         return (hand.size()<=2);
     }
+
+    //  REMOVE CELL 8,6... WHEN SOMEONE DIES
+    public void hasDied(){
+        // SETS FIRST 1 TO 0
+        for(int i=0;i<pointsArray.length;i++){
+            if(pointsArray[i]){
+                pointsArray[i]=false;
+            break;}
+        }
+    }
+    /*
+    public void getPoints(){
+    }
+    */
+
+    public boolean isDead(){
+        return (track[11]!= Figure.PlayerColor.NONE);
+    }
+
+
+
 
 
 }
