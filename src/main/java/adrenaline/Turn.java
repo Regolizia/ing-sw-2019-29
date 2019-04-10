@@ -49,7 +49,7 @@ WeaponCard weapon;
 
 
                 case RUN: int x=0,y=0; //adding a method to choose the coordinates
-                    action.run(player,x,y);
+                    //action.run(player,x,y);
                     break;
 
                 case SHOOT: //weapon=player.getWeapon(player);

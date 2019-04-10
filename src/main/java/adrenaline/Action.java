@@ -1,14 +1,77 @@
 package adrenaline;
 
+import java.util.LinkedList;
+
 public class Action {
 
 //WeaponCard weapon;
 
     public static enum ActionType {
-        GRAB, RUN, SHOOT, ADRENALINEGRAB, ADRENALINESHOOT;
+        GRAB, RUN, SHOOT, ADRENALINESHOOT;
     }
 
     private ActionType actionSelected;
+
+
+    public Action(ActionType chosen, Player player, CoordinatesWithRoom c, GameBoard g){
+        actionSelected = chosen;
+        switch (actionSelected){
+            case RUN:
+                // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
+                //selectedCell =
+                //run(player, selectedCell);
+                break;
+
+            case GRAB:
+                // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
+                //selectedCell =
+                //grab
+                break;
+
+            case SHOOT:
+                break;
+            case ADRENALINESHOOT:
+                break;
+
+            default:
+                //INVALID CHOICE
+
+        }
+    }
+
+    // PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)
+    public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c, GameBoard g){
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g,1));
+        list.addAll(c.XTilesDistant(g,2));
+        list.addAll(c.XTilesDistant(g,3));
+        return list;
+    }
+
+    // RUN
+    public void run(Player p,CoordinatesWithRoom c){
+        p.setPlayerPosition(c.getX(),c.getY());
+    }
+
+        // PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)
+    public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p){
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g,1));
+        list.add(c);
+
+        // IF ADRENALINE GRAB IS POSSIBLE
+        if(p.checkDamage()==1){
+            list.addAll(c.XTilesDistant(g,2));
+        }
+        return list;
+    }
+
+
+    //GRAB
+    public void grab(Player p, CoordinatesWithRoom c, GameBoard g){
+        // IF THERE IS A SPAWNPOINT HERE
+        //CHOOSE WEAPON IF CANGRAB IT
+        //IF THERE IS AMMOTILE
+        //ADD STUFF IF CAN HAVE IT
+    }
 
 
     public void shoot(Player player, WeaponCard weapon)
@@ -35,52 +98,15 @@ public class Action {
 
     }
 
-    public void grab(Player player , int xF , int yF)
-    {
+// GRAB
+
+// GRAB ADRENALINE
 
 
-        // CHECK IF CAN MOVE: move only a square up/down or a square left/right
-        if((((player.getPlayerPositionX()-xF==1)||(player.getPlayerPositionX()-xF==-1))&& player.getPlayerPositionY()-yF==0)||((player.getPlayerPositionX()-xF==0)&&(player.getPlayerPositionX()-yF==0)))
-        {//check if there is a wall, if not
-            player.setPlayerPosition(xF,yF);
-            //method to pickup the card
-            return;
-        }
-        else if (player.checkDamage()==2||player.checkDamage()==1) {
-            grabAdrenaline(player,xF,yF);
 
-        }
-        else  System.out.println("movimento non valido");
-    }
-    public void grabAdrenaline(Player player, int x, int y)
-    {   //4 options: down+left down+right up+left up+ right
-        // plus two up, two down, two left, two right
-        if((player.getPlayerPositionX()-x==2&& player.getPlayerPositionY()-y==0)||(player.getPlayerPositionX()-x==-2&& player.getPlayerPositionY()-y==0)
-                ||(player.getPlayerPositionX()-x==0&& player.getPlayerPositionY()-y==2)||(player.getPlayerPositionX()-x==0&& player.getPlayerPositionY()-y==-2))
-        {//check if there is a wall, if not
-            player.setPlayerPosition(x,y);
-            //method to pickup the card
-        }
-        if((player.getPlayerPositionX()-x==1&& player.getPlayerPositionY()-y==1)||(player.getPlayerPositionX()-x==-1&& player.getPlayerPositionY()-y==1)
-                ||(player.getPlayerPositionX()-x==1&& player.getPlayerPositionY()-y==-1)||(player.getPlayerPositionX()-x==-1&& player.getPlayerPositionY()-y==-1))
-        {//check if there is a wall, if not
-            player.setPlayerPosition(x,y);
-            //method to pickup the card
-        }
-        else System.out.println("movimento non valido");
-    }
 
-    public void run(Player player, int xF,int yF)
-    {
-        // can move up/down or left/right max 3 square
-        if ((player.getPlayerPositionX()-xF==2||player.getPlayerPositionX()-xF==-2)&&(player.getPlayerPositionY()-yF==1||player.getPlayerPositionY()-yF==-1))
-            player.setPlayerPosition(xF,yF);
-        else if((player.getPlayerPositionY()-yF==2||player.getPlayerPositionY()-yF==-2)&&(player.getPlayerPositionX()-xF==1||player.getPlayerPositionX()-xF==-1))
-            player.setPlayerPosition(xF,yF);
-        else if(((player.getPlayerPositionX()-xF==3||player.getPlayerPositionX()-xF==-3)&&player.getPlayerPositionY()-yF==0)||
-                ((player.getPlayerPositionY()-yF==3||player.getPlayerPositionY()-yF==-3)&&player.getPlayerPositionX()-xF==0))
-            player.setPlayerPosition(xF,yF);
-    }
+
+
 /*    public void reload(Player player)
     {
         *//*weapon=*//*player.getWeaponCard(player);
