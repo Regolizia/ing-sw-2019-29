@@ -42,7 +42,7 @@ public class WeaponCard extends Card{
 
 
 
-    // PROPOSE TARGETS (FROM HERE OR FROM DISTANCE 1)
+    // PROPOSE TARGETS (FROM HERE OR FROM DISTANCE 1 if adrenaline)
     public LinkedList<Object> proposeTargets(CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<CoordinatesWithRoom>(getPossibleTargetCells(c,e)); // CELLS IN WEAPON RANGE, DEPENDING ON THE WEAPON
         LinkedList<Object> targetList = new LinkedList<>();
@@ -74,6 +74,9 @@ public class WeaponCard extends Card{
 
     public LinkedList<Object> getTargets(){
         return targets;
+    }
+    public LinkedList<AmmoCube> getPrice(){
+        return price;
     }
 
 }

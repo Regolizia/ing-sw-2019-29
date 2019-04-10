@@ -142,7 +142,9 @@ public class Player {
     public int[] getAmmoBox(){
         return  ammoBox;
     }
-
+    public LinkedList<WeaponCard> getHand(){
+        return hand;
+    }
 
 
 }
