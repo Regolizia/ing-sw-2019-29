@@ -23,7 +23,7 @@ WeaponCard weapon;
         secondAction=false;
     }
 
-
+/*
     public void playerTurn(Player player, Action.ActionType actiontype, GameModel.Bot bot) {
         if (firstAction) {
             getAction(player, actiontype, bot);
@@ -39,7 +39,7 @@ WeaponCard weapon;
             action.reload(player);
         endTurn(player);
 
-    }
+    }*/
 
 
     public void getAction(Player player, Action.ActionType actiontype, GameModel.Bot bot){

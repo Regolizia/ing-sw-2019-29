@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 public class Player {
 
-  private Figure.PlayerColor track[];
-  private int ammoBox[];
+  private Figure.PlayerColor[] track;
+  private int[] ammoBox;
   private CoordinatesWithRoom coordinates;
   private Figure.PlayerColor color;
   private CoordinatesWithRoom respawnCoordinates;
@@ -14,7 +14,7 @@ public class Player {
   private LinkedList<WeaponCard> hand;
   private LinkedList<PowerUpCard> powerups;
 
-  private boolean[] pointsArray;
+  private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
 
     public Player(){
 
@@ -42,6 +42,9 @@ public class Player {
         return color;
     }
 
+    public Figure.PlayerColor[] getTrack(){
+        return track;
+    }
 
     public int checkDamage(){
 
@@ -51,17 +54,6 @@ public class Player {
             return 2;       //better Shoot (and Grab)
         return 0;
     };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public boolean canGrabPowerUp(){
-        return(powerups.get(2)==null);
-    }
-
-    public boolean canGrabWeapon(){
-        return(hand.get(2)==null);
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // public void setToken(Player player){}
 
@@ -87,7 +79,7 @@ public class Player {
     }
 //_________________________________________________________________________________________________________//
 
-
+/*
     // I DON'T THINK IT SHOULD BE HERE
     public void pickWeaponCard(int x, int y){
         //metod to find the card in that coordinates
@@ -101,12 +93,12 @@ public class Player {
         //return only a card
         WeaponCard card=new WeaponCard();
         return card;
-    }
+    }*/
 
-    public boolean canPickUpPowerUp(){
+    public boolean canGrabPowerUp(){
         return (powerups.size()<=2);
     }
-    public boolean canPickUpWeapon(){
+    public boolean canGrabWeapon(){
         return (hand.size()<=2);
     }
 
@@ -119,6 +111,13 @@ public class Player {
             break;}
         }
     }
+
+    public boolean[] getPointsArray(){
+        return pointsArray;
+    }
+
+
+
     /*
     public void getPoints(){
     }

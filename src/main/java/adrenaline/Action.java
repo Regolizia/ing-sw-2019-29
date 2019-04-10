@@ -81,11 +81,11 @@ public class Action {
                 ((player.getPlayerPositionY()-yF==3||player.getPlayerPositionY()-yF==-3)&&player.getPlayerPositionX()-xF==0))
             player.setPlayerPosition(xF,yF);
     }
-    public void reload(Player player)
+/*    public void reload(Player player)
     {
-        /*weapon=*/player.getWeaponCard(player);
+        *//*weapon=*//*player.getWeaponCard(player);
 
-    }
+    }*/
     /*todo frenzyShoot frenzyRun frenzyGrab*/
 
 
