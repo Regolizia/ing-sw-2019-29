@@ -6,7 +6,7 @@ import java.util.LinkedList;
 public class Player {
 
   private Figure.PlayerColor[] track;
-  private int[] ammoBox;
+  private int[] ammoBox; //BLUE RED YELLOW
   private CoordinatesWithRoom coordinates;
   private Figure.PlayerColor color;
   private CoordinatesWithRoom respawnCoordinates;
@@ -139,7 +139,9 @@ public class Player {
         return (track[11]!= Figure.PlayerColor.NONE);
     }
 
-
+    public int[] getAmmoBox(){
+        return  ammoBox;
+    }
 
 
 
