@@ -17,7 +17,8 @@ public class Figure {
     /**
      * Default constructor
      */
-    public Figure() {
+    public Figure(PlayerColor c) {
+        this.color = c;
     }
 
     /**

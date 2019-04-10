@@ -21,7 +21,7 @@ public class GameBoard {
 
 // VORREI NON FARGLI FARE NULLA PERCHé I METODI SONO NEI RISPETTIVI BOARD MA VUOLE CHE RITORNI QUALCOSA
     public Room getRoom(int i) {
-        return this.getRoom(i);
+        return new Room();
     }
 
     public void addRoom(Room r){

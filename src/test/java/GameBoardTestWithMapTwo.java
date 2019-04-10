@@ -10,6 +10,7 @@ public class GameBoardTestWithMapTwo {
     public void testConstructor() {
 
         Map map = new MapTwo(DEATHMATCH);
+        Map map2 = new Map(DEATHMATCH);
     }
 
 }
