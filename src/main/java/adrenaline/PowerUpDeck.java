@@ -43,11 +43,6 @@ public class PowerUpDeck extends Deck {
     }
     //public void setPowerUpDeck(){    }
 
-    /**
-     * 
-     */
-    public void pickUpPower() {
-        // TODO implement here
-    }
+
 
 }

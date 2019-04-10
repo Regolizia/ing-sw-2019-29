@@ -5,45 +5,69 @@ import java.util.LinkedList;
 
 public class GameModel {
 
-    LinkedList<Player> players;
-    Player next = new Player();
+    private LinkedList<Player> players;
+    //privatePlayer next = new Player();
 
     public static enum Mode {
-        DEATHMATCH, DOMINATION;
+        DEATHMATCH, DOMINATION
     }
     public static enum Bot {
-        BOT, NOBOT;
+        BOT, NOBOT
     }
+
     protected Mode mode;
     protected Map mapUsed;
     protected Bot bot;
 
 
-    public GameModel(Mode m, Bot b) {
-        //TODO CHANGE INTO MAP1 MAP2 ETC... SWITCHCASE MAYBE FOR MODES AND CHOESEN MAP
-        mapUsed = new Map(m);
+    public GameModel(Mode m, Bot b, int chosenMap) {
+
+        players = new LinkedList<>();
+
+        switch (chosenMap) {
+            case 1:
+                mapUsed = new MapOne(m);
+                break;
+            case 2:
+                mapUsed = new MapTwo(m);
+                break;
+            case 3:
+                mapUsed = new MapThree(m);
+                break;
+            case 4:
+                mapUsed = new MapFour(m);
+                break;
+            default:
+                mapUsed = new MapOne(m);
+        }
         mode = m;
         bot = b;
     }
 
     public void addPlayer(Player p){
-        players.add(p);
+        getPlayers().add(p);
     }
 
-
+/*
     public Player nextPlayer(Player player){
       //  return next.getToken(next);
         return next;
-    }
-
+    }*/
 
     public Map getMapUsed(){
         return mapUsed;
     }
-    public void setMapUsed(Map m){
+/*    public void setMapUsed(Map m){
         this.mapUsed = m;
+    }*/
+
+    public LinkedList<Player> getPlayers(){
+        return players;
     }
-/*
+
+
+
+    /*
     public void assignDeathPoints(Player dead){
 
 

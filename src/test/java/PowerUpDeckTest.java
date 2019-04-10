@@ -1,3 +1,4 @@
+import adrenaline.AmmoCube;
 import adrenaline.PowerUpCard;
 import adrenaline.PowerUpDeck;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -12,6 +13,10 @@ public class PowerUpDeckTest {
         PowerUpDeck deck = new PowerUpDeck();
 
         assertTrue(deck.getPowerUpDeck().size() == 24);
+
+        deck.getPowerUpDeck().add(new PowerUpCard(AmmoCube.CubeColor.RED));
+        PowerUpCard c = new PowerUpCard(AmmoCube.CubeColor.RED);
+        AmmoCube.CubeColor a = c.getPowerUpColor();
 
 
 

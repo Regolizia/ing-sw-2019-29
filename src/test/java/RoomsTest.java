@@ -1,7 +1,4 @@
-import adrenaline.DeathmatchBoard;
-import adrenaline.GameBoard;
-import adrenaline.Room;
-import adrenaline.RoomDeath;
+import adrenaline.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +16,8 @@ public class RoomsTest {
         ((DeathmatchBoard) board).addRoom(new RoomDeath(2,2));
         ((DeathmatchBoard) board).addRoom(new RoomDeath(3,2));
         ((DeathmatchBoard) board).addRoom(new RoomDeath(2,4));
-        board.getRoom(0);
+        Coordinates c1 = new Coordinates(1,1);
+        board.getRoom(0).addAmmoTile(new AmmoTile(c1, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE));
         board.getRoom(1);
         board.getRoom(2);
 

@@ -36,10 +36,6 @@ public class Room {
         return n;
     }
 
-    public void addPlayer(Player p){
-        players.add(p);
-    }
-
     public void addAmmoTile(AmmoTile t){
         tiles.add(t);
     }
