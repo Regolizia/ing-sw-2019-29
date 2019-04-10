@@ -38,7 +38,8 @@ public class GameModel {
                 mapUsed = new MapFour(m);
                 break;
             default:
-                mapUsed = new MapOne(m);
+                System.out.printf("Invalid input");
+                break;
         }
         mode = m;
         bot = b;

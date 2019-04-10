@@ -9,7 +9,6 @@ public class Room {
 
     private Coordinates size;
     private LinkedList<AmmoTile> tiles;
-    private LinkedList<Player> players;
     private int token;
 
     /**
@@ -20,7 +19,7 @@ public class Room {
     }
 
     public Room(int x, int y) {
-        this.players = new LinkedList<Player>();
+
         this.tiles = new LinkedList<AmmoTile>();
         this.size = new Coordinates(x,y);
         setToken(99);
@@ -54,9 +53,6 @@ public class Room {
         return this.token;
     }
 
-    public LinkedList<Player> getPlayers(){
-        return players;
-    }
     public LinkedList<AmmoTile> getTiles(){
         return tiles;
     }
