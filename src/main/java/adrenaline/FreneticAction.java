@@ -5,8 +5,8 @@ import java.util.*;
 /**
  * 
  */
-public class FreneticAction extends Action {
-
+public class FreneticAction //extends Action {
+{
     /**
      * Default constructor
      */

@@ -70,6 +70,8 @@ public class Player {
         this.coordinates.setRoom(r);
     }
 
+    public Room getPlayerRoom(){ return coordinates.getRoom(); }
+
     public int getPlayerPositionX(){
         return coordinates.getX();
     }
@@ -116,7 +118,17 @@ public class Player {
         return pointsArray;
     }
 
-
+    // CAN SELECT WEAPON IF CHARGED (EVERY AMMOCUBE BASE MUST BE PAID)
+    public boolean isLoaded(WeaponCard w){
+        for(int i=0;i<w.price.size();i++) {
+            if(w.price.get(i).getEffect()== AmmoCube.Effect.BASE){
+                if(!w.price.get(i).getPaid()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /*
     public void getPoints(){

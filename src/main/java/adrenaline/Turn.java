@@ -53,7 +53,7 @@ WeaponCard weapon;
                     break;
 
                 case SHOOT: //weapon=player.getWeapon(player);
-                    action.shoot(player, weapon);
+                   // action.shoot(player, weapon);
                     break;
 
                 case GRAB:
@@ -70,7 +70,7 @@ WeaponCard weapon;
                     break;
 
                 case SHOOT: //weapon=player.getWeapon(player);
-                    action.shoot(player, weapon);
+                    //action.shoot(player, weapon);
                     break;
                 default: }
         }

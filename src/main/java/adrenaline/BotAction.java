@@ -5,8 +5,8 @@ import java.util.*;
 /**
  * 
  */
-public class BotAction extends Action {
-
+public class BotAction //extends Action {
+{
     /**
      * Default constructor
 
