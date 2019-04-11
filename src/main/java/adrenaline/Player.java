@@ -145,7 +145,12 @@ public class Player {
     public LinkedList<WeaponCard> getHand(){
         return hand;
     }
+/*
+    public int trackEmptyCell(){
+        for(int i=0;i<getTrack().length;i++){
+            if(getTrack()[i]== Figure.PlayerColor.NONE) {
+    }
 
-
+    */
 }
 
