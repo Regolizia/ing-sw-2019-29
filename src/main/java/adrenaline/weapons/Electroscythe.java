@@ -32,29 +32,25 @@ public class Electroscythe extends WeaponCard {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, EVERY PLAYER
-                for(int j=0;j<targetList.size();j++){
-                    if(targetList.get(j) instanceof Player) {
-                        ((Player) targetList.get(j)).addDamageToTrack(p,1);
-
-
-                    }
-                    else{
-                        // DAMAGE SPAWNPOINT
-                    }
-                }
-                break;
-
             case ALT:   // 2 DAMAGE, EVERY PLAYER
                 for(int j=0;j<targetList.size();j++){
                     if(targetList.get(j) instanceof Player) {
-                        ((Player) targetList.get(j)).addDamageToTrack(p,2);
+                        int i =((Player) targetList.get(0)).marksByShooter(p);
+
+                        if(e.getEffect()== AmmoCube.Effect.ALT){
+                            i++;
+                        }
+                        i++;
+
+                        ((Player) targetList.get(0)).addDamageToTrack(p,i);
+
+
                     }
                     else{
                         // DAMAGE SPAWNPOINT
                     }
                 }
                 break;
-
 
         }
     }

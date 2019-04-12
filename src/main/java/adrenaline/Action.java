@@ -88,13 +88,21 @@ public class Action {
         // JUST TO MAKE IT COMPILE, TO BE REMOVED
         LinkedList<Object> targets = new LinkedList<>();
 
+        //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
         //w.getPossibleTargetCells();
+
         //w.proposeTargets();
         //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
         //TODO CHECK THAT IT FOLLOWS THE RULES
         //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
         // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
-        // LockRifle, MachineGun
+
+        // TARGETS ORDER
+        // LockRifle, MachineGun, Thor(fagli scegliere un solo target alla volta, se ha pagato per le op fagli scegliere per op1
+        // un target tra quello che vede il target della base, per op2 un target tra quello che vede il target di op1)
+
+        // EFFECTS ORDER
+        // Thor
 
         // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
         w.weaponShoot(targets, c, p, effectsList, m);

@@ -1,7 +1,8 @@
 package adrenaline.weapons;
 
-import adrenaline.AmmoCube;
-import adrenaline.WeaponCard;
+import adrenaline.*;
+
+import java.util.LinkedList;
 
 /**
  * 
@@ -18,4 +19,37 @@ public class Thor extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.OP2,false));
     }
 
-}
+    @Override
+    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+
+            switch (e.getEffect()) {
+                case BASE:  // 2 DAMAGE, 1 TARGET
+                case OP2:   // 2 DAMAGE, DIFFERENT TARGET
+                    if(targetList.get(0) instanceof Player) {
+                        int i =((Player) targetList.get(0)).marksByShooter(p);
+                        i=i+2;
+                        ((Player) targetList.get(0)).addDamageToTrack(p,i);
+                    }
+                    else {
+                        // DAMAGE SPAWNPOINT
+                    }
+                    break;
+
+                case OP1:   // 1 DAMAGE, 1 DIFFERENT TARGET
+                    if(targetList.get(0) instanceof Player) {
+                        int i =((Player) targetList.get(0)).marksByShooter(p);
+                        i++;
+                        ((Player) targetList.get(0)).addDamageToTrack(p,i);
+                    }
+                    else {
+                        // DAMAGE SPAWNPOINT
+                    }
+
+                    break;
+
+
+            }
+
+        }
+
+    }
