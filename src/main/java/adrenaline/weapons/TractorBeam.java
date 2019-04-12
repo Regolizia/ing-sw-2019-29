@@ -1,9 +1,6 @@
 package adrenaline.weapons;
 
-import adrenaline.AmmoCube;
-import adrenaline.EffectAndNumber;
-import adrenaline.Player;
-import adrenaline.WeaponCard;
+import adrenaline.*;
 
 import java.util.LinkedList;
 
@@ -22,22 +19,79 @@ public class TractorBeam extends WeaponCard {
 
     }
 
+    // USED FOR ALT EFFECT
+    @Override
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
+        if(e== AmmoCube.Effect.ALT){
+            LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
+            list.addAll(c.XTilesDistant(g,2));
+            list.add(c);
+            return list;
+        }
+        else {
+            return super.getPossibleTargetCells(c, e, g);
+        }
+    }
+
+    // USED FOR BASE EFFECT
+    @Override
+    public LinkedList<Object> proposeTargets(CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
+        if(e== AmmoCube.Effect.BASE) {
+            LinkedList<Object> list = new LinkedList<>();
+            LinkedList<CoordinatesWithRoom> listMoves = new LinkedList<>();
+            LinkedList<CoordinatesWithRoom> listOriginalMoves = getPossibleTargetCells(c, e, g);
+            CoordinatesWithRoom c1 = new CoordinatesWithRoom();
+            for (Player element : m.getPlayers()) {
+                if (element.getColor() != p.getColor()) {   // OTHER PLAYERS
+                    c1.setX(element.getPlayerPositionX());
+                    c1.setY(element.getPlayerPositionY());
+                    c1.setRoom(element.getPlayerRoom());
+                    listMoves = c1.oneTileDistant(g);
+                    listMoves.addAll(c1.XTilesDistant(g, 2));
+                    listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
+
+                    if(c1.isCWRInTwoLists(listMoves,listOriginalMoves,this,e,g)){
+                        list.add(element);
+                    }
+                }
+            }
+            return list;
+        }
+        else{
+            return super.proposeTargets(c,g,p,m,e);
+        }
+    }
+
     @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
-            case BASE:
+            case BASE:  // MOVE 0-1-2 1 TARGET (NOT SPAWNPOINT)
+                if(targetList.get(0) instanceof Player) {
+                    int i =((Player) targetList.get(0)).marksByShooter(p);
+                    i++;
+                    ((Player) targetList.get(0)).addDamageToTrack(p,i);
+
+                }
+
+                else {
+                    // DAMAGE SPAWNPOINT
+                }
+
                 break;
 
-            case OP1:
-                break;
+            case ALT:   // MOVE 1 TARGET TO MY SQUARE, 3 DAMAGE
+                if(targetList.get(0) instanceof Player) {
+                    int i =((Player) targetList.get(0)).marksByShooter(p);
+                    i=i+3;
+                    ((Player) targetList.get(0)).addDamageToTrack(p,i);
 
-            case OP2:
-                break;
+                }
 
-            case ALT:
+                else {
+                    // DAMAGE SPAWNPOINT
+                }
                 break;
-
 
         }
 

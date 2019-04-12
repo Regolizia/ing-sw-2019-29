@@ -222,7 +222,9 @@ public class Player {
                 }
             }
     }
-
-
+    // MOVES PLAYER TO A CELL
+    public void moveToThisSquare(CoordinatesWithRoom c){
+        setPlayerPosition(c.getX(),c.getY(),c.getRoom());
+    }
 }
 

@@ -98,8 +98,13 @@ public class Action {
         // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
 
         // TARGETS ORDER
-        // LockRifle, MachineGun, Thor(fagli scegliere un solo target alla volta, se ha pagato per le op fagli scegliere per op1
+        // LockRifle
+        // MachineGun
+        // Thor(fagli scegliere un solo target alla volta, se ha pagato per le op fagli scegliere per op1
         // un target tra quello che vede il target della base, per op2 un target tra quello che vede il target di op1)
+        // Tractor beam
+        // VortexCannon(fagli scegliere tra le caselle che vede una chiamata vortex, prendi i giocatori nel vortex e 1 distanti da lì
+        // e fagli scegliere il target) lo danneggi e sposti, uguale per op1
 
         // EFFECTS ORDER
         // Thor
