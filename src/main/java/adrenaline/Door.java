@@ -36,4 +36,35 @@ public class Door {
     public Coordinates getCoordinates2(){
         return c2;
     }
+
+
+
+    // PASSAGE BETWEEN ROOM1 TO ROOM2
+    // 1 -> NS
+    // 2 -> SN
+    // 3 -> WE
+    // 4 -> EW
+    public int hasDirection(){
+
+        if(c1.getY()==room2.getRoomSizeY() && c2.getY()==1) {
+            return 1;   // FROM N TO S
+        }
+        if(c2.getY()==room2.getRoomSizeY() && c1.getY()==1) {
+            return 2;   // FROM S TO N
+        }
+        if(c2.getX()==1 && c1.getX()==room1.getRoomSizeX()) {
+            return 3;    // FROM W TO E
+        }
+        if(c1.getX()==1 && c2.getX()==room2.getRoomSizeX()) {
+            return 4;   // FROM E TO W
+        }
+        return 42;
+
+    }
+
+
+
+
+
+
 }

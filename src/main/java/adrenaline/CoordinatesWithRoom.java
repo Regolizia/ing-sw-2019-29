@@ -123,7 +123,37 @@ public class CoordinatesWithRoom extends Coordinates {
         return false;
     }
 
+    public LinkedList<CoordinatesWithRoom> addCellDistant2ThroughDoor(LinkedList<CoordinatesWithRoom> list,CoordinatesWithRoom c, GameBoard g){
+        int x = c.getX();
+        int y = c.getY();
 
+        // ADDS CELLS IF DISTANT 2, THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
+        for(int k=0;k<list.size();k++) {
+            for (int i = 0; i < g.getDoors().size(); i++) {
+                if ((list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken()
+                        && list.get(k).getX() == g.getDoors().get(i).getCoordinates1().getX()
+                        && list.get(k).getY() == g.getDoors().get(i).getCoordinates1().getY()) ||
+                        (list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken()
+                                && list.get(k).getX() == g.getDoors().get(i).getCoordinates2().getX()
+                                && list.get(k).getY() == g.getDoors().get(i).getCoordinates2().getY())){
+
+                    // PASSAGE BETWEEN ROOM1 TO ROOM2
+                    // 1 -> NS
+                    // 2 -> SN
+                    // 3 -> WE
+                    // 4 -> EW
+                    if (list.get(k).getX() == x + 1 && g.getDoors().get(i).hasDirection() == 3 ||
+                            list.get(k).getX() == x - 1 && g.getDoors().get(i).hasDirection() == 4 ||
+                            list.get(k).getY() == y + 1 && g.getDoors().get(i).hasDirection() == 1 ||
+                            list.get(k).getY() == y - 1 && g.getDoors().get(i).hasDirection() == 2) {
+                        list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),
+                                g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
+                    }
+                }
+            }
+        }
+        return list;
+    }
 
 
 }
