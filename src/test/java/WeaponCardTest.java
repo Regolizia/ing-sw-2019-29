@@ -24,11 +24,11 @@ public class WeaponCardTest {
         LinkedList<Object> targets = new LinkedList<>();
         LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, AmmoCube.Effect.ALT,map.getGameBoard());
         w.weaponShoot(targets,c1,p,list,m);
-        w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         p.getTrack()[2]= Figure.PlayerColor.BLUE;
-        w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         p.getTrack()[5]= Figure.PlayerColor.BLUE;
-        w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         LinkedList<Object> ma = new LinkedList<>();
         w.applyDamage(ma,p,list.get(0));
 

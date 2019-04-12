@@ -36,6 +36,19 @@ public class Action {
                 // LIST OF EFFECTS CHOSEN (BASE ALREADY IN, IT HAS BEEN PAID (if they want ALT remove BASE))
                 // EFFECTS ADDED TO EFFECTSLIST
 
+
+        /* WHEN SOMEBODY CHOOSES ADRENALINE SHOOT WE ASK WHERE TO MOVE AND THEN WE DO THE STAUFF TO SHOOT
+        // IF ADRENALINE SHOOT IS POSSIBLE, CAN MOVE ONCE
+        if(p.checkDamage()==2){
+            listTemp.addAll(c.XTilesDistant(g,1));
+
+            for(int i=0;i<listTemp.size();i++) {
+                list.addAll(getPossibleTargetCells(listTemp.get(i),e,g));
+                // TODO REMOVE DUPLICATES
+                // TODO, WE HAVE TO CHECK IF PLAYER MOVED, AND THEN MOVE IT
+            }
+        }*/
+
                 // /*/ref options list*/ checkPayment(Player player, WeaponCard weapon);  checkPayment is in WeaponCard
                 // /*/ref possible target list*/ canAim(Player player, // ref options list );
                 // /*/ref target list/ aimTarget(ref possible target);
@@ -91,7 +104,7 @@ public class Action {
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
         //w.getPossibleTargetCells();
 
-        //w.proposeTargets();
+        //w.fromCellsToTargets();
         //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
         //TODO CHECK THAT IT FOLLOWS THE RULES
         //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
@@ -105,6 +118,7 @@ public class Action {
         // Tractor beam
         // VortexCannon(fagli scegliere tra le caselle che vede una chiamata vortex, prendi i giocatori nel vortex e 1 distanti da lì
         // e fagli scegliere il target) lo danneggi e sposti, uguale per op1
+        // Furnace offri tutte le caselle delle stanze, prendi una sola stanza(cella, parametro di proposeTragets)
 
         // EFFECTS ORDER
         // Thor

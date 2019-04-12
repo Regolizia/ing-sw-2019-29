@@ -18,14 +18,17 @@ public class Heatseeker extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));
     }
 
+
+
     @Override
-    public LinkedList<Object> proposeTargets(CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
-        LinkedList<Object> list = super.proposeTargets(c, g, p, m, e);
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list,CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
+        LinkedList<Object> listOne = super.fromCellsToTargets(list,c, g, p, m, e);
         LinkedList<Object> listOthers = new LinkedList<>();
 
+        // TODO ALL PLAYERS AND SPAWNPOINTS(IF DOMINATION) TO LISTOTHERS
 
         // TODO CHECK IF IT WORKS
-        listOthers.removeAll(list);
+        listOthers.removeAll(listOne);
 
         return listOthers;
     }

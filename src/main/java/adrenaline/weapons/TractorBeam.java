@@ -34,15 +34,16 @@ public class TractorBeam extends WeaponCard {
     }
 
     // USED FOR BASE EFFECT
+    // MOVE 0-1-2 1 TARGET TO A CELL YOU SEE
     @Override
-    public LinkedList<Object> proposeTargets(CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
         if(e== AmmoCube.Effect.BASE) {
-            LinkedList<Object> list = new LinkedList<>();
+            LinkedList<Object> listOne = new LinkedList<>();
             LinkedList<CoordinatesWithRoom> listMoves = new LinkedList<>();
             LinkedList<CoordinatesWithRoom> listOriginalMoves = getPossibleTargetCells(c, e, g);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom();
             for (Player element : m.getPlayers()) {
-                if (element.getColor() != p.getColor()) {   // OTHER PLAYERS
+                if (element.getColor() != p.getColor()) {   // ADD OTHER PLAYERS TO listOne IF, MOVING THEM, I SEE THEM
                     c1.setX(element.getPlayerPositionX());
                     c1.setY(element.getPlayerPositionY());
                     c1.setRoom(element.getPlayerRoom());
@@ -51,14 +52,20 @@ public class TractorBeam extends WeaponCard {
                     listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
 
                     if(c1.isCWRInTwoLists(listMoves,listOriginalMoves,this,e,g)){
-                        list.add(element);
+                        listOne.add(element);
                     }
                 }
             }
-            return list;
+
+
+            // ASK WHICH TARGET
+            // (REMEMBER TO MOVE THE CHOSEN TARGET)
+            // GET JUST ONE
+
+            return listOne;
         }
         else{
-            return super.proposeTargets(c,g,p,m,e);
+            return super.fromCellsToTargets(list,c,g,p,m,e);
         }
     }
 

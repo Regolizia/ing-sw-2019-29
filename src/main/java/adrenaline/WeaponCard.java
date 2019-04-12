@@ -71,27 +71,17 @@ public class WeaponCard extends Card{
     }
 
 
-    // GETS EVERYBODY IN WEAPON RANGE
-    // PROPOSE TARGETS (FROM HERE OR FROM DISTANCE 1 if adrenaline)
-    public LinkedList<Object> proposeTargets(CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<CoordinatesWithRoom>(getPossibleTargetCells(c,e,m.getMapUsed().getGameBoard())); // CELLS IN WEAPON RANGE, DEPENDING ON THE WEAPON
+    // GETS EVERYBODY IN WEAPON RANGE (DEPENDING ON THE WEAPON getPossibleTargetCells)
+    // IT JUST TRANSFORMS CELLS INTO PLAYERS
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
         LinkedList<Object> targetList = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listTemp = new LinkedList<>(); // DISTANCE 1 FROM MY CELL
 
-        // IF ADRENALINE SHOOT IS POSSIBLE, CAN MOVE ONCE
-        if(p.checkDamage()==2){
-            listTemp.addAll(c.XTilesDistant(g,1));
-
-            for(int i=0;i<listTemp.size();i++) {
-                list.addAll(getPossibleTargetCells(listTemp.get(i),e,g));
-                // TODO, WE HAVE TO CHECK IF PLAYER MOVED, AND THEN MOVE IT
-            }
-        }
         // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
-        for(int j=0;j<list.size();j++) {
-            for(int k=0;k<m.getPlayers().size();k++) {
+           for(int k=0;k<m.getPlayers().size();k++) {
+               for(int j=0;j<list.size();j++) {
                 if(m.getPlayers().get(k).getPlayerRoom()==list.get(j).getRoom() && m.getPlayers().get(k).getPlayerPositionX()==list.get(j).getX() && m.getPlayers().get(k).getPlayerPositionY()==list.get(j).getY()) {
                     targetList.add(m.getPlayers().get(k));
+                    break;
                 }
             }
         }
@@ -107,7 +97,10 @@ public class WeaponCard extends Card{
         for(int i=0;i<effectsList.size();i++){
             //FOR EVERY EFFECT IT DAMAGES THE CORRESPONDING TARGETS
             applyDamage(targets,p,effectsList.get(i));
-            effectsList.removeFirst();
+            for(int j=1;j<=effectsList.get(i).getTargetsNumber();j++) {
+                effectsList.removeFirst();
+            }
+
         }
     }
 
