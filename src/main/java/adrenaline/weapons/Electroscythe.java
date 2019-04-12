@@ -34,12 +34,9 @@ public class Electroscythe extends WeaponCard {
             case BASE:  // 1 DAMAGE, EVERY PLAYER
                 for(int j=0;j<targetList.size();j++){
                     if(targetList.get(j) instanceof Player) {
-                        for (int i = 0; i < ((Player) targetList.get(0)).getTrack().length; i++) {  //FIND FIRST EMPTY CELL OF TRACK
-                            if (((Player) targetList.get(0)).getTrack()[i] == Figure.PlayerColor.NONE) {
-                                ((Player) targetList.get(0)).getTrack()[i] = p.getColor();
-                                break;
-                            }
-                        }
+                        ((Player) targetList.get(j)).addDamageToTrack(p,1);
+
+
                     }
                     else{
                         // DAMAGE SPAWNPOINT
@@ -50,13 +47,7 @@ public class Electroscythe extends WeaponCard {
             case ALT:   // 2 DAMAGE, EVERY PLAYER
                 for(int j=0;j<targetList.size();j++){
                     if(targetList.get(j) instanceof Player) {
-                        for (int i = 0; i < ((Player) targetList.get(0)).getTrack().length; i++) {  //FIND FIRST EMPTY CELL OF TRACK
-                            if (((Player) targetList.get(0)).getTrack()[i] == Figure.PlayerColor.NONE) {
-                                ((Player) targetList.get(0)).getTrack()[i] = p.getColor();
-                                ((Player) targetList.get(0)).getTrack()[i+1] = p.getColor();
-                                break;
-                            }
-                        }
+                        ((Player) targetList.get(j)).addDamageToTrack(p,2);
                     }
                     else{
                         // DAMAGE SPAWNPOINT

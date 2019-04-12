@@ -6,7 +6,7 @@ public class EffectAndNumber {
     private AmmoCube.Effect effect;
     private int targetsNumber;
 
-    EffectAndNumber(AmmoCube.Effect e, int i){
+    public EffectAndNumber(AmmoCube.Effect e, int i){
         this.effect = e;
         this.targetsNumber = i;
     }

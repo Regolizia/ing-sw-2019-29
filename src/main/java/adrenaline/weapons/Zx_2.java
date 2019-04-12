@@ -26,14 +26,11 @@ public class Zx_2 extends WeaponCard {
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 2 MARKS, 1 TARGET
                 if(targetList.get(0) instanceof Player){
-                    for(int i=0;i<((Player) targetList.get(0)).getTrack().length;i++){  //FIND FIRST EMPTY CELL OF TRACK
-                        if(((Player) targetList.get(0)).getTrack()[i]== Figure.PlayerColor.NONE) {
-                            ((Player) targetList.get(0)).getTrack()[i] = p.getColor();
-                            // TODO ADD MARKS
-                            break;
+                    int i =((Player) targetList.get(0)).marksByShooter(p);
+                    i++;
+                    ((Player) targetList.get(0)).addDamageToTrack(p,i);
+                    ((Player) targetList.get(0)).addMarks(p,2);
 
-                        }
-                    }
                 }
                 else {
                     // DAMAGE SPAWNPOINT
@@ -42,10 +39,8 @@ public class Zx_2 extends WeaponCard {
 
             case ALT:   // 1 MARK, UP TO 3 TARGETS
                 for(int i=0;i<e.getTargetsNumber();i++){
-                    // TODO ADD MARK TO EACH OF THEM
+                    ((Player)targetList.get(i)).addMarks(p,1);
                 }
-
-
                 // TODO CANNOT USE ON SPAWNPOINT ???
                 break;
 

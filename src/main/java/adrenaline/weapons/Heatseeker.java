@@ -36,15 +36,9 @@ public class Heatseeker extends WeaponCard {
         switch (e.getEffect()) {
             case BASE:  // 3 DAMAGE, 1 TARGET
                 if(targetList.get(0) instanceof Player) {
-                    for(int i=0;i<((Player) targetList.get(0)).getTrack().length;i++) {  //FIND FIRST EMPTY CELL OF TRACK
-                        if (((Player) targetList.get(0)).getTrack()[i] == Figure.PlayerColor.NONE) {
-                            ((Player) targetList.get(0)).getTrack()[i] = p.getColor();
-                            ((Player) targetList.get(0)).getTrack()[i + 1] = p.getColor();
-                            if (((Player) targetList.get(0)).getTrack()[12] == Figure.PlayerColor.NONE){
-                                ((Player) targetList.get(0)).getTrack()[i + 2] = p.getColor();}
-                        break;
-                        }
-                    }
+                    int i =((Player) targetList.get(0)).marksByShooter(p);
+                    i=i+3;
+                    ((Player) targetList.get(0)).addDamageToTrack(p,i);
                 }
                 else {
                     // DAMAGE SPAWNPOINT

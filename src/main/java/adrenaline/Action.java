@@ -34,8 +34,7 @@ public class Action {
                 // choose EFFECTS AND ACCEPT PAYMENT FOR THEM
 
                 // LIST OF EFFECTS CHOSEN (BASE ALREADY IN, IT HAS BEEN PAID (if they want ALT remove BASE))
-                // created effectsList (THEY ARE ENUM, list because i don't know the number chosen)
-                // it is passed to shoot()
+                // EFFECTS ADDED TO EFFECTSLIST
 
                 // /*/ref options list*/ checkPayment(Player player, WeaponCard weapon);  checkPayment is in WeaponCard
                 // /*/ref possible target list*/ canAim(Player player, // ref options list );
@@ -84,8 +83,21 @@ public class Action {
 
 ////////////////////////////////////////////////////
     // SHOOT
-    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<AmmoCube.Effect> effectsList, GameModel m){
-        w.weaponShoot(c, p, effectsList, m);
+    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m){
+
+        // JUST TO MAKE IT COMPILE, TO BE REMOVED
+        LinkedList<Object> targets = new LinkedList<>();
+
+        //w.getPossibleTargetCells();
+        //w.proposeTargets();
+        //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
+        //TODO CHECK THAT IT FOLLOWS THE RULES
+        //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
+        // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
+        // LockRifle, MachineGun
+
+        // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
+        w.weaponShoot(targets, c, p, effectsList, m);
     }
 
 

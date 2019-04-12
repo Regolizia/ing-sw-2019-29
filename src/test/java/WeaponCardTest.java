@@ -17,20 +17,20 @@ public class WeaponCardTest {
         m.addPlayer(new Player(c1, Figure.PlayerColor.GREEN));
         m.getPlayers().get(0).setPlayerPosition(1,1,map.getGameBoard().getRoom(1));
         m.getPlayers().get(0).setPlayerPosition(1,1,map.getGameBoard().getRoom(1));
-        LinkedList<AmmoCube.Effect> list = new LinkedList<>();
-        list.add(AmmoCube.Effect.BASE);
-        list.add(AmmoCube.Effect.OP1);
+        LinkedList<EffectAndNumber> list = new LinkedList<>();
+        list.add(new EffectAndNumber(AmmoCube.Effect.BASE,1));
+        list.add(new EffectAndNumber(AmmoCube.Effect.OP1,1));
         WeaponCard w = new WeaponCard();
-        LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, AmmoCube.Effect.ALT);
-        w.weaponShoot(c1,p,list,m);
+        LinkedList<Object> targets = new LinkedList<>();
+        LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, AmmoCube.Effect.ALT,map.getGameBoard());
+        w.weaponShoot(targets,c1,p,list,m);
         w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         p.getTrack()[2]= Figure.PlayerColor.BLUE;
         w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         p.getTrack()[5]= Figure.PlayerColor.BLUE;
         w.proposeTargets(c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
         LinkedList<Object> ma = new LinkedList<>();
-        w.applyDamage(ma,p, AmmoCube.Effect.BASE);
-        ma = w.getTargets();
+        w.applyDamage(ma,p,list.get(0));
 
 
     }

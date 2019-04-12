@@ -27,33 +27,27 @@ public class LockRifle extends WeaponCard {
         switch (e.getEffect()) {
             case BASE:  // 2 DAMAGE, 1 MARK, 1 TARGET
                     if(targetList.get(0) instanceof Player){
-                        for(int i=0;i<((Player) targetList.get(0)).getTrack().length;i++){  //FIND FIRST EMPTY CELL OF TRACK
-                            if(((Player) targetList.get(0)).getTrack()[i]== Figure.PlayerColor.NONE){
-                                ((Player) targetList.get(0)).getTrack()[i] = p.getColor();
-                                ((Player) targetList.get(0)).getTrack()[i+1] = p.getColor();
+                        int i =((Player) targetList.get(0)).marksByShooter(p);
+                        i=i+2;
+                        ((Player) targetList.get(0)).addDamageToTrack(p,i);
 
-                                //  TODO
+                        ((Player) targetList.get(0)).addMarks(p,1);
 
-                                targetList.removeFirst();
-
-                                break;
-                            }
-                        }
+                        targetList.removeFirst();
 
                     }
                     else{
                         // DAMAGE SPAWNPOINT
                     }
 
-
-
                 break;
             case OP1:   // 1 MARK, DIFFERENT TARGET
+                if(targetList.get(0) instanceof Player){
+                    ((Player) targetList.get(0)).addMarks(p,1);
 
-                // TODO
+                    targetList.removeFirst();
 
-                targetList.removeFirst();
-
+                }
                 break;
 
 
