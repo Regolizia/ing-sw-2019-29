@@ -106,7 +106,7 @@ GameBoard g=new GameBoard();
 ////////////////////////////////////////////////////
     // SHOOT
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m){
-
+        int indexEffect=0;
         // JUST TO MAKE IT COMPILE, TO BE REMOVED
         LinkedList<Object> targets = new LinkedList<>();
 
@@ -124,8 +124,11 @@ GameBoard g=new GameBoard();
             return;}
         if(resp==0)
         {
-            //    w.weaponShoot(targets,c,p,effectsList,m);
+            while(effectsList.get(indexEffect)!=null){
+
+            LinkedList<CoordinatesWithRoom> targetsCell=p.chooseTargets(w,p,c,effectsList.get(indexEffect),g);
             //targets=w.getPossibleTargetCells(c,effectsList.get(0),g.getGameboard()); todo choose targets
+            }
             return;}
 
 
@@ -153,7 +156,7 @@ GameBoard g=new GameBoard();
 
 
 
-        // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
+      //  // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
         w.weaponShoot(targets, c, p, effectsList, m);
     }
 
