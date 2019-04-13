@@ -9,6 +9,9 @@ import java.util.Scanner;
 
 public class Action {
 final int numMaxAlternativeOptions=1;
+final int numMaxOptions=2;
+int resp=0;
+GameBoard g=new GameBoard();
 //WeaponCard weapon;
     Scanner scan=new Scanner(System.in);
 
@@ -107,6 +110,25 @@ final int numMaxAlternativeOptions=1;
         // JUST TO MAKE IT COMPILE, TO BE REMOVED
         LinkedList<Object> targets = new LinkedList<>();
 
+
+        //if true the player has paid the base/alternative effect and can shoot or buy optional effect
+        if(checkBasePayment(w,p)==false)
+            return; //if false the player can't shoot
+        // todo paidOptionsMethod to know the paid options
+        System.out.println("Do you want to add other options?\n digit\n 1:yes\n2:no");
+        resp=scan.nextInt();
+
+
+        if(resp==1){
+        //    w.weaponShoot(targets,c,p,effectsList,m);
+            return;}
+        if(resp==0)
+        {
+            //    w.weaponShoot(targets,c,p,effectsList,m);
+            //targets=w.getPossibleTargetCells(c,effectsList.get(0),g.getGameboard()); todo choose targets
+            return;}
+
+
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
         //w.getPossibleTargetCells();
 
@@ -128,6 +150,8 @@ final int numMaxAlternativeOptions=1;
 
         // EFFECTS ORDER
         // Thor
+
+
 
         // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
         w.weaponShoot(targets, c, p, effectsList, m);
@@ -167,7 +191,7 @@ final int numMaxAlternativeOptions=1;
 
     public boolean checkBasePayment(WeaponCard w,Player p){
        boolean response=false;
-       int resp=0;
+
        int indexList=0;
        boolean okChoosen=false;
        System.out.println("Do you want base option: digit 1\n for alternative option digit 0\n 2 to cancel shoot action");
