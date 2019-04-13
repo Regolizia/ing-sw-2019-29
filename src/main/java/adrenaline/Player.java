@@ -11,7 +11,9 @@ public class Player {
     private CoordinatesWithRoom coordinates;
     private Figure.PlayerColor color;
     private CoordinatesWithRoom respawnCoordinates;
-
+    private int yellowCube;
+    private int blueCube;
+    private int redCube;
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
 
@@ -39,6 +41,9 @@ public class Player {
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        yellowCube=3;
+        redCube=3;
+        blueCube=3;
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
@@ -222,6 +227,18 @@ public class Player {
                 }
             }
     }
+    public void setRedCube(Player player, int red){
+        this.redCube=red;
+
+    }
+    public void setBlueCube(Player player, int blue){
+        this.blueCube=blue;
+    }  public void setYellowCube(Player player, int yellow){
+        this.yellowCube=yellow;
+    }
+    public int getCubeRed(Player player){return redCube;}
+    public int getCubeYellow(Player player){return yellowCube;}
+    public int getCubeBlue(Player player){return blueCube;};
     // MOVES PLAYER TO A CELL
     public void moveToThisSquare(CoordinatesWithRoom c){
         setPlayerPosition(c.getX(),c.getY(),c.getRoom());
