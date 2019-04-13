@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Player {
-
+    private final static int numMaxCube=3;
     private Figure.PlayerColor[] track;
     private Figure.PlayerColor[] marks;
     private int[] ammoBox; //BLUE RED YELLOW
@@ -47,9 +47,7 @@ public class Player {
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         System.out.println("What's your name?");
         this.name=scan.nextLine();
-        yellowCube=3;
-        redCube=3;
-        blueCube=3;
+
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
@@ -236,18 +234,32 @@ public class Player {
                 }
             }
     }
-    public void setRedCube(Player player, int red){
+    public void addRedCube(Player player, int red){
         this.redCube=red;
 
     }
-    public void setBlueCube(Player player, int blue){
+    public void addBlueCube(Player player, int blue){
         this.blueCube=blue;
-    }  public void setYellowCube(Player player, int yellow){
+    }  public void addYellowCube(Player player, int yellow){
         this.yellowCube=yellow;
     }
-    public int getCubeRed(Player player){return redCube;}
-    public int getCubeYellow(Player player){return yellowCube;}
-    public int getCubeBlue(Player player){return blueCube;};
+    public void setCube(Player player)
+    {   int counter=0;
+        this.ammoBox [0]= +this.blueCube;//BLUE RED YELLOW
+        this.ammoBox[1]=+this.redCube;
+        this.ammoBox[2]=+this.yellowCube;
+        addBlueCube(player,0);
+        addRedCube(player,0);
+        addYellowCube(player,0);
+    for(counter=0;counter<3;counter++)
+    {
+        if(ammoBox[counter]>=numMaxCube)ammoBox[counter]=numMaxCube;
+    }
+
+    }
+    public int getCubeRed(Player player){return ammoBox[2];}
+    public int getCubeYellow(Player player){return ammoBox[3];}
+    public int getCubeBlue(Player player){return ammoBox[1];}
 
 
     public LinkedList<CoordinatesWithRoom> chooseTargets(WeaponCard w,Player p,CoordinatesWithRoom c, EffectAndNumber effectList,GameBoard g){
