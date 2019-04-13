@@ -155,6 +155,25 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
+/*
+    public boolean hasInsideWall(CoordinatesWithRoom c1, GameBoard g){
+        // SE HA UNA PORTA CON UNA STESSA COORDINATA E PORTA ALLORA Sì
+        for(int i=0;i<g.getDoors().size();i++){
+
+
+
+        }
+    }
+
+    // NUOVO METODO CHE RETITUISCE LA PORTA SULLA STESSA LINEA DELLA CELLA
+    //POI TROVO LA SUA DIREZIONE
+
+    public CoordinatesWithRoom cellThroughWall(){
+        // SE Sì
+
+
+    }
+    */
 
 }
 
