@@ -23,7 +23,10 @@ public class GameBoard {
     public Room getRoom(int i) {
         return new Room();
     }
-
+    public GameBoard getGameboard(){        //to get gameboard type
+        GameBoard g=new GameBoard();
+        return g;
+    }
     public void addRoom(Room r){
     }
     public void addRoom(RoomDeath r){
