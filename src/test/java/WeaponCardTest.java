@@ -22,13 +22,15 @@ public class WeaponCardTest {
         list.add(new EffectAndNumber(AmmoCube.Effect.OP1,1));
         WeaponCard w = new WeaponCard();
         LinkedList<Object> targets = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, AmmoCube.Effect.ALT,map.getGameBoard());
+        EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.ALT,1);
+        LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, en, map.getGameBoard());
         w.weaponShoot(targets,c1,p,list,m);
-        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        EffectAndNumber en1 = new EffectAndNumber(AmmoCube.Effect.ALT,1);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, en1);
         p.getTrack()[2]= Figure.PlayerColor.BLUE;
-        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, en1);
         p.getTrack()[5]= Figure.PlayerColor.BLUE;
-        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, AmmoCube.Effect.ALT);
+        w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, en1);
         LinkedList<Object> ma = new LinkedList<>();
         w.applyDamage(ma,p,list.get(0));
 

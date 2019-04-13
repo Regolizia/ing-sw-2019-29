@@ -18,12 +18,12 @@ public class Shotgun extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
-        if(e == AmmoCube.Effect.BASE){
+        if(en.getEffect() == AmmoCube.Effect.BASE){
             list.add(c);
         }
-        if(e == AmmoCube.Effect.ALT){
+        if(en.getEffect() == AmmoCube.Effect.ALT){
             list = c.oneTileDistant(g);
         }
         return list;

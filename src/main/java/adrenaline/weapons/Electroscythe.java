@@ -19,7 +19,7 @@ public class Electroscythe extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
         list.add(c);
         return list;

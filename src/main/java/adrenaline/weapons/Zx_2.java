@@ -4,8 +4,6 @@ import adrenaline.*;
 
 import java.util.LinkedList;
 
-import static adrenaline.AmmoCube.Effect.OP1;
-
 /**
  * 
  */
@@ -38,7 +36,7 @@ public class Zx_2 extends WeaponCard {
                 break;
 
             case ALT:   // 1 MARK, UP TO 3 TARGETS
-                for(int i=0;i<e.getTargetsNumber();i++){
+                for(int i = 0; i<e.getNumber(); i++){
                     ((Player)targetList.get(i)).addMarks(p,1);
                 }
                 // TODO CANNOT USE ON SPAWNPOINT ???

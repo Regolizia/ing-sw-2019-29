@@ -4,24 +4,25 @@ package adrenaline;
 public class EffectAndNumber {
 
     private AmmoCube.Effect effect;
-    private int targetsNumber;
+    private int number;
 
     public EffectAndNumber(AmmoCube.Effect e, int i){
         this.effect = e;
-        this.targetsNumber = i;
+        this.number = i;
     }
 
     public AmmoCube.Effect getEffect(){
         return  effect;
     }
-    public int getTargetsNumber(){
-        return targetsNumber;
+    public int getNumber(){
+        return number;
     }
 
     public void setEffect(AmmoCube.Effect e){
         this.effect = e;
     }
-    public void setTargetsNumber(int x){
-        this.targetsNumber = x;
+    public void setNumber(int x){
+        this.number = x;
     }
 }
+

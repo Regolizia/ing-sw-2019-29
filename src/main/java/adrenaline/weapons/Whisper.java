@@ -19,8 +19,8 @@ public class Whisper extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, e, g);
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
         LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
 
         // TODO CHECK IF IT WORKS

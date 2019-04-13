@@ -1,6 +1,5 @@
 package adrenaline;
 
-import java.sql.Struct;
 import java.util.*;
 
 public class WeaponCard extends Card{
@@ -28,7 +27,7 @@ public class WeaponCard extends Card{
 
     // CELLS IN WEAPON RANGE
     // TO BE OVERRIDDEN
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g){
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g){
 
         // CELLS OF EVERY ROOM I SEE
         // MAYBE OVERRIDDEN
@@ -73,7 +72,7 @@ public class WeaponCard extends Card{
 
     // GETS EVERYBODY IN WEAPON RANGE (DEPENDING ON THE WEAPON getPossibleTargetCells)
     // IT JUST TRANSFORMS CELLS INTO PLAYERS
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         LinkedList<Object> targetList = new LinkedList<>();
 
         // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
@@ -97,7 +96,7 @@ public class WeaponCard extends Card{
         for(int i=0;i<effectsList.size();i++){
             //FOR EVERY EFFECT IT DAMAGES THE CORRESPONDING TARGETS
             applyDamage(targets,p,effectsList.get(i));
-            for(int j=1;j<=effectsList.get(i).getTargetsNumber();j++) {
+            for(int j = 1; j<=effectsList.get(i).getNumber(); j++) {
                 effectsList.removeFirst();
             }
 

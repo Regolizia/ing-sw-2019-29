@@ -21,8 +21,8 @@ public class Heatseeker extends WeaponCard {
 
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list,CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
-        LinkedList<Object> listOne = super.fromCellsToTargets(list,c, g, p, m, e);
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list,CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> listOne = super.fromCellsToTargets(list,c, g, p, m, en);
         LinkedList<Object> listOthers = new LinkedList<>();
 
         // TODO ALL PLAYERS AND SPAWNPOINTS(IF DOMINATION) TO LISTOTHERS

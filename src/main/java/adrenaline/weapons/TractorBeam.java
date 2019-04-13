@@ -21,26 +21,26 @@ public class TractorBeam extends WeaponCard {
 
     // USED FOR ALT EFFECT
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
-        if(e== AmmoCube.Effect.ALT){
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        if(en.getEffect()== AmmoCube.Effect.ALT){
             LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
             list.addAll(c.XTilesDistant(g,2));
             list.add(c);
             return list;
         }
         else {
-            return super.getPossibleTargetCells(c, e, g);
+            return super.getPossibleTargetCells(c, en, g);
         }
     }
 
     // USED FOR BASE EFFECT
     // MOVE 0-1-2 1 TARGET TO A CELL YOU SEE
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
-        if(e== AmmoCube.Effect.BASE) {
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        if(en.getEffect()== AmmoCube.Effect.BASE) {
             LinkedList<Object> listOne = new LinkedList<>();
             LinkedList<CoordinatesWithRoom> listMoves = new LinkedList<>();
-            LinkedList<CoordinatesWithRoom> listOriginalMoves = getPossibleTargetCells(c, e, g);
+            LinkedList<CoordinatesWithRoom> listOriginalMoves = getPossibleTargetCells(c, en, g);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom();
             for (Player element : m.getPlayers()) {
                 if (element.getColor() != p.getColor()) {   // ADD OTHER PLAYERS TO listOne IF, MOVING THEM, I SEE THEM
@@ -51,7 +51,7 @@ public class TractorBeam extends WeaponCard {
                     listMoves.addAll(c1.XTilesDistant(g, 2));
                     listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
 
-                    if(c1.isCWRInTwoLists(listMoves,listOriginalMoves,this,e,g)){
+                    if(c1.isCWRInTwoLists(listMoves,listOriginalMoves,this,en,g)){
                         listOne.add(element);
                     }
                 }
@@ -65,7 +65,7 @@ public class TractorBeam extends WeaponCard {
             return listOne;
         }
         else{
-            return super.fromCellsToTargets(list,c,g,p,m,e);
+            return super.fromCellsToTargets(list,c,g,p,m,en);
         }
     }
 

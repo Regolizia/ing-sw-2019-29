@@ -19,8 +19,8 @@ public class Hellion extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, AmmoCube.Effect e, GameBoard g) {
-        LinkedList list = super.getPossibleTargetCells(c, e, g);
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        LinkedList list = super.getPossibleTargetCells(c, en, g);
         LinkedList listOne = c.oneTileDistant(g);
         listOne.add(c);
 
@@ -31,8 +31,8 @@ public class Hellion extends WeaponCard {
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, AmmoCube.Effect e) {
-        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, e);
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
 
         // GET JUST ONE TARGET OUT OF FROMCELLSTOTARGETS
         // ASK WHICH TARGET
