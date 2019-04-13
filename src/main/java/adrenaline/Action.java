@@ -5,7 +5,7 @@ package adrenaline;
 import com.sun.scenario.effect.impl.sw.java.JSWBlend_BLUEPeer;
 
 import java.util.LinkedList;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class Action {
 final int numMaxAlternativeOptions=1;
@@ -13,7 +13,7 @@ final int numMaxOptions=2;
 int resp=0;
 GameBoard g=new GameBoard();
 //WeaponCard weapon;
-    Scanner scan=new Scanner(System.in);
+    //Scanner scan=new Scanner(System.in);
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, ADRENALINESHOOT;
@@ -115,8 +115,8 @@ GameBoard g=new GameBoard();
         if(checkBasePayment(w,p)==false)
             return; //if false the player can't shoot
         // todo paidOptionsMethod to know the paid options
-        System.out.println("Do you want to add other options?\n digit\n 1:yes\n2:no");
-        resp=scan.nextInt();
+       // System.out.println("Do you want to add other options?\n digit\n 1:yes\n2:no");
+      //  resp=scan.nextInt();
 
 
         if(resp==1){
@@ -197,8 +197,8 @@ GameBoard g=new GameBoard();
 
        int indexList=0;
        boolean okChoosen=false;
-       System.out.println("Do you want base option: digit 1\n for alternative option digit 0\n 2 to cancel shoot action");
-        resp=scan.nextInt();
+      // System.out.println("Do you want base option: digit 1\n for alternative option digit 0\n 2 to cancel shoot action");
+       //resp=scan.nextInt();
         if(resp==1)
             indexList=0;
         if(resp==2)
@@ -206,7 +206,7 @@ GameBoard g=new GameBoard();
         if(resp==0)
             {  while(indexList<=numMaxAlternativeOptions){
                 System.out.println("Do you want this alternative?\ndigit\n1:yes\n2:no\n3:exit");//todo call to weapon to get alternative name + effect
-                resp=scan.nextInt();
+             //   resp=scan.nextInt();
                 if(resp==3||resp==1)
                 {if(resp==1)
                     okChoosen=true;
@@ -218,18 +218,21 @@ GameBoard g=new GameBoard();
 
         switch(w.price.get(indexList).getCubeColor()){
             case BLUE: if(p.getCubeBlue(p)>=1) {
-                p.setBlueCube(p,p.getCubeBlue(p)-1);
+                p.addBlueCube(p,-1);
+                p.setCube(p);
                 return true;
             }
                 else return false;
 
             case RED:if(p.getCubeRed(p)>=1) {
-                p.setRedCube(p,p.getCubeRed(p)-1);
+                p.addRedCube(p,-1);
+                p.setCube(p);
                 return true;
             }
                 else return false;
             case YELLOW:if(p.getCubeYellow(p)>=1) {
-                p.setYellowCube(p,p.getCubeYellow(p)-1);
+                p.addYellowCube(p,-1);
+                p.setCube(p);
                 return true;
             } else return false;}
         return false;
