@@ -2,6 +2,7 @@ package adrenaline;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Player {
 
@@ -14,6 +15,9 @@ public class Player {
     private int yellowCube;
     private int blueCube;
     private int redCube;
+    private int resp=0;
+    private Scanner scan=new Scanner(System.in);
+    private String name;
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
 
@@ -41,6 +45,8 @@ public class Player {
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        System.out.println("What's your name?");
+        this.name=scan.nextLine();
         yellowCube=3;
         redCube=3;
         blueCube=3;
@@ -55,6 +61,7 @@ public class Player {
     public Figure.PlayerColor[] getTrack() {
         return track;
     }
+
 
     public int checkDamage() {
 
@@ -81,6 +88,8 @@ public class Player {
         this.coordinates.setCoordinates(x, y);
         this.coordinates.setRoom(r);
     }
+
+    // public void list target in that cell (CoordinatesWithRoom c){ } // todo a way to get players name +figures
 
     public Room getPlayerRoom() {
         return coordinates.getRoom();
@@ -239,6 +248,25 @@ public class Player {
     public int getCubeRed(Player player){return redCube;}
     public int getCubeYellow(Player player){return yellowCube;}
     public int getCubeBlue(Player player){return blueCube;};
+
+
+    public LinkedList<CoordinatesWithRoom> chooseTargets(WeaponCard w,Player p,CoordinatesWithRoom c, EffectAndNumber effectList,GameBoard g){
+       boolean end =false;
+       int i=0;
+        LinkedList<CoordinatesWithRoom> targetCell=null;
+        while(w.getPossibleTargetCells(c,effectList,g).get(i)!=null){
+            System.out.println("Do you want to shoot this player:"+/*.getPlayerNameWithCoordinates(c);*/"\n" +
+                    "digit\n 1:yes\n2:no");
+            resp=scan.nextInt();
+            if(resp==2)
+                i++;
+            if(resp==1)
+            {targetCell.add(w.getPossibleTargetCells(c,effectList,g).get(i));i++;}
+            //if yes added to target list
+
+        }
+        return targetCell;
+    }
     // MOVES PLAYER TO A CELL
     public void moveToThisSquare(CoordinatesWithRoom c){
         setPlayerPosition(c.getX(),c.getY(),c.getRoom());
