@@ -1,5 +1,9 @@
 package adrenaline;
 
+
+
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_BLUEPeer;
+
 import java.util.LinkedList;
 
 public class Action {
@@ -159,7 +163,26 @@ public class Action {
 
     /*todo frenzyShoot frenzyRun frenzyGrab*/
 
-
+    public boolean checkBasePayment(WeaponCard w,Player p){
+        switch(w.price.get(0).getCubeColor()){
+            case BLUE: if(p.getCubeBlue(p)>=1) {
+                p.setBlueCube(p,p.getCubeBlue(p)-1);
+                return true;
+            }
+                        break;
+            case RED:if(p.getCubeRed(p)>=1) {
+                p.setRedCube(p,p.getCubeRed(p)-1);
+                return true;
+            }
+                break;
+            case YELLOW:if(p.getCubeYellow(p)>=1) {
+                p.setYellowCube(p,p.getCubeYellow(p)-1);
+                return true;
+            }
+                break;
+        }
+        return true;
+    }
     public ActionType getActionSelected() {
         return actionSelected;
     }
