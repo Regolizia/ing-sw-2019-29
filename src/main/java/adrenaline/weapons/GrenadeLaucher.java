@@ -44,12 +44,43 @@ public class GrenadeLaucher extends WeaponCard {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1 TARGET, THEN CAN MOVE IT
+                if(targetList.get(0) instanceof Player) {
+                    int i =((Player) targetList.get(0)).marksByShooter(p);
+                    i=i+1;
+                    ((Player) targetList.get(0)).addDamageToTrack(p,i);
+
+                    moveOneSquare(((Player) targetList.get(0)).getPlayerPositionX(),
+                            ((Player) targetList.get(0)).getPlayerPositionY(),((Player)
+                                    targetList.get(0)).getPlayerRoom());
+
+
+                }
+                else {/*damage spawnpoint;*/}
                 break;
 
             case OP1:   // 1 DAMAGE, EVERY PLAYER, 1 SQUARE
+                int indexTarget=0;
+                while(targetList.get(indexTarget)!=null)
+                {
+                    if(targetList.get(indexTarget) instanceof Player) {
+                        int damage =((Player) targetList.get(indexTarget)).marksByShooter(p);
+                        damage=damage+1;
+                        ((Player) targetList.get(indexTarget)).addDamageToTrack(p,damage);
+                    }
+                    else {/*damage spawnpoint;*/}
+                }
                 break;
 
 
         }
     }
+
+
+    public void moveOneSquare(int x,int y, Room room){
+        boolean moveTarget=false;
+        if(moveTarget==true)
+            //move by one square
+        if(moveTarget==false)
+        return;}
 }
+
