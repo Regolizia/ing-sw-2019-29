@@ -130,58 +130,129 @@ public class CoordinatesWithRoom extends Coordinates {
 
 ///////////////////////////////////////////////////////////////////////
 
-    // CELLS 2 DISTANT, SAME DIRECTION
+    // SAME DIRECTION, THROUGH WALLS
     // LIST ALREADY CONTAINS CELLS DISTANT 1 (NORMAL OR THROUGH A DOOR) FROM C
-    public LinkedList<CoordinatesWithRoom> twoTilesDistantSameDirection(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g){
+    public LinkedList<CoordinatesWithRoom> tilesSameDirection(CoordinatesWithRoom c, GameBoard g){
         int x = c.getX();
         int y = c.getY();
+        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> listTwo = new LinkedList<>();
 
-        // ADDS CELLS DISTANT 2, ONLY THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
-        for(int k=0;k<list.size();k++) {
-            for (int i = 0; i < g.getDoors().size(); i++) {
-                // IF THESE HAVE A DOOR
-                if ((list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken()
-                        && list.get(k).getX() == g.getDoors().get(i).getCoordinates1().getX()
-                        && list.get(k).getY() == g.getDoors().get(i).getCoordinates1().getY()) ||
-                        (list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken()
-                                && list.get(k).getX() == g.getDoors().get(i).getCoordinates2().getX()
-                                && list.get(k).getY() == g.getDoors().get(i).getCoordinates2().getY())){
 
-                    // IF THE DOOR HAS A CERTAIN DIRECTION
+        do {
 
-                    // PASSAGE BETWEEN ROOM1 TO ROOM2
-                    // 1 -> NS
-                    // 2 -> SN
-                    // 3 -> WE
-                    // 4 -> EW
-                    if (list.get(k).getX() == x + 1 && g.getDoors().get(i).hasDirection() == 3 ||
-                            list.get(k).getX() == x - 1 && g.getDoors().get(i).hasDirection() == 4 ||
-                            list.get(k).getY() == y + 1 && g.getDoors().get(i).hasDirection() == 1 ||
-                            list.get(k).getY() == y - 1 && g.getDoors().get(i).hasDirection() == 2) {
-                        list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),
-                                g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
+            // ADDS CELLS DISTANT 2, ONLY THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
+            for (int k = 0; k < list.size(); k++) {
+                for (int i = 0; i < g.getDoors().size(); i++) {
+                    // IF THESE HAVE A DOOR
+                    if ((list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken()
+                            && list.get(k).getX() == g.getDoors().get(i).getCoordinates1().getX()
+                            && list.get(k).getY() == g.getDoors().get(i).getCoordinates1().getY()) ||
+                            (list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken()
+                                    && list.get(k).getX() == g.getDoors().get(i).getCoordinates2().getX()
+                                    && list.get(k).getY() == g.getDoors().get(i).getCoordinates2().getY())) {
+
+                        // IF THE DOOR HAS A CERTAIN DIRECTION
+
+                        // PASSAGE BETWEEN ROOM1 TO ROOM2
+                        // 1 -> NS
+                        // 2 -> SN
+                        // 3 -> WE
+                        // 4 -> EW
+                        if (list.get(k).getX() == x + 1 && g.getDoors().get(i).hasDirection() == 3 ||
+                                list.get(k).getX() == x - 1 && g.getDoors().get(i).hasDirection() == 4 ||
+                                list.get(k).getY() == y + 1 && g.getDoors().get(i).hasDirection() == 1 ||
+                                list.get(k).getY() == y - 1 && g.getDoors().get(i).hasDirection() == 2) {
+                            listTwo.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),
+                                    g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
+                        }
                     }
                 }
             }
-        }
 
 
-        // ADDS CELLS IF DISTANT 2, SAME DIRECTION
-        if(x+2<=c.getRoom().getRoomSizeX())
-            list.add(new CoordinatesWithRoom(x+1,y,c.getRoom()));
+            // ADDS CELLS IF DISTANT 2, SAME DIRECTION
+            if (x + 2 <= c.getRoom().getRoomSizeX())
+                listTwo.add(new CoordinatesWithRoom(x + 1, y, c.getRoom()));
 
-        if(y+2<=c.getRoom().getRoomSizeY())
-            list.add(new CoordinatesWithRoom(x,y+1,c.getRoom()));
+            if (y + 2 <= c.getRoom().getRoomSizeY())
+                listTwo.add(new CoordinatesWithRoom(x, y + 1, c.getRoom()));
 
-        if(x-2>0)
-            list.add(new CoordinatesWithRoom(x-1,y,c.getRoom()));
+            if (x - 2 > 0)
+                listTwo.add(new CoordinatesWithRoom(x - 1, y, c.getRoom()));
 
-        if(y-2>0)
-            list.add(new CoordinatesWithRoom(x,y-1,c.getRoom()));
+            if (y - 2 > 0)
+                listTwo.add(new CoordinatesWithRoom(x, y - 1, c.getRoom()));
 
+            list.addAll(listTwo);
+            listTwo.clear();
+
+
+        }while(!listTwo.isEmpty());  // DO IT AGAIN BECAUSE I HAVE NEW CELLS TO CHECK
+
+        list.add(c);    // CAN ALSO BE IN MY OWN CELL
 
         return list;
     }
+
+///////////////////////////////////////////////
+// CELLS 2 DISTANT, SAME DIRECTION
+// LIST ALREADY CONTAINS CELLS DISTANT 1 (NORMAL OR THROUGH A DOOR) FROM C
+public LinkedList<CoordinatesWithRoom> twoTilesDistantSameDirection(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g){
+    int x = c.getX();
+    int y = c.getY();
+
+    // ADDS CELLS DISTANT 2, ONLY THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
+    for(int k=0;k<list.size();k++) {
+        for (int i = 0; i < g.getDoors().size(); i++) {
+            // IF THESE HAVE A DOOR
+            if ((list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken()
+                    && list.get(k).getX() == g.getDoors().get(i).getCoordinates1().getX()
+                    && list.get(k).getY() == g.getDoors().get(i).getCoordinates1().getY()) ||
+                    (list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken()
+                            && list.get(k).getX() == g.getDoors().get(i).getCoordinates2().getX()
+                            && list.get(k).getY() == g.getDoors().get(i).getCoordinates2().getY())){
+
+                // IF THE DOOR HAS A CERTAIN DIRECTION
+
+                // PASSAGE BETWEEN ROOM1 TO ROOM2
+                // 1 -> NS
+                // 2 -> SN
+                // 3 -> WE
+                // 4 -> EW
+                if (list.get(k).getX() == x + 1 && g.getDoors().get(i).hasDirection() == 3 ||
+                        list.get(k).getX() == x - 1 && g.getDoors().get(i).hasDirection() == 4 ||
+                        list.get(k).getY() == y + 1 && g.getDoors().get(i).hasDirection() == 1 ||
+                        list.get(k).getY() == y - 1 && g.getDoors().get(i).hasDirection() == 2) {
+                    list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),
+                            g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
+                }
+            }
+        }
+    }
+
+
+    // ADDS CELLS IF DISTANT 2, SAME DIRECTION
+    if(x+2<=c.getRoom().getRoomSizeX())
+        list.add(new CoordinatesWithRoom(x+1,y,c.getRoom()));
+
+    if(y+2<=c.getRoom().getRoomSizeY())
+        list.add(new CoordinatesWithRoom(x,y+1,c.getRoom()));
+
+    if(x-2>0)
+        list.add(new CoordinatesWithRoom(x-1,y,c.getRoom()));
+
+    if(y-2>0)
+        list.add(new CoordinatesWithRoom(x,y-1,c.getRoom()));
+
+
+    return list;
+}
+
+
+
+
+
 
 }
 
