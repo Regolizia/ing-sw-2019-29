@@ -21,6 +21,13 @@ public class MachineGun extends WeaponCard {
 
 
     @Override
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+        //IF BASE CHOOSE 2 TARGETS, IF OP1 OP2 CHOOSE ONE (IN ACTION WE CHECK THIS, ELSE IT'S DONE AGAIN)
+        return targets;
+    }
+
+    @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
 
 
@@ -44,9 +51,7 @@ public class MachineGun extends WeaponCard {
 
                 break;
 
-            // THEY ARE THE SAME WITH DIFFERENT TARGETS
-            case OP1:   // 1 DAMAGE, 1 TARGET DIFFERENT FROM OP2 TARGET
-
+            case OP1:   // 1 DAMAGE, 1 TARGET DIFFERENT FROM OP2 TARGET, ALSO IS ONE OF BASE TARGETS
             case OP2:   // 1 DAMAGE, 1 TARGET DIFFERENT FROM OP1 TARGET
                 if (targetList.get(0) instanceof Player) {
                     int i = ((Player) targetList.get(0)).marksByShooter(p);

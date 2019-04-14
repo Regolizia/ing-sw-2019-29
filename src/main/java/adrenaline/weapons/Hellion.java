@@ -18,15 +18,11 @@ public class Hellion extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.ALT,false));
     }
 
+    // NOT YOUR SQUARE
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList list = super.getPossibleTargetCells(c, en, g);
-        LinkedList listOne = c.oneTileDistant(g);
-        listOne.add(c);
-
-        // TODO CHECK IF IT WORKS
-        list.removeAll(listOne);
-
+        list = c.removeThisCell(list);
         return list;
     }
 
@@ -39,6 +35,8 @@ public class Hellion extends WeaponCard {
 
         // ADD THE OTHER PLAYERS THAT ARE IN THE SAME SPOT AS THE CHOSEN TARGET
         //  TODO ALSO ADD SPAWNPOINTS
+
+        //FOR EXAMPLE
         // chosenTarget =
         //int x= getPositionX
         //int y= getPositionY
@@ -50,10 +48,10 @@ public class Hellion extends WeaponCard {
             targets.add(m.getPlayers().get(k));
         }
         }
+
+
         */
         return targets;
-
-
     }
 
 

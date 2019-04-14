@@ -30,6 +30,15 @@ public class Shotgun extends WeaponCard {
     }
 
     @Override
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+
+        //CHOOSE 1 TARGET IF BASE EFFECT, 1 IF ALT, PUT IT IN TARGETS
+
+        return targets;
+    }
+
+    @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {

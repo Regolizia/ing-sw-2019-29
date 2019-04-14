@@ -231,6 +231,13 @@ public class Player {
                 }
             }
     }
+
+
+
+
+
+    ///// FOR CHECKPAYMENT
+
     public void addRedCube(Player player, int red){
         this.redCube=red;
 

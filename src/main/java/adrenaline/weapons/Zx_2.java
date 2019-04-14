@@ -17,6 +17,13 @@ public class Zx_2 extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,false));
     }
 
+    @Override
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+
+        //CHOOSE 1 TARGET IF BASE EFFECT, UP TO 3 IF ALT, PUT THEM IN TARGETS
+        return targets;
+    }
 
     @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {

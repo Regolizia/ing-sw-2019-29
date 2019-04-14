@@ -1,6 +1,8 @@
 package adrenaline;
 
 
+import adrenaline.weapons.RocketLaucher;
+
 import java.util.LinkedList;
 //import java.util.Scanner;
 
@@ -142,13 +144,15 @@ GameBoard g=new GameBoard();
 
         // TARGETS ORDER
         // LockRifle
-        // MachineGun
+        // MachineGun, CHECK TARGET OP1 IS ONE OF THE TARGETS OF BASE, CHECK TARGET OP2 IS DIFFERENT FROM TARGET OP1
         // Thor(fagli scegliere un solo target alla volta, se ha pagato per le op fagli scegliere per op1
         // un target tra quello che vede il target della base, per op2 un target tra quello che vede il target di op1)
         // Tractor beam
         // VortexCannon(fagli scegliere tra le caselle che vede una chiamata vortex, prendi i giocatori nel vortex e 1 distanti da lì
         // e fagli scegliere il target) lo danneggi e sposti, uguale per op1
         // Furnace offri tutte le caselle delle stanze, prendi una sola stanza(cella, parametro di proposeTragets)
+        // Cyberblade target diversi CHECK
+        //  RocketLaucher SAVE FIRST TARGET'S POSITION, IN OP2 I NEED IT (IT SHOULD BE PASSED AS c)
 
         // EFFECTS ORDER
         // Thor

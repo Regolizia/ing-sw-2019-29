@@ -37,8 +37,11 @@ public class RocketLaucher extends WeaponCard {
 
         } else {   // OP2 (OP1 WON'T CALL THESE METHODS)
 
-            //ASK PLAYER TO CHOOSE WHICH CELL TO SELECT, PUT IT IN LIST ALONE
-            return super.fromCellsToTargets(list, c, g, p, m, en);
+            // ACTION CLASS GIVES ME THE OLD POSITION IN C
+            //SELECT ALL THE PLAYERS IN C, PUT THEM IN TARGETS
+            // ALSO ADD OLD TARGET
+
+            return targets;
 
         }
     }

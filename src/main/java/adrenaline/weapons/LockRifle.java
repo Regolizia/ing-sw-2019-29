@@ -20,6 +20,14 @@ public class LockRifle extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.OP1,false));
     }
 
+
+    @Override
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+        //ASK WHICH TARGET TO DAMAGE, REMOVE OTHERS
+        return targets;
+    }
+
     // TODO ADD MARKS
     @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {

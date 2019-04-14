@@ -1,9 +1,6 @@
 package adrenaline.weapons;
 
-import adrenaline.AmmoCube;
-import adrenaline.EffectAndNumber;
-import adrenaline.Player;
-import adrenaline.WeaponCard;
+import adrenaline.*;
 
 import java.util.LinkedList;
 
@@ -19,6 +16,15 @@ public class PlasmaGun extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.BASE,true));
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.OP2,false));
+    }
+
+
+    @Override
+    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+
+        ///CHOOSE ONE TARGET
+        return targets;
     }
 
     @Override
