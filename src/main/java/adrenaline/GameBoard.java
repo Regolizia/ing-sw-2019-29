@@ -8,6 +8,7 @@ import java.util.*;
 public class GameBoard {
 
     protected LinkedList<Door> doors;
+    protected LinkedList<Wall> walls;
 
 
 
@@ -16,6 +17,7 @@ public class GameBoard {
      */
     public GameBoard() {
         doors = new LinkedList<Door>();
+        walls = new LinkedList<Wall>();
     }
 
 
@@ -35,6 +37,13 @@ public class GameBoard {
     }
     public LinkedList<Door> getDoors(){
         return doors;
+    }
+
+    public void addWall(Wall w){
+        walls.add(w);
+    }
+    public LinkedList<Wall> getWall(){
+        return walls;
     }
 
     // MOVED DISTANCE METHODS IN COORDINATES WITH ROOM

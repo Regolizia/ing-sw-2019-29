@@ -7,7 +7,9 @@ public class Wall {
         private Coordinates c1;
         private Coordinates c2;
 
+        public Wall(){
 
+        }
 
         public Wall(Room r1, int x1, int y1, Room r2, int x2, int y2) {
             this.room1 = r1;

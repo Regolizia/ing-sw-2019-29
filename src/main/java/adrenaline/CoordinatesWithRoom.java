@@ -73,6 +73,8 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
+///////////////////////////////////////////////////////////////////////
+
     public LinkedList<CoordinatesWithRoom> removeDuplicates(LinkedList<CoordinatesWithRoom> list){
         for (int k = 0; k < list.size(); k++) {
             for (int j = k + 1; j < list.size(); j++) {
@@ -110,6 +112,8 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
+    ///////////////////////////////////////////////////////////////////////
+
     public boolean isCWRInTwoLists(LinkedList<CoordinatesWithRoom> listMoves, LinkedList<CoordinatesWithRoom> listOriginalMoves, WeaponCard w, EffectAndNumber en, GameBoard g) {
         for (int i = 0; i < listMoves.size(); i++) {
             for (int l = 0; l < w.getPossibleTargetCells(this, en, g).size(); l++) {
@@ -123,19 +127,27 @@ public class CoordinatesWithRoom extends Coordinates {
         return false;
     }
 
-    public LinkedList<CoordinatesWithRoom> addCellDistant2ThroughDoor(LinkedList<CoordinatesWithRoom> list,CoordinatesWithRoom c, GameBoard g){
+
+///////////////////////////////////////////////////////////////////////
+
+    // CELLS 2 DISTANT, SAME DIRECTION
+    // LIST ALREADY CONTAINS CELLS DISTANT 1 (NORMAL OR THROUGH A DOOR) FROM C
+    public LinkedList<CoordinatesWithRoom> twoTilesDistantSameDirection(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g){
         int x = c.getX();
         int y = c.getY();
 
-        // ADDS CELLS IF DISTANT 2, THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
+        // ADDS CELLS DISTANT 2, ONLY THROUGH DOOR (IN THE SAME DIRECTION AS DISTANT 1)
         for(int k=0;k<list.size();k++) {
             for (int i = 0; i < g.getDoors().size(); i++) {
+                // IF THESE HAVE A DOOR
                 if ((list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken()
                         && list.get(k).getX() == g.getDoors().get(i).getCoordinates1().getX()
                         && list.get(k).getY() == g.getDoors().get(i).getCoordinates1().getY()) ||
                         (list.get(k).getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken()
                                 && list.get(k).getX() == g.getDoors().get(i).getCoordinates2().getX()
                                 && list.get(k).getY() == g.getDoors().get(i).getCoordinates2().getY())){
+
+                    // IF THE DOOR HAS A CERTAIN DIRECTION
 
                     // PASSAGE BETWEEN ROOM1 TO ROOM2
                     // 1 -> NS
@@ -152,28 +164,24 @@ public class CoordinatesWithRoom extends Coordinates {
                 }
             }
         }
+
+
+        // ADDS CELLS IF DISTANT 2, SAME DIRECTION
+        if(x+2<=c.getRoom().getRoomSizeX())
+            list.add(new CoordinatesWithRoom(x+1,y,c.getRoom()));
+
+        if(y+2<=c.getRoom().getRoomSizeY())
+            list.add(new CoordinatesWithRoom(x,y+1,c.getRoom()));
+
+        if(x-2>0)
+            list.add(new CoordinatesWithRoom(x-1,y,c.getRoom()));
+
+        if(y-2>0)
+            list.add(new CoordinatesWithRoom(x,y-1,c.getRoom()));
+
+
         return list;
     }
-
-/*
-    public boolean hasInsideWall(CoordinatesWithRoom c1, GameBoard g){
-        // SE HA UNA PORTA CON UNA STESSA COORDINATA E PORTA ALLORA Sì
-        for(int i=0;i<g.getDoors().size();i++){
-
-
-
-        }
-    }
-
-    // NUOVO METODO CHE RETITUISCE LA PORTA SULLA STESSA LINEA DELLA CELLA
-    //POI TROVO LA SUA DIREZIONE
-
-    public CoordinatesWithRoom cellThroughWall(){
-        // SE Sì
-
-
-    }
-    */
 
 }
 

@@ -17,6 +17,12 @@ public class Map {
     protected int[] doorR2;
     protected int[] doorX2;
     protected int[] doorY2;
+    protected int[] wallR1;
+    protected int[] wallX1;
+    protected int[] wallY1;
+    protected int[] wallR2;
+    protected int[] wallX2;
+    protected int[] wallY2;
 
     public Map() {
 

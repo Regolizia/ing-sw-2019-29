@@ -19,6 +19,15 @@ public class MapTwo extends Map{
         doorR2 = new int[]{0,3,2,2,3,4,3};
         doorX2 = new int[]{1,1,1,2,2,1,3};
         doorY2 = new int[]{1,1,1,1,1,1,1};
+        wallR1 = new int[]{1,2};
+        wallX1 = new int[]{1,2};
+        wallY1 = new int[]{2,1};
+        wallR2 = new int[]{2,3};
+        wallX2 = new int[]{1,3};
+        wallY2 = new int[]{1,1};
+
+        //TODO CREATE WALLS
+
 
         if (m.equals(DEATHMATCH)) {
             setGameBoard(new DeathmatchBoard());
@@ -66,6 +75,11 @@ public class MapTwo extends Map{
 
         }
 
+        for(int n=0;n<wallR1.length;n++) {
+
+            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n]));
+
+        }
     }
 
 

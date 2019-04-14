@@ -20,53 +20,13 @@ public class Flamethrower extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
-
-        // COORDINATES OF MY CELL
-        int x = c.getX();
-        int y = c.getY();
-
-        // ADDS CELLS IF CELL HAS CELLS NEARBY
-        if(x+1<=c.getRoom().getRoomSizeX())
-            list.add(new CoordinatesWithRoom(x+1,y,c.getRoom()));
-
-        if(y+1<=c.getRoom().getRoomSizeY())
-            list.add(new CoordinatesWithRoom(x,y+1,c.getRoom()));
-
-        if(x-1>0)
-            list.add(new CoordinatesWithRoom(x-1,y,c.getRoom()));
-
-        if(y-1>0)
-            list.add(new CoordinatesWithRoom(x,y-1,c.getRoom()));
-
-        //  ADDS CELLS IF CELL HAS DOORS
-            for(int i=0;i<g.getDoors().size();i++) {
-                if ((c.getRoom().getToken() == g.getDoors().get(i).getRoom1().getToken() && c.getX() == g.getDoors().get(i).getCoordinates1().getX() && c.getY() == g.getDoors().get(i).getCoordinates1().getY()))
-                    list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(), g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getRoom2()));
+        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
 
 
-                if ((c.getRoom().getToken() == g.getDoors().get(i).getRoom2().getToken() && c.getX() == g.getDoors().get(i).getCoordinates2().getX() && c.getY() == g.getDoors().get(i).getCoordinates2().getY()))
-                    list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates1().getX(), g.getDoors().get(i).getCoordinates1().getY(), g.getDoors().get(i).getRoom1()));
-            }
-
-            en.setNumber(list.size());   // I KNOW HOW MANY CELLS ARE 1 DISTANT
+        en.setNumber(list.size());   // I KNOW HOW MANY CELLS ARE 1 DISTANT
             // I'LL NEED THIS INFO LATER WHEN I HAVE TO CHOOSE THE CELL
 
-        list = c.addCellDistant2ThroughDoor(list,c,g);
-
-
-        // ADDS CELLS IF DISTANT 2, SAME DIRECTION
-        if(x+2<=c.getRoom().getRoomSizeX())
-            list.add(new CoordinatesWithRoom(x+1,y,c.getRoom()));
-
-        if(y+2<=c.getRoom().getRoomSizeY())
-            list.add(new CoordinatesWithRoom(x,y+1,c.getRoom()));
-
-        if(x-2>0)
-            list.add(new CoordinatesWithRoom(x-1,y,c.getRoom()));
-
-        if(y-2>0)
-            list.add(new CoordinatesWithRoom(x,y-1,c.getRoom()));
+        list = c.twoTilesDistantSameDirection(list,c,g);
 
         return list;
     }

@@ -18,13 +18,20 @@ public class MapFour extends Map {
         doorR2 = new int[]{1,4,3,5,2,4,3,3};
         doorX2 = new int[]{1,1,1,1,1,1,1,2};
         doorY2 = new int[]{1,1,1,1,1,1,2,1};
+        wallR1 = new int[]{1,3};
+        wallX1 = new int[]{1,1};
+        wallY1 = new int[]{2,1};
+        wallR2 = new int[]{4,4};
+        wallX2 = new int[]{1,1};
+        wallY2 = new int[]{1,1};
+
 
         if (m.equals(DEATHMATCH)) {
             setGameBoard(new DeathmatchBoard());
 
             for(int i=0;i<arrayX.length;i++) {
 
-                //BLUE (getRoom(0))
+                // BLUE (getRoom(0))
                 // RED  (getRoom(1))
                 // WHITE  (getRoom(2))
                 // YELLOW  (getRoom(3))
@@ -65,6 +72,12 @@ public class MapFour extends Map {
         for(int k=0;k<doorR1.length;k++) {
 
             getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k]));
+
+        }
+
+        for(int n=0;n<wallR1.length;n++) {
+
+            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n]));
 
         }
     }
