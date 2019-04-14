@@ -45,9 +45,6 @@ public class Player {
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
-        System.out.println("What's your name?");
-        this.name=scan.nextLine();
-
     }
 
     // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
@@ -261,24 +258,6 @@ public class Player {
     public int getCubeYellow(Player player){return ammoBox[3];}
     public int getCubeBlue(Player player){return ammoBox[1];}
 
-
-    public LinkedList<CoordinatesWithRoom> chooseTargets(WeaponCard w,Player p,CoordinatesWithRoom c, EffectAndNumber effectList,GameBoard g){
-       boolean end =false;
-       int i=0;
-        LinkedList<CoordinatesWithRoom> targetCell=null;
-        while(w.getPossibleTargetCells(c,effectList,g).get(i)!=null){
-            System.out.println("Do you want to shoot this player:"+/*.getPlayerNameWithCoordinates(c);*/"\n" +
-                    "digit\n 1:yes\n2:no");
-            resp=scan.nextInt();
-            if(resp==2)
-                i++;
-            if(resp==1)
-            {targetCell.add(w.getPossibleTargetCells(c,effectList,g).get(i));i++;}
-            //if yes added to target list
-
-        }
-        return targetCell;
-    }
     // MOVES PLAYER TO A CELL
     public void moveToThisSquare(CoordinatesWithRoom c){
         setPlayerPosition(c.getX(),c.getY(),c.getRoom());

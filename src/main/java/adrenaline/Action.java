@@ -1,9 +1,6 @@
 package adrenaline;
 
 
-
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_BLUEPeer;
-
 import java.util.LinkedList;
 //import java.util.Scanner;
 
@@ -111,6 +108,7 @@ GameBoard g=new GameBoard();
         LinkedList<Object> targets = new LinkedList<>();
 
 
+/*
         //if true the player has paid the base/alternative effect and can shoot or buy optional effect
         if(checkBasePayment(w,p)==false)
             return; //if false the player can't shoot
@@ -130,6 +128,7 @@ GameBoard g=new GameBoard();
             //targets=w.getPossibleTargetCells(c,effectsList.get(0),g.getGameboard()); todo choose targets
             }
             return;}
+*/
 
 
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
@@ -192,7 +191,12 @@ GameBoard g=new GameBoard();
 
     /*todo frenzyShoot frenzyRun frenzyGrab*/
 
-    public boolean checkBasePayment(WeaponCard w,Player p){
+
+
+    ////////////////////////////////////////////////////////////////////
+    // RIPETO, NON CI DEVONO ESSERE SCANF QUI
+    ////
+    /*public boolean checkBasePayment(WeaponCard w,Player p){
        boolean response=false;
 
        int indexList=0;
@@ -243,5 +247,5 @@ GameBoard g=new GameBoard();
     public void setActionSelected(ActionType a){
         this.actionSelected = a;
     }
-
+*/
 }
