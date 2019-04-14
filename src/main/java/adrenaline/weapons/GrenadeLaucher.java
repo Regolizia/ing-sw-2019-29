@@ -68,6 +68,7 @@ public class GrenadeLaucher extends WeaponCard {
                         ((Player) targetList.get(indexTarget)).addDamageToTrack(p,damage);
                     }
                     else {/*damage spawnpoint;*/}
+                    indexTarget++;
                 }
                 break;
 
