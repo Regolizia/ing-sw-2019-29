@@ -53,19 +53,29 @@ public class RocketLaucher extends WeaponCard {
             case BASE:  // 2 DAMAGE, 1 TARGET, THEN YOU MAY MOVE IT 1 SQUARE (MOVE TARGET AFTER OP2 IF OP2 IS IN EFFECTSLIST)
                 if (targetList.get(0) instanceof Player) {
                     int i = ((Player) targetList.get(0)).marksByShooter(p);
-                    i++;
+                    i=i+2; //2 damage
                     ((Player) targetList.get(0)).addDamageToTrack(p, i);
                 } else {
                     // DAMAGE SPAWNPOINT
                 }
                 break;
 
-            case OP1:   // MOVE 1-2 SQUARES (TODO, DELETE THESE CASES WITH MOVES, PUT THEM SOMEWHERE)
+            case OP1:   // MOVE 1-2 SQUARES (TODO, DELETE THESE CASES WITH MOVES, PUT THEM SOMEWHERE) we can put them in base and check with if
+                //to get the paid option ?? like in Sledgehammer?? REMEMBER i've to buy the base if i want to buy the option
                 break;
 
             case OP2:   // 1 DAMAGE, EVERY TARGET IN TARGET'S FIRST SQUARE (ALSO THE TARGET)
-
-                for (int j = 0; j < targetList.size(); j++) {
+                int i=0;
+                while(targetList.get(i)!=null)
+                {
+                    if (targetList.get(i) instanceof Player) {
+                  int damage=((Player) targetList.get(i)).marksByShooter(p);
+                  damage++;
+                    ((Player) targetList.get(i)).addDamageToTrack(p, damage);
+                    i++;}
+                    else {}//targetDamage??
+                }
+               /* for (int j = 0; j < targetList.size(); j++) {
                     if (targetList.get(j) instanceof Player) {
                         int i = ((Player) targetList.get(j)).marksByShooter(p);
                         i++;
@@ -74,8 +84,8 @@ public class RocketLaucher extends WeaponCard {
 
                         break;
 
-                    }
-                }
+                    }*/
+
                 break;
         }
     }
