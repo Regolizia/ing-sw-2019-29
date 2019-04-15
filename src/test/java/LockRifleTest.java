@@ -1,8 +1,9 @@
 import adrenaline.*;
-import adrenaline.weapons.Cyberblade;
 import adrenaline.weapons.LockRifle;
 import org.junit.jupiter.api.Test;
 
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedList;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
@@ -29,7 +30,7 @@ public class LockRifleTest {
         m.addPlayer(new Player(c3, Figure.PlayerColor.PURPLE));
         m.addPlayer(new Player(c4, Figure.PlayerColor.GRAY));
 
-        m.addPlayer(new Player(c5, Figure.PlayerColor.YELLOW));
+        m.addPlayer(new Player(c5, Figure.PlayerColor.YELLOW)); // SHOOTER
 
         m.getPlayers().get(4).getHand().add(new LockRifle());
         EffectAndNumber enBase = new EffectAndNumber(AmmoCube.Effect.BASE,0);
@@ -44,7 +45,7 @@ public class LockRifleTest {
             System.out.println(o);
         }
 
-        // I CHOOSE BLUE TARGET
+        // I CHOOSE BLUE TARGET, BASE EFFECT
         LinkedList<Object> temp = new LinkedList<>();
         temp.add(targets.get(1));
 
@@ -53,7 +54,8 @@ public class LockRifleTest {
         m.getPlayers().get(4).getHand().get(0).applyDamage(temp,m.getPlayers().get(4),enBase);
         System.out.printf("\nDamage by shooter: "+m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));
         System.out.printf("\nMarks by shooter: "+m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4)));
-
+        assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4))==2);
+        assertTrue(m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4))==1);
 
         // IF I USE OP1 ON GREEN TARGET
         temp.clear();
@@ -64,6 +66,8 @@ public class LockRifleTest {
         m.getPlayers().get(4).getHand().get(0).applyDamage(temp,m.getPlayers().get(4),enOp1);
         System.out.printf("\nDamage by shooter: "+m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)));
         System.out.printf("\nMarks by shooter: "+m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4)));
+        assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==0);
+        assertTrue(m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4))==1);
 
 
 
