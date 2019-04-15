@@ -53,7 +53,7 @@ public class RocketLaucher extends WeaponCard {
             case BASE:  // 2 DAMAGE, 1 TARGET, THEN YOU MAY MOVE IT 1 SQUARE (MOVE TARGET AFTER OP2 IF OP2 IS IN EFFECTSLIST)
                 if (targetList.get(0) instanceof Player) {
                     int i = ((Player) targetList.get(0)).marksByShooter(p);
-                    i++;
+                    i=i+2;
                     ((Player) targetList.get(0)).addDamageToTrack(p, i);
                 } else {
                     // DAMAGE SPAWNPOINT
@@ -65,11 +65,11 @@ public class RocketLaucher extends WeaponCard {
 
             case OP2:   // 1 DAMAGE, EVERY TARGET IN TARGET'S FIRST SQUARE (ALSO THE TARGET)
 
-                for (int j = 0; j < targetList.size(); j++) {
-                    if (targetList.get(j) instanceof Player) {
-                        int i = ((Player) targetList.get(j)).marksByShooter(p);
+                for (Object o : targetList) {
+                    if (o instanceof Player) {
+                        int i = ((Player) o).marksByShooter(p);
                         i++;
-                        ((Player) targetList.get(j)).addDamageToTrack(p, i);
+                        ((Player) o).addDamageToTrack(p, i);
 
 
                         break;

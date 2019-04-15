@@ -41,11 +41,11 @@ public class Shockwave extends WeaponCard {
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, UP TO 3 TARGETS, DIFFERENT SQUARES
             case ALT:   // 1 DAMAGE, EVERY TARGET 1 MOVE AWAY
-                for (int j = 0; j < targetList.size(); j++) {
-                    if (targetList.get(j) instanceof Player) {
-                        int i = ((Player) targetList.get(j)).marksByShooter(p);
+                for (Object o : targetList) {
+                    if (o instanceof Player) {
+                        int i = ((Player) o).marksByShooter(p);
                         i++;
-                        ((Player) targetList.get(j)).addDamageToTrack(p, i);
+                        ((Player) o).addDamageToTrack(p, i);
 
                         break;
 

@@ -48,18 +48,16 @@ public class Railgun extends WeaponCard {
                 break;
 
             case ALT:   // 2 DAMAGE, 1-2 TARGETS
-                for (int j = 0; j < targetList.size(); j++) {
-                    if (targetList.get(j) instanceof Player) {
-                        int i = ((Player) targetList.get(j)).marksByShooter(p);
-                        i = i+1;
-                        ((Player) targetList.get(j)).addDamageToTrack(p, i);
-                    }
-                    else {
+                for (Object o : targetList) {
+                    if (o instanceof Player) {
+                        int i = ((Player) o).marksByShooter(p);
+                        i = i + 1;
+                        ((Player) o).addDamageToTrack(p, i);
+                    } else {
                         // DAMAGE SPAWNPOINT
                     }
-                    break;
-                    }
+
+                }break;
                 }
         }
     }
-}

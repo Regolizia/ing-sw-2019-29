@@ -41,6 +41,7 @@ public class Cyberblade extends WeaponCard {
 
         switch (e.getEffect()) {
             case BASE:  // 2 DAMAGE, 1 TARGET
+            case OP2:   // 2 DAMAGE, 1 DIFFERENT TARGET
                 if(targetList.get(0) instanceof Player) {
                     int i =((Player) targetList.get(0)).marksByShooter(p);
                     i=i+2;
@@ -54,10 +55,6 @@ public class Cyberblade extends WeaponCard {
 
             case OP1:   // MOVE 1-2 SQUARES, TODO REMOVE FROM HERE
                 break;
-
-            case OP2:   // 2 DAMAGE, 1 DIFFERENT TARGET
-                break;
-
 
 
         }

@@ -33,11 +33,11 @@ public class MachineGun extends WeaponCard {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1/2 TARGET
-                for(int k=0;k<targetList.size();k++) {
+                for (Object o : targetList) {
                     if (targetList.get(0) instanceof Player) {
                         int i = ((Player) targetList.get(0)).marksByShooter(p);
                         i++;
-                        ((Player) targetList.get(k)).addDamageToTrack(p, i);
+                        ((Player) o).addDamageToTrack(p, i);
 
                     } else {
                         // DAMAGE SPAWNPOINT

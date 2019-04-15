@@ -89,10 +89,11 @@ public class PowerGlove extends WeaponCard {
                     } else {
                         // DAMAGE SPAWNPOINT
                     }
-                    break;
+
 
 
                 }
+                break;
         }
     }
 }
