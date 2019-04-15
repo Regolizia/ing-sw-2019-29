@@ -47,7 +47,10 @@ public class Player {
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
     }
 
-    // TODO IMPLEMENT PLAYER(COORDINATES) TO RESPAWNPLAYER ON SPAWNPOINT
+    @Override
+    public String toString() {
+        return "My name is x and my color is " + this.color;
+    }
 
     public Figure.PlayerColor getColor() {
         return color;
@@ -187,6 +190,18 @@ public class Player {
         }
 
     }
+
+    // COUNTS HOW MANY DAMAGES BY SHOOTER TO TARGET
+    public int damageByShooter(Player shooter){
+        int x=0;
+        for(int i=0;i<track.length;i++){
+            if(track[i]==shooter.getColor()){
+                x++;
+            }
+        }
+        return x;
+    }
+
 
     // COUNTS HOW MANY MARKS GIVEN BY SHOOTER TO PLAYER
     public int marksByShooter(Player shooter){

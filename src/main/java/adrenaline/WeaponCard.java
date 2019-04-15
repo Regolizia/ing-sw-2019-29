@@ -77,14 +77,19 @@ public class WeaponCard extends Card{
 
         // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
            for(int k=0;k<m.getPlayers().size();k++) {
-               for(int j=0;j<list.size();j++) {
-                if(m.getPlayers().get(k).getPlayerRoom()==list.get(j).getRoom() && m.getPlayers().get(k).getPlayerPositionX()==list.get(j).getX() && m.getPlayers().get(k).getPlayerPositionY()==list.get(j).getY()) {
-                    targetList.add(m.getPlayers().get(k));
-                    break;
-                }
-            }
+               for (CoordinatesWithRoom coordinatesWithRoom : list) {
+                   if (m.getPlayers().get(k).getPlayerRoom() == coordinatesWithRoom.getRoom() &&
+                           m.getPlayers().get(k).getPlayerPositionX() == coordinatesWithRoom.getX() &&
+                           m.getPlayers().get(k).getPlayerPositionY() == coordinatesWithRoom.getY()) {
+                       targetList.add(m.getPlayers().get(k));
+                       break;
+                   }
+               }
         }
         // TODO ADD POSSIBLE SPAWNPOINTS TO TARGETLIST
+
+        targetList.remove(p);
+
         return targetList;
     }
 
