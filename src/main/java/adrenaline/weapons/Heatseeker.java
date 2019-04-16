@@ -27,8 +27,15 @@ public class Heatseeker extends WeaponCard {
 
         // TODO ALL PLAYERS AND SPAWNPOINTS(IF DOMINATION) TO LISTOTHERS
 
-        // TODO CHECK IF IT WORKS
-        listOthers.removeAll(listOne);
+        listOthers.addAll(m.getPlayers());
+        for(int k=0;k<listOthers.size();k++){
+            for(Object o: listOne){
+                if(((Player)o).getColor()==((Player)listOthers.get(k)).getColor()){
+                    listOthers.remove(k);
+                }
+            }
+        }
+        listOthers.remove(p);
 
         return listOthers;
     }

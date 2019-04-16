@@ -45,8 +45,8 @@ public class WeaponCard extends Card{
               c.getY()==g.getDoors().get(k).getCoordinates1().getY()&&
               c.getRoom().getToken()==g.getDoors().get(k).getCoordinates1().getRoom().getToken()){
 
-               for(int i=1;i<=x;i++){
-                   for(int j=1;j<=y;j++){
+               for(int i=1;i<=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeX();i++){
+                   for(int j=1;j<=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeY();j++){
                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates2().getRoom()));
                    }
                }
@@ -56,8 +56,8 @@ public class WeaponCard extends Card{
               c.getY()==g.getDoors().get(k).getCoordinates2().getY()&&
               c.getRoom().getToken()==g.getDoors().get(k).getCoordinates2().getRoom().getToken()){
 
-                for(int i=1;i<=x;i++){
-                    for(int j=1;j<=y;j++){
+                for(int i=1;i<=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeX();i++){
+                    for(int j=1;j<=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeY();j++){
                         list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates1().getRoom()));
                     }
                 }
