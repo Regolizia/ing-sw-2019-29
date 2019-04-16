@@ -41,25 +41,50 @@ public class Flamethrower extends WeaponCard {
         //IT'S EASIER THIS WAY
 
         LinkedList<Object> targets = new LinkedList<>();
-        int targetsOneDistant = 0;
+        LinkedList<Object> targets1 = new LinkedList<>();
+        LinkedList<Object> targets2 = new LinkedList<>();
+        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
+        int x = 0;
 
-        if(en.getEffect()== AmmoCube.Effect.BASE){
-
+        if (en.getEffect() == AmmoCube.Effect.BASE) {
+  /*
         // MAKE PLAYER CHOOSE WHO IN FIRST SQUARE TO DAMAGE ( ...list.get(0)...)
 
                 if(list.get(1)!=null){
                     // MAKE PLAYER CHOOSE WHO IN SECOND SQUARE TO DAMAGE ( ...list.get(1)...)
                 }
-
-
+*/
+            targets = super.fromCellsToTargets(list, c, g, p, m, en);
             // TODO ADD POSSIBLE SPAWNPOINTS TO TARGETLIST
 
-         return targets;
+            return targets;
+        } else {  // ALT EFFECT, ADD EVERYONE
+
+            targets = super.fromCellsToTargets(list, c, g, p, m, en);
+            for (Object o : targets) {
+             for(CoordinatesWithRoom c2 : listOne) {
+                 CoordinatesWithRoom c1 = new CoordinatesWithRoom(((Player) o).getPlayerPositionX(),
+                         ((Player) o).getPlayerPositionY(), ((Player) o).getPlayerRoom());
+                 if (c1.getX()==c2.getX()&&c1.getY()==c2.getY()&&c1.getRoom().getToken()==c2.getRoom().getToken()) {
+                            x++;                //NUMBER OF TARGETS DISTANT 1
+                     targets1.add(o);
+                 } else {
+                     targets2.add(o);
+                 }
+             }
+            }
+
+            targets1.addAll(targets2);
+
+            en.setNumber(x);    // USED WHEN WE APPLY DAMAGE
+            return targets1;
         }
-        else {  // ALT EFFECT, ADD EVERYONE
+    }
 
 
-            // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
+
+
+      /*      // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
             for(int k=0;k<m.getPlayers().size();k++) {
                 for(int j=0;j<list.size();j++) {
                     if(m.getPlayers().get(k).getPlayerRoom()==list.get(j).getRoom() &&
@@ -70,15 +95,8 @@ public class Flamethrower extends WeaponCard {
                         }
 
                         targets.add(m.getPlayers().get(k));
-                        break;
-                    }
-                }
-            }
+                        break;*/
 
-            en.setNumber(targetsOneDistant);    // USED WHEN WE APPLY DAMAGE
-            return targets;
-        }
-    }
 
 
     @Override

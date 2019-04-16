@@ -171,13 +171,6 @@ public class CoordinatesWithRoom extends Coordinates {
 
     // C PREVIOUS CELL, C1 THIS CELL, C2 NEXT CELL
     public CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g){
-/*
-
-        System.out.printf("\ndirection c c1\n"+g.getDirection(c,c1));
-        System.out.printf("\nc\n"+c.getX()+", "+c.getY());
-        System.out.printf("\nc1\n"+c1.getX()+", "+c1.getY());
-*/
-
 
                         if ((c1.getX() + 1) <= c1.getRoom().getRoomSizeX() && g.getDirection(c, c1) == WE) {
                             return (new CoordinatesWithRoom(c1.getX() + 1, c1.getY(), c1.getRoom()));
