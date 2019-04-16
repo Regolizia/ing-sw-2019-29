@@ -1,5 +1,6 @@
 package adrenaline;
 
+import static adrenaline.Door.Direction.*;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 // MapThree is the second little map in the rules
@@ -18,6 +19,7 @@ public class MapThree extends Map {
         doorR2 = new int[]{1, 4, 3, 2, 3, 3};
         doorX2 = new int[]{1, 1, 1, 1, 1, 2};
         doorY2 = new int[]{1, 1, 1, 1, 2, 1};
+        doorDir = new Door.Direction[]{NS, WE, NS, NS, WE, NS};
         wallR1 = new int[]{0,1};
         wallX1 = new int[]{2,2};
         wallY1 = new int[]{1,1};
@@ -66,7 +68,7 @@ public class MapThree extends Map {
         }
         for (int k = 0; k < doorR1.length; k++) {
 
-            getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k]));
+            getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k],doorDir[k]));
 
         }
 

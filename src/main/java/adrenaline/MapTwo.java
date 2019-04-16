@@ -1,6 +1,7 @@
 package adrenaline;
 
 
+import static adrenaline.Door.Direction.*;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 // MapTwo is the big map in the rules near the little maps
@@ -19,14 +20,15 @@ public class MapTwo extends Map{
         doorR2 = new int[]{0,3,2,2,3,4,3};
         doorX2 = new int[]{1,1,1,2,2,1,3};
         doorY2 = new int[]{1,1,1,1,1,1,1};
+        doorDir = new Door.Direction[]{WE, NS, NS, NS, NS, WE, EW};
         wallR1 = new int[]{1,2};
         wallX1 = new int[]{1,2};
         wallY1 = new int[]{2,1};
         wallR2 = new int[]{2,3};
         wallX2 = new int[]{1,3};
         wallY2 = new int[]{1,1};
+        //TODO ADD DIR
 
-        //TODO CREATE WALLS
 
 
         if (m.equals(DEATHMATCH)) {
@@ -71,7 +73,7 @@ public class MapTwo extends Map{
         }
         for(int k=0;k<doorR1.length;k++) {
 
-            getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k]));
+            getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k],doorDir[k]));
 
         }
 

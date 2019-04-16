@@ -1,6 +1,8 @@
 import adrenaline.*;
 import org.junit.jupiter.api.Test;
 
+import static adrenaline.Door.*;
+
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
     public class GameBoardTestWithMapFour {
@@ -9,6 +11,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
         public void testConstructor() {
 
             Map map = new MapFour(DEATHMATCH);
+
 
         }
 

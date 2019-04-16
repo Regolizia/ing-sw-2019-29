@@ -20,13 +20,15 @@ public class Flamethrower extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> temp = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
 
 
-        en.setNumber(list.size());   // I KNOW HOW MANY CELLS ARE 1 DISTANT
+        en.setNumber(temp.size());   // I KNOW HOW MANY CELLS ARE 1 DISTANT
             // I'LL NEED THIS INFO LATER WHEN I HAVE TO CHOOSE THE CELL
 
-        list = c.twoTilesDistantSameDirection(list,c,g);
+        list = c.tilesSameDirection(2,g);
+        list.remove(c);
 
         return list;
     }

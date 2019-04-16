@@ -20,7 +20,7 @@ public class Railgun extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        return c.tilesSameDirection(c, g);   // IGNORING ALSO WALLS
+        return c.tilesSameDirectionWalls(0, g);   // IGNORING ALSO WALLS
     }
 
     @Override

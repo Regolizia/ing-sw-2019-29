@@ -30,16 +30,16 @@ public class Furnace extends WeaponCard {
             for (int k = 0; k < g.getDoors().size(); k++) {
                 if (c.getX() == g.getDoors().get(k).getCoordinates1().getX() &&
                         c.getY() == g.getDoors().get(k).getCoordinates1().getY() &&
-                        c.getRoom().getToken() == g.getDoors().get(k).getRoom1().getToken()) {
+                        c.getRoom().getToken() == g.getDoors().get(k).getCoordinates1().getRoom().getToken()) {
 
-                    possibleRooms.add(g.getDoors().get(k).getRoom2());
+                    possibleRooms.add(g.getDoors().get(k).getCoordinates2().getRoom());
                 }
 
                 if (c.getX() == g.getDoors().get(k).getCoordinates2().getX() &&
                         c.getY() == g.getDoors().get(k).getCoordinates2().getY() &&
-                        c.getRoom().getToken() == g.getDoors().get(k).getRoom2().getToken()) {
+                        c.getRoom().getToken() == g.getDoors().get(k).getCoordinates2().getRoom().getToken()) {
 
-                    possibleRooms.add(g.getDoors().get(k).getRoom1());
+                    possibleRooms.add(g.getDoors().get(k).getCoordinates1().getRoom());
 
                 }
             }

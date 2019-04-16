@@ -43,22 +43,22 @@ public class WeaponCard extends Card{
         for(int k=0;k<g.getDoors().size();k++){
            if(c.getX()==g.getDoors().get(k).getCoordinates1().getX()&&
               c.getY()==g.getDoors().get(k).getCoordinates1().getY()&&
-              c.getRoom().getToken()==g.getDoors().get(k).getRoom1().getToken()){
+              c.getRoom().getToken()==g.getDoors().get(k).getCoordinates1().getRoom().getToken()){
 
                for(int i=1;i<=x;i++){
                    for(int j=1;j<=y;j++){
-                       list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getRoom2()));
+                       list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates2().getRoom()));
                    }
                }
            }
 
             if(c.getX()==g.getDoors().get(k).getCoordinates2().getX()&&
               c.getY()==g.getDoors().get(k).getCoordinates2().getY()&&
-              c.getRoom().getToken()==g.getDoors().get(k).getRoom2().getToken()){
+              c.getRoom().getToken()==g.getDoors().get(k).getCoordinates2().getRoom().getToken()){
 
                 for(int i=1;i<=x;i++){
                     for(int j=1;j<=y;j++){
-                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getRoom1()));
+                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates1().getRoom()));
                     }
                 }
 
