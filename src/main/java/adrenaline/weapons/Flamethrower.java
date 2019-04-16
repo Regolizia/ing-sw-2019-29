@@ -58,23 +58,7 @@ public class Flamethrower extends WeaponCard {
             targets = super.fromCellsToTargets(list, c, g, p, m, en);
      targets.removeAll(targets1);
      targets1.addAll(targets);
-//
-//        for(Player p1 : m.getPlayers()) {
-//            for(Object o : targets1) {
-//                if(((Player)o).getColor()==p1.getColor()) {
-//                    targets.add(p1);
-//                    break;
-//                }
-//            }
-//        }
-//        for(Player p1 : m.getPlayers()) {
-//            for(Object o : targets2) {
-//                if(((Player)o).getColor()==p1.getColor()) {
-//                    targets.add(p1);
-//                    break;
-//                }
-//            }
-//        }
+
 
             System.out.println(en.getNumber());
             return targets1;
