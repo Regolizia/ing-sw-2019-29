@@ -59,6 +59,9 @@ public class Player {
     public Figure.PlayerColor[] getTrack() {
         return track;
     }
+    public Figure.PlayerColor[] getMarks() {
+        return marks;
+    }
 
 
     public int checkDamage() {
@@ -227,26 +230,27 @@ public class Player {
                 x=i;
                 break;
             }
-            else{
-                x=42;
-                break;
-            }
+
         }
         return x;
     }
 
+
+
+
+
     // ADDS i NUMBER OF MARKS BY SHOOTER TO PLAYER
     public void addMarks(Player shooter, int i){
-            for (int x=i; x> 0; x--) {
+            for (int x=this.markEmptyCell(); x<marks.length && i>0; x++) {
                 if(canAddMark(shooter)){ // IF SHOOTER HAS LESS THEN 3 MARKS
-                    this.marks[markEmptyCell()] = shooter.getColor();
+                    this.marks[x] = shooter.getColor();
                 }
                 else{
                     break;
                 }
+                i--;
             }
     }
-
 
 
 

@@ -21,13 +21,27 @@ public class Hellion extends WeaponCard {
     // NOT YOUR SQUARE
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList list = super.getPossibleTargetCells(c, en, g);
-        list = c.removeThisCell(list);
+        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
+        LinkedList<CoordinatesWithRoom> listOne = new LinkedList();
+        listOne = c.oneTileDistant(g);
+        listOne.add(c);
+
+        for(int k=list.size()-1;k>=0;k--){
+            for(CoordinatesWithRoom c2: listOne){
+                if(list.get(k).getX()==c2.getX() &&
+                        list.get(k).getY()==c2.getY() &&
+                        list.get(k).getRoom().getToken()==c2.getRoom().getToken()){
+                    list.remove(k);
+                }
+            }
+        }
+
         return list;
     }
 
     @Override
     public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+
         LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
 
         // GET JUST ONE TARGET OUT OF FROMCELLSTOTARGETS
@@ -65,13 +79,15 @@ public class Hellion extends WeaponCard {
                 for(int j=0;j<targetList.size();j++) {
                     if (targetList.get(j) instanceof Player) {
                         if(j==0) {
-                            int i = ((Player) targetList.get(0)).marksByShooter(p);
+                            int i = ((Player) targetList.get(j)).marksByShooter(p);
                             i++;
-                            ((Player) targetList.get(0)).addDamageToTrack(p, i);
+                            ((Player) targetList.get(j)).addDamageToTrack(p, i);
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT){
-                            ((Player) targetList.get(0)).addMarks(p,1);
+                            ((Player) targetList.get(j)).addMarks(p,1);
                         }
+
+
                         ((Player) targetList.get(j)).addMarks(p,1);
 
                     } else {
