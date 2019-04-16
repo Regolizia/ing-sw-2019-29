@@ -42,7 +42,7 @@ public class Electroscythe extends WeaponCard {
                         }
                         i++;
 
-                        ((Player) targetList.get(0)).addDamageToTrack(p, i);
+                        ((Player)o).addDamageToTrack(p, i);
 
 
                     } else {

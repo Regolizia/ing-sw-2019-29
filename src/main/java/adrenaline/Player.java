@@ -185,7 +185,7 @@ public class Player {
     //  ADDS i NUMBER OF OLDMARKS AND DAMAGES BY SHOOTER TO PLAYER
     public void addDamageToTrack(Player shooter, int i){
         for(int x = this.trackEmptyCell(); x<track.length && i>0; x++){
-            this.track[i] = shooter.getColor();
+            this.track[x] = shooter.getColor();
             i--;
         }
 
