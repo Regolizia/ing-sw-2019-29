@@ -78,13 +78,13 @@ public class Furnace extends WeaponCard {
             case ALT:   // 1 DAMAGE, 1 MARK, EVERY PLAYER
                 for (Object o : targetList) {
                     if (o instanceof Player) {
-                        int i = ((Player) targetList.get(0)).marksByShooter(p);
+                        int i = ((Player)o).marksByShooter(p);
                         i++;
 
-                        ((Player) targetList.get(0)).addDamageToTrack(p, i);
+                        ((Player)o).addDamageToTrack(p, i);
 
                         if (e.getEffect() == AmmoCube.Effect.ALT) {
-                            ((Player) targetList.get(0)).addMarks(p, 1);
+                            ((Player)o).addMarks(p, 1);
 
                         }
                     } else {
