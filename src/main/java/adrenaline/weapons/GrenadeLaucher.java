@@ -46,7 +46,7 @@ public class GrenadeLaucher extends WeaponCard {
             case BASE:  // 1 DAMAGE, 1 TARGET, THEN CAN MOVE IT
                 if(targetList.get(0) instanceof Player) {
                     int i =((Player) targetList.get(0)).marksByShooter(p);
-                    i=i+3;
+                    i++;
                     ((Player) targetList.get(0)).addDamageToTrack(p,i);
 
                 }
