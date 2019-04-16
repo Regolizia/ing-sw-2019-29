@@ -74,7 +74,6 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 
             // IF I USE ALT ON 1,2 R3 AND 1,1 R4
-            temp.clear();
             LinkedList<CoordinatesWithRoom> listTwo = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enBase, m.getMapUsed().getGameBoard());
             listTwo.remove(1);
             listTwo.remove(1);
@@ -88,16 +87,20 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
             }
 
 
+            System.out.printf("\nDamage by shooter: " + m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)));
+            System.out.printf("\nDamage by shooter: " + m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));
+            System.out.printf("\nDamage by shooter: " + m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4)));
+            System.out.printf("\nDamage by shooter: " + m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4)));
+
             m.getPlayers().get(4).getHand().get(0).applyDamage(targetsTwo, m.getPlayers().get(4), enAlt);
 
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)));
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4)));
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4)));
-            assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)) == 2);  // FIRST SQUARE
-            assertTrue(m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4)) == 0);
-            assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)) == 1);  // SECOND SQUARE
-            assertTrue(m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4)) == 0);
+            assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)) == 3);  // FIRST SQUARE
+            assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)) == 2);  // SECOND SQUARE
+
         }
 
 

@@ -284,5 +284,9 @@ public class Player {
     public void moveToThisSquare(CoordinatesWithRoom c){
         setPlayerPosition(c.getX(),c.getY(),c.getRoom());
     }
+
+
+
+
 }
 

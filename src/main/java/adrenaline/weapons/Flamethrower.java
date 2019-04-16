@@ -20,12 +20,9 @@ public class Flamethrower extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> temp = c.oneTileDistant(g);
+
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
 
-
-        en.setNumber(temp.size());   // I KNOW HOW MANY CELLS ARE 1 DISTANT
-            // I'LL NEED THIS INFO LATER WHEN I HAVE TO CHOOSE THE CELL
 
         list = c.tilesSameDirection(2,g);
         list.remove(c);
@@ -37,14 +34,12 @@ public class Flamethrower extends WeaponCard {
     public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
 
         //ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
-        // EN.GETNUMBER HAS THE NUMBER OF CELLS 1 DISTANT
-        //IT'S EASIER THIS WAY
 
         LinkedList<Object> targets = new LinkedList<>();
         LinkedList<Object> targets1 = new LinkedList<>();
         LinkedList<Object> targets2 = new LinkedList<>();
         LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
-        int x = 0;
+        en.setNumber(listOne.size());
 
         if (en.getEffect() == AmmoCube.Effect.BASE) {
   /*
@@ -59,45 +54,32 @@ public class Flamethrower extends WeaponCard {
 
             return targets;
         } else {  // ALT EFFECT, ADD EVERYONE
-
+            targets1 = super.fromCellsToTargets(listOne, c, g, p, m, en);
             targets = super.fromCellsToTargets(list, c, g, p, m, en);
-            for (Object o : targets) {
-             for(CoordinatesWithRoom c2 : listOne) {
-                 CoordinatesWithRoom c1 = new CoordinatesWithRoom(((Player) o).getPlayerPositionX(),
-                         ((Player) o).getPlayerPositionY(), ((Player) o).getPlayerRoom());
-                 if (c1.getX()==c2.getX()&&c1.getY()==c2.getY()&&c1.getRoom().getToken()==c2.getRoom().getToken()) {
-                            x++;                //NUMBER OF TARGETS DISTANT 1
-                     targets1.add(o);
-                 } else {
-                     targets2.add(o);
-                 }
-             }
-            }
+     targets.removeAll(targets1);
+     targets1.addAll(targets);
+//
+//        for(Player p1 : m.getPlayers()) {
+//            for(Object o : targets1) {
+//                if(((Player)o).getColor()==p1.getColor()) {
+//                    targets.add(p1);
+//                    break;
+//                }
+//            }
+//        }
+//        for(Player p1 : m.getPlayers()) {
+//            for(Object o : targets2) {
+//                if(((Player)o).getColor()==p1.getColor()) {
+//                    targets.add(p1);
+//                    break;
+//                }
+//            }
+//        }
 
-            targets1.addAll(targets2);
-
-            en.setNumber(x);    // USED WHEN WE APPLY DAMAGE
+            System.out.println(en.getNumber());
             return targets1;
         }
     }
-
-
-
-
-      /*      // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
-            for(int k=0;k<m.getPlayers().size();k++) {
-                for(int j=0;j<list.size();j++) {
-                    if(m.getPlayers().get(k).getPlayerRoom()==list.get(j).getRoom() &&
-                       m.getPlayers().get(k).getPlayerPositionX()==list.get(j).getX() &&
-                       m.getPlayers().get(k).getPlayerPositionY()==list.get(j).getY()) {
-                        if(j<en.getNumber()){
-                           targetsOneDistant++; // TODO CHECK IF SPAWNPOINT
-                        }
-
-                        targets.add(m.getPlayers().get(k));
-                        break;*/
-
-
 
     @Override
     public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
