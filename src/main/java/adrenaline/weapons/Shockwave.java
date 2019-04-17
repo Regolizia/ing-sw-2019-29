@@ -47,11 +47,12 @@ public class Shockwave extends WeaponCard {
                         i++;
                         ((Player) o).addDamageToTrack(p, i);
 
-                        break;
+
 
 
                     }
                 }
+                break;
         }
     }
 }

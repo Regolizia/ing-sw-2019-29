@@ -37,6 +37,8 @@ public class RocketLaucher extends WeaponCard {
 
         } else {   // OP2 (OP1 WON'T CALL THESE METHODS)
 
+            targets = super.fromCellsToTargets(list, c, g, p, m, en); // TO BE REMOVED
+
             // ACTION CLASS GIVES ME THE OLD POSITION IN C
             //SELECT ALL THE PLAYERS IN C, PUT THEM IN TARGETS
             // ALSO ADD OLD TARGET
@@ -60,9 +62,6 @@ public class RocketLaucher extends WeaponCard {
                 }
                 break;
 
-            case OP1:   // MOVE 1-2 SQUARES (TODO, DELETE THESE CASES WITH MOVES, PUT THEM SOMEWHERE)
-                break;
-
             case OP2:   // 1 DAMAGE, EVERY TARGET IN TARGET'S FIRST SQUARE (ALSO THE TARGET)
 
                 for (Object o : targetList) {
@@ -70,9 +69,6 @@ public class RocketLaucher extends WeaponCard {
                         int i = ((Player) o).marksByShooter(p);
                         i++;
                         ((Player) o).addDamageToTrack(p, i);
-
-
-                        break;
 
                     }
                 }

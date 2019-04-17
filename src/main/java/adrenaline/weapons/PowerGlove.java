@@ -20,15 +20,14 @@ public class PowerGlove extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
+        if(en.getEffect()== AmmoCube.Effect.BASE)
+            return c.oneTileDistant(g);
 
-            list.add(c);
-            return list;
-
-            // ALT: SECOND PART
+          else {  // ALT: SECOND PART
             // IF PLAYER'S POSITION DIFFERENT FROM C
             // FIND CELL SAME DIRECTION MOVEMENT (CHECK ALSO DOORS)
-
+            return c.oneTileDistant(g);// REMOVEEEEE
+        }
     }
 
     @Override
@@ -42,20 +41,35 @@ public class PowerGlove extends WeaponCard {
             //TODO MOVE PLAYER THERE
             return targets;
         }
-        else {
-            en.setNumber(1);
+       // else {
+       //     en.setNumber(1);
             // CHOOSE TARGET FIRST SQUARE, REMOVE THE OTHERS
             // ASK IF WANT TO MOVE ONE MORE SQUARE SAME DIRECTION
             // IF SO en.setNumber(2);
             // NEEDED LATER
-            //CHECK IF POSSIBLE
-            //MOVE THERE
-            //LinkedList<CoordinatesWithRoom> list = getPossibleTargetCells(c,en,g);    with new position
-            //THEN CALL THE SUPERMETHOD FROMCELLSTOTARGETS WITH THIS LIST
+            // CHECK IF POSSIBLE
+            // MOVE THERE
+            // original position C0
+            // new position C1
+       /*
+            IF NEXT CELL EXISTS IT'S CALLED C2
+            CoordinatesWithRoom c2;
+             c2.getNextCell(c0,c1,g);
+            PUT IT IN A LIST
+            LinkedList<CoordinatesWithRoom> listOne = new LinkedList<>;
+            listOne.add(c2);
+
+            if(c2.getX()==0 || c2.getY()==0){
+                IT DOESN'T EXIST
+                return empty list
+            }
+                        */
+            //  IF C2 EXISTS
+            //THEN CALL THE SUPERMETHOD FROMCELLSTOTARGETS WITH THIS LIST (TO GET TARGETS)
             //ASK WHICH TARGET, REMOVE THE OTHERS
             return targets;
 
-        }
+      //  }
 
     }
 
@@ -67,10 +81,10 @@ public class PowerGlove extends WeaponCard {
 
                 if(targetList.get(0) instanceof Player) {
                     int i =((Player) targetList.get(0)).marksByShooter(p);
-                    i=i+2;
+                    i++;
                     ((Player) targetList.get(0)).addDamageToTrack(p,i);
 
-                    ((Player) targetList.get(0)).addMarks(p,1);
+                    ((Player) targetList.get(0)).addMarks(p,2);
                 }
 
                 else {
