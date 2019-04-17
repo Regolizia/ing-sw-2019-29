@@ -49,7 +49,7 @@ public class LockRifleTest {
         LinkedList<Object> temp = new LinkedList<>();
         temp.add(targets.get(1));
 
-        System.out.printf("Damage by shooter: "+m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));
+        System.out.printf("\nDamage by shooter: "+m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));
         System.out.printf("\nMarks by shooter: "+m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4)));
         m.getPlayers().get(4).getHand().get(0).applyDamage(temp,m.getPlayers().get(4),enBase);
         System.out.printf("\nDamage by shooter: "+m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)));

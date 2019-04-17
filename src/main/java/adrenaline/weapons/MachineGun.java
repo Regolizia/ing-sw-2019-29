@@ -43,11 +43,11 @@ public class MachineGun extends WeaponCard {
                         // DAMAGE SPAWNPOINT
                     }
                 }
-
+/*  IT'LL BE WHERE WE PUT THE CALL TO THIS METHOD
                 targetList.removeFirst();
                 if(targetList.size()==2){
                     targetList.removeFirst();
-                }
+                }*/
 
                 break;
 
@@ -61,8 +61,10 @@ public class MachineGun extends WeaponCard {
                 } else {
                     // DAMAGE SPAWNPOINT
                 }
+/*
 
                 targetList.removeFirst();
+*/
 
                 break;
 

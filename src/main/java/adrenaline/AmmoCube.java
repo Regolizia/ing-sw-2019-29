@@ -8,7 +8,7 @@ import java.util.*;
 public class AmmoCube {
 
     public enum CubeColor {
-        RED, YELLOW, BLUE, POWERUP;
+        RED, YELLOW, BLUE, POWERUP, FREE;
     }
     public enum Effect {
         BASE, OP1, OP2, ALT;

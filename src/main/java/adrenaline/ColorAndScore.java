@@ -1,5 +1,6 @@
 package adrenaline;
 
+// I THINK IT HAS SOMETHING TO DO WITH SCORING THE POINTS WHEN SOMEONE DIES
 public class ColorAndScore {
     private Figure.PlayerColor color;
     private int score;

@@ -22,7 +22,7 @@ public class AmmoTile{
     public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
         this.coordinates = p;
         ammoTile = new LinkedList<>();
-        ammoTile.add(new AmmoCube(ac));
+        ammoTile.add(new AmmoCube(ac)); // WE HAVE TO CHECK IF THIS AMMOCUBE MEANS POWERUP, IF SO PICK CARD FROM DECK
         ammoTile.add(new AmmoCube(bc));
         ammoTile.add(new AmmoCube(cc));
     }

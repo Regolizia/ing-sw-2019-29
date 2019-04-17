@@ -15,6 +15,7 @@ public class PlasmaGun extends WeaponCard {
     public PlasmaGun() {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.BASE,true));
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));
+        price.add(new AmmoCube(AmmoCube.CubeColor.FREE, AmmoCube.Effect.OP1,true)); // IF AN EFFECT IS FREE THIS IS ALWAYS TRUE
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.OP2,false));
     }
 
