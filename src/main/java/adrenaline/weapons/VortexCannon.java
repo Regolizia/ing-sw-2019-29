@@ -1,9 +1,6 @@
 package adrenaline.weapons;
 
-import adrenaline.AmmoCube;
-import adrenaline.EffectAndNumber;
-import adrenaline.Player;
-import adrenaline.WeaponCard;
+import adrenaline.*;
 
 import java.util.LinkedList;
 
@@ -19,6 +16,19 @@ public class VortexCannon extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE, true));
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.BASE, false));
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.OP1, false));
+    }
+
+    // THE COORDINATE PASSED C IS THE VORTEX
+    @Override
+    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c,en,g);
+/*
+        // ASK PLAYER WHERE TO PUT VORTEX (CELL THAT ARE SEEN)
+        CoordinatesWithRoom vortex = new CoordinatesWithRoom(); // TODO GET SELECTED CELL FROM LIST, PUT IT HERE
+        list.clear();
+        list = vortex.oneTileDistant(g);
+        list.add(vortex);*/
+        return list;
     }
 
     @Override

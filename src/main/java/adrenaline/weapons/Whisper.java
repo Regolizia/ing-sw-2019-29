@@ -22,10 +22,17 @@ public class Whisper extends WeaponCard {
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
         LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
+        listOne.add(c);
 
-        // TODO CHECK IF IT WORKS
-        list.removeAll(listOne);
-
+        for(int k=list.size()-1;k>=0;k--){
+            for(CoordinatesWithRoom c2: listOne){
+                if(list.get(k).getX()==c2.getX() &&
+                        list.get(k).getY()==c2.getY() &&
+                        list.get(k).getRoom().getToken()==c2.getRoom().getToken()){
+                    list.remove(k);
+                }
+            }
+        }
         return list;
     }
 
