@@ -39,8 +39,7 @@ public class TractorBeam extends WeaponCard {
     public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         if(en.getEffect()== AmmoCube.Effect.BASE) {
             LinkedList<Object> listOne = new LinkedList<>();
-            LinkedList<CoordinatesWithRoom> listMoves = new LinkedList<>();
-            LinkedList<CoordinatesWithRoom> listOriginalMoves = getPossibleTargetCells(c, en, g);
+            LinkedList<CoordinatesWithRoom> listMoves;
             CoordinatesWithRoom c1 = new CoordinatesWithRoom();
             for (Player element : m.getPlayers()) {
                 if (element.getColor() != p.getColor()) {   // ADD OTHER PLAYERS TO listOne IF, MOVING THEM, I SEE THEM
@@ -51,7 +50,7 @@ public class TractorBeam extends WeaponCard {
                     listMoves.addAll(c1.XTilesDistant(g, 2));
                     listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
 
-                    if(c1.isCWRInTwoLists(listMoves,listOriginalMoves,this,en,g)){
+                    if(c1.isCWRInTwoLists(listMoves,list,this,en,g)){
                         listOne.add(element);
                     }
                 }

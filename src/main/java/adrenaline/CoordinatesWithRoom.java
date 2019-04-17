@@ -124,10 +124,10 @@ public class CoordinatesWithRoom extends Coordinates {
     }
 
     ///////////////////////////////////////////////////////////////////////
-
+    // LIST ORIGINAL MOVES CONTAINS WHAT SHOOTER SEES
     public boolean isCWRInTwoLists(LinkedList<CoordinatesWithRoom> listMoves, LinkedList<CoordinatesWithRoom> listOriginalMoves, WeaponCard w, EffectAndNumber en, GameBoard g) {
         for (int i = 0; i < listMoves.size(); i++) {
-            for (int l = 0; l < w.getPossibleTargetCells(this, en, g).size(); l++) {
+            for (int l = 0; l < listOriginalMoves.size(); l++) {
                 if (listMoves.get(i).getX() == listOriginalMoves.get(l).getX() &&
                         listMoves.get(i).getY() == listOriginalMoves.get(l).getY() &&
                         listMoves.get(i).getRoom().getToken() == listOriginalMoves.get(l).getRoom().getToken()) {
