@@ -25,7 +25,7 @@ public class Map {
     protected int[] wallR2;
     protected int[] wallX2;
     protected int[] wallY2;
-    // TODO ADD DIR
+    protected Door.Direction[] wallDir;
 
     public Map() {
 

@@ -64,7 +64,7 @@ public class Furnace extends WeaponCard {
             return list;
         }
         else{
-            list = c.oneTileDistant(g);
+            list = c.oneTileDistant(g, false);
 
             //// ASK PLAYER WHICH TILE, GET ONE BACK IN THAT LIST
 

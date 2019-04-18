@@ -24,7 +24,7 @@ public class Flamethrower extends WeaponCard {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
 
 
-        list = c.tilesSameDirection(2,g);
+        list = c.tilesSameDirection(2,g,false);
         list.remove(c);
 
         return list;
@@ -38,7 +38,7 @@ public class Flamethrower extends WeaponCard {
         LinkedList<Object> targets = new LinkedList<>();
         LinkedList<Object> targets1 = new LinkedList<>();
         LinkedList<Object> targets2 = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
         en.setNumber(listOne.size());
 
         if (en.getEffect() == AmmoCube.Effect.BASE) {

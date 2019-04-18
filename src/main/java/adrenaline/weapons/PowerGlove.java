@@ -21,12 +21,12 @@ public class PowerGlove extends WeaponCard {
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.BASE)
-            return c.oneTileDistant(g);
+            return c.oneTileDistant(g, false);
 
           else {  // ALT: SECOND PART
             // IF PLAYER'S POSITION DIFFERENT FROM C
             // FIND CELL SAME DIRECTION MOVEMENT (CHECK ALSO DOORS)
-            return c.oneTileDistant(g);// REMOVEEEEE
+            return c.oneTileDistant(g, false);// REMOVEEEEE
         }
     }
 

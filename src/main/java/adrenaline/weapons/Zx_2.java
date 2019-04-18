@@ -43,7 +43,7 @@ public class Zx_2 extends WeaponCard {
                 break;
 
             case ALT:   // 1 MARK, UP TO 3 TARGETS
-                for(int i = 0; i<e.getNumber(); i++){
+                for(int i = 0; i<targetList.size(); i++){
                     ((Player)targetList.get(i)).addMarks(p,1);
                 }
                 // TODO CANNOT USE ON SPAWNPOINT ???

@@ -42,7 +42,7 @@ public class VortexCannonTest {
             // DONE MANUALLY, THE REQUEST SHOULD BE INSIDE THE WEAPON
             LinkedList<CoordinatesWithRoom> listwithvortex = new LinkedList<>();
             listwithvortex.add(list.get(4));
-            listwithvortex.addAll(list.get(4).oneTileDistant(m.getMapUsed().getGameBoard()));
+            listwithvortex.addAll(list.get(4).oneTileDistant(m.getMapUsed().getGameBoard(), false));
 
             for(CoordinatesWithRoom c : listwithvortex){
                 System.out.println(c);

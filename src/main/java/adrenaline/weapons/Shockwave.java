@@ -19,7 +19,7 @@ public class Shockwave extends WeaponCard {
 
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
+        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
         return list;
     }
 

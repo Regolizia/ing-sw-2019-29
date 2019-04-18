@@ -23,7 +23,7 @@ public class TractorBeam extends WeaponCard {
     @Override
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.ALT){
-            LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g);
+            LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
             list.addAll(c.XTilesDistant(g,2));
             list.add(c);
             return list;
@@ -46,7 +46,7 @@ public class TractorBeam extends WeaponCard {
                     c1.setX(element.getPlayerPositionX());
                     c1.setY(element.getPlayerPositionY());
                     c1.setRoom(element.getPlayerRoom());
-                    listMoves = c1.oneTileDistant(g);
+                    listMoves = c1.oneTileDistant(g, false);
                     listMoves.addAll(c1.XTilesDistant(g, 2));
                     listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
 

@@ -23,7 +23,7 @@ public class Hellion extends WeaponCard {
     public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
         LinkedList<CoordinatesWithRoom> listOne = new LinkedList();
-        listOne = c.oneTileDistant(g);
+        listOne = c.oneTileDistant(g, false);
         listOne.add(c);
 
         for(int k=list.size()-1;k>=0;k--){

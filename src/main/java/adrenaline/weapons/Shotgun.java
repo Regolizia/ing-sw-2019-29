@@ -27,7 +27,7 @@ public class Shotgun extends WeaponCard {
             list.add(c);
         }
         if(en.getEffect() == AmmoCube.Effect.ALT){
-            list = c.oneTileDistant(g);
+            list = c.oneTileDistant(g, false);
         }
         return list;
     }

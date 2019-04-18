@@ -44,7 +44,7 @@ public class GameBoard {
     public void addWall(Wall w){
         walls.add(w);
     }
-    public LinkedList<Wall> getWall(){
+    public LinkedList<Wall> getWalls(){
         return walls;
     }
 
@@ -85,6 +85,32 @@ public class GameBoard {
                         && c.getY() == getDoors().get(i).getCoordinates1().getY()) {
 
                     return getDoors().get(i).getDir();
+                }
+            }
+
+            //////////////// WALLS
+            for (int i = 0; i < getWalls().size(); i++) {
+                if ((c1.getRoom().getToken() == getWalls().get(i).getCoordinates1().getRoom().getToken()
+                        && c1.getX() == getWalls().get(i).getCoordinates1().getX()
+                        && c1.getY() == getWalls().get(i).getCoordinates1().getY())
+                        && c.getRoom().getToken() == getWalls().get(i).getCoordinates2().getRoom().getToken()
+                        && c.getX() == getWalls().get(i).getCoordinates2().getX()
+                        && c.getY() == getWalls().get(i).getCoordinates2().getY()) {
+                    if (getWalls().get(i).getDir() == NS) return SN;
+                    if (getWalls().get(i).getDir() == SN) return NS;
+                    if (getWalls().get(i).getDir() == WE) return EW;
+                    if (getWalls().get(i).getDir() == EW) return WE;
+                }
+
+
+                if (c1.getRoom().getToken() == getWalls().get(i).getCoordinates2().getRoom().getToken()
+                        && c1.getX() == getWalls().get(i).getCoordinates2().getX()
+                        && c1.getY() == getWalls().get(i).getCoordinates2().getY()
+                        && c.getRoom().getToken() == getWalls().get(i).getCoordinates1().getRoom().getToken()
+                        && c.getX() == getWalls().get(i).getCoordinates1().getX()
+                        && c.getY() == getWalls().get(i).getCoordinates1().getY()) {
+
+                    return getWalls().get(i).getDir();
                 }
             }
         }

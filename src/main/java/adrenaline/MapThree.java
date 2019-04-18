@@ -26,6 +26,7 @@ public class MapThree extends Map {
         wallR2 = new int[]{1,3,};
         wallX2 = new int[]{2,1};
         wallY2 = new int[]{1,1};
+        wallDir = new Door.Direction[]{NS, WE};
 
         if (m.equals(DEATHMATCH)) {
             setGameBoard(new DeathmatchBoard());
@@ -74,7 +75,7 @@ public class MapThree extends Map {
 
         for(int n=0;n<wallR1.length;n++) {
 
-            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n]));
+            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n], wallDir[n]));
 
         }
     }

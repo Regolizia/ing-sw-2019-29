@@ -26,6 +26,7 @@ public class MapFour extends Map {
         wallR2 = new int[]{4,4};
         wallX2 = new int[]{1,1};
         wallY2 = new int[]{1,1};
+        wallDir = new Door.Direction[]{WE, EW};
 
 
         if (m.equals(DEATHMATCH)) {
@@ -79,7 +80,7 @@ public class MapFour extends Map {
 
         for(int n=0;n<wallR1.length;n++) {
 
-            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n]));
+            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n], wallDir[n]));
 
         }
     }

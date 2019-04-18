@@ -19,13 +19,14 @@ public class MapOne extends Map {
          doorR2 = new int[]{1,1,1,3,3};
          doorX2 = new int[]{1,3,2,1,1};
          doorY2 = new int[]{1,1,1,1,2};
-         doorDir = new Door.Direction[]{SN, SN, NS, WE, WE};
+         doorDir = new Door.Direction[]{NS, NS, SN, WE, WE};
          wallR1 = new int[]{0,1};
          wallX1 = new int[]{2,3};
          wallY1 = new int[]{1,1};
          wallR2 = new int[]{1,2};
          wallX2 = new int[]{2,2};
          wallY2 = new int[]{1,1};
+         wallDir = new Door.Direction[]{NS, NS};
 
         if (m.equals(DEATHMATCH)) {
             setGameBoard(new DeathmatchBoard());
@@ -74,7 +75,7 @@ public class MapOne extends Map {
 
         for(int n=0;n<wallR1.length;n++) {
 
-            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n]));
+            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n], wallDir[n]));
 
         }
 

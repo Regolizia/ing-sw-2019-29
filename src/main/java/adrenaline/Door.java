@@ -15,15 +15,6 @@ public class Door{
     }
 
 
-
-    /**
-     * Default constructor
-     *
-     *   public Door() {
-     *     }
-     */
-
-
     public Door(Room r1, int x1, int y1, Room r2, int x2, int y2, Direction d) {
         this.c1 = new CoordinatesWithRoom(x1,y1,r1);
         this.c2 = new CoordinatesWithRoom(x2,y2,r2);
