@@ -273,35 +273,51 @@ public class Action {
         LinkedList<EffectAndNumber> paid = new LinkedList<>(null);
 // if pay base don't psy alt
         int i = 0;
+        int k=0;
         LinkedList<AmmoCube> cost = weapon.getPrice();
         for (i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
                 if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {
-                    switch (cost.get(i).getCubeColor()) {
-                        case RED:
-                            player.addRedCube(player, -1);
-                            break;
-
-                        case BLUE:
-                            player.addBlueCube(player, -1);
-                            break;
-
-                        case YELLOW:
-                            player.addYellowCube(player, -1);
-                            break;
-                    }
+                    pay(player, cost.get(j));
                 }
+                }
+            paid.get(0).setEffect(cost.get(i).getEffect()); break;  // i can pay only one
             }
-            paid.get(0).setEffect(cost.get(i).getEffect());
 
 
+            //then you can pay options
+        for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
+            for (int j = 0; j < numMaxAmmoToPay; j++) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() == AmmoCube.Effect.OP1 ||
+                        cost.get(j).getEffect() == AmmoCube.Effect.OP2)) {
+                    pay(player, cost.get(j));
+                }
+
+
+            }
+            paid.get(k).setEffect(cost.get(i).getEffect());
         }
 
-//then you can pay options
+        return paid;}
 
-        return paid;
+
+            public void pay (Player player, AmmoCube cube){
+                switch (cube.getCubeColor()) {
+                    case RED:
+                        player.addRedCube(player, -1);
+                        break;
+
+                    case BLUE:
+                        player.addBlueCube(player, -1);
+                        break;
+
+                    case YELLOW:
+                        player.addYellowCube(player, -1);
+                        break;
+                }
+            }
     }
-}
+
     /*public boolean checkBasePayment(WeaponCard w,Player p){
        boolean response=false;
 
