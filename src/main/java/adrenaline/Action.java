@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class Action {
 final int numMaxAlternativeOptions=1;
 final int numMaxOptions=2;
+final int numMaxAmmoToPay=2;
 int resp=0;
 GameBoard g=new GameBoard();
 //WeaponCard weapon;
@@ -29,7 +30,6 @@ GameBoard g=new GameBoard();
                 // selectedCell =
                 // run(player, selectedCell);
                 break;
-
             case GRAB:
                 // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
                 // selectedCell =
@@ -38,6 +38,19 @@ GameBoard g=new GameBoard();
 
             case SHOOT:
                 // HERE JUST WEAPON AND PAYMENTS, EVERYTHING ELSE IN CORRECT WEAPONCARD
+
+                // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
+                LinkedList<WeaponCard> hand=player.getHand();
+                // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
+                WeaponCard weapon=chooseWeaponCard(hand);
+                // Boolean payCard()
+
+                if(!canPayCard(weapon,player))
+                {
+                    break;
+                }
+
+                //IF RETURNS FALSE GO TO SELECT ACTION
                 // selectedWeapon = getSelectedWeapon (THAT IS CHARGED, isLoaded method in Player)
                 // choose EFFECTS AND ACCEPT PAYMENT FOR THEM
 
@@ -196,10 +209,68 @@ GameBoard g=new GameBoard();
     /*todo frenzyShoot frenzyRun frenzyGrab*/
 
 
+///////////////////////////CHOOSE WEAPON & PAY/////////////////////////////////////////
+
+    public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand){
+        int j;
+        for(j=0;j<hand.size();j++){
+            //WHEN A WEAPON IS CHOOSEN BREAK
+        }
+
+
+        return hand.get(j);
+    }
+
+
+    public boolean canPayCard(WeaponCard weapon, Player player){
+        //can you pay base effect
+        LinkedList<AmmoCube> cost =weapon.getPrice();
+        int i=0;
+        boolean no=false;
+        for(i=0;i<cost.size();i++) {
+            if (cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)||cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)) {
+                for(int j=0;j<numMaxAmmoToPay;j++){
+                if(cost.get(i).getEffect().equals(cost.get(j).getEffect())){
+                switch (cost.get(i).getCubeColor()) {
+                    case RED:
+                        if (player.getCubeRed(player) - 1 < 0)
+                            no = true;
+                        else no=false;
+                        break;
+
+                    case BLUE:
+                        if (player.getCubeBlue(player) - 1 < 0)
+                        no = true;
+                        else no=false;
+                        break;
+
+                    case YELLOW:
+                        if (player.getCubeYellow(player) - 1 < 0)
+                        no = true;
+                        else no=false;
+                        break;
+                }}}
+                if(no==false) break;
+            }
+
+        }
+        if(no==true) //CANT PAY BASE NEITHER ALT
+            return false;
+        else return true;                           //BEFORE CALL A METHOD TO GET OPTIONS PAYED
+        }}
+
+            //AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,true));
+
+
+
+        //if no no you can't shoot return false
+
+        //if one is true >pay
+            //the control if you can pay another option
+
 
     ////////////////////////////////////////////////////////////////////
-    // RIPETO, NON CI DEVONO ESSERE SCANF QUI
-    ////
+
     /*public boolean checkBasePayment(WeaponCard w,Player p){
        boolean response=false;
 
@@ -252,4 +323,4 @@ GameBoard g=new GameBoard();
         this.actionSelected = a;
     }
 */
-}
+
