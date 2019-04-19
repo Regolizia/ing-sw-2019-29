@@ -4,13 +4,11 @@ package adrenaline;
 import adrenaline.weapons.RocketLaucher;
 
 import java.util.LinkedList;
-//import java.util.Scanner;
+
 
 public class Action {
-    final int numMaxAlternativeOptions = 1;
-    final int numMaxOptions = 2;
-    final int numMaxAmmoToPay = 2;
-    int resp = 0;
+    final private int numMaxAlternativeOptions = 1;
+    final private int numMaxAmmoToPay = 2;
     GameBoard g = new GameBoard();
 
 
@@ -23,6 +21,7 @@ public class Action {
 
     public Action(ActionType chosen, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m) {
         actionSelected = chosen;
+        boolean executedAction;
         switch (actionSelected) {
             case RUN:
                 // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -51,8 +50,6 @@ public class Action {
                 LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
 
                 shoot(weapon,c,player,payEff,m);
-
-
                 break;
 
             //IF RETURNS FALSE GO TO SELECT ACTION
@@ -115,8 +112,13 @@ public class Action {
     // GRAB
     public void grab(Player p, CoordinatesWithRoom c, GameBoard g) {
         // IF THERE IS A SPAWNPOINT HERE
+       if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
+            && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
+       c.getRoom().getSpawnpoints().get(0).getSpawnpointY()== c.getY())
+           chooseWeaponCard(p.getHand());
         //CHOOSE WEAPON IF CANGRAB IT
         //IF THERE IS AMMOTILE
+        // grab ammo or powerUp
         //ADD STUFF IF CAN HAVE IT
     }
 
@@ -292,14 +294,17 @@ public class Action {
                 switch (cube.getCubeColor()) {
                     case RED:
                         player.addRedCube(player, -1);
+                        player.setCube(player);
                         break;
 
                     case BLUE:
                         player.addBlueCube(player, -1);
+                        player.setCube(player);
                         break;
 
                     case YELLOW:
                         player.addYellowCube(player, -1);
+                        player.setCube(player);
                         break;
                 }
             }
