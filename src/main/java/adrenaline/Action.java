@@ -115,11 +115,19 @@ public class Action {
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
             && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
        c.getRoom().getSpawnpoints().get(0).getSpawnpointY()== c.getY())
-           chooseWeaponCard(p.getHand());
+       {   chooseWeaponCard(p.getHand());
         //CHOOSE WEAPON IF CANGRAB IT
-        //IF THERE IS AMMOTILE
+        return;}
+        AmmoTile toBeGrabbedTile=null;
+        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY())
+            toBeGrabbedTile=c.getRoom().getAmmoTile(c);  // now i can grab that tile
         // grab ammo or powerUp
-        //ADD STUFF IF CAN HAVE IT
+        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
+            //is a powerUp
+            ;
+        if(toBeGrabbedTile.getAmmoTile().get(1)!=null||toBeGrabbedTile.getAmmoTile().get(2)!=null)
+            //is a ammo/cube
+            ;
     }
 
     ////////////////////////////////////////////////////
