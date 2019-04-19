@@ -44,26 +44,14 @@ public class Action {
                 // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
                 WeaponCard weapon = chooseWeaponCard(hand);
                 // Boolean payCard()
-
                 if (!canPayCard(weapon, player))
                     break;
-                EffectAndNumber effectNumber=null;
+
                 LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
 
-                for(int index=0;index<payEff.size();index++) {
-                                                ///todo choose effect order
-                    switch (payEff.get(index).getEffect()) {
-                        case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
-                        case ALT: effectNumber = new EffectAndNumber(AmmoCube.Effect.ALT, 0);
-                        case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
-                        case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
-                    }
-                    LinkedList<CoordinatesWithRoom> target= weapon.getPossibleTargetCells(c, effectNumber, g);
-                    weapon.fromCellsToTargets(target,c,g,player,m,effectNumber);
-                    //here controller gives back choosen opponents
-                    LinkedList<Object>effectiveTarget=null;
-                    weapon.applyDamage(effectiveTarget,player,effectNumber);
-                }
+                shoot(weapon,c,player,payEff,m);
+
+
                 break;
 
             //IF RETURNS FALSE GO TO SELECT ACTION
@@ -134,34 +122,21 @@ public class Action {
     ////////////////////////////////////////////////////
     // SHOOT
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
-        int indexEffect = 0;
-        // JUST TO MAKE IT COMPILE, TO BE REMOVED
-        LinkedList<Object> targets = new LinkedList<>();
-
-
-/*
-        //if true the player has paid the base/alternative effect and can shoot or buy optional effect
-        if(checkBasePayment(w,p)==false)
-            return; //if false the player can't shoot
-        // todo paidOptionsMethod to know the paid options
-       // System.out.println("Do you want to add other options?\n digit\n 1:yes\n2:no");
-      //  resp=scan.nextInt();
-
-
-        if(resp==1){
-        //    w.weaponShoot(targets,c,p,effectsList,m);
-            return;}
-        if(resp==0)
-        {
-            while(effectsList.get(indexEffect)!=null){
-
-            LinkedList<CoordinatesWithRoom> targetsCell=p.chooseTargets(w,p,c,effectsList.get(indexEffect),g);
-            //targets=w.getPossibleTargetCells(c,effectsList.get(0),g.getGameboard()); todo choose targets
+        EffectAndNumber effectNumber=null;
+        for(int index=0;index<effectsList.size();index++) {
+            ///todo choose effect order
+            switch (effectsList.get(index).getEffect()) {
+                case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
+                case ALT: effectNumber = new EffectAndNumber(AmmoCube.Effect.ALT, 0);
+                case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
+                case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
             }
-            return;}
-*/
-
-
+            LinkedList<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
+            w.fromCellsToTargets(target,c,g,p,m,effectNumber);
+            //here controller gives back choosen opponents
+            LinkedList<Object>effectiveTarget=null;
+           w.weaponShoot(effectiveTarget,c,p,effectsList,m);
+        }
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
         //w.getPossibleTargetCells();
 
@@ -188,7 +163,6 @@ public class Action {
 
 
         //  // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
-        w.weaponShoot(targets, c, p, effectsList, m);
     }
 
 
