@@ -13,5 +13,11 @@ public class Spawnpoint {
         this.y = y;
     }
 
+    public int getSpawnpointX( ) {
+        return x;
+    }
 
+    public int getSpawnpointY( ) {
+        return y;
+    }
 }
