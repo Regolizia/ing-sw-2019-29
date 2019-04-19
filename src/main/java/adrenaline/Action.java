@@ -58,7 +58,11 @@ public class Action {
                         case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
                         case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
                     }
-                    weapon.getPossibleTargetCells(c, effectNumber, g);
+                    LinkedList<CoordinatesWithRoom> target= weapon.getPossibleTargetCells(c, effectNumber, g);
+                    weapon.fromCellsToTargets(target,c,g,player,m,effectNumber);
+                    //here controller gives back choosen opponents
+                    LinkedList<Object>effectiveTarget=null;
+                    weapon.applyDamage(effectiveTarget,player,effectNumber);
                 }
                 break;
 
