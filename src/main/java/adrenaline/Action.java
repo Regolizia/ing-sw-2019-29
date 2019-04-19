@@ -12,8 +12,7 @@ public class Action {
     final int numMaxAmmoToPay = 2;
     int resp = 0;
     GameBoard g = new GameBoard();
-//WeaponCard weapon;
-    //Scanner scan=new Scanner(System.in);
+
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, ADRENALINESHOOT;
@@ -27,13 +26,15 @@ public class Action {
         switch (actionSelected) {
             case RUN:
                 // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
-                // selectedCell =
-                // run(player, selectedCell);
+                proposeCellsRun(c,g);
+                CoordinatesWithRoom coordinatesR=null;
+                run(player,coordinatesR);
                 break;
             case GRAB:
                 // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-                // selectedCell =
-                // grab()
+                proposeCellsGrab(c,g,player);
+                CoordinatesWithRoom coordinatesG=null;
+                grab(player,coordinatesG,g);
                 break;
 
             case SHOOT:
@@ -146,6 +147,8 @@ public class Action {
         //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
         // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
 
+
+                //è in weaponCard
         // TARGETS ORDER
         // LockRifle
         // MachineGun, CHECK TARGET OP1 IS ONE OF THE TARGETS OF BASE, CHECK TARGET OP2 IS DIFFERENT FROM TARGET OP1
