@@ -39,6 +39,20 @@ public class Room {
         tiles.add(t);
     }
 
+
+    public AmmoTile getAmmoTile(Coordinates coordinates){
+        int index=0;
+        for(index=0;index<getTiles().size();index++)
+        {
+            //check the list until you find the AmmoTile
+            if(getTiles().get(index).getCoordinates()==coordinates)
+                break;
+        }
+        return getTiles().get(index);
+    }
+
+
+
     public void setToken(int i){
         this.token = i;
     }

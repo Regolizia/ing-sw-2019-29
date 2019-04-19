@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class Action {
     final private int numMaxAlternativeOptions = 1;
     final private int numMaxAmmoToPay = 2;
+    final private int numMaxWeaponYouCanChoose=3;
     GameBoard g = new GameBoard();
 
 
@@ -60,7 +61,7 @@ public class Action {
             // EFFECTS ADDED TO EFFECTSLIST
 
 
-        /* WHEN SOMEBODY CHOOSES ADRENALINE SHOOT WE ASK WHERE TO MOVE AND THEN WE DO THE STAUFF TO SHOOT
+        /* WHEN SOMEBODY CHOOSES ADRENALINE SHOOT WE ASK WHERE TO MOVE AND THEN WE DO THE STAFF TO SHOOT
         // IF ADRENALINE SHOOT IS POSSIBLE, CAN MOVE ONCE
         if(p.checkDamage()==2){
             listTemp.addAll(c.XTilesDistant(g,1));
@@ -72,9 +73,7 @@ public class Action {
             }
         }*/
 
-            // /*/ref options list*/ checkPayment(Player player, WeaponCard weapon);  checkPayment is in WeaponCard
-            // /*/ref possible target list*/ canAim(Player player, // ref options list );
-            // /*/ref target list/ aimTarget(ref possible target);
+
 
             default:
                 //INVALID CHOICE
@@ -82,8 +81,8 @@ public class Action {
         }
     }
 
-    ////////////////////////////////////////////////////
-    // PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)
+
+    //___________________________ PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)___________________________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
         list.addAll(c.XTilesDistant(g, 2));
@@ -91,13 +90,12 @@ public class Action {
         return list;
     }
 
-    // RUN
+    //_______________________________________________RUN______________________________________________________________//
     public void run(Player p, CoordinatesWithRoom c) {
         p.setPlayerPosition(c.getX(), c.getY());
     }
 
-    ////////////////////////////////////////////////////
-    // PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)
+    //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
         list.add(c);
@@ -109,21 +107,55 @@ public class Action {
         return list;
     }
 
-    // GRAB
+    //________________________________________________GRAB____________________________________________________________//
     public void grab(Player p, CoordinatesWithRoom c, GameBoard g) {
         // IF THERE IS A SPAWNPOINT HERE
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
             && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
        c.getRoom().getSpawnpoints().get(0).getSpawnpointY()== c.getY())
-           chooseWeaponCard(p.getHand());
+       {   grabCard(p.getHand(),c);
         //CHOOSE WEAPON IF CANGRAB IT
-        //IF THERE IS AMMOTILE
+        return;}
+        AmmoTile toBeGrabbedTile=null;
+        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY())
+            toBeGrabbedTile=c.getRoom().getAmmoTile(c);  // now i can grab that tile
         // grab ammo or powerUp
-        //ADD STUFF IF CAN HAVE IT
+        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
+            //is a powerUp
+            ;
+        if(toBeGrabbedTile.getAmmoTile().get(1)!=null||toBeGrabbedTile.getAmmoTile().get(2)!=null)
+            //is a ammo/cube
+            ;
     }
 
-    ////////////////////////////////////////////////////
-    // SHOOT
+    //____________________________________________GRAB OPTIONS________________________________________________________//
+
+    public void grabCard(LinkedList<WeaponCard> hand, CoordinatesWithRoom c){
+        int index;
+        LinkedList <WeaponCard> canBeGrabbedWeapon=null;
+        WeaponCard w;
+        for(int i=0;i<numMaxWeaponYouCanChoose;i++){
+            //here you get all the WeaponCard in that position
+           // todo method to get weapon   canBeGrabbedWeapon.get(i)=w.getWeapon;
+        }
+        if(hand.size()>=3)
+            dropWeaponCard(hand); //I need to drop that card
+
+        for (index = 0; index <canBeGrabbedWeapon.size() ; index++) {
+            //WHEN A WEAPON IS CHOOSEN BREAK
+        }
+        hand.add(canBeGrabbedWeapon.get(index));
+    }
+    public void dropWeaponCard(LinkedList<WeaponCard> hand){
+        int index;
+        for (index = 0; index < hand.size(); index++) {
+            //WHEN A WEAPON IS CHOOSEN BREAK
+        }
+        hand.remove(index);
+    }
+
+
+    //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
         EffectAndNumber effectNumber=null;
         for(int index=0;index<effectsList.size();index++) {
@@ -170,7 +202,7 @@ public class Action {
         //  // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
     }
 
-
+//_____________________________________RELOAD________________________________________________________________________//
     public boolean Reload(Player p, WeaponCard w) {
         int blue = p.getAmmoBox()[0];
         int red = p.getAmmoBox()[1];
@@ -202,7 +234,7 @@ public class Action {
     /*todo frenzyShoot frenzyRun frenzyGrab*/
 
 
-///////////////////////////CHOOSE WEAPON & PAY/////////////////////////////////////////
+///////////////////////////______________choose weapon & canPay_________________////////////////////////////////////////
 
     public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand) {
         int j;
@@ -254,9 +286,7 @@ public class Action {
         else return true;
     }
 
-    //////////////////////////////////////////////////////////////////
-
-//////////////////pay///////////////////////
+    //////////////////_____________________payMethods______________________________________________///////////////////////
 
     public LinkedList<EffectAndNumber> paidEffect(WeaponCard weapon, Player player) {
         LinkedList<EffectAndNumber> paid = new LinkedList<>(null);
@@ -310,56 +340,5 @@ public class Action {
             }
     }
 
-    /*public boolean checkBasePayment(WeaponCard w,Player p){
-       boolean response=false;
 
-       int indexList=0;
-       boolean okChoosen=false;
-      // System.out.println("Do you want base option: digit 1\n for alternative option digit 0\n 2 to cancel shoot action");
-       //resp=scan.nextInt();
-        if(resp==1)
-            indexList=0;
-        if(resp==2)
-            return false;
-        if(resp==0)
-            {  while(indexList<=numMaxAlternativeOptions){
-                System.out.println("Do you want this alternative?\ndigit\n1:yes\n2:no\n3:exit");//todo call to weapon to get alternative name + effect
-             //   resp=scan.nextInt();
-                if(resp==3||resp==1)
-                {if(resp==1)
-                    okChoosen=true;
-                break;}
-                if(resp==2) indexList ++;
-            }
-            if (okChoosen==false) return false;}
-
-
-        switch(w.price.get(indexList).getCubeColor()){
-            case BLUE: if(p.getCubeBlue(p)>=1) {
-                p.addBlueCube(p,-1);
-                p.setCube(p);
-                return true;
-            }
-                else return false;
-
-            case RED:if(p.getCubeRed(p)>=1) {
-                p.addRedCube(p,-1);
-                p.setCube(p);
-                return true;
-            }
-                else return false;
-            case YELLOW:if(p.getCubeYellow(p)>=1) {
-                p.addYellowCube(p,-1);
-                p.setCube(p);
-                return true;
-            } else return false;}
-        return false;
-    }
-    public ActionType getActionSelected() {
-        return actionSelected;
-    }
-    public void setActionSelected(ActionType a){
-        this.actionSelected = a;
-    }
-*/
 
