@@ -28,14 +28,12 @@ public class AmmoTile{
     }
 
 
-
     public Coordinates getCoordinates(){
         return coordinates;
     }
     public void setCoordinates(int x, int y){
         this.coordinates.setCoordinates(x,y);
     }
-
     public LinkedList<AmmoCube> getAmmoTile(){
         return ammoTile;
     }
