@@ -14,10 +14,12 @@ public class Spawnpoint {
     }
 
     public int getSpawnpointX( ) {
+
         return x;
     }
 
     public int getSpawnpointY( ) {
+
         return y;
     }
 }
