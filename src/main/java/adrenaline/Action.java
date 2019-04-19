@@ -47,13 +47,19 @@ public class Action {
 
                 if (!canPayCard(weapon, player))
                     break;
-
+                EffectAndNumber effectNumber=null;
                 LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
 
-
-                EffectAndNumber number = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
-                weapon.getPossibleTargetCells(c, number, g);
-
+                for(int index=0;index<payEff.size();index++) {
+                                                ///todo choose effect order
+                    switch (payEff.get(index).getEffect()) {
+                        case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
+                        case ALT: effectNumber = new EffectAndNumber(AmmoCube.Effect.ALT, 0);
+                        case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
+                        case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
+                    }
+                    weapon.getPossibleTargetCells(c, effectNumber, g);
+                }
                 break;
 
             //IF RETURNS FALSE GO TO SELECT ACTION
