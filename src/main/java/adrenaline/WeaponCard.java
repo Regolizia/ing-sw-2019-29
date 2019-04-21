@@ -8,9 +8,10 @@ public class WeaponCard extends Card{
     protected LinkedList<AmmoCube> price;
     private EffectAndNumber effectAndNumber;
     //private LinkedList<Object> targets;
-
+    private boolean reload;
     public WeaponCard() {
         price = new LinkedList<AmmoCube>();
+        reload =false;
     }
 
 
@@ -24,6 +25,7 @@ public class WeaponCard extends Card{
                 }
 
                 */
+
 
     // CELLS IN WEAPON RANGE
     // TO BE OVERRIDDEN
@@ -121,4 +123,8 @@ public class WeaponCard extends Card{
         return price;
     }
 
+    public void setReload(WeaponCard weapon){reload=true;}
+// reload to pay baseEffect
+    public void setNotReload(WeaponCard weapon){reload=false;}
+    public boolean getReload(WeaponCard weapon){return reload;}
 }
