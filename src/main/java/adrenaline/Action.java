@@ -45,12 +45,14 @@ public class Action {
                 // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
                 WeaponCard weapon = chooseWeaponCard(hand);
                 // Boolean payCard()
-                if (!canPayCard(weapon, player))
-                    break;
+                if(weapon.getReload(weapon)==false)
+                {if (!canPayCard(weapon, player))
+                    break; }
 
                 LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
 
                 shoot(weapon,c,player,payEff,m);
+                weapon.setNotReload(weapon);// i've lost base effect payment
                 break;
 
             //IF RETURNS FALSE GO TO SELECT ACTION
@@ -253,9 +255,10 @@ public class Action {
         int i = 0;
         boolean no = false;
         for (i = 0; i < cost.size(); i++) {
-            if (cost.get(i).getEffect().equals(AmmoCube.Effect.BASE) || cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)) {
+            if (((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE) || cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&!weapon.getReload(weapon)
+            ) ||(((cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&weapon.getReload(weapon))){
                 for (int j = 0; j < numMaxAmmoToPay; j++) {
-                    if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {
+                    if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {      //BASE EFFECT always element 0
                         switch (cost.get(i).getCubeColor()) {
                             case RED:
                                 if (player.getCubeRed(player) - 1 < 0)
@@ -275,15 +278,13 @@ public class Action {
                                 else no = false;
                                 break;
                         }
-                    }
+                        if (no==true&&cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)&&!weapon.getReload(weapon))return false; }
                 }
-                if (no == false) break;
+
             }
 
         }
-        if (no == true) //CANT PAY BASE NEITHER ALT
-            return false;
-        else return true;
+         return true;
     }
 
     //////////////////_____________________payMethods______________________________________________///////////////////////
