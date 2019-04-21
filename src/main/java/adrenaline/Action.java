@@ -14,7 +14,7 @@ public class Action {
 
 
     public static enum ActionType {
-        GRAB, RUN, SHOOT, ADRENALINESHOOT;
+        GRAB, RUN, SHOOT, ADRENALINESHOOT ,RELOAD;      //reload is an  optional action
     }
 
     private ActionType actionSelected;
@@ -54,6 +54,16 @@ public class Action {
                 shoot(weapon,c,player,payEff,m);
                 weapon.setNotReload(weapon);// i've lost base effect payment
                 break;
+
+            case RELOAD:
+                LinkedList<WeaponCard>weaponList=player.getHand();
+                WeaponCard weaponToReload=chooseWeaponCard(weaponList);
+                if(weaponToReload.getReload(weaponToReload))
+                    break;
+                reload(player,weaponToReload);
+                break;
+                //rembember this action doesn't increment #action
+
 
             //IF RETURNS FALSE GO TO SELECT ACTION
             // selectedWeapon = getSelectedWeapon (THAT IS CHARGED, isLoaded method in Player)
@@ -147,6 +157,7 @@ public class Action {
             //WHEN A WEAPON IS CHOOSEN BREAK
         }
         hand.add(canBeGrabbedWeapon.get(index));
+        canBeGrabbedWeapon.get(index).setReload(canBeGrabbedWeapon.get(index)); //when i grab a weapon i've already paid its base effect
     }
     public void dropWeaponCard(LinkedList<WeaponCard> hand){
         int index;
@@ -205,7 +216,7 @@ public class Action {
     }
 
 //_____________________________________RELOAD________________________________________________________________________//
-    public boolean Reload(Player p, WeaponCard w) {
+    public boolean reload(Player p, WeaponCard w) {
         int blue = p.getAmmoBox()[0];
         int red = p.getAmmoBox()[1];
         int yellow = p.getAmmoBox()[2];
@@ -229,8 +240,11 @@ public class Action {
             p.getAmmoBox()[0] = blue;
             p.getAmmoBox()[1] = red;
             p.getAmmoBox()[2] = yellow;
+            w.setReload(w);
             return true;
-        } else return false;
+        } else {
+            w.setNotReload(w);
+        return false;}
     }
 
     /*todo frenzyShoot frenzyRun frenzyGrab*/
@@ -304,7 +318,7 @@ public class Action {
                 }
             paid.get(0).setEffect(cost.get(i).getEffect()); break;  // i can pay only one
             }
-            //then you can pay options 
+            //then you can pay options
         for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
                 if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() == AmmoCube.Effect.OP1 ||
