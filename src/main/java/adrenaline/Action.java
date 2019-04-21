@@ -297,15 +297,14 @@ public class Action {
         LinkedList<AmmoCube> cost = weapon.getPrice();
         for (i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect())&&((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE))||
+                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&!weapon.getReload(weapon)) {
                     pay(player, cost.get(j));
                 }
                 }
             paid.get(0).setEffect(cost.get(i).getEffect()); break;  // i can pay only one
             }
-
-
-            //then you can pay options
+            //then you can pay options 
         for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
                 if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() == AmmoCube.Effect.OP1 ||
