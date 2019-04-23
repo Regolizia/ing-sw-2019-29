@@ -12,12 +12,6 @@ public class Player {
     private CoordinatesWithRoom coordinates;
     private Figure.PlayerColor color;
     private CoordinatesWithRoom respawnCoordinates;
-    private int yellowCube;
-    private int blueCube;
-    private int redCube;
-    private int resp=0;
-    private Scanner scan=new Scanner(System.in);
-    private String name;
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
 
@@ -28,7 +22,7 @@ public class Player {
     }
 
     // Coordinates rsp is the spawnPosition chosen by the player
-    public Player(CoordinatesWithRoom rsp, Figure.PlayerColor playercolor) {
+    public Player(CoordinatesWithRoom rsp, Figure.PlayerColor playerColor) {
 
         this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
         this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
@@ -38,7 +32,7 @@ public class Player {
                 , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
                 , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
         // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
-        this.color = playercolor;
+        this.color = playerColor;
         this.respawnCoordinates = rsp;
         this.coordinates = rsp;
         // they are lists because we need to add and remove easily
@@ -122,11 +116,11 @@ public class Player {
     }*/
 
     public boolean canGrabPowerUp() {
-        return (powerups.size() <= 2);
+        return (powerups.size() <= 3);
     }
 
     public boolean canGrabWeapon() {
-        return (hand.size() <= 2);
+        return (hand.size() <= 3);
     }
 
     //  REMOVE CELL 8,6... WHEN SOMEONE DIES
@@ -144,25 +138,8 @@ public class Player {
         return pointsArray;
     }
 
-    // CAN SELECT WEAPON IF CHARGED (EVERY AMMOCUBE BASE MUST BE PAID)
-    public boolean isLoaded(WeaponCard w) {
-        for (int i = 0; i < w.price.size(); i++) {
-            if (w.price.get(i).getEffect() == AmmoCube.Effect.BASE) {
-                if (!w.price.get(i).getPaid()) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /*
-    public void getPoints(){
-    }
-    */
-
     public boolean isDead() {
-        return (track[11] != Figure.PlayerColor.NONE);
+        return (track[10] != Figure.PlayerColor.NONE);
     }
 
     public int[] getAmmoBox() {
@@ -257,32 +234,31 @@ public class Player {
 
     ///// FOR CHECKPAYMENT
 
-    public void addRedCube(Player player, int red){
-        this.redCube=red;
+    public void setRedCube(int redCube) {
+        this.ammoBox[1] = redCube;
+    }
+    public void setBlueCube(int blueCube){
+        this.ammoBox[0]=blueCube;
+    }
+    public void setYellowCube(int yellowCube){
+        this.ammoBox[2]=yellowCube;
+    }
 
-    }
-    public void addBlueCube(Player player, int blue){
-        this.blueCube=blue;
-    }  public void addYellowCube(Player player, int yellow){
-        this.yellowCube=yellow;
-    }
-    public void setCube(Player player)
-    {   int counter=0;
-        this.ammoBox [0]= +this.blueCube;//BLUE RED YELLOW
-        this.ammoBox[1]=+this.redCube;
-        this.ammoBox[2]=+this.yellowCube;
-        addBlueCube(player,0);
-        addRedCube(player,0);
-        addYellowCube(player,0);
-    for(counter=0;counter<3;counter++)
+    public void setCube(int red,int blue,int yellow)
     {
-        if(ammoBox[counter]>=numMaxCube)ammoBox[counter]=numMaxCube;
+        setBlueCube(getCubeBlue()+blue);
+        setRedCube(getCubeRed()+red);
+        setYellowCube(getCubeYellow()+yellow);
+
+    for(int counter=0;counter<3;counter++)
+    {
+        if(this.ammoBox[counter]>=numMaxCube)ammoBox[counter]=numMaxCube;
     }
 
     }
-    public int getCubeRed(Player player){return ammoBox[2];}
-    public int getCubeYellow(Player player){return ammoBox[3];}
-    public int getCubeBlue(Player player){return ammoBox[1];}
+    public int getCubeRed(){return ammoBox[2];}
+    public int getCubeYellow(){return ammoBox[3];}
+    public int getCubeBlue(){return ammoBox[1];}
 
     // MOVES PLAYER TO A CELL
     public void moveToThisSquare(CoordinatesWithRoom c){
