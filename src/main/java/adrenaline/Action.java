@@ -97,11 +97,13 @@ public class Action {
             else executedSecondAction=true;
         }
         //HERE ENDS TURN
-       /* for(int index=0;index< 1;i++)
-        {
-            if(player.isDead())
-                player.newLife();
-        }*/
+        LinkedList<Player> players=m.getPlayers();
+        //public LinkedList<Player> getPlayers()
+
+        for(int index=0;index< players.size();index++)
+        { if(players.get(index).isDead())
+                players.get(index).newLife();
+        }
     }
 
 
