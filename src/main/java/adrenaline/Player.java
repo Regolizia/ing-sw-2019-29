@@ -84,6 +84,12 @@ public class Player {
         this.coordinates.setRoom(r);
     }
 
+    public void setPlayerPositionSpawnpoint(CoordinatesWithRoom c) {
+        this.coordinates=(c);
+
+    }
+
+
     // public void list target in that cell (CoordinatesWithRoom c){ } // todo a way to get players name +figures
 
     public Room getPlayerRoom() {
@@ -96,6 +102,13 @@ public class Player {
 
     public int getPlayerPositionY() {
         return coordinates.getY();
+    }
+
+    public void newLife(){
+        setPlayerPositionSpawnpoint(respawnCoordinates);
+        this.track=new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+        this.marks=new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+        //must reset also ammoBox?
     }
 //_________________________________________________________________________________________________________//
 
