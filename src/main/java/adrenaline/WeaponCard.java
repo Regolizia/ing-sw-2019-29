@@ -123,8 +123,11 @@ public class WeaponCard extends Card{
         return price;
     }
 
-    public void setReload(WeaponCard weapon){reload=true;}
+    // CAN SELECT WEAPON IF CHARGED (EVERY AMMOCUBE BASE MUST BE PAID)
+
+
+    public void setReload(){reload=true;}
 // reload to pay baseEffect
-    public void setNotReload(WeaponCard weapon){reload=false;}
-    public boolean getReload(WeaponCard weapon){return reload;}
+    public void setNotReload(){reload=false;}
+    public boolean getReload(){return reload;}
 }
