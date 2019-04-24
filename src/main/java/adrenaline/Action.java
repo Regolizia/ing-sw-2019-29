@@ -5,14 +5,14 @@ import java.util.LinkedList;
 
 
 public class Action {
-    final private int numMaxAlternativeOptions = 1;
+    final private int numMaxAlternativeOptions = 1; //(0=base 1=alternative)
     final private int numMaxAmmoToPay = 2;
     final private int numMaxWeaponYouCanChoose=3;
     GameBoard g = new GameBoard();
 
 
     public static enum ActionType {
-        GRAB, RUN, SHOOT, ADRENALINESHOOT ,RELOAD;      //reload is an  optional action
+        GRAB, RUN, SHOOT, RELOAD;      //reload is an  optional action //ADRENALINESHOOT
     }
 
     private ActionType actionSelected;
@@ -20,55 +20,58 @@ public class Action {
 
     public Action(ActionType chosen, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m) {
         actionSelected = chosen;
-        boolean executedAction;
-        switch (actionSelected) {
-            case RUN:
-                // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
-                proposeCellsRun(c,g);
-                CoordinatesWithRoom coordinatesR=null;
-                run(player,coordinatesR);
-                break;
-            case GRAB:
-                // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-                proposeCellsGrab(c,g,player);
-                CoordinatesWithRoom coordinatesG=null;
-                grab(player,coordinatesG,g);
-                break;
-
-            case SHOOT:
-                // HERE JUST WEAPON AND PAYMENTS, EVERYTHING ELSE IN CORRECT WEAPONCARD
-
-                // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
-                LinkedList<WeaponCard> hand = player.getHand();
-                // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
-                WeaponCard weapon = chooseWeaponCard(hand);
-                // Boolean payCard()
-                if(weapon.getReload(weapon)==false)
-                {if (!canPayCard(weapon, player))
-                    break; }
-
-                LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
-
-                shoot(weapon,c,player,payEff,m);
-                weapon.setNotReload(weapon);// i've lost base effect payment
-                break;
-
-            case RELOAD:
-                LinkedList<WeaponCard>weaponList=player.getHand();
-                WeaponCard weaponToReload=chooseWeaponCard(weaponList);
-                if(weaponToReload.getReload(weaponToReload))
+        boolean executedFirstAction=false;
+        boolean executedSecondAction=false;
+        while(!executedSecondAction) {
+            switch (actionSelected) {
+                case RUN:
+                    // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
+                    proposeCellsRun(c, g);
+                    CoordinatesWithRoom coordinatesR = null;
+                    run(player, coordinatesR);
                     break;
-                reload(player,weaponToReload);
-                break;
+                case GRAB:
+                    // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
+                    proposeCellsGrab(c, g, player);
+                    CoordinatesWithRoom coordinatesG = null;
+                    grab(player, coordinatesG, g);
+                    break;
+
+                case SHOOT:
+                    // HERE JUST WEAPON AND PAYMENTS, EVERYTHING ELSE IN CORRECT WEAPONCARD
+
+                    // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
+                    LinkedList<WeaponCard> hand = player.getHand();
+                    // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
+                    WeaponCard weapon = chooseWeaponCard(hand);
+                    // Boolean payCard()
+                    if (weapon.getReload() == false) {
+                        if (!canPayCard(weapon, player))
+                            break;
+                    }
+
+                    LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player);
+
+                    shoot(weapon, c, player, payEff, m);
+                    weapon.setNotReload();// i've lost base effect payment
+                    break;
+
+                case RELOAD:
+                    LinkedList<WeaponCard> weaponList = player.getHand();
+                    WeaponCard weaponToReload = chooseWeaponCard(weaponList);
+                    if (weaponToReload.getReload())
+                        break;
+                    reload(player, weaponToReload);
+                    break;
                 //rembember this action doesn't increment #action
 
 
-            //IF RETURNS FALSE GO TO SELECT ACTION
-            // selectedWeapon = getSelectedWeapon (THAT IS CHARGED, isLoaded method in Player)
-            // choose EFFECTS AND ACCEPT PAYMENT FOR THEM
+                //IF RETURNS FALSE GO TO SELECT ACTION
+                // selectedWeapon = getSelectedWeapon (THAT IS CHARGED, isLoaded method in Player)
+                // choose EFFECTS AND ACCEPT PAYMENT FOR THEM
 
-            // LIST OF EFFECTS CHOSEN (BASE ALREADY IN, IT HAS BEEN PAID (if they want ALT remove BASE))
-            // EFFECTS ADDED TO EFFECTSLIST
+                // LIST OF EFFECTS CHOSEN (BASE ALREADY IN, IT HAS BEEN PAID (if they want ALT remove BASE))
+                // EFFECTS ADDED TO EFFECTSLIST
 
 
         /* WHEN SOMEBODY CHOOSES ADRENALINE SHOOT WE ASK WHERE TO MOVE AND THEN WE DO THE STAFF TO SHOOT
@@ -84,10 +87,20 @@ public class Action {
         }*/
 
 
+                default:
+                    //INVALID CHOICE
 
-            default:
-                //INVALID CHOICE
+            }
+            if(!executedFirstAction) executedFirstAction=true;
+            else executedSecondAction=true;
+        }
+        //HERE ENDS TURN
+        LinkedList<Player> players=m.getPlayers();
+        //public LinkedList<Player> getPlayers()
 
+        for(int index=0;index< players.size();index++)
+        { if(players.get(index).isDead())
+                players.get(index).newLife();
         }
     }
 
@@ -155,7 +168,7 @@ public class Action {
             //WHEN A WEAPON IS CHOOSEN BREAK
         }
         hand.add(canBeGrabbedWeapon.get(index));
-        canBeGrabbedWeapon.get(index).setReload(canBeGrabbedWeapon.get(index)); //when i grab a weapon i've already paid its base effect
+        canBeGrabbedWeapon.get(index).setReload(); //when i grab a weapon i've already paid its base effect
     }
     public void dropWeaponCard(LinkedList<WeaponCard> hand){
         int index;
@@ -238,10 +251,10 @@ public class Action {
             p.getAmmoBox()[0] = blue;
             p.getAmmoBox()[1] = red;
             p.getAmmoBox()[2] = yellow;
-            w.setReload(w);
+            w.setReload();
             return true;
         } else {
-            w.setNotReload(w);
+            w.setNotReload();
         return false;}
     }
 
@@ -264,33 +277,33 @@ public class Action {
     public boolean canPayCard(WeaponCard weapon, Player player) {
         //can you pay base effect or you can pay alt
         LinkedList<AmmoCube> cost = weapon.getPrice();
-        int i = 0;
+        int i ;
         boolean no = false;
         for (i = 0; i < cost.size(); i++) {
-            if (((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE) || cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&!weapon.getReload(weapon)
-            ) ||(((cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&weapon.getReload(weapon))){
+            if (((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE) || cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&!weapon.getReload()
+            ) ||(((cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&weapon.getReload())){
                 for (int j = 0; j < numMaxAmmoToPay; j++) {
                     if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {      //BASE EFFECT always element 0
                         switch (cost.get(i).getCubeColor()) {
                             case RED:
-                                if (player.getCubeRed(player) - 1 < 0)
+                                if (player.getCubeRed() - 1 < 0)
                                     no = true;
                                 else no = false;
                                 break;
 
                             case BLUE:
-                                if (player.getCubeBlue(player) - 1 < 0)
+                                if (player.getCubeBlue() - 1 < 0)
                                     no = true;
                                 else no = false;
                                 break;
 
                             case YELLOW:
-                                if (player.getCubeYellow(player) - 1 < 0)
+                                if (player.getCubeYellow() - 1 < 0)
                                     no = true;
                                 else no = false;
                                 break;
                         }
-                        if (no==true&&cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)&&!weapon.getReload(weapon))return false; }
+                        if (no==true&&cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)&&!weapon.getReload())return false; }
                 }
 
             }
@@ -310,7 +323,7 @@ public class Action {
         for (i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
                 if (cost.get(i).getEffect().equals(cost.get(j).getEffect())&&((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE))||
-                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&!weapon.getReload(weapon)) {
+                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&!weapon.getReload()) {
                     pay(player, cost.get(j));
                 }
                 }
@@ -335,18 +348,14 @@ public class Action {
             public void pay (Player player, AmmoCube cube){
                 switch (cube.getCubeColor()) {
                     case RED:
-                        player.addRedCube(player, -1);
-                        player.setCube(player);
+                        player.setCube(-1,0,0);
                         break;
 
                     case BLUE:
-                        player.addBlueCube(player, -1);
-                        player.setCube(player);
+                        player.setCube(0,-1,0);
                         break;
-
                     case YELLOW:
-                        player.addYellowCube(player, -1);
-                        player.setCube(player);
+                        player.setCube(0,0,-1);
                         break;
                 }
             }
