@@ -1,7 +1,5 @@
 package adrenaline;
 
-import static adrenaline.GameModel.Mode.DEATHMATCH;
-
 public class Map {
 
     private GameBoard gameboard;

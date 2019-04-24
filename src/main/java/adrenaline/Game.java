@@ -2,14 +2,14 @@ package adrenaline;
 
 public class Game {
 
-    private GameModel model;
+    public static void main(String[] args) {
 
+        GameModel model;
 
-    public Game(){
 
         // CONNECTION AND GAME SETTINGS
         /*
-        //FROM VIEW
+        //FROM VIEW OF FIRST CLIENT
         mode =
         bot =
         chosenMap =

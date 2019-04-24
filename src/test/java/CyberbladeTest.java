@@ -1,6 +1,5 @@
 import adrenaline.*;
 import adrenaline.weapons.Cyberblade;
-import adrenaline.weapons.LockRifle;
 import org.junit.jupiter.api.Test;
 
 

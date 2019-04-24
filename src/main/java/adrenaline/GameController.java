@@ -3,32 +3,37 @@ package adrenaline;
 /**
  * 
  */
-public class GameController implements Observer {
+public class GameController{
 
-    /**
-     * Default constructor
-     */
-    public GameController() {
+    private GameModel model;
+    private VirtualClientCLI viewCLI;
+    private VirtualClientGUI viewGUI;
+
+    public GameController(GameModel model){
+        this.model = model;
     }
 
-    /**
-     * 
-     */
-    //public void model;
-
-    /**
-     * 
-     */
-   // public void view;
-
-
-
-    /**
-     * 
-     */
-    public void gameController() {
-        // TODO implement here
+    // NEW INSTANCE OF
+  /*  public void setStudentName(String name){
+        model.setName(name);
     }
+
+    public String getStudentName(){
+        return model.getName();
+    }
+
+    public void setStudentRollNo(String rollNo){
+        model.setRollNo(rollNo);
+    }
+
+    public String getStudentRollNo(){
+        return model.getRollNo();
+    }
+
+    public void updateCLIView(){
+        viewCLI.printPlayerDetails(model.getName(), model.getRollNo());
+    }
+    */
 
     /**
      * 

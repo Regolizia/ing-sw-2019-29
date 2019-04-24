@@ -1,9 +1,5 @@
 package adrenaline;
 
-import java.util.*;
-
-import static adrenaline.Door.Direction.*;
-
 public class Door{
 
     private CoordinatesWithRoom c1;

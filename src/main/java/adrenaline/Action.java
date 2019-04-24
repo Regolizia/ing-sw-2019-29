@@ -1,8 +1,6 @@
 package adrenaline;
 
 
-import adrenaline.weapons.RocketLaucher;
-
 import java.util.LinkedList;
 
 

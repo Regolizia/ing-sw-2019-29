@@ -5,7 +5,6 @@ import adrenaline.MapOne;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
