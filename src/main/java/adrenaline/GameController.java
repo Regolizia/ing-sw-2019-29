@@ -3,7 +3,7 @@ package adrenaline;
 /**
  * 
  */
-public class GameController implements Observer {
+public class GameController{
 
     /**
      * Default constructor
