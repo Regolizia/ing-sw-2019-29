@@ -5,6 +5,8 @@ import adrenaline.weapons.RocketLaucher;
 
 import java.util.LinkedList;
 
+import static adrenaline.AmmoCube.CubeColor.YELLOW;
+
 
 public class Action {
     final private int numMaxAlternativeOptions = 1; //(0=base 1=alternative)
@@ -25,6 +27,7 @@ public class Action {
         boolean executedFirstAction=false;
         boolean executedSecondAction=false;
         boolean endTurn=false;
+        boolean deletedAction=false;
         while(!endTurn) {
             switch (actionSelected) {
                 case RUN:
@@ -32,12 +35,13 @@ public class Action {
                     proposeCellsRun(c, g);
                     CoordinatesWithRoom coordinatesR = null;
                     run(player, coordinatesR);
+                    deletedAction=false;
                     break;
                 case GRAB:
                     // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
                     proposeCellsGrab(c, g, player);
                     CoordinatesWithRoom coordinatesG = null;
-                    grab(player, coordinatesG, g);
+                    deletedAction=!(grab(player, coordinatesG, g));
                     break;
 
                 case SHOOT:
@@ -50,6 +54,7 @@ public class Action {
                     // Boolean payCard()
                     if (weapon.getReload() == false) {
                         if (!canPayCard(weapon, player))
+                            deletedAction=true;
                             break;
                     }
 
@@ -88,8 +93,8 @@ public class Action {
                     //INVALID CHOICE
 
             }
-            if(!executedFirstAction) executedFirstAction=true;
-            else executedSecondAction=true;
+            if(!executedFirstAction&&deletedAction==false) executedFirstAction=true;
+            else if(executedFirstAction&&deletedAction==false) executedSecondAction=true;
         }
         //HERE ENDS TURN
         if(actionSelected.equals(ActionType.RELOAD)){
@@ -134,45 +139,38 @@ public class Action {
     }
 
     //________________________________________________GRAB____________________________________________________________//
-    public void grab(Player p, CoordinatesWithRoom c, GameBoard g) {
+    public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         // IF THERE IS A SPAWNPOINT HERE
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
             && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
        c.getRoom().getSpawnpoints().get(0).getSpawnpointY()== c.getY())
-       {   grabCard(p.getHand(),c);
+       {
         //CHOOSE WEAPON IF CANGRAB IT
-        return;}
-        AmmoTile toBeGrabbedTile=null;
-        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY())
-            toBeGrabbedTile=c.getRoom().getAmmoTile(c);  // now i can grab that tile
-        // grab ammo or powerUp
-        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
-            //is a powerUp
-            ;
-        if(toBeGrabbedTile.getAmmoTile().get(1)!=null||toBeGrabbedTile.getAmmoTile().get(2)!=null)
-            //is a ammo/cube
-            ;
+        return   grabCard(p,p.getHand(),c);}
+       else
+        return grabTile(p,c);
+
     }
 
-    //____________________________________________GRAB OPTIONS________________________________________________________//
+    //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
-    public void grabCard(LinkedList<WeaponCard> hand, CoordinatesWithRoom c){
+    public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c){
         int index;
         LinkedList <WeaponCard> canBeGrabbedWeapon=null;
         WeaponCard w;
-        for(int i=0;i<numMaxWeaponYouCanChoose;i++){
-            //here you get all the WeaponCard in that position
-           // todo method to get weapon   canBeGrabbedWeapon.get(i)=w.getWeapon;
-        }
-        if(hand.size()>=3)
-            dropWeaponCard(hand); //I need to drop that card
-
         for (index = 0; index <canBeGrabbedWeapon.size() ; index++) {
             //WHEN A WEAPON IS CHOOSEN BREAK
         }
+        if(!canPayCard(canBeGrabbedWeapon.get(index),player))
+            return false;
+        if(canPayCard(canBeGrabbedWeapon.get(index),player)&&hand.size()>=3)
+        dropWeaponCard(hand); //I need to drop that card
+
+
         hand.add(canBeGrabbedWeapon.get(index));
         canBeGrabbedWeapon.get(index).setReload(); //when i grab a weapon i've already paid its base effect
+        return true;
     }
     public void dropWeaponCard(LinkedList<WeaponCard> hand){
         int index;
@@ -181,7 +179,50 @@ public class Action {
         }
         hand.remove(index);
     }
+    //_____________________________________GRAB OPTION TILE ___________________________________________________________//
+    public boolean grabTile(Player player, CoordinatesWithRoom c){
+        AmmoTile toBeGrabbedTile=null;
+        // grab ammo or powerUp
+        PowerUpCard toBeGrabbedPowerUp=null;
+        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
+            //is a powerUp
+            return grabPowerUp(player,c,toBeGrabbedPowerUp);
 
+        if (toBeGrabbedTile.getAmmoTile().get(1) != null || toBeGrabbedTile.getAmmoTile().get(2) != null )
+                    return grabCube(player,c, toBeGrabbedTile);
+
+        return false;
+
+    }
+    public boolean grabCube(Player player, CoordinatesWithRoom c, AmmoTile a){
+
+        for(int i=0;i<3;i++)
+        {
+            if(player.getAmmoBox()[i]>=3)
+                return false;
+        }
+        for(int i=1;i<3;i++)
+        {
+            switch (a.getAmmoTile().get(i).getCubeColor())
+
+                {
+                    case YELLOW: player.setCube(0,0,1);break;
+                    case BLUE:   player.setCube(0,1,0);break;
+                    case RED:    player.setCube(1,0,0);break;
+                }
+        }
+
+
+        return true;
+    }
+public boolean grabPowerUp(Player p, CoordinatesWithRoom c,PowerUpCard a){
+        if(!p.canGrabPowerUp()) return false;
+
+
+        p.getPowerUp().add(a);
+        return true;
+
+}
 
     //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
@@ -243,7 +284,7 @@ public class Action {
                     blue--;
                 if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.RED)
                     red--;
-                if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.YELLOW)
+                if (w.price.get(i).getCubeColor() == YELLOW)
                     yellow--;
             }
         }
