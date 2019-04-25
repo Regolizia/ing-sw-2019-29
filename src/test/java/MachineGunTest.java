@@ -1,4 +1,5 @@
 import adrenaline.*;
+import adrenaline.weapons.LockRifle;
 import adrenaline.weapons.MachineGun;
 import org.junit.jupiter.api.Test;
 

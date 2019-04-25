@@ -1,7 +1,7 @@
 package adrenaline;
 
 import static adrenaline.GameModel.Bot.*;// it imports gameplay's bot choice
-
+import static adrenaline.Action.ActionType.*;
 
 public class Turn {
 private boolean firstAction;

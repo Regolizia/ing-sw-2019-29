@@ -1,7 +1,8 @@
 
     import adrenaline.*;
     import adrenaline.weapons.Flamethrower;
-    import org.junit.jupiter.api.Test;
+    import adrenaline.weapons.LockRifle;
+import org.junit.jupiter.api.Test;
 
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

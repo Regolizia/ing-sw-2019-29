@@ -5,6 +5,12 @@ package adrenaline;
  */
 public class VirtualClientCLI {
 
+    public static void main(String avg[]) throws Exception {
+
+
+    }
+
+
     public void printPlayerDetails(String playerName, int score, String color){
         System.out.println("Player: ");
         System.out.println("Name: " + playerName);

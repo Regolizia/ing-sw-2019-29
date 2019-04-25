@@ -3,6 +3,7 @@ import adrenaline.DominationBoard;
 import adrenaline.GameBoard;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
