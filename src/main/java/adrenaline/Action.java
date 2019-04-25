@@ -24,7 +24,8 @@ public class Action {
         actionSelected = chosen;
         boolean executedFirstAction=false;
         boolean executedSecondAction=false;
-        while(!executedSecondAction) {
+        boolean endTurn=false;
+        while(!endTurn) {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -58,13 +59,7 @@ public class Action {
                     weapon.setNotReload();// i've lost base effect payment
                     break;
 
-                case RELOAD:
-                    LinkedList<WeaponCard> weaponList = player.getHand();
-                    WeaponCard weaponToReload = chooseWeaponCard(weaponList);
-                    if (weaponToReload.getReload())
-                        break;
-                    reload(player, weaponToReload);
-                    break;
+
                 //rembember this action doesn't increment #action
 
 
@@ -97,6 +92,11 @@ public class Action {
             else executedSecondAction=true;
         }
         //HERE ENDS TURN
+        if(actionSelected.equals(ActionType.RELOAD)){
+        LinkedList<WeaponCard> weaponList = player.getHand();
+        WeaponCard weaponToReload = chooseWeaponCard(weaponList);
+        if (!weaponToReload.getReload())
+        reload(player, weaponToReload); }
         LinkedList<Player> players=m.getPlayers();
         //public LinkedList<Player> getPlayers()
 
