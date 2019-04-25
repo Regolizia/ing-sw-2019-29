@@ -117,7 +117,8 @@ public class Action {
 
     //_______________________________________________RUN______________________________________________________________//
     public void run(Player p, CoordinatesWithRoom c) {
-        p.setPlayerPosition(c.getX(), c.getY());
+
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
     }
 
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
@@ -134,6 +135,7 @@ public class Action {
 
     //________________________________________________GRAB____________________________________________________________//
     public void grab(Player p, CoordinatesWithRoom c, GameBoard g) {
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         // IF THERE IS A SPAWNPOINT HERE
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
             && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
@@ -183,6 +185,7 @@ public class Action {
 
     //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         EffectAndNumber effectNumber=null;
         for(int index=0;index<effectsList.size();index++) {
             ///todo choose effect order
