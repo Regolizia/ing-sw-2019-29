@@ -22,7 +22,8 @@ public class Action {
         actionSelected = chosen;
         boolean executedFirstAction=false;
         boolean executedSecondAction=false;
-        while(!executedSecondAction) {
+        boolean endTurn=false;
+        while(!endTurn) {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -56,13 +57,7 @@ public class Action {
                     weapon.setNotReload();// i've lost base effect payment
                     break;
 
-                case RELOAD:
-                    LinkedList<WeaponCard> weaponList = player.getHand();
-                    WeaponCard weaponToReload = chooseWeaponCard(weaponList);
-                    if (weaponToReload.getReload())
-                        break;
-                    reload(player, weaponToReload);
-                    break;
+
                 //rembember this action doesn't increment #action
 
 
@@ -95,6 +90,11 @@ public class Action {
             else executedSecondAction=true;
         }
         //HERE ENDS TURN
+        if(actionSelected.equals(ActionType.RELOAD)){
+        LinkedList<WeaponCard> weaponList = player.getHand();
+        WeaponCard weaponToReload = chooseWeaponCard(weaponList);
+        if (!weaponToReload.getReload())
+        reload(player, weaponToReload); }
         LinkedList<Player> players=m.getPlayers();
         //public LinkedList<Player> getPlayers()
 
@@ -115,7 +115,8 @@ public class Action {
 
     //_______________________________________________RUN______________________________________________________________//
     public void run(Player p, CoordinatesWithRoom c) {
-        p.setPlayerPosition(c.getX(), c.getY());
+
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
     }
 
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
@@ -132,6 +133,7 @@ public class Action {
 
     //________________________________________________GRAB____________________________________________________________//
     public void grab(Player p, CoordinatesWithRoom c, GameBoard g) {
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         // IF THERE IS A SPAWNPOINT HERE
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
             && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
@@ -181,6 +183,7 @@ public class Action {
 
     //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         EffectAndNumber effectNumber=null;
         for(int index=0;index<effectsList.size();index++) {
             ///todo choose effect order
