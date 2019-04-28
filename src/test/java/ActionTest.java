@@ -1,12 +1,15 @@
 import adrenaline.*;
 import adrenaline.weapons.Cyberblade;
 import adrenaline.weapons.Electroscythe;
+import adrenaline.weapons.Thor;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 import java.util.LinkedList;
 
+import static adrenaline.AmmoCube.Effect.ALT;
+import static adrenaline.AmmoCube.Effect.BASE;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class ActionTest {
@@ -161,6 +164,100 @@ public class ActionTest {
         }
 //BLUE RED YELLOW
         System.out.println(player.getAmmoBox()[0]+"\n"+player.getAmmoBox()[1]+"\n"+player.getAmmoBox()[2]);
+    }
+    @Test
+    public void grabPowerUp(){
+        Map map = new MapFour(DEATHMATCH);
+        PowerUpCard a=new PowerUpCard();
+        a.setPowerUpColor(AmmoCube.CubeColor.BLUE);
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player p=new Player(c,Figure.PlayerColor.GRAY);
+        if(!p.canGrabPowerUp()) return;
+
+        System.out.println(p.getPowerUp());
+        p.getPowerUp().add(a);
+        System.out.println(p.getPowerUp());
+    }
+    @Test
+    public void shoot( ) {
+        WeaponCard w=new Cyberblade();
+        LinkedList<EffectAndNumber> effectsList=new LinkedList<>();
+        EffectAndNumber effectAndNumber=new EffectAndNumber(BASE,0);
+        effectsList.add(0,effectAndNumber);
+        effectsList.get(0).setEffect(BASE);
+        Map map = new MapFour(DEATHMATCH);
+        GameModel m=new GameModel(DEATHMATCH,null,1);
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player p=new Player(c,Figure.PlayerColor.GRAY);
+        Player victim=new Player(c,Figure.PlayerColor.BLUE);
+        GameBoard g=map.getGameBoard();
+        p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
+        EffectAndNumber effectNumber=null;
+        for(int index=0;index<effectsList.size();index++) {
+            ///todo choose effect order
+            switch (effectsList.get(index).getEffect()) {
+                case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
+                case ALT: effectNumber = new EffectAndNumber(ALT, 0);
+                case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
+                case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
+            }
+          //  LinkedList<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
+          //  w.fromCellsToTargets(target,c,g,p,m,effectNumber);
+            //here controller gives back choosen opponents
+            LinkedList<Object>effectiveTarget=new LinkedList<>();
+
+            effectiveTarget.add(0,victim);
+            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
+        }}
+@Test
+    public void reload() {
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard w=new Thor();
+        Action.PayOption option=Action.PayOption.AMMO;
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player p=new Player(c,Figure.PlayerColor.GRAY);
+
+        switch(option){
+            case AMMO:break;
+
+            case AMMOPOWER:break;
+
+        }
+
+    }
+    @Test
+    public void reloadAmmoPower(){
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard weapon=new Thor();
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+
+        System.out.println(player.getAmmoBox());
+
+        LinkedList<PowerUpCard>wallet=new LinkedList<>();
+        PowerUpCard powerUp=new PowerUpCard();
+        powerUp.setPowerUpColor(AmmoCube.CubeColor.BLUE);
+        wallet.addFirst(powerUp);
+
+        System.out.println(wallet);
+
+        int redCube=player.getCubeRed();
+        int blueCube=player.getCubeBlue();
+        int yellowCube=player.getCubeYellow();
+        System.out.println(player.getCubeBlue());
+        for(int i=0;i<wallet.size();i++){
+            switch (wallet.get(i).getPowerUpColor()){
+                case RED: redCube++;break;
+                case YELLOW:yellowCube++;break;
+                case BLUE:blueCube++;break;
+            }
+        }
+        System.out.println(blueCube);
+
+
+        for(int i=0;i<wallet.size();i++)
+            player.getPowerUp().remove(wallet.get(i));
+        System.out.println(wallet);
     }
 
 
