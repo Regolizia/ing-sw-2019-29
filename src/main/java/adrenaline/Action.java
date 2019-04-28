@@ -14,6 +14,10 @@ public class Action {
     final private int numMaxWeaponYouCanHave=3;
     GameBoard g = new GameBoard();
 
+    boolean executedFirstAction=false;
+    boolean executedSecondAction=false;
+    boolean endTurn=false;
+    boolean deletedAction=false;
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, RELOAD;      //reload is an  optional action //ADRENALINESHOOT
@@ -23,16 +27,22 @@ public class Action {
         AMMO,AMMOPOWER,NONE;      //reload is an  optional action //ADRENALINESHOOT
     }
 
-    private ActionType actionSelected;
+  //  private ActionType actionSelected;
 
 
-    public Action(ActionType chosen, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option) {
-        actionSelected = chosen;
-        boolean executedFirstAction=false;
-        boolean executedSecondAction=false;
-        boolean endTurn=false;
-        boolean deletedAction=false;
-        while(!endTurn) {
+    public Action() {
+        if(this.endTurn=true){
+       this.executedFirstAction=false;
+       this.executedSecondAction=false;
+       this.endTurn=false;
+       this. deletedAction=false;}
+    }
+
+    //________________________________DO ACTION_____________________________________________________________________//
+    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option){
+      //  actionSelected = chosen;
+
+        if(!endTurn) {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -59,42 +69,17 @@ public class Action {
                     if (weapon.getReload() == false) {
                         if (!canPayCard(weapon, player,option))
                             deletedAction=true;
-                            break;
+                        break;
                     }
                     if(canPayCard(weapon,player,option)){
-                    LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,option);
-                    if(payEff==null)
-                    {deletedAction=true;break;}
-                    shoot(weapon, c, player, payEff, m);
-                    weapon.setNotReload();// i've lost base effect payment
+                        LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,option);
+                        if(payEff==null)
+                        {deletedAction=true;break;}
+                        shoot(weapon, c, player, payEff, m);
+                        weapon.setNotReload();// i've lost base effect payment
                         deletedAction=false;
-                         }
+                    }
                     break;
-
-
-                //rembember this action doesn't increment #action
-
-
-                //IF RETURNS FALSE GO TO SELECT ACTION
-                // selectedWeapon = getSelectedWeapon (THAT IS CHARGED, isLoaded method in Player)
-                // choose EFFECTS AND ACCEPT PAYMENT FOR THEM
-
-                // LIST OF EFFECTS CHOSEN (BASE ALREADY IN, IT HAS BEEN PAID (if they want ALT remove BASE))
-                // EFFECTS ADDED TO EFFECTSLIST
-
-
-        /* WHEN SOMEBODY CHOOSES ADRENALINE SHOOT WE ASK WHERE TO MOVE AND THEN WE DO THE STAFF TO SHOOT
-        // IF ADRENALINE SHOOT IS POSSIBLE, CAN MOVE ONCE
-        if(p.checkDamage()==2){
-            listTemp.addAll(c.XTilesDistant(g,1));
-
-            for(int i=0;i<listTemp.size();i++) {
-                list.addAll(getPossibleTargetCells(listTemp.get(i),e,g));
-                // TODO REMOVE DUPLICATES
-                // TODO, WE HAVE TO CHECK IF PLAYER MOVED, AND THEN MOVE IT
-            }
-        }*/
-
 
                 default:
                     //INVALID CHOICE
@@ -105,18 +90,19 @@ public class Action {
             if(executedFirstAction&&executedSecondAction)endTurn=true;
         }
         //HERE ENDS TURN
+        else{
         if(actionSelected.equals(ActionType.RELOAD)){
-        LinkedList<WeaponCard> weaponList = player.getHand();
-        WeaponCard weaponToReload = chooseWeaponCard(weaponList);
-        if (!weaponToReload.getReload())
-        reload(player, weaponToReload,option); }
+            LinkedList<WeaponCard> weaponList = player.getHand();
+            WeaponCard weaponToReload = chooseWeaponCard(weaponList);
+            if (!weaponToReload.getReload())
+                reload(player, weaponToReload,option); }
         LinkedList<Player> players=m.getPlayers();
         //public LinkedList<Player> getPlayers()
 
         for(int index=0;index< players.size();index++)
         { if(players.get(index).isDead())
-                players.get(index).newLife();
-        }
+            players.get(index).newLife();
+        }}
     }
 
 
