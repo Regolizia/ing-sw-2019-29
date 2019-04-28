@@ -154,6 +154,7 @@ public class Action {
 
     public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option){
         int index;
+        //TODO a way to convert propose to grab cells in weaponCard/Card
         LinkedList <WeaponCard> canBeGrabbedWeapon=null;
         WeaponCard w;
         for (index = 0; index <canBeGrabbedWeapon.size() ; index++) {
@@ -180,6 +181,8 @@ public class Action {
     public boolean grabTile(Player player, CoordinatesWithRoom c){
         AmmoTile toBeGrabbedTile=null;
         // grab ammo or powerUp
+
+        //TODO a way to convert propose to grab cells in AmmoTile
         PowerUpCard toBeGrabbedPowerUp=null;
         if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
             //is a powerUp
