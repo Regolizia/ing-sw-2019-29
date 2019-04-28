@@ -320,7 +320,7 @@ public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow){
                 blueToPay++;
             if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.RED)
                 redToPay++;
-            if (w.price.get(i).getCubeColor() == YELLOW)
+            if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.YELLOW)
                 yellowToPay++;
         }
     }
