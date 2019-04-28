@@ -136,13 +136,16 @@ public class Action {
     public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g,PayOption option) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         // IF THERE IS A SPAWNPOINT HERE
+        LinkedList<Spawnpoint> spawnpoints=c.getRoom().getSpawnpoints();
+
+     for (int i=0;i<spawnpoints.size();i++){
        if( c.getRoom()==p.getPlayerRoom()&&c.getX()==p.getPlayerPositionX()&&c.getY()==p.getPlayerPositionY()
-            && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(0).getSpawnpointX()==c.getX()&&
-       c.getRoom().getSpawnpoints().get(0).getSpawnpointY()== c.getY())
+            && c.getRoom().getSpawnpoints()!=null && c.getRoom().getSpawnpoints().get(i).getSpawnpointX()==c.getX()&&
+       c.getRoom().getSpawnpoints().get(i).getSpawnpointY()== c.getY())
        {
         //CHOOSE WEAPON IF CANGRAB IT
-        return   grabCard(p,p.getHand(),c,option);}
-       else
+        return   grabCard(p,p.getHand(),c,option);}}
+
         return grabTile(p,c);
 
     }
