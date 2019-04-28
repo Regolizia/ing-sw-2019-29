@@ -1,4 +1,6 @@
 import adrenaline.*;
+import adrenaline.weapons.Cyberblade;
+import adrenaline.weapons.Electroscythe;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
@@ -57,5 +59,57 @@ public class ActionTest {
         }
 
     }
+@Test
+    public void grab( )
+{
+    Action.PayOption option= Action.PayOption.AMMO;
+    Map map = new MapFour(DEATHMATCH);
+    CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+    Player p = new Player(c, Figure.PlayerColor.GRAY);
+    p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
+    p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
+    Spawnpoint s=new Spawnpoint(c.getX(),c.getY());
+    c.getRoom().addSpawnpoint(s);
+    LinkedList<Spawnpoint>spawnpoints=c.getRoom().getSpawnpoints();
+        // IF THERE IS A SPAWNPOINT HERE
+    for (int i=0;i<spawnpoints.size();i++) {
+        if (c.getRoom() == p.getPlayerRoom() && c.getX() == p.getPlayerPositionX() && c.getY() == p.getPlayerPositionY()
+                && c.getRoom().getSpawnpoints() != null && c.getRoom().getSpawnpoints().get(i).getSpawnpointX() == c.getX() &&
+                c.getRoom().getSpawnpoints().get(i).getSpawnpointY() == c.getY()) ;
     }
+
+
+}
+@Test
+    public void grabCard(){
+        Map map = new MapFour(DEATHMATCH);
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player = new Player(c, Figure.PlayerColor.GRAY);
+        Action.PayOption option= Action.PayOption.AMMO;
+
+        LinkedList<WeaponCard> hand= new LinkedList<>();
+        LinkedList <WeaponCard> canBeGrabbedWeapon=new LinkedList<>();
+        WeaponCard w=new Electroscythe();
+        canBeGrabbedWeapon.addFirst(w);
+
+        hand.add(canBeGrabbedWeapon.get(0));
+        canBeGrabbedWeapon.get(0).setReload(); //when i grab a weapon i've already paid its base effect
+
+    }
+    @Test
+    public void dropWeaponCard(){
+        Player player=new Player(null, Figure.PlayerColor.GRAY);
+
+        player.getHand().addFirst(new Cyberblade());
+        player.getHand().add(new Electroscythe());
+        System.out.println(player.getHand());
+        player.getHand().removeFirst();
+
+        System.out.println(player.getHand());
+    }
+
+
+
+
+}
 
