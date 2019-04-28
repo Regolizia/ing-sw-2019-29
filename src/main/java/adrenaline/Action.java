@@ -201,14 +201,18 @@ public class Action {
             if(player.getAmmoBox()[i]>=3)
                 return false;
         }
-        for(int i=1;i<3;i++)
+        for(int i=0;i<3;i++)
         {
             switch (a.getAmmoTile().get(i).getCubeColor())
 
                 {
-                    case YELLOW: player.setCube(0,0,1);break;
-                    case BLUE:   player.setCube(0,1,0);break;
-                    case RED:    player.setCube(1,0,0);break;
+                    case YELLOW:
+                        player.setCube(0,0,1);break;
+                    case BLUE:
+                        player.setCube(0,1,0);break;
+
+                    case RED:
+                        player.setCube(1,0,0);break;
                 }
         }
 
