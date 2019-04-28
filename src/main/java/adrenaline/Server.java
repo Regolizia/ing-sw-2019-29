@@ -1,31 +1,32 @@
 package adrenaline;
 
 // SOCKET
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.Executors;
+import  java.lang.*;
+import java.util.stream.*;
 
 // RMI
 
 public class Server {
 
+    GameModel model;
 
-    /**
-     * A multithreaded server. When a client connects the server requests a screen
-     * name by sending the client the text "SUBMITNAME", and keeps requesting a name until
-     * a unique one is received. After a client submits a unique name, the server acknowledges
-     * with "NAMEACCEPTED". Then all messages from that client will be broadcast to all other
-     * clients that have submitted a unique screen name. The broadcast messages are prefixed
-     * with "MESSAGE".
-     * <p>
-     * This is just a teaching example so it can be enhanced in many ways, e.g., better
-     * logging. Another is to accept a lot of fun commands, like Slack.
-     */
+    private static int TIME = 0;
+    private static int connectionsCount = 0;
+
+    // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
+    private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
+            .map(Figure.PlayerColor::name)
+            .collect(Collectors.toList());
+    private static Set<String> colorsChosen = new HashSet<>();
+    //String csv = String.join(",", possibleColors); WILL BE USED TO SEND THE LIST AS A STRING TO THE CLIENT
 
     // All client names, so we can check for duplicates upon registration.
     private static Set<String> names = new HashSet<>();
@@ -33,7 +34,11 @@ public class Server {
     // The set of all the print writers for all the clients, used for broadcast.
     private static Set<PrintWriter> writers = new HashSet<>();
 
+
     public static void main(String[] args) throws Exception {
+        TIME =Integer.parseInt(args[0]);
+        possibleColors.remove("NONE");
+
         System.out.println("The server is running...");
         var pool = Executors.newFixedThreadPool(500);
         try (var listener = new ServerSocket(59001)) {
@@ -43,11 +48,42 @@ public class Server {
         }
     }
 
+    private static class Countdown{
+        public Countdown(){
+            final Timer timer = new Timer();
+            try {
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    int i = TIME;
+
+                    public void run() {
+                        System.out.println(i--);
+                        if (i< 0 || connectionsCount<3) {
+                            if(i<0) {
+                                System.out.println("Game is starting...");
+                            // DO SOMETHING TO START THE GAME
+                            }
+                            else {
+                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
+                            }
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
     /**
      * The client handler task.
      */
     private static class Handler implements Runnable {
         private String name;
+        private String color;
         private Socket socket;
         private Scanner in;
         private PrintWriter out;
@@ -69,6 +105,11 @@ public class Server {
          */
         public void run() {
             try {
+                Server.connectionsCount++;
+                if(connectionsCount==3){
+                    Countdown c = new Countdown();
+                }
+
                 in = new Scanner(socket.getInputStream());
                 out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -84,17 +125,56 @@ public class Server {
                             names.add(name);
                             break;
                         }
+                        else if(names.contains(name)){
+                            System.out.println("DUPLICATE NAME ");    // WHAT I SEE IN SERVER
+                            out.println("DUPLICATE NAME ");   // WHAT I SEND TO CLIENT
+                        }
                     }
                 }
 
                 // Now that a successful name has been chosen, add the socket's print writer
                 // to the set of all writers so this client can receive broadcast messages.
                 // But BEFORE THAT, let everyone else know that the new person has joined!
-                out.println("NAMEACCEPTED " + name);
+                System.out.println("NAME ACCEPTED " + name);    // WHAT I SEE IN SERVER
+                out.println("NAME ACCEPTED " + name);   // WHAT I SEND TO CLIENT
                 for (PrintWriter writer : writers) {
-                    writer.println("MESSAGE " + name + " has joined");
+                    writer.println("MESSAGE" + name + " has joined");
                 }
                 writers.add(out);
+
+                while (true) {
+                    String csv = String.join(",", possibleColors);  // SEND POSSIBLE COLORS
+                    out.println("CHOOSE COLOR ");
+                    out.println(csv);
+                    color = in.nextLine();
+                    if (color == null) {
+                        System.out.println("color null");
+                        return;
+                    }
+                    synchronized (possibleColors) {
+                        if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color) )
+                                && (colorsChosen.isEmpty() || (!colorsChosen.contains(color) && !colorsChosen.contains(color.toUpperCase())))) {
+                            colorsChosen.add(color.toUpperCase());
+                            possibleColors.remove(color.toUpperCase());
+                            break;
+                        }
+                        else if((!possibleColors.contains(color.toUpperCase()) || !possibleColors.contains(color) )
+                            && !colorsChosen.contains(color.toUpperCase()) && !colorsChosen.contains(color)) {
+                            System.out.println("WORD NOT ACCEPTED ");    // WHAT I SEE IN SERVER
+                            out.println("WORD NOT ACCEPTED ");   // WHAT I SEND TO CLIENT
+
+                        }
+                        else if(colorsChosen.contains(color.toUpperCase()) || colorsChosen.contains(color)){
+                            System.out.println("DUPLICATE COLOR ");    // WHAT I SEE IN SERVER
+                            out.println("DUPLICATE COLOR ");   // WHAT I SEND TO CLIENT
+                        }
+                    }
+                }
+                System.out.println("COLOR ACCEPTED " + color);    // WHAT I SEE IN SERVER
+                out.println("COLOR ACCEPTED " + color);   // WHAT I SEND TO CLIENT
+                for (PrintWriter writer : writers) {
+                    writer.println("MESSAGE" + name + " has chosen " + color);
+                }
 
                 // Accept messages from this client and broadcast them.
                 while (true) {
@@ -103,12 +183,16 @@ public class Server {
                         return;
                     }
                     for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + ": " + input);
+                        System.out.println(writer);
+                        writer.println("MESSAGE" + name + ": " + input);
                     }
                 }
             } catch (Exception e) {
-                System.out.println(e);
+                // PLAYER DISCONNECTED
+                //System.out.println(e);
+                //System.out.println(e.getStackTrace()[0].getLineNumber());
             } finally {
+                connectionsCount--;
                 if (out != null) {
                     writers.remove(out);
                 }
@@ -116,7 +200,7 @@ public class Server {
                     System.out.println(name + " is leaving");
                     names.remove(name);
                     for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE " + name + " has left");
+                        writer.println("MESSAGE" + name + " has left");
                     }
                 }
                 try {
@@ -137,5 +221,5 @@ public class Server {
                        }
                     }
                     return true;
-            }
+    }
 }

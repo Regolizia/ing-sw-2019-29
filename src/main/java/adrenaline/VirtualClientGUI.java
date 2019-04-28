@@ -43,7 +43,7 @@ public class VirtualClientGUI {
     String serverAddress;
     Scanner in;
     PrintWriter out;
-    JFrame frame = new JFrame("Chatter");
+    JFrame frame = new JFrame("ClientGUI");
     JTextField textField = new JTextField(50);
     JTextArea messageArea = new JTextArea(16, 50);
 
@@ -76,8 +76,16 @@ public class VirtualClientGUI {
     private String getName() {
         return JOptionPane.showInputDialog(
                 frame,
-                "Choose a screen name:",
-                "Screen name selection",
+                "Choose nickname:",
+                "Nickname selection",
+                JOptionPane.PLAIN_MESSAGE
+        );
+    }
+    private String getColor() {
+        return JOptionPane.showInputDialog(
+                frame,
+                "Choose color: " + in.nextLine(),
+                "Color selection",
                 JOptionPane.PLAIN_MESSAGE
         );
     }
@@ -92,13 +100,17 @@ public class VirtualClientGUI {
                 var line = in.nextLine();
                 if (line.startsWith("ENTER")) {
                     out.println(getName());
-                } else if (line.startsWith("NAMEACCEPTED")) {
-                    this.frame.setTitle("Chatter - " + line.substring(13));
+                } else if (line.startsWith("NAME ACCEPTED")) {
+                    this.frame.setTitle("Player: " + line.substring(13)); // FRAME TITLE
                     textField.setEditable(true);
+                } else if (line.startsWith("CHOOSE COLOR ")) {
+                    out.println(getColor());
                 } else if (line.startsWith("MESSAGE")) {
-                    messageArea.append(line.substring(8) + "\n");
+                    messageArea.append(line.substring(7) + "\n");
                 }
             }
+        } catch (IOException e){
+            System.out.println("Couldn't connect to server");
         } finally {
             frame.setVisible(false);
             frame.dispose();
