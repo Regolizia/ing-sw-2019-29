@@ -107,8 +107,61 @@ public class ActionTest {
 
         System.out.println(player.getHand());
     }
+@Test
+    public void grabTile(){
+    Map map = new MapFour(DEATHMATCH);
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        AmmoTile toBeGrabbedTile=new AmmoTile(c, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.YELLOW);
+        // grab ammo or powerUp
+
+        //TODO a way to convert propose to grab cells in AmmoTile
+        PowerUpCard toBeGrabbedPowerUp=null;
+        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
+            //is a powerUp
+           ;
+
+        if (toBeGrabbedTile.getAmmoTile().get(1) != null || toBeGrabbedTile.getAmmoTile().get(2) != null )
+           ;
 
 
+
+    }
+    @Test
+    public void grabCube( ){
+        Map map = new MapFour(DEATHMATCH);
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        AmmoTile a=new AmmoTile(c, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW);
+      //  player.setCube(2,1,0);
+
+        for(int i=0;i<3;i++)
+        {
+            if(player.getAmmoBox()[i]>=3)
+                ;
+            System.out.println(player.getAmmoBox()[i]);
+        }
+        for(int i=0;i<3;i++)
+        {
+            switch (a.getAmmoTile().get(i).getCubeColor())
+
+
+                {
+                    case YELLOW:if(player.getCubeYellow()<3)
+                        player.setCube(0,0,1);break;
+                    case BLUE:if(player.getCubeBlue()<3)
+                        player.setCube(0,1,0);break;
+
+                    case RED:
+                        player.setCube(1,0,0);break;
+
+
+            }
+
+        }
+//BLUE RED YELLOW
+        System.out.println(player.getAmmoBox()[0]+"\n"+player.getAmmoBox()[1]+"\n"+player.getAmmoBox()[2]);
+    }
 
 
 }
