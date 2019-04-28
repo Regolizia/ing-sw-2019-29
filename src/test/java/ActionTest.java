@@ -8,6 +8,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 import java.util.LinkedList;
 
+import static adrenaline.AmmoCube.CubeColor.YELLOW;
 import static adrenaline.AmmoCube.Effect.ALT;
 import static adrenaline.AmmoCube.Effect.BASE;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
@@ -115,7 +116,7 @@ public class ActionTest {
     Map map = new MapFour(DEATHMATCH);
         CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
         Player player=new Player(c,Figure.PlayerColor.GRAY);
-        AmmoTile toBeGrabbedTile=new AmmoTile(c, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.YELLOW);
+        AmmoTile toBeGrabbedTile=new AmmoTile(c, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED, YELLOW);
         // grab ammo or powerUp
 
         //TODO a way to convert propose to grab cells in AmmoTile
@@ -135,7 +136,7 @@ public class ActionTest {
         Map map = new MapFour(DEATHMATCH);
         CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
         Player player=new Player(c,Figure.PlayerColor.GRAY);
-        AmmoTile a=new AmmoTile(c, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW);
+        AmmoTile a=new AmmoTile(c, YELLOW, YELLOW, YELLOW);
       //  player.setCube(2,1,0);
 
         for(int i=0;i<3;i++)
@@ -259,7 +260,47 @@ public class ActionTest {
             player.getPowerUp().remove(wallet.get(i));
         System.out.println(wallet);
     }
+@Test
+    public void reloadAmmo(){
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard w=new Thor();
+        LinkedList<AmmoCube> price;
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player p=new Player(c,Figure.PlayerColor.GRAY);
+        int red=3;
+        int blue=3;
+        int yellow=3;
+        price=w.getPrice();
+        System.out.println(price.get(0)+""+price.get(1)+""+price.get(2));
+        int blueToPay=0;
+        int yellowToPay=0;
+        int redToPay=0;
+        for (int i = 0; i < price.size(); i++) {
+            if (price.get(i).getEffect() == AmmoCube.Effect.BASE) {
+                if (price.get(i).getCubeColor() == AmmoCube.CubeColor.BLUE)
+                    blueToPay++;
+                if (price.get(i).getCubeColor() == AmmoCube.CubeColor.RED)
+                    redToPay++;
+                if (price.get(i).getCubeColor() == AmmoCube.CubeColor.YELLOW)
+                    yellowToPay++;
+            }
+        }
+        if(blue-blueToPay<0||red-redToPay<0||yellow-yellowToPay<0) {
+            w.setNotReload();
 
 
+        }
+        for (int i = 0; i < price.size(); i++) {
+            if (price.get(i).getEffect() == AmmoCube.Effect.BASE) {
+                price.get(i).setPaid(true);
+            }
+
+            p.getAmmoBox()[0] = blue-blueToPay;
+            p.getAmmoBox()[1] = red-redToPay;
+            p.getAmmoBox()[2] = yellow-yellowToPay;
+            w.setReload();
+
+        }
+        }
 }
 
