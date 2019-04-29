@@ -10,7 +10,7 @@ import static adrenaline.AmmoCube.CubeColor.YELLOW;
 
 public class Action {
     final private int numMaxAlternativeOptions = 1; //(0=base 1=alternative)
-    final private int numMaxAmmoToPay = 1;//(0:first price 1:second price)
+    final private int numMaxAmmoToPay = 2;//(0:first price 1:second price 2:second price)
     final private int numMaxWeaponYouCanHave=3;
     GameBoard g = new GameBoard();
 
@@ -470,6 +470,7 @@ return false;}
 
     public LinkedList<EffectAndNumber>payAmmoPlusPowerUp(Player player,WeaponCard weapon,PayOption option){
        LinkedList<PowerUpCard>choosenPowerUp=choosePowerUp(player);
+       EffectAndNumber effectAndNumber;
         if(!canPayAmmoPower(weapon,player,choosenPowerUp))
             return null;
         LinkedList<EffectAndNumber>paid=null;
@@ -498,7 +499,8 @@ return false;}
 
 
             }
-            paid.get(k).setEffect(weapon.price.get(i).getEffect());
+            effectAndNumber=new EffectAndNumber(weapon.price.get(i).getEffect(),0);
+            paid.add(k,effectAndNumber);
         }
 
         return paid;
