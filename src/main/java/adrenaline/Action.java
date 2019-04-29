@@ -513,7 +513,7 @@ return false;}
         // if pay base don't psy alt
         int i = 0;
         LinkedList<EffectAndNumber> paid = new LinkedList<>(null);
-        ;
+        EffectAndNumber effectAndNumber;
         int k=0;
         LinkedList<AmmoCube> cost = weapon.getPrice();
         if(!weapon.getReload())
@@ -524,10 +524,12 @@ return false;}
                     pay(player, cost.get(j));
                 }
             }
-            paid.get(0).setEffect(cost.get(i).getEffect()); break;  // i can pay only one
+            effectAndNumber=new EffectAndNumber(cost.get(i).getEffect(),0);
+            paid.add(0,effectAndNumber);
         }}
         if(weapon.getReload()){
-            paid.get(0).setEffect(AmmoCube.Effect.BASE);
+            effectAndNumber=new EffectAndNumber(AmmoCube.Effect.BASE,0);
+            paid.add(0,effectAndNumber);
         }
         //then you can pay options
         for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
@@ -539,7 +541,8 @@ return false;}
 
 
             }
-            paid.get(k).setEffect(cost.get(i).getEffect());
+            effectAndNumber=new EffectAndNumber(weapon.price.get(i).getEffect(),0);
+            paid.add(k,effectAndNumber);
         }
 
         return paid;
