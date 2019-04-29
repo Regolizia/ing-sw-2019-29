@@ -490,6 +490,103 @@ public class ActionTest {
 
 
     }
+    @Test
+    public void payAmmo(){
+        // if pay base don't psy alt
+        int i = 0;
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard weapon=new Thor();
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        EffectAndNumber effectAndNumber;
+        int k=0;
+        LinkedList<EffectAndNumber>paid=new LinkedList<>();
+        weapon.getPrice();
+        LinkedList<AmmoCube> cost = weapon.getPrice();
+        if(!weapon.getReload())
+        {for (i = 0; i < 1; i++) {        //missing choose your effect base/alt here you source option position
+            for (int j = 0; j < 2; j++) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect())&&((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE))||
+                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&!weapon.getReload()) {
+
+                }
+            }
+            effectAndNumber=new EffectAndNumber(cost.get(i).getEffect(),0);
+            paid.add(0,effectAndNumber);
+        }}
+        if(weapon.getReload()){
+            effectAndNumber=new EffectAndNumber(AmmoCube.Effect.BASE,0);
+            paid.add(0,effectAndNumber);
+        }
+        //then you can pay options
+        for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
+            for (int j = 0; j < 2; j++) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() == AmmoCube.Effect.OP1 ||
+                        cost.get(j).getEffect() == AmmoCube.Effect.OP2)) {
+
+                }
+
+
+            }
+            effectAndNumber=new EffectAndNumber(weapon.getPrice().get(i).getEffect(),0);
+            paid.add(k,effectAndNumber);
+        }
+
+
+
+    }
+
+@Test
+    public void pay (){
+    Map map = new MapFour(DEATHMATCH);
+
+    CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+    Player player=new Player(c,Figure.PlayerColor.GRAY);
+    AmmoCube cube=new AmmoCube(BLUE);
+   System.out.println(player.getCubeBlue());
+        switch (cube.getCubeColor()) {
+            case RED:
+                player.setCube(-1,0,0);
+                break;
+
+            case BLUE:
+                player.setCube(0,-1,0);
+                break;
+            case YELLOW:
+                player.setCube(0,0,-1);
+                break;
+        }
+    System.out.println(player.getCubeBlue());
+    }
+    @Test
+    public void payPowerUp(){
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard weapon=new Cyberblade();
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        PowerUpCard powerUpCard=new PowerUpCard();
+        powerUpCard.setPowerUpColor(YELLOW);
+        LinkedList<PowerUpCard>choosenPowerUp=new LinkedList<>();
+        choosenPowerUp.addFirst(powerUpCard);
+        System.out.println("weapon:"+weapon.getPrice()+"\npowerUp:"+choosenPowerUp);
+        for(int index=0;index<choosenPowerUp.size();index++)
+        {
+            for(int j=0;j<weapon.getPrice().size();j++)
+            {
+                if(choosenPowerUp.get(index).getPowerUpColor().equals(weapon.getPrice().get(j))){
+
+                    weapon.getPrice().remove(j);
+                    player.getPowerUp().remove(index);
+                    choosenPowerUp.remove(index);
+
+                }
+
+            }
+
+        }
+        System.out.println("weapon:"+weapon.getPrice()+"\npowerUp:"+choosenPowerUp);
+    }
+
     }
 
 
