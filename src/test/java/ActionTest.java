@@ -8,7 +8,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 
 import java.util.LinkedList;
 
-import static adrenaline.AmmoCube.CubeColor.YELLOW;
+import static adrenaline.AmmoCube.CubeColor.*;
 import static adrenaline.AmmoCube.Effect.ALT;
 import static adrenaline.AmmoCube.Effect.BASE;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
@@ -302,5 +302,134 @@ public class ActionTest {
 
         }
         }
-}
+@Test
+    public void chooseWeaponCard() {
+        int j;
+    Map map = new MapFour(DEATHMATCH);
+    WeaponCard w=new Thor();
+    CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+    Player p=new Player(c,Figure.PlayerColor.GRAY);
+    LinkedList<WeaponCard>hand=new LinkedList<>();
+    hand.addFirst(w);
+    }
+@Test
+    public void canPayCard() {
+
+        //todo ask pay option: only ammo or ammo+power-up
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard weapon=new Thor();
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        Action.PayOption option= Action.PayOption.AMMO;
+        switch(option) {
+
+            case AMMOPOWER: {
+
+            }
+
+            case AMMO: {
+
+            }
+        }
+    }
+@Test
+    public void canPayAmmo() {
+        Map map = new MapFour(DEATHMATCH);
+        WeaponCard weapon=new Thor();
+        CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+        Player player=new Player(c,Figure.PlayerColor.GRAY);
+        LinkedList<AmmoCube> cost = weapon.getPrice();
+        int red=3;int yellow=2;int blue=2;
+        int i;
+        int redToPay=0;
+        int blueToPay=0;
+        int yellowToPay=0;
+        boolean no = false;
+        if(weapon.getReload())
+        //can you pay base effect or you can pay alt
+        for (i = 0; i < cost.size(); i++) {
+            if (((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE) || cost.get(i).getEffect().equals(AmmoCube.Effect.ALT)) && !weapon.getReload()
+            )) {
+
+                for (int j = 0; j < 2; j++) {
+
+                    if (cost.get(i).getEffect().equals(cost.get(j).getEffect())) {
+
+
+                        switch (cost.get(i).getCubeColor()) {
+                            case RED:
+                                redToPay++;
+                                break;
+
+                            case BLUE:
+
+                                blueToPay++;
+                                break;
+
+                            case YELLOW:
+
+                                yellowToPay++;
+                                break;
+                        }
+
+
+                    }
+
+                }
+
+            }
+            if(yellow-yellowToPay<0||red-redToPay<0||blue-blueToPay<0);
+
+        }
+        }
+
+        @Test
+        public void canPayAmmoPower(){
+            Map map = new MapFour(DEATHMATCH);
+            WeaponCard weapon=new Thor();
+            CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+            Player player=new Player(c,Figure.PlayerColor.GRAY);
+            LinkedList<PowerUpCard>powerUpCards=new LinkedList<>();
+            PowerUpCard power=new PowerUpCard();
+            power.setPowerUpColor(BLUE );
+            powerUpCards.addFirst(power);
+            int redPower=0;
+            int bluePower=0;
+            int yellowPower=0;
+            for(int i=0;i<powerUpCards.size();i++)
+            {
+                switch(powerUpCards.get(i).getPowerUpColor())
+                {
+                    case RED: redPower++;
+                        break;
+                    case BLUE: bluePower++;
+                        break;
+                    case YELLOW: yellowPower++;
+                        break;
+                }
+            }
+            int redCube=player.getCubeRed()+redPower;
+            int blueCube=player.getCubeBlue()+bluePower;
+            int yellowCube=player.getCubeYellow()+yellowPower;
+
+
+        }
+        @Test
+    public void choosePowerUp(){
+        int j=0;
+            Map map = new MapFour(DEATHMATCH);
+
+            CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+            Player player=new Player(c,Figure.PlayerColor.GRAY);
+        LinkedList<PowerUpCard>power=player.getPowerUp();
+        LinkedList<PowerUpCard>powerChoosen=new LinkedList<>();
+            PowerUpCard e=new PowerUpCard();
+            e.setPowerUpColor(RED);
+        powerChoosen.addFirst(e);
+        }
+
+
+    }
+
+
 
