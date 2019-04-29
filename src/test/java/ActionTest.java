@@ -427,8 +427,69 @@ public class ActionTest {
             e.setPowerUpColor(RED);
         powerChoosen.addFirst(e);
         }
+        @Test
+
+    public void paidEffect() {
+            Map map = new MapFour(DEATHMATCH);
+            WeaponCard weapon=new Thor();
+            CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+            Player player=new Player(c,Figure.PlayerColor.GRAY);
+            Action.PayOption option= Action.PayOption.AMMO;
+            switch (option) {
+                case AMMO:
+
+                case AMMOPOWER:
+
+            }
+        }
 
 
+@Test
+    public void payAmmoPlusPowerUp(){
+    Map map = new MapFour(DEATHMATCH);
+    WeaponCard weapon=new Thor();
+    CoordinatesWithRoom c = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
+    Player player=new Player(c,Figure.PlayerColor.GRAY);
+    Action.PayOption option= Action.PayOption.AMMO;
+    LinkedList<AmmoCube>price=weapon.getPrice();
+    LinkedList<EffectAndNumber> paid=new LinkedList<>();
+    EffectAndNumber effectAndNumber=new EffectAndNumber(BASE,2);
+    paid.addFirst(effectAndNumber);
+    EffectAndNumber effectAndNumberToAdd;
+
+        if(!weapon.getReload()){
+            for (int i = 0; i < 1; i++) {        //missing choose your effect base/alt here you source option position
+                for (int j = 0; j < 2; j++) {
+                    if (price.get(i).getEffect().equals(price.get(j).getEffect())&&((price.get(i).getEffect().equals(AmmoCube.Effect.BASE))||
+                            (price.get(i).getEffect().equals(AmmoCube.Effect.ALT)))&&!weapon.getReload()) {
+
+                    }
+                }
+                paid.get(0).setEffect(price.get(i).getEffect()); break;  // i can pay only one
+            }}
+        if(weapon.getReload()){
+            paid.get(0).setEffect(AmmoCube.Effect.BASE);
+        }
+
+        //now pay options
+
+        for (int i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
+            for (int j = 0; j < 2; j++) {
+                if (price.get(i).getEffect().equals(price.get(j).getEffect()) && (price.get(j).getEffect() == AmmoCube.Effect.OP1 ||
+                        price.get(j).getEffect() == AmmoCube.Effect.OP2)) {
+
+                }
+
+
+            }
+            effectAndNumberToAdd=new EffectAndNumber(price.get(i).getEffect(),0);
+        paid.add(k,effectAndNumber);
+        }
+
+
+
+
+    }
     }
 
 
