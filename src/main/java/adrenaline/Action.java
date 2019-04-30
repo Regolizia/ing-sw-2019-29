@@ -255,7 +255,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
     //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
-        EffectAndNumber effectNumber=null;
+        EffectAndNumber effectNumber=new EffectAndNumber(AmmoCube.Effect.BASE,0);
         for(int index=0;index<effectsList.size();index++) {
             ///todo choose effect order
             switch (effectsList.get(index).getEffect()) {
