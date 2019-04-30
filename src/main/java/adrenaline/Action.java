@@ -526,7 +526,7 @@ return true;}
                 }
             }
             paid.get(0).setEffect(weapon.price.get(i).getEffect());
-            if(paid.get(0).equals(AmmoCube.Effect.BASE)||paid.get(0).equals(AmmoCube.Effect.ALT))
+            if(paid.get(0).getEffect()==AmmoCube.Effect.BASE||paid.get(0).getEffect()==AmmoCube.Effect.ALT)
             break;  // i can pay only one
         }}
         if(weapon.getReload()){
