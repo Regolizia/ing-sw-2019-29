@@ -33,70 +33,72 @@ public class VirtualClientCLI {
      }
 
     private void run() throws IOException {
-
-        var socket = new Socket(serverAddress, 59001);
-        in = new Scanner(socket.getInputStream());
-        out = new PrintWriter(socket.getOutputStream(), true);
-        Scanner scanner = new Scanner(System.in);
-        String input;
-        boolean hasNickname = false;
-        String line;
-         do {
+        // added try and finally
+            var socket = new Socket(serverAddress, 59001);
+            in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream(), true);
+            Scanner scanner = new Scanner(System.in);
+            String input;
+            boolean hasNickname = false;
+            String line;
+            try{
+            do {
 /* TO HAVE A CHAT, IT SEND THE WORDS YOU WRITE
              if(hasNickname && scanner.hasNextLine()) {
                  input = scanner.nextLine();
                  out.println(input);
                 // System.out.println(1);
              }*/
-             line = in.nextLine();
-            //System.out.println("line: "+line);
+                line = in.nextLine();
+                //System.out.println("line: "+line);
 
-             if (line.startsWith("MESSAGE")) {
-                 System.out.println(line.substring(7));
-              //   System.out.println(4);
-             } else
+                if (line.startsWith("MESSAGE")) {
+                    System.out.println(line.substring(7));
+                    //   System.out.println(4);
+                } else if (line.startsWith("ENTER")) {
+                    //// ALTRIMENTI
+                    System.out.println("Enter nickname: ");
+                    //Scanner scanner = new Scanner(System.in);
+                    input = scanner.nextLine();
+                    out.println(input);
+                    //   System.out.println(2);
+                }
+                if (line.startsWith("NAME ACCEPTED ")) {
+                    System.out.println("Nickname accepted!");
+                    hasNickname = true;
+                    //  System.out.println(3);
+                }
+                if (line.startsWith("CHOOSE COLOR ")) {
+                    System.out.println("Choose a color: ");
+                    System.out.println(in.nextLine());
+                    input = scanner.nextLine();
+                    out.println(input);
+                }
+                if (line.startsWith("COLOR ACCEPTED ")) {
+                    System.out.println("Color accepted!");
+                }
+                if (line.startsWith("DUPLICATE COLOR ")) {
+                    System.out.println("You have chosen a color already selected by another player, choose again");
+                }
+                if (line.startsWith("DUPLICATE NAME ")) {
+                    System.out.println("You have entered a nickname already chosen by another player!");
+                }
+                if (line.startsWith("WORD NOT ACCEPTED ")) {
+                    System.out.println("Word not accepted, insert again");
+                }
+                if (line.startsWith("CHOOSE SPAWNPOINT ")) {
 
-             if (line.startsWith("ENTER")) {
-                 //// ALTRIMENTI
-                 System.out.println("Enter nickname: ");
-                 //Scanner scanner = new Scanner(System.in);
-                 input = scanner.nextLine();
-                 out.println(input);
-              //   System.out.println(2);
-             }
-             if (line.startsWith("NAME ACCEPTED ")) {
-                 System.out.println("Nickname accepted!");
-                 hasNickname = true;
-               //  System.out.println(3);
-             }
-             if (line.startsWith("CHOOSE COLOR ")) {
-                 System.out.println("Choose a color: ");
-                System.out.println(in.nextLine());
-                 input = scanner.nextLine();
-                 out.println(input);
-             }
-             if (line.startsWith("COLOR ACCEPTED ")) {
-                 System.out.println("Color accepted!");
-             }
-             if (line.startsWith("DUPLICATE COLOR ")) {
-                 System.out.println("You have chosen a color already selected by another player, choose again");
-             }
-             if (line.startsWith("DUPLICATE NAME ")) {
-                 System.out.println("You have entered a nickname already chosen by another player!");
-             }
-             if (line.startsWith("WORD NOT ACCEPTED ")) {
-                 System.out.println("Word not accepted, insert again");
-             }
-             if (line.startsWith("CHOOSE SPAWNPOINT ")) {
-
-             }
-         }
-         while (in.hasNextLine());
+                }
+            }
+            while (in.hasNextLine());
+        } finally {
+            socket.close();
         }
-
+    }
     public void printPlayerDetails(String playerName, int score, String color) {
         System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
     }
+
 
     // UPDATES DIRECTLY FROM THE MODEL WHAT'S GOING ON IN THE GAME
     // PLAYERS, SCORE, LIFE...

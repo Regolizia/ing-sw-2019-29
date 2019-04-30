@@ -42,8 +42,10 @@ public class Server {
         System.out.println("The server is running...");
         var pool = Executors.newFixedThreadPool(500);
         try (var listener = new ServerSocket(59001)) {
+           //questo è un loop infinito ele
             while (true) {
                 pool.execute(new Handler(listener.accept()));
+                break;//just to remove bug
             }
         }
     }

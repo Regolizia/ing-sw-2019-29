@@ -34,7 +34,7 @@ import javax.swing.JTextField;
  * server. When the server sends a line beginning with "MESSAGE" then all characters
  * following this string should be displayed in its message area.
  */
-
+//added try finally to close socket
 
 public class VirtualClientGUI {
     private JPanel panel1;
@@ -95,7 +95,7 @@ public class VirtualClientGUI {
             var socket = new Socket(serverAddress, 59001);
             in = new Scanner(socket.getInputStream());
             out = new PrintWriter(socket.getOutputStream(), true);
-
+            try{
             while (in.hasNextLine()) {
                 var line = in.nextLine();
                 if (line.startsWith("ENTER")) {
@@ -108,7 +108,7 @@ public class VirtualClientGUI {
                 } else if (line.startsWith("MESSAGE")) {
                     messageArea.append(line.substring(7) + "\n");
                 }
-            }
+            }}finally {socket.close();}
         } catch (IOException e){
             System.out.println("Couldn't connect to server");
         } finally {
