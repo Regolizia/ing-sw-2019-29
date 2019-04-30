@@ -5,8 +5,7 @@ import adrenaline.weapons.RocketLaucher;
 
 import java.util.LinkedList;
 
-import static adrenaline.AmmoCube.CubeColor.POWERUP;
-import static adrenaline.AmmoCube.CubeColor.YELLOW;
+import static adrenaline.AmmoCube.CubeColor.*;
 
 
 public class Action {
@@ -203,14 +202,14 @@ public class Action {
     }
     //_____________________________________GRAB OPTION TILE ___________________________________________________________//
     public boolean grabTile(Player player, CoordinatesWithRoom c){
-        AmmoTile toBeGrabbedTile=null;
+        AmmoTile toBeGrabbedTile=new AmmoTile(c,RED,RED,RED);
         // grab ammo or powerUp
 
         //TODO a way to convert propose to grab cells in AmmoTile
       //  PowerUpCard toBeGrabbedPowerUp=null;
         for(int index=0;index<toBeGrabbedTile.getAmmoTile().size();index++)
         {
-            if(toBeGrabbedTile.getAmmoTile().get(index).equals(POWERUP))
+            if(toBeGrabbedTile.getAmmoTile().get(index).getCubeColor().equals(POWERUP))
                 return (grabPowerUp(player,c)&&grabCube(player,c,toBeGrabbedTile));
 
         }
@@ -269,6 +268,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
            // w.fromCellsToTargets(target,c,g,p,m,effectNumber);
             //here controller gives back choosen opponents
             LinkedList<Object>effectiveTarget=new LinkedList<>();
+            effectNumber.setNumber(3);//just to remove bug
                 effectiveTarget=chooseTargets(w.fromCellsToTargets(target,c,g,p,m,effectNumber),effectNumber.getNumber());
            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
         }
@@ -380,9 +380,9 @@ public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow){
         p.getAmmoBox()[1] = red-redToPay;
         p.getAmmoBox()[2] = yellow-yellowToPay;
         w.setReload();
-        return true;
+
     }
-return false;}
+return true;}
 ///////////////////////////______________choose weapon & canPay_________________////////////////////////////////////////
 
     public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand) {
@@ -458,9 +458,8 @@ return false;}
             }
             if(yellow-yellowToPay<0||red-redToPay<0||blue-blueToPay<0)
                 return false;
-            return true;
         }
-    return false;}
+    return true;}
 
     ////////////////////___________________canPayAmmoPower pay bse effect with power up_____________________________________________________________//////////////
 
@@ -526,7 +525,9 @@ return false;}
                     payPowerUp(weapon,choosenPowerUp,player);
                 }
             }
-            paid.get(0).setEffect(weapon.price.get(i).getEffect()); break;  // i can pay only one
+            paid.get(0).setEffect(weapon.price.get(i).getEffect());
+            if(paid.get(0)!=null)
+            break;  // i can pay only one
         }}
         if(weapon.getReload()){
             paid.get(0).setEffect(AmmoCube.Effect.BASE);
@@ -615,7 +616,7 @@ return false;}
         {
             for(int j=0;j<weapon.getPrice().size();j++)
             {
-                if(choosenPowerUp.get(index).getPowerUpColor().equals(weapon.getPrice().get(j))){
+                if(choosenPowerUp.get(index).getPowerUpColor()==(weapon.getPrice().get(j).getCubeColor())){
 
                     weapon.getPrice().remove(j);
                     player.getPowerUp().remove(index);
