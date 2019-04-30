@@ -5,12 +5,13 @@ import adrenaline.weapons.RocketLaucher;
 
 import java.util.LinkedList;
 
+import static adrenaline.AmmoCube.CubeColor.POWERUP;
 import static adrenaline.AmmoCube.CubeColor.YELLOW;
 
 
 public class Action {
-    final private int numMaxAlternativeOptions = 1; //(0=base 1=alternative)
-    final private int numMaxAmmoToPay = 2;//(0:first price 1:second price 2:second price)
+    final private int numMaxAlternativeOptions = 2; //(0=base 1=alternative)
+    final private int numMaxAmmoToPay = 3;//(0:first price 1:second price 2:second price)
     final private int numMaxWeaponYouCanHave=3;
     GameBoard g = new GameBoard();
 
@@ -46,15 +47,15 @@ public class Action {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
-                    proposeCellsRun(c, g);
-                    CoordinatesWithRoom coordinatesR = null;
+                    //proposeCellsRun(c, g);
+                    CoordinatesWithRoom coordinatesR=chooseCell(proposeCellsRun(c,g));
                     run(player, coordinatesR);
                     deletedAction=false;
                     break;
                 case GRAB:
                     // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-                    proposeCellsGrab(c, g, player);
-                    CoordinatesWithRoom coordinatesG = null;
+                    CoordinatesWithRoom coordinatesG=chooseCell(proposeCellsGrab(c, g, player));
+                   // CoordinatesWithRoom coordinatesG = null;
                     deletedAction=!(grab(player, coordinatesG, g,option));
                     break;
 
@@ -75,7 +76,9 @@ public class Action {
                         LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,option);
                         if(payEff==null)
                         {deletedAction=true;break;}
-                        shoot(weapon, c, player, payEff, m);
+                        CoordinatesWithRoom cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
+                        player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
+                        shoot(weapon, cChoosen, player, payEff, m);
                         weapon.setNotReload();// i've lost base effect payment
                         deletedAction=false;
                     }
@@ -105,12 +108,33 @@ public class Action {
         }}
     }
 
+    //______________________________CHOOSE CELL______________________________________________________________________//
+    public CoordinatesWithRoom chooseCell(LinkedList<CoordinatesWithRoom>coordinates){
+        CoordinatesWithRoom choosenCell=new CoordinatesWithRoom();
+        for(int i=0;i<coordinates.size();i++)
+        {
+            //here select the one you choose and then break
+        }
+        return choosenCell;
+    }
+
 
     //___________________________ PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)___________________________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
         list.addAll(c.XTilesDistant(g, 2));
         list.addAll(c.XTilesDistant(g, 3));
+        return list;
+    }
+    //__________________________PROPOSE CELL TO MOVE BEFORE SHOOT NOT FRENZY_____________________________________________//
+
+    public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShoot(CoordinatesWithRoom c,GameBoard g){
+        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
+    return list;}
+    //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT FRENZY_______________________________________________//
+    public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootFrenzy(CoordinatesWithRoom c,GameBoard g){
+        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
+        list.addAll(c.XTilesDistant(g,2));
         return list;
     }
 
@@ -155,7 +179,7 @@ public class Action {
     public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option){
         int index;
         //TODO a way to convert propose to grab cells in weaponCard/Card
-        LinkedList <WeaponCard> canBeGrabbedWeapon=null;
+        LinkedList <WeaponCard> canBeGrabbedWeapon=new LinkedList<>();
         WeaponCard w;
         for (index = 0; index <canBeGrabbedWeapon.size() ; index++) {
             //WHEN A WEAPON IS CHOOSEN BREAK
@@ -183,17 +207,16 @@ public class Action {
         // grab ammo or powerUp
 
         //TODO a way to convert propose to grab cells in AmmoTile
-        PowerUpCard toBeGrabbedPowerUp=null;
-        if(toBeGrabbedTile.getAmmoTile().get(0)!=null&&toBeGrabbedTile.getAmmoTile().get(1)==null&&toBeGrabbedTile.getAmmoTile().get(2)==null)
-            //is a powerUp
-            return grabPowerUp(player,c,toBeGrabbedPowerUp);
+      //  PowerUpCard toBeGrabbedPowerUp=null;
+        for(int index=0;index<toBeGrabbedTile.getAmmoTile().size();index++)
+        {
+            if(toBeGrabbedTile.getAmmoTile().get(index).equals(POWERUP))
+                return (grabPowerUp(player,c)&&grabCube(player,c,toBeGrabbedTile));
 
-        if (toBeGrabbedTile.getAmmoTile().get(1) != null || toBeGrabbedTile.getAmmoTile().get(2) != null )
+        }
                     return grabCube(player,c, toBeGrabbedTile);
-
-        return false;
-
     }
+    //____________________________ADDING CUBE______________________________________________________________________//
     public boolean grabCube(Player player, CoordinatesWithRoom c, AmmoTile a){
 
         for(int i=0;i<3;i++)
@@ -213,17 +236,19 @@ public class Action {
 
                     case RED:
                         player.setCube(1,0,0);break;
+                default:player.setCube(0,0,0);
                 }
         }
 
 
         return true;
     }
-public boolean grabPowerUp(Player p, CoordinatesWithRoom c,PowerUpCard a){
+public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         if(!p.canGrabPowerUp()) return false;
 
-
-        p.getPowerUp().add(a);
+        PowerUpCard power=new PowerUpCard();
+        p.getPowerUp().add(power);
+        //missing method to get PowerUpCard from deck
         return true;
 
 }
@@ -241,9 +266,10 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c,PowerUpCard a){
                 case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
             }
             LinkedList<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
-            w.fromCellsToTargets(target,c,g,p,m,effectNumber);
+           // w.fromCellsToTargets(target,c,g,p,m,effectNumber);
             //here controller gives back choosen opponents
-            LinkedList<Object>effectiveTarget=null;
+            LinkedList<Object>effectiveTarget=new LinkedList<>();
+                effectiveTarget=chooseTargets(w.fromCellsToTargets(target,c,g,p,m,effectNumber),effectNumber.getNumber());
            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
         }
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
@@ -290,6 +316,22 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c,PowerUpCard a){
     }
 
     /*todo frenzyShoot frenzyRun frenzyGrab*/
+    ////////////////////////////_______________choose targets_________________________________________/////////////
+
+    public LinkedList<Object>chooseTargets(LinkedList<Object> possibleTarget,int number){
+        LinkedList<Object>effectiveTargets=new LinkedList<>();
+        for(int i=0;i<possibleTarget.size();i++){
+            //when a target is choosen add to effective player
+            if(effectiveTargets.size()<=number)
+                effectiveTargets.add(possibleTarget.get(i));
+           else break;
+        }
+        return effectiveTargets;
+    }
+
+
+
+
     ///////////////////////////_______________reloadAmmoPower_____________________________________///////////////////////////////////////////
     public boolean reloadAmmoPower(Player player,WeaponCard weapon){
         LinkedList<PowerUpCard>wallet=choosePowerUp(player);
@@ -405,6 +447,7 @@ return false;}
 
                                 yellowToPay++;
                                 break;
+                                default:
                         }
 
 
@@ -436,6 +479,7 @@ return false;}
                     break;
                 case YELLOW: yellowPower++;
                     break;
+                default:
             }
         }
         int redCube=player.getCubeRed()+redPower;
@@ -448,7 +492,7 @@ return false;}
     public LinkedList<PowerUpCard>choosePowerUp(Player player){
         int j=0;
         LinkedList<PowerUpCard>power=player.getPowerUp();
-        LinkedList<PowerUpCard>powerChoosen=null;
+        LinkedList<PowerUpCard>powerChoosen=new LinkedList<>();
         for (j = 0; j < power.size(); j++) {
             //when a card is choosen
             powerChoosen.add(power.get(j));
@@ -473,7 +517,7 @@ return false;}
        EffectAndNumber effectAndNumber;
         if(!canPayAmmoPower(weapon,player,choosenPowerUp))
             return null;
-        LinkedList<EffectAndNumber>paid=null;
+        LinkedList<EffectAndNumber>paid=new LinkedList<>();
         if(!weapon.getReload()){
         for (int i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
@@ -492,8 +536,8 @@ return false;}
 
         for (int i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect()) && (weapon.price.get(j).getEffect() == AmmoCube.Effect.OP1 ||
-                        weapon.price.get(j).getEffect() == AmmoCube.Effect.OP2)) {
+                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect()) && (weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP1) ||
+                        weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP2))) {
                     payPowerUp(weapon,choosenPowerUp,player);
                 }
 
@@ -512,7 +556,7 @@ return false;}
     public LinkedList<EffectAndNumber>payAmmo(Player player,WeaponCard weapon){
         // if pay base don't psy alt
         int i = 0;
-        LinkedList<EffectAndNumber> paid = new LinkedList<>(null);
+        LinkedList<EffectAndNumber> paid = new LinkedList<>();
         EffectAndNumber effectAndNumber;
         int k=0;
         LinkedList<AmmoCube> cost = weapon.getPrice();
@@ -534,8 +578,8 @@ return false;}
         //then you can pay options
         for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() == AmmoCube.Effect.OP1 ||
-                        cost.get(j).getEffect() == AmmoCube.Effect.OP2)) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() .equals( AmmoCube.Effect.OP1) ||
+                        cost.get(j).getEffect() .equals( AmmoCube.Effect.OP2))) {
                     pay(player, cost.get(j));
                 }
 
@@ -562,6 +606,7 @@ return false;}
                     case YELLOW:
                         player.setCube(0,0,-1);
                         break;
+                        default:
                 }
             }
             //_____________________________________effective pay with powerUp___________________________________________________//
