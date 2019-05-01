@@ -45,8 +45,10 @@ public class Server {
         System.out.println("The server is running...");
         var pool = Executors.newFixedThreadPool(500);
         try (var listener = new ServerSocket(59001)) {
+           
             while (true) {
                 pool.execute(new Handler(listener.accept()));
+               
             }
         }
     }

@@ -33,30 +33,29 @@ public class VirtualClientCLI {
      }
 
     private void run() throws IOException {
-
-        var socket = new Socket(serverAddress, 59001);
-        in = new Scanner(socket.getInputStream());
-        out = new PrintWriter(socket.getOutputStream(), true);
-        Scanner scanner = new Scanner(System.in);
-        String input;
-        boolean hasNickname = false;
-        String line;
-         do {
+        // added try and finally
+            var socket = new Socket(serverAddress, 59001);
+            in = new Scanner(socket.getInputStream());
+            out = new PrintWriter(socket.getOutputStream(), true);
+            Scanner scanner = new Scanner(System.in);
+            String input;
+            boolean hasNickname = false;
+            String line;
+        try{
+            do {
 /* TO HAVE A CHAT, IT SEND THE WORDS YOU WRITE
              if(hasNickname && scanner.hasNextLine()) {
                  input = scanner.nextLine();
                  out.println(input);
                 // System.out.println(1);
              }*/
-             line = in.nextLine();
-            //System.out.println("line: "+line);
+                line = in.nextLine();
+                //System.out.println("line: "+line);
 
-             if (line.startsWith("MESSAGE")) {
-                 System.out.println(line.substring(7));
-              //   System.out.println(4);
-             } else
-
-             if (line.startsWith("ENTER")) {
+                if (line.startsWith("MESSAGE")) {
+                    System.out.println(line.substring(7));
+                    //   System.out.println(4);
+                } else if (line.startsWith("ENTER")) {
                  //// ALTRIMENTI
                  System.out.println("Enter nickname: ");
                  //Scanner scanner = new Scanner(System.in);
@@ -100,11 +99,14 @@ public class VirtualClientCLI {
              }
          }
          while (in.hasNextLine());
+       } finally {
+            socket.close();
         }
-
+    }
     public void printPlayerDetails(String playerName, int score, String color) {
         System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
     }
+
 
     // UPDATES DIRECTLY FROM THE MODEL WHAT'S GOING ON IN THE GAME
     // PLAYERS, SCORE, LIFE...

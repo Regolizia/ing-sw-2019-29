@@ -263,15 +263,15 @@ public class Player {
         setRedCube(getCubeRed()+red);
         setYellowCube(getCubeYellow()+yellow);
 
-    for(int counter=0;counter<3;counter++)
+   for(int counter=0;counter<3;counter++)
     {
         if(this.ammoBox[counter]>=numMaxCube)ammoBox[counter]=numMaxCube;
     }
 
     }
-    public int getCubeRed(){return ammoBox[2];}
-    public int getCubeYellow(){return ammoBox[3];}
-    public int getCubeBlue(){return ammoBox[1];}
+    public int getCubeRed(){return ammoBox[1];}
+    public int getCubeYellow(){return ammoBox[2];}
+    public int getCubeBlue(){return ammoBox[0];}
 
     // MOVES PLAYER TO A CELL
     public void moveToThisSquare(CoordinatesWithRoom c){
