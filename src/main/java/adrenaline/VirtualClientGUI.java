@@ -2,25 +2,18 @@ package adrenaline;
 import javax.swing.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import javax.swing.ImageIcon;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
 import java.awt.BorderLayout;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
+import javax.swing.*;
 
 /**
  * A simple Swing-based client for the chat server. Graphically it is a frame with a text
@@ -37,40 +30,21 @@ import javax.swing.JTextField;
 
 
 public class VirtualClientGUI {
-    private JPanel panel1;
-    private JLabel picLabel;
 
     String serverAddress;
     Scanner in;
     PrintWriter out;
     JFrame frame = new JFrame("ClientGUI");
-    JTextField textField = new JTextField(50);
-    JTextArea messageArea = new JTextArea(16, 50);
+    JTextArea messageArea = new JTextArea();
+    JLabel labelA;
+    JLabel labelB;
+    ImageIcon imageA;
+    ImageIcon imageB;
+    Font font;
 
-
-    /**
-     * Constructs the client by laying out the GUI and registering a listener with the
-     * textfield so that pressing Return in the listener sends the textfield contents
-     * to the server. Note however that the textfield is initially NOT editable, and
-     * only becomes editable AFTER the client receives the NAMEACCEPTED message from
-     * the server.
-     */
     public VirtualClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
-
-        textField.setEditable(false);
-        messageArea.setEditable(false);
-        frame.getContentPane().add(textField, BorderLayout.SOUTH);
-        frame.getContentPane().add(new JScrollPane(messageArea), BorderLayout.CENTER);
-        frame.pack();
-
-        // Send on enter then clear to prepare for next message
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                out.println(textField.getText());
-                textField.setText("");
-            }
-        });
+        setGameBoardImages(0);
     }
 
     private String getName() {
@@ -90,6 +64,20 @@ public class VirtualClientGUI {
         );
     }
 
+   /* // TODO SCELTA MAPPA CON IMMAGINI INVECE CHE NUMERI
+    private String getBoard(){
+        Image image=GenerateImage.toImage(true);  //this generates an image file
+        ImageIcon icon = new ImageIcon(image);
+        JLabel thumb = new JLabel();
+        thumb.setIcon(icon);
+    }*/
+   private int getBoard() {
+       String[] options = new String[]{"1", "2", "3", "4"};
+       return JOptionPane.showOptionDialog(null, "Choose game board: ", "Game board selection",
+               JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+               null, options, options[0]) +1 ;  // +1 BECAUSE IT STARTS FROM 0
+   }
+
     private void run() throws IOException {
         try {
             var socket = new Socket(serverAddress, 59001);
@@ -102,11 +90,20 @@ public class VirtualClientGUI {
                     out.println(getName());
                 } else if (line.startsWith("NAME ACCEPTED")) {
                     this.frame.setTitle("Player: " + line.substring(13)); // FRAME TITLE
-                    textField.setEditable(true);
+                  //  textField.setEditable(true);
                 } else if (line.startsWith("CHOOSE COLOR ")) {
                     out.println(getColor());
                 } else if (line.startsWith("MESSAGE")) {
                     messageArea.append(line.substring(7) + "\n");
+                } else if (line.startsWith("CHOOSE BOARD ")) {
+                    out.println(getBoard());
+                } else if (line.startsWith("PLAYER BOARDS ")) {
+                    var original = in.nextLine();
+                    addPlayerBoards(original);
+                }
+                if (line.startsWith("MESSAGE" + "The chosen board is number ")) {
+                    // SET IMAGES AS BACKGROUND
+                    setGameBoardImages(Integer.valueOf(line.substring(34)));
                 }
             }
         } catch (IOException e){
@@ -127,84 +124,141 @@ public class VirtualClientGUI {
         client.frame.setVisible(true);
         client.run();
 
-
-/*
-/////////////////////////////// QUESTA PARTE DOVREBBE ANDARE, COMMENTATA PERCHé DEVO RICEVERE LA MAPPA SCELTA
-        File partA;
-        File partB;
-
-        // CASE MAP SELECTED
-        // IT DEPENDS ON THE MAP CHOSEN BY THE FIRST
-        int mapChosen; // MAP CHOSEN
-
-       switch(mapChosen) {//number of map chosen by first player)
-           case(1):
-               partA= new File("resources/images/Part1.jpg");
-               partB= new File("resources/images/Part4.jpg");
-               break;
-           case(2):
-               partA= new File("resources/images/Part3.jpg");
-               partB= new File("resources/images/Part4.jpg");
-               break;
-           case(3):
-               partA= new File("resources/images/Part1.jpg");
-               partB= new File("resources/images/Part2.jpg");
-               break;
-           case(4):
-               partA= new File("resources/images/Part3.jpg");
-               partB= new File("resources/images/Part2.jpg");
-               break;
-       */
-
-///////////////////////// QUESTA PARTE NON VA PERCHé NON LEGGE DALLA CARTELLA RESOURCES
-/*
-
-          VirtualClientGUI clientGUI = new VirtualClientGUI();
-            File file = clientGUI.getFileFromResources("images/Part1.jpg");
-
-        System.out.println(file.getAbsolutePath());
-        System.out.println(file.canRead());
-///////////////////////////////////////////////////////////////// non è qui?
-        File partA=new File("src/main/resources/images/Part1.jpg"); //just to try
-        File partB=new File("src/main/resources/images/Part4.jpg"); //just to try
-        BufferedImage left = ImageIO.read(partA);
-        BufferedImage right = ImageIO.read(partB);
-        JLabel picLabelL = new JLabel(new ImageIcon(left));
-        JLabel picLabelR = new JLabel(new ImageIcon(right));
-        JFrame frame = new JFrame();
-        frame.setLayout(new FlowLayout());
-        frame.setSize(600, 400);
-        frame.add(picLabelL);
-        frame.add(picLabelR);
-*/
-
     }
-/*
-        // get file from classpath, resources folder
-        private File getFileFromResources(String fileName) {
 
-            ClassLoader classLoader = getClass().getClassLoader();
+    public void addPlayerBoards(String o){
+       System.out.println(o);
+       int numberOfCommas = o.replaceAll("[^,]","").length();
+        System.out.println("commas "+ numberOfCommas);
 
-            URL resource = classLoader.getResource(fileName);
-            if (resource == null) {
-                throw new IllegalArgumentException("file is not found!");
-            } else {
-                return new File(resource.getFile());
+        String[] singleColors = o.split(",");
+        JLabel[] playerBoards = new JLabel[numberOfCommas +1];
+        Insets insets = frame.getContentPane().getInsets();
+        Dimension size;
+        for(int index=0;index<singleColors.length;index++) {
+            ImageIcon image = new ImageIcon();
+            System.out.println("color->"+singleColors[index]);
+            switch (singleColors[index]) {
+                case ("GREEN"):
+                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\GREEN.jpg");
+                    break;
+                case ("BLUE"):
+                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\BLUE.jpg");
+                    break;
+                case ("PURPLE"):
+                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\PURPLE.jpg");
+                    break;
+                case ("YELLOW"):
+                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\YELLOW.jpg");
+                    break;
+                case ("GRAY"):
+                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\GRAY.jpg");
+                    break;
             }
+            playerBoards[index] = new JLabel(image, SwingConstants.CENTER);
 
-        }*/
-/////////////////////////////////////// QUESTA PARTE SERVIRà QUANDO LEGGE IL FILE, SERVE PER COSTRUIRE LA VIEW
+            playerBoards[index].setSize(446, 110);
+
+            size = playerBoards[index].getPreferredSize();
+            playerBoards[index].setBounds(1054 + insets.left, insets.top + (index)*image.getIconHeight() + 250,
+                    size.width, size.height);
+            frame.getContentPane().add(playerBoards[index]);
+            playerBoards[index].repaint();
+            System.out.println(playerBoards[index].getLocation());
+        }
+
+        frame.revalidate();
+        frame.repaint();
+        frame.setVisible(true);
+    }
+
+    public void setGameBoardImages(int n){
+
+        frame.getContentPane().setLayout(null);
+        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.getContentPane().setBackground(Color.black);
+        frame.setResizable(false);
+        Insets insets = frame.getContentPane().getInsets();
+        Dimension size;
+        System.out.println(n);
+        if(n!=0) {
+            switch(n) {
+                case (1):
+                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part1.jpg");
+                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part4.jpg");
+                    break;
+                case (2):
+                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part3.jpg");
+                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part4.jpg");
+                    break;
+                case (3):
+                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part1.jpg");
+                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part2.jpg");
+                    break;
+                case (4):
+                default:
+                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part3.jpg");
+                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part2.jpg");
+                    break;
+            }
+            labelA = new JLabel(imageA, SwingConstants.CENTER);
+            labelB = new JLabel(imageB, SwingConstants.CENTER);
+
+            labelA.setSize(560, 800);
+            labelB.setSize(560, 800);
+
+            size = labelA.getPreferredSize();
+            labelA.setBounds(insets.left, insets.top,
+                    size.width, size.height);
+            size = labelB.getPreferredSize();
+            labelB.setBounds(496 + insets.left, insets.top,
+                    size.width, size.height);
+            frame.getContentPane().add(labelA);
+            frame.getContentPane().add(labelB);
 
 
-  /*  BufferedImage left = ImageIO.read(partA);
-    BufferedImage right = ImageIO.read(partB);
-    JLabel picLabelL = new JLabel(new ImageIcon(left));
-    JLabel picLabelR = new JLabel(new ImageIcon(right));
-    JFrame frame = new JFrame();
-    // frame.setLayout(new FlowLayout());
-    // frame.setSize(600, 400);
-    // frame.add(picLabelL);
-    // frame.add(picLabelR);*/
+            labelA.repaint();
+            labelB.repaint();
+        }
+
+        size = messageArea.getPreferredSize();
+        messageArea.setBounds(1054 + insets.left, insets.bottom,
+                size.width, size.height);
+
+        messageArea.setBackground(Color.BLACK);
+        messageArea.setForeground(Color.blue);
+
+        messageArea.setSize(446,250);
+        messageArea.setEditable(false);
+        frame.getContentPane().add(messageArea);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        if(n==0) {
+            frame.validate();
+        } else
+            frame.revalidate();
+        frame.repaint();
+
+        frame.setVisible(true);
+
+   /*     try {
+            File fontFile = new File(this.getClass().getResource("\\fonts\\ethnocentric.ttf").toURI());
+            fontFile.getAbsolutePath();
+            fontFile.canRead();
+            //InputStream is = VirtualClientGUI.class.getResourceAsStream("fonts/ethnocentric.ttf");
+            font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        } catch(FontFormatException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (URISyntaxException e){
+            e.printStackTrace();
+        }
+        frame.setFont(font);
+*/
+    }
+
 
     }
 

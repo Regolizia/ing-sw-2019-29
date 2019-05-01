@@ -87,6 +87,14 @@ public class VirtualClientCLI {
              if (line.startsWith("WORD NOT ACCEPTED ")) {
                  System.out.println("Word not accepted, insert again");
              }
+             if (line.startsWith("CHOOSE BOARD ")) {
+                 System.out.println("Choose board number: 1, 2, 3, 4");
+                 input = scanner.nextLine();
+                 out.println(input);
+             }
+             if (line.startsWith("NOT ACCEPTED, TRY AGAIN")) {
+                 System.out.println("Not accepted, insert again");
+             }
              if (line.startsWith("CHOOSE SPAWNPOINT ")) {
 
              }

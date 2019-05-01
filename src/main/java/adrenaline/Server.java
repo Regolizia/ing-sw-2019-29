@@ -20,16 +20,19 @@ public class Server {
 
     private static int TIME = 0;
     private static int connectionsCount = 0;
+    private static String firstPlayer;
+    private static int boardChosen = 0;
+    private static boolean gameIsOn = false;
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
             .map(Figure.PlayerColor::name)
             .collect(Collectors.toList());
-    private static Set<String> colorsChosen = new HashSet<>();
+    private static ArrayList<String> colorsChosen = new ArrayList<>();
     //String csv = String.join(",", possibleColors); WILL BE USED TO SEND THE LIST AS A STRING TO THE CLIENT
 
     // All client names, so we can check for duplicates upon registration.
-    private static Set<String> names = new HashSet<>();
+    private static ArrayList<String> names = new ArrayList<>();
 
     // The set of all the print writers for all the clients, used for broadcast.
     private static Set<PrintWriter> writers = new HashSet<>();
@@ -57,12 +60,13 @@ public class Server {
 
                     public void run() {
                         System.out.println(i--);
-                        if (i< 0 || connectionsCount<3) {
-                            if(i<0) {
+                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
+                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
+                                Server.startGame();
                             // DO SOMETHING TO START THE GAME
                             }
-                            else {
+                            else if(connectionsCount<3){
                                 System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
                             }
                             timer.cancel();
@@ -117,17 +121,15 @@ public class Server {
                 while (true) {
                     out.println("ENTER NICKNAME");
                     name = in.nextLine();
-                    if (name == null) {
-                        return;
-                    }
-                    synchronized (names) {
-                        if (!isBlank(name) && !names.contains(name)) {
-                            names.add(name);
-                            break;
-                        }
-                        else if(names.contains(name)){
-                            System.out.println("DUPLICATE NAME ");    // WHAT I SEE IN SERVER
-                            out.println("DUPLICATE NAME ");   // WHAT I SEND TO CLIENT
+                    if (!name.equals("null")) {
+                        synchronized (names) {
+                            if (!isBlank(name) && !names.contains(name)) {
+                                names.add(name);
+                                break;
+                            } else if (names.contains(name)) {
+                                System.out.println("DUPLICATE NAME ");    // WHAT I SEE IN SERVER
+                                out.println("DUPLICATE NAME ");   // WHAT I SEND TO CLIENT
+                            }
                         }
                     }
                 }
@@ -176,6 +178,32 @@ public class Server {
                     writer.println("MESSAGE" + name + " has chosen " + color);
                 }
 
+                if(names.get(0)==name){
+                    System.out.println("BOARD SELECTION ");
+                    System.out.println(names.get(0));
+                    while(true){
+                        out.println("CHOOSE BOARD ");
+                        int result = isInteger(in.nextLine());
+                        System.out.println(result);
+                            if (result == 1 || result == 2 || result == 3 || result == 4) {
+                                Server.setBoardChosen(result);
+                                System.out.println("BOARD CHOSEN " + result);
+                                Server.firstPlayer = name;
+                                break;
+                            } else {
+                                System.out.println("NOT ACCEPTED, TRY AGAIN");
+                                out.println("NOT ACCEPTED, TRY AGAIN");
+                            }
+
+                    }
+                }
+
+                out.println("MESSAGE" + "Waiting for other players...");
+
+
+
+                // TODO DO SOMETHING IF NAME DISCONNECTED, SOMEONE ELSES CHOOSES
+
                 // Accept messages from this client and broadcast them.
                 while (true) {
                     String input = in.nextLine();
@@ -189,8 +217,8 @@ public class Server {
                 }
             } catch (Exception e) {
                 // PLAYER DISCONNECTED
-                //System.out.println(e);
-                //System.out.println(e.getStackTrace()[0].getLineNumber());
+                System.out.println(e);
+                System.out.println(e.getStackTrace()[0].getLineNumber());
             } finally {
                 connectionsCount--;
                 if (out != null) {
@@ -221,5 +249,29 @@ public class Server {
                        }
                     }
                     return true;
+    }
+
+    public static int isInteger(String input){
+        try{
+            int i = Integer.valueOf(input);
+            return i;
+        }catch(NumberFormatException e){
+            return 0;
+        }
+    }
+    public static void setBoardChosen(int i){
+        boardChosen = i;
+    }
+    public static void startGame(){
+        gameIsOn = true;
+
+        String pbc = String.join(",", colorsChosen);  // SEND COLORS
+
+        for (PrintWriter writer : writers) {
+            writer.println("MESSAGE" + "The chosen board is number " + boardChosen);
+            writer.println("MESSAGE" + "The game is starting...");
+            writer.println("PLAYER BOARDS ");
+            writer.println(pbc);
+        }
     }
 }
