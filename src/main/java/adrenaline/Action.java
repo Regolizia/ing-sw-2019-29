@@ -17,6 +17,7 @@ public class Action {
     boolean executedFirstAction=false;
     boolean executedSecondAction=false;
     boolean endTurn=false;
+    boolean newStart=false;
     boolean deletedAction=false;
 
     public static enum ActionType {
@@ -30,8 +31,9 @@ public class Action {
   //  private ActionType actionSelected;
 
 
-    public Action() {
-        if(this.endTurn=true){
+    public Action(Boolean newStart) {
+        this.newStart=newStart;
+        if(this.newStart){
        this.executedFirstAction=false;
        this.executedSecondAction=false;
        this.endTurn=false;
@@ -42,7 +44,7 @@ public class Action {
     public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option){
       //  actionSelected = chosen;
 
-        if(!endTurn) {
+        if(!getEndturn()) {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -87,12 +89,15 @@ public class Action {
                     //INVALID CHOICE
 
             }
-            if(!executedFirstAction&&deletedAction==false) executedFirstAction=true;
-            else if(executedFirstAction&&deletedAction==false) executedSecondAction=true;
-            if(executedFirstAction&&executedSecondAction)endTurn=true;
+
+            if(executedFirstAction&&!deletedAction&&!executedSecondAction)this.executedSecondAction=true;
+            else if(!executedFirstAction&&deletedAction&&!executedSecondAction){this.executedFirstAction=false;this.executedSecondAction=false;}
+            else if(executedFirstAction&&deletedAction&&!executedSecondAction)this.executedSecondAction=false;
+            else if(!executedFirstAction&&!deletedAction&&!executedSecondAction) {this.executedFirstAction=true;this.executedSecondAction=false;}
+            if(executedFirstAction&&executedSecondAction)this.endTurn=true;
         }
         //HERE ENDS TURN
-        else{
+        else if(getEndturn()){
         if(actionSelected.equals(ActionType.RELOAD)){
             LinkedList<WeaponCard> weaponList = player.getHand();
             WeaponCard weaponToReload = chooseWeaponCard(weaponList);
@@ -388,18 +393,18 @@ return true;}
     public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand) {
         int j;
         for (j = 0; j < hand.size(); j++) {
-            //WHEN A WEAPON IS CHOOSEN BREAK
+            //WHEN A WEAPON IS CHOOSEN....,then BREAK
+            return hand.get(j);
         }
 
 
-        return hand.get(j);
-    }
+    return null;}
 ///____________________________________canPayCard(TRUE if can pay base effect)____________________________________///
 
     public boolean canPayCard(WeaponCard weapon, Player player,PayOption option) {
 
         //todo ask pay option: only ammo or ammo+power-up
-
+        if(option!=null){
         switch(option){
 
             case AMMOPOWER:{
@@ -409,7 +414,9 @@ return true;}
             case AMMO:{
                return canPayAmmo(weapon,player, player.getCubeRed(), player.getCubeYellow(), player.getCubeBlue());
                 }//nope
-        }
+
+
+        }}
       return false;
     }
     ///////////////////////________________canPayOnlyCube______________________________________________________________________////////////////////////
@@ -437,14 +444,10 @@ return true;}
                             case RED:
                                 redToPay++;
                                 break;
-
                             case BLUE:
-
                                    blueToPay++;
                                 break;
-
                             case YELLOW:
-
                                 yellowToPay++;
                                 break;
                                 default:
@@ -507,6 +510,7 @@ return true;}
         switch(option){
             case AMMO: return payAmmo(player,weapon);
             case AMMOPOWER:return payAmmoPlusPowerUp(player,weapon,option);
+            default:
         }
        return null; }
        //_________________________________________________payAmmoPlusPowerUp________________________________________________________//
@@ -624,10 +628,12 @@ return true;}
                 }
                 else pay(player,weapon.getPrice().get(j));
             }
-
         }
     }
-
+    //____________________________getter and setter________________//
+public boolean getEndturn(){
+        return this.endTurn;
+}
 }
 
 
