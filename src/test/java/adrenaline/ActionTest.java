@@ -1,6 +1,7 @@
 package adrenaline;
 import adrenaline.weapons.Cyberblade;
 import adrenaline.weapons.Thor;
+import adrenaline.weapons.Zx_2;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
@@ -21,11 +22,16 @@ public class ActionTest {
         Player victim=new Player(c1, Figure.PlayerColor.BLUE);//
         LinkedList<Object>victims=new LinkedList<>();//
         victims.add(victim);//
+        LinkedList<Player>players=new LinkedList<>();
+        players.add(player);players.add(victim);
         LinkedList<CoordinatesWithRoom> c=action.proposeCellsGrab(c1,m.getMapUsed().getGameBoard(),player);//to do grab()
         LinkedList<PowerUpCard>powers=new LinkedList<>();//to do payPowerUp()
         PowerUpCard powerOne=new PowerUpCard(AmmoCube.CubeColor.RED);//
         PowerUpCard powerTwo=new PowerUpCard(AmmoCube.CubeColor.BLUE);//
         PowerUpCard powerThree=new PowerUpCard(AmmoCube.CubeColor.YELLOW);//
+
+
+
         powers.add(powerOne);//
         powers.get(0).getPowerUpColor().equals(AmmoCube.CubeColor.RED);//
         powers.remove(0);//
@@ -34,10 +40,10 @@ public class ActionTest {
         powers.remove(0);//
         powers.add(powerThree);//
         powers.get(0).getPowerUpColor().equals(AmmoCube.CubeColor.YELLOW);//
-
+        player.getHand().add(w);//
+        player.getHand().get(0);//
 
         new Thor().getPrice().get(0).getCubeColor().equals(AmmoCube.CubeColor.BLUE);//
-
 
         action.chooseWeaponCard(player.getHand());//
         action.chooseTargets(victims,1);//
@@ -55,10 +61,16 @@ public class ActionTest {
         action.reload(player,w, Action.PayOption.AMMO);//
         action.reload(player,w, Action.PayOption.AMMOPOWER);//
         action.reload(player,w, Action.PayOption.NONE);//
-        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        //action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        //action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        //action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
+        action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
+        action.proposeCellsRunBeforeShootFrenzy(c1,m.getMapUsed().getGameBoard());//
+
+
+        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+       // action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
+        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+        action.setEndTurn(true);//
+        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+
     }
 }
 /*
