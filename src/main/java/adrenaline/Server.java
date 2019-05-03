@@ -1,10 +1,7 @@
 package adrenaline;
 
 // SOCKET
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -268,10 +265,14 @@ public class Server {
         gameIsOn = true;
 
         String pbc = String.join(",", colorsChosen);  // SEND COLORS
+        String pn = String.join(",", names);  // SEND COLORS
 
         for (PrintWriter writer : writers) {
             writer.println("MESSAGE" + "The chosen board is number " + boardChosen);
             writer.println("MESSAGE" + "The game is starting...");
+
+            writer.println("PLAYER NAMES ");
+            writer.println(pn);
             writer.println("PLAYER BOARDS ");
             writer.println(pbc);
         }

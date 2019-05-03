@@ -1,16 +1,22 @@
 package adrenaline;
-import java.io.BufferedReader;
+
+// SOCKET
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+
+// RMI
+import java.rmi.Naming;
+
 
 public class VirtualClientCLI {
 
     String serverAddress;
     Scanner in;
     PrintWriter out;
+    Socket socket;
+    boolean isRMI;   // FALSE FOR SOCKET, TRUE FOR RMI
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
@@ -21,34 +27,36 @@ public class VirtualClientCLI {
         client.run();
     }
 
-    /**
-     * Constructs the client by laying out the GUI and registering a listener with the
-     * textfield so that pressing Return in the listener sends the textfield contents
-     * to the server. Note however that the textfield is initially NOT editable, and
-     * only becomes editable AFTER the client receives the NAMEACCEPTED message from
-     * the server.
-     */
+
     public VirtualClientCLI(String serverAddress) {
         this.serverAddress = serverAddress;
      }
 
-    private void run() throws IOException {
-        // added try and finally
-            var socket = new Socket(serverAddress, 59001);
-            in = new Scanner(socket.getInputStream());
-            out = new PrintWriter(socket.getOutputStream(), true);
-            Scanner scanner = new Scanner(System.in);
+    private void run() throws IOException, Exception {
+        Scanner scanner = new Scanner(System.in);
+
+        /*while (true) {
+            System.out.println("Do you want to use Socket or RMI? s/r");
+            String type= scanner.nextLine();
+            if(type.equals("s")){
+            */    isRMI=false;
+                socket = new Socket(serverAddress, 59001);
+                in = new Scanner(socket.getInputStream());
+                out = new PrintWriter(socket.getOutputStream(), true);
+         /*       break;
+            } else if (type.equals("r")){
+
+                InterfaceRMI serv = (InterfaceRMI)Naming.lookup("//localhost/RmiServer");
+                isRMI=true;
+                toSend="true";*//*
+                break;
+            }
+        }*/
+
             String input;
-            boolean hasNickname = false;
             String line;
         try{
             do {
-/* TO HAVE A CHAT, IT SEND THE WORDS YOU WRITE
-             if(hasNickname && scanner.hasNextLine()) {
-                 input = scanner.nextLine();
-                 out.println(input);
-                // System.out.println(1);
-             }*/
                 line = in.nextLine();
                 //System.out.println("line: "+line);
 
@@ -65,7 +73,6 @@ public class VirtualClientCLI {
              }
              if (line.startsWith("NAME ACCEPTED ")) {
                  System.out.println("Nickname accepted!");
-                 hasNickname = true;
                //  System.out.println(3);
              }
              if (line.startsWith("CHOOSE COLOR ")) {
@@ -100,7 +107,8 @@ public class VirtualClientCLI {
          }
          while (in.hasNextLine());
        } finally {
-            socket.close();
+           // if(!isRMI)
+                socket.close();
         }
     }
     public void printPlayerDetails(String playerName, int score, String color) {
@@ -108,9 +116,4 @@ public class VirtualClientCLI {
     }
 
 
-    // UPDATES DIRECTLY FROM THE MODEL WHAT'S GOING ON IN THE GAME
-    // PLAYERS, SCORE, LIFE...
-   /* public void update() {
-        // TODO implement here
-    */
 }

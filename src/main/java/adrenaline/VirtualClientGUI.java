@@ -100,6 +100,9 @@ public class VirtualClientGUI {
                 } else if (line.startsWith("PLAYER BOARDS ")) {
                     var original = in.nextLine();
                     addPlayerBoards(original);
+                } else if (line.startsWith("PLAYER NAMES ")) {
+                    var original = in.nextLine();
+                    addPlayerNames(original);
                 }
                 if (line.startsWith("MESSAGE" + "The chosen board is number ")) {
                     // SET IMAGES AS BACKGROUND
@@ -167,6 +170,37 @@ public class VirtualClientGUI {
             System.out.println(playerBoards[index].getLocation());
         }
 
+        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.revalidate();
+        frame.repaint();
+        frame.setVisible(true);
+    }
+
+    public void addPlayerNames(String o){
+       System.out.println(o);
+       int numberOfCommas = o.replaceAll("[^,]","").length();
+        System.out.println("commas "+ numberOfCommas);
+
+        String[] singleNames = o.split(",");
+        JLabel[] playerNames = new JLabel[numberOfCommas +1];
+        Insets insets = frame.getContentPane().getInsets();
+        Dimension size;
+        for(int index=0;index<singleNames.length;index++) {
+            System.out.println("names->"+singleNames[index]);
+
+            playerNames[index] = new JLabel("", SwingConstants.CENTER);
+            playerNames[index].setText(singleNames[index]);
+            playerNames[index].setOpaque(true);
+
+            size = playerNames[index].getPreferredSize();
+            playerNames[index].setBounds(1054 +40+ insets.left, insets.top + (index)*110 + 250 +5,
+                    size.width, size.height);
+            frame.getContentPane().add(playerNames[index]);
+            playerNames[index].repaint();
+            System.out.println(playerNames[index].getLocation());
+        }
+
+        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
         frame.revalidate();
         frame.repaint();
         frame.setVisible(true);
