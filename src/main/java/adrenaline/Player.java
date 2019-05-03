@@ -152,7 +152,7 @@ public class Player {
     }
 
     public boolean isDead() {
-        return (track[10] != Figure.PlayerColor.NONE);
+        return (getTrack()[10] != Figure.PlayerColor.NONE);
     }
 
     public int[] getAmmoBox() {

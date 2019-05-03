@@ -634,8 +634,9 @@ return true;}
 public boolean getEndturn(){
         return this.endTurn;
 }
+
+
+public void setEndTurn(boolean bool){this.endTurn=bool;}
+
+
 }
-
-
-
-
