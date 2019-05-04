@@ -36,7 +36,7 @@ public class Action {
         if(this.newStart){
        this.executedFirstAction=false;
        this.executedSecondAction=false;
-       this.endTurn=false;
+       setEndTurn(false);
        this. deletedAction=false;}
     }
 
@@ -94,7 +94,7 @@ public class Action {
             else if(!executedFirstAction&&deletedAction&&!executedSecondAction){this.executedFirstAction=false;this.executedSecondAction=false;}
             else if(executedFirstAction&&deletedAction&&!executedSecondAction)this.executedSecondAction=false;
             else if(!executedFirstAction&&!deletedAction&&!executedSecondAction) {this.executedFirstAction=true;this.executedSecondAction=false;}
-            if(executedFirstAction&&executedSecondAction)this.endTurn=true;
+            if(executedFirstAction&&executedSecondAction)setEndTurn(true);
         }
         //HERE ENDS TURN
         else if(getEndturn()){
