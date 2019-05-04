@@ -293,7 +293,7 @@ public class Player {
                 {
                     //player get points
                     allPlayers.get(indexPlayer).givePoints(indexTracks);
-                    if (indexTracks==11)//additional Marks
+                    if (indexTracks==trackSize-1)//additional Marks
                         allPlayers.get(indexPlayer).addMarks(victims.get(indexVictims),1);
                 }
             }}
