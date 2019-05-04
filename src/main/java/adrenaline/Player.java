@@ -6,7 +6,9 @@ import java.util.Scanner;
 
 public class Player {
     private final static int numMaxCube=3;
+    private final static int trackSize=12;
     private Figure.PlayerColor[] track;
+    private int[] pointTrack;
     private Figure.PlayerColor[] marks;
     private int[] ammoBox; //BLUE RED YELLOW
     private CoordinatesWithRoom coordinates;
@@ -14,7 +16,7 @@ public class Player {
     private CoordinatesWithRoom respawnCoordinates;
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
-
+    private int points;
     private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
 
     public Player() {
@@ -39,6 +41,8 @@ public class Player {
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        this.points=0;
+        this.pointTrack=new int[]{1,1,8,6,4,2,1,1};
     }
 
     @Override
@@ -278,8 +282,40 @@ public class Player {
         setPlayerPosition(c.getX(),c.getY(),c.getRoom());
     }
 
+//______________________________________point + 12°hit==> +mark_________________________________________________________________________//
+    public void canGetPoints(int points,LinkedList<Player> victims,LinkedList<Player>allPlayers){
+        for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
+        {
+            for(int indexVictims=0;indexVictims<victims.size();indexVictims++){
+            for(int indexTracks=0; indexTracks<trackSize;indexTracks++)
+            {
+                if(allPlayers.get(indexPlayer).getColor()==victims.get(indexVictims).getTrack()[indexTracks])
+                {
+                    //player get points
+                    allPlayers.get(indexPlayer).givePoints(indexTracks);
+                    if (indexTracks==11)//additional Marks
+                        allPlayers.get(indexPlayer).addMarks(victims.get(indexVictims),1);
+                }
+            }}
+        }
 
 
+    }
 
+    public void givePoints(int trackPosition){
+
+        setPoints(getPointTrack()[trackPosition]);
+
+    }
+
+    public void setPoints( int points)
+    {
+        this.points=+points;
+    }
+    public int[] getPointTrack(){
+        return this.pointTrack;
+    }
+    public int getPoints(){
+        return this.points;
+    }
 }
-
