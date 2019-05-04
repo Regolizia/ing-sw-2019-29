@@ -283,7 +283,7 @@ public class Player {
     }
 
 //______________________________________point + 12°hit==> +mark_________________________________________________________________________//
-    public void canGetPoints(int points,LinkedList<Player> victims,LinkedList<Player>allPlayers){
+    public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
         for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
         {
             for(int indexVictims=0;indexVictims<victims.size();indexVictims++){
