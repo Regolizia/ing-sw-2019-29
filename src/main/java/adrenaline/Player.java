@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Player {
     private final static int numMaxCube = 3;
     private final static int trackSize = 12;
+    private final static  int trackPointSize=5;
     private Figure.PlayerColor[] track;
     private int[] pointTrack;
     private Figure.PlayerColor[] marks;
@@ -17,7 +18,8 @@ public class Player {
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
     private int points;
-    private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED //to be deleted
+    private int indexPointCounter; //to indicate max points assegnable
+    private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
     private boolean[] skullTrack;
     public Player() {
 
@@ -40,10 +42,11 @@ public class Player {
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
-        this.pointsArray = new boolean[]{true, true, true, true, true, true}; //to be deleted
+         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         this.points = 0;
-        this.pointTrack = new int[]{1, 1, 8, 6, 4, 2, 1, 1};
+        this.pointTrack = new int[]{8,6,4,2,1};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
+        this.indexPointCounter=0; //it means tha i can give 8 points
     }
 
     @Override
@@ -143,7 +146,7 @@ public class Player {
         return (hand.size() <= 3);
     }
 
-   //  REMOVE CELL 8,6... WHEN SOMEONE DIES  //to be deleted
+    //  REMOVE CELL 8,6... WHEN SOMEONE DIES
     public void hasDied() {
         // SETS FIRST 1 TO 0
         for (int i = 0; i < pointsArray.length; i++) {
@@ -154,7 +157,7 @@ public class Player {
         }
     }
 
-    public boolean[] getPointsArray() {  //to be deleted
+    public boolean[] getPointsArray() {
         return pointsArray;
     }
 
@@ -292,7 +295,7 @@ public class Player {
         setPlayerPosition(c.getX(), c.getY(), c.getRoom());
     }
 
-//______________________________________point + 12°hit==> +mark_________________________________________________________________________//
+//______________________________________point ________________________________________________________________________//
 
 
     public void setPoints(int points) {
@@ -313,6 +316,9 @@ public class Player {
     public boolean[] getSkullTrack(){
         return this.skullTrack;
     }
+    public int getTrackPointSize(){return this.trackPointSize;}
+    public int getMaxPointAssignableCounter(){return this.indexPointCounter;}
+    public void setMaxPointAssignableCounter(int max){this.indexPointCounter=max;}
     //______________________________________________putASkullOnTrack__________________________________________________________________________//
     public void putASkullOnTrack() {
         for(int i=0;i<getTrackSize();i++){
@@ -322,6 +328,15 @@ public class Player {
 
             }}
     }
-
+//_________________________how Many Deaths____________________________________________________________//
+    public int numberOfDeaths(){
+        int death=0;
+        for(int i=0; i<getTrackSize();i++)
+        {
+            if (getSkullTrack()[i]==true)
+                death++;
+        }
+    return death;
+    }
 
 }
