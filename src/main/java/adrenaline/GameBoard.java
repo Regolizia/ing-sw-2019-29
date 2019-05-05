@@ -11,15 +11,16 @@ public class GameBoard {
 
     protected LinkedList<Door> doors;
     protected LinkedList<Wall> walls;
-
+    int numSkull;
 
 
     /**
      * Default constructor
      */
-    public GameBoard() {
+    public GameBoard(int numSkull) {
         doors = new LinkedList<Door>();
         walls = new LinkedList<Wall>();
+        this.numSkull=numSkull;
     }
 
 
@@ -124,5 +125,10 @@ public class GameBoard {
         }
     }
     */
-
+ public int getNumSkull(){
+     return this.numSkull;
+ }
+public void pickASkull(){
+     this.numSkull--;
+}
 }
