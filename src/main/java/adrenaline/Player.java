@@ -17,7 +17,7 @@ public class Player {
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
     private int points;
-    //private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
+    private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED //to be deleted
     private boolean[] skullTrack;
     public Player() {
 
@@ -143,7 +143,7 @@ public class Player {
         return (hand.size() <= 3);
     }
 
-   /* //  REMOVE CELL 8,6... WHEN SOMEONE DIES
+   //  REMOVE CELL 8,6... WHEN SOMEONE DIES  //to be deleted
     public void hasDied() {
         // SETS FIRST 1 TO 0
         for (int i = 0; i < pointsArray.length; i++) {
@@ -154,9 +154,9 @@ public class Player {
         }
     }
 
-    public boolean[] getPointsArray() {
+    public boolean[] getPointsArray() {  //to be deleted
         return pointsArray;
-    }*/
+    }
 
     public boolean isDead() {
         return (getTrack()[10] != Figure.PlayerColor.NONE);
