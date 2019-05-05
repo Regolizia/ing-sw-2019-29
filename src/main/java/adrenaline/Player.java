@@ -40,7 +40,7 @@ public class Player {
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
-        // this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        this.pointsArray = new boolean[]{true, true, true, true, true, true}; //to be deleted
         this.points = 0;
         this.pointTrack = new int[]{1, 1, 8, 6, 4, 2, 1, 1};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
