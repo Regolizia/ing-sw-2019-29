@@ -12,8 +12,8 @@ public class DominationBoard extends GameBoard {
     /**
      * Default constructor
      */
-    public DominationBoard() {
-        super();
+    public DominationBoard(int numSkull) {
+        super(numSkull);
         rooms = new LinkedList<RoomDom>();
 
     }
