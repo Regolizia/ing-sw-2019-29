@@ -651,7 +651,7 @@ public boolean getEndturn(){
 
 public void setEndTurn(boolean bool){this.endTurn=bool;}
 
-//________________________GIVE POINTS__________________________________//
+//________________________GIVE POINTS_______& ENDOFTHEGAME___________________________//
 public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
     for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
     {
@@ -672,8 +672,20 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
 }
 
     public void givePoints(int trackPosition,Player player){
-
-        player.setPoints(player.getPointTrack()[trackPosition]);
-
+        if(player.getSkullTrack()[trackPosition]==false)
+            player.setPoints(player.getPointTrack()[trackPosition]);
+        else{
+            for(int indexTrack=trackPosition;indexTrack<player.getTrackSize();indexTrack++)
+            {
+                if(player.getSkullTrack()[indexTrack]==false)
+                    player.setPoints(player.getPointTrack()[indexTrack]);
+            }
+        }
     }
-}
+
+    public boolean endOfTheGame(){          //8||5 skulls
+        //if(countSkull-1<=0)
+        return true;
+        //esle return false
+    }}
+

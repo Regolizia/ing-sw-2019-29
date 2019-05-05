@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class Player {
-    private final static int numMaxCube=3;
-    private final static int trackSize=12;
+    private final static int numMaxCube = 3;
+    private final static int trackSize = 12;
     private Figure.PlayerColor[] track;
     private int[] pointTrack;
     private Figure.PlayerColor[] marks;
@@ -17,8 +17,8 @@ public class Player {
     private LinkedList<WeaponCard> hand;
     private LinkedList<PowerUpCard> powerups;
     private int points;
-    private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
-
+    //private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
+    private boolean[] skullTrack;
     public Player() {
 
     }
@@ -40,9 +40,10 @@ public class Player {
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();
-        this.pointsArray = new boolean[]{true, true, true, true, true, true};
-        this.points=0;
-        this.pointTrack=new int[]{1,1,8,6,4,2,1,1};
+        // this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        this.points = 0;
+        this.pointTrack = new int[]{1, 1, 8, 6, 4, 2, 1, 1};
+        this.skullTrack = new boolean[]{false, false, false, false, false, false};
     }
 
     @Override
@@ -57,6 +58,7 @@ public class Player {
     public Figure.PlayerColor[] getTrack() {
         return track;
     }
+
     public Figure.PlayerColor[] getMarks() {
         return marks;
     }
@@ -89,7 +91,7 @@ public class Player {
     }
 
     public void setPlayerPositionSpawnpoint(CoordinatesWithRoom c) {
-        this.coordinates=(c);
+        this.coordinates = (c);
 
     }
 
@@ -108,10 +110,11 @@ public class Player {
         return coordinates.getY();
     }
 
-    public void newLife(){
+    public void newLife() {
         setPlayerPositionSpawnpoint(respawnCoordinates);
-        this.track=new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
-        this.marks=new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+        this.marks = new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+        putASkullOnTrack();
         //must reset also ammoBox?
     }
 //_________________________________________________________________________________________________________//
@@ -140,7 +143,7 @@ public class Player {
         return (hand.size() <= 3);
     }
 
-    //  REMOVE CELL 8,6... WHEN SOMEONE DIES
+   /* //  REMOVE CELL 8,6... WHEN SOMEONE DIES
     public void hasDied() {
         // SETS FIRST 1 TO 0
         for (int i = 0; i < pointsArray.length; i++) {
@@ -153,7 +156,7 @@ public class Player {
 
     public boolean[] getPointsArray() {
         return pointsArray;
-    }
+    }*/
 
     public boolean isDead() {
         return (getTrack()[10] != Figure.PlayerColor.NONE);
@@ -169,19 +172,23 @@ public class Player {
 
     // FINDS FIRST EMPTY CELL OF DAMAGETRACK
     public int trackEmptyCell() {
-        int x=0;
+        int x = 0;
         for (int i = 0; i < getTrack().length; i++) {
             if (getTrack()[i] == Figure.PlayerColor.NONE) {
-                x=i;
+                x = i;
                 break;
             }
         }
         return x;
     }
-    public LinkedList<PowerUpCard> getPowerUp(){return powerups;}
+
+    public LinkedList<PowerUpCard> getPowerUp() {
+        return powerups;
+    }
+
     //  ADDS i NUMBER OF OLDMARKS AND DAMAGES BY SHOOTER TO PLAYER
-    public void addDamageToTrack(Player shooter, int i){
-        for(int x = this.trackEmptyCell(); x<track.length && i>0; x++){
+    public void addDamageToTrack(Player shooter, int i) {
+        for (int x = this.trackEmptyCell(); x < track.length && i > 0; x++) {
             this.track[x] = shooter.getColor();
             i--;
         }
@@ -189,10 +196,10 @@ public class Player {
     }
 
     // COUNTS HOW MANY DAMAGES BY SHOOTER TO TARGET
-    public int damageByShooter(Player shooter){
-        int x=0;
-        for(int i=0;i<track.length;i++){
-            if(track[i]==shooter.getColor()){
+    public int damageByShooter(Player shooter) {
+        int x = 0;
+        for (int i = 0; i < track.length; i++) {
+            if (track[i] == shooter.getColor()) {
                 x++;
             }
         }
@@ -201,10 +208,10 @@ public class Player {
 
 
     // COUNTS HOW MANY MARKS GIVEN BY SHOOTER TO PLAYER
-    public int marksByShooter(Player shooter){
-        int x=0;
-        for(int i=0;i<marks.length;i++){
-            if(marks[i]==shooter.getColor()){
+    public int marksByShooter(Player shooter) {
+        int x = 0;
+        for (int i = 0; i < marks.length; i++) {
+            if (marks[i] == shooter.getColor()) {
                 x++;
             }
         }
@@ -212,16 +219,16 @@ public class Player {
     }
 
     // IF SHOOTER HAS LESS THEN 3 MARKS
-    public boolean canAddMark(Player shooter){
-        return (marksByShooter(shooter)<3);
+    public boolean canAddMark(Player shooter) {
+        return (marksByShooter(shooter) < 3);
     }
 
     // FINDS FIRST EMPTY CELL OF MARKS
     public int markEmptyCell() {
-        int x=0;
+        int x = 0;
         for (int i = 0; i < marks.length; i++) {
             if (marks[i] == Figure.PlayerColor.NONE) {
-                x=i;
+                x = i;
                 break;
             }
 
@@ -230,23 +237,17 @@ public class Player {
     }
 
 
-
-
-
     // ADDS i NUMBER OF MARKS BY SHOOTER TO PLAYER
-    public void addMarks(Player shooter, int i){
-            for (int x=this.markEmptyCell(); x<marks.length && i>0; x++) {
-                if(canAddMark(shooter)){ // IF SHOOTER HAS LESS THEN 3 MARKS
-                    this.marks[x] = shooter.getColor();
-                }
-                else{
-                    break;
-                }
-                i--;
+    public void addMarks(Player shooter, int i) {
+        for (int x = this.markEmptyCell(); x < marks.length && i > 0; x++) {
+            if (canAddMark(shooter)) { // IF SHOOTER HAS LESS THEN 3 MARKS
+                this.marks[x] = shooter.getColor();
+            } else {
+                break;
             }
+            i--;
+        }
     }
-
-
 
 
     ///// FOR CHECKPAYMENT
@@ -254,46 +255,73 @@ public class Player {
     public void setRedCube(int redCube) {
         this.ammoBox[1] = redCube;
     }
-    public void setBlueCube(int blueCube){
-        this.ammoBox[0]=blueCube;
-    }
-    public void setYellowCube(int yellowCube){
-        this.ammoBox[2]=yellowCube;
+
+    public void setBlueCube(int blueCube) {
+        this.ammoBox[0] = blueCube;
     }
 
-    public void setCube(int red,int blue,int yellow)
-    {
-        setBlueCube(getCubeBlue()+blue);
-        setRedCube(getCubeRed()+red);
-        setYellowCube(getCubeYellow()+yellow);
-
-   for(int counter=0;counter<3;counter++)
-    {
-        if(this.ammoBox[counter]>=numMaxCube)ammoBox[counter]=numMaxCube;
+    public void setYellowCube(int yellowCube) {
+        this.ammoBox[2] = yellowCube;
     }
 
+    public void setCube(int red, int blue, int yellow) {
+        setBlueCube(getCubeBlue() + blue);
+        setRedCube(getCubeRed() + red);
+        setYellowCube(getCubeYellow() + yellow);
+
+        for (int counter = 0; counter < 3; counter++) {
+            if (this.ammoBox[counter] >= numMaxCube) ammoBox[counter] = numMaxCube;
+        }
+
     }
-    public int getCubeRed(){return ammoBox[1];}
-    public int getCubeYellow(){return ammoBox[2];}
-    public int getCubeBlue(){return ammoBox[0];}
+
+    public int getCubeRed() {
+        return ammoBox[1];
+    }
+
+    public int getCubeYellow() {
+        return ammoBox[2];
+    }
+
+    public int getCubeBlue() {
+        return ammoBox[0];
+    }
 
     // MOVES PLAYER TO A CELL
-    public void moveToThisSquare(CoordinatesWithRoom c){
-        setPlayerPosition(c.getX(),c.getY(),c.getRoom());
+    public void moveToThisSquare(CoordinatesWithRoom c) {
+        setPlayerPosition(c.getX(), c.getY(), c.getRoom());
     }
 
 //______________________________________point + 12°hit==> +mark_________________________________________________________________________//
 
 
-    public void setPoints( int points)
-    {
-        this.points=+points;
+    public void setPoints(int points) {
+        this.points = +points;
     }
-    public int[] getPointTrack(){
+
+    public int[] getPointTrack() {
         return this.pointTrack;
     }
-    public int getPoints(){
+
+    public int getPoints() {
         return this.points;
     }
-    public int getTrackSize(){return this.trackSize;}
+
+    public int getTrackSize() {
+        return this.trackSize;
+    }
+    public boolean[] getSkullTrack(){
+        return this.skullTrack;
+    }
+    //______________________________________________putASkullOnTrack__________________________________________________________________________//
+    public void putASkullOnTrack() {
+        for(int i=0;i<getTrackSize();i++){
+            if(getSkullTrack()[i]==false) {
+                getSkullTrack()[i]=true;
+                break;
+
+            }}
+    }
+
+
 }
