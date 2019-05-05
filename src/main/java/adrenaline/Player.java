@@ -283,30 +283,7 @@ public class Player {
     }
 
 //______________________________________point + 12°hit==> +mark_________________________________________________________________________//
-    public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
-        for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
-        {
-            for(int indexVictims=0;indexVictims<victims.size();indexVictims++){
-            for(int indexTracks=0; indexTracks<trackSize;indexTracks++)
-            {
-                if(allPlayers.get(indexPlayer).getColor()==victims.get(indexVictims).getTrack()[indexTracks])
-                {
-                    //player get points
-                    allPlayers.get(indexPlayer).givePoints(indexTracks);
-                    if (indexTracks==trackSize-1)//additional Marks
-                        allPlayers.get(indexPlayer).addMarks(victims.get(indexVictims),1);
-                }
-            }}
-        }
 
-
-    }
-
-    public void givePoints(int trackPosition){
-
-        setPoints(getPointTrack()[trackPosition]);
-
-    }
 
     public void setPoints( int points)
     {
@@ -318,4 +295,5 @@ public class Player {
     public int getPoints(){
         return this.points;
     }
+    public int getTrackSize(){return this.trackSize;}
 }

@@ -103,18 +103,23 @@ public class Action {
         }
         //HERE ENDS TURN
         else if(getEndturn()){
+
         if(actionSelected.equals(ActionType.RELOAD)){
             LinkedList<WeaponCard> weaponList = player.getHand();
             WeaponCard weaponToReload = chooseWeaponCard(weaponList);
             if (!weaponToReload.getReload())
                 reload(player, weaponToReload,option); }
         LinkedList<Player> players=m.getPlayers();
-        //public LinkedList<Player> getPlayers()
+            LinkedList<Player>victims=new LinkedList<>();
 
         for(int index=0;index< players.size();index++)
-        { if(players.get(index).isDead())
-            players.get(index).newLife();
-        }}
+        { if(players.get(index).isDead()){
+            victims.add(players.get(index));
+        }
+        canGetPoints(victims,players);
+        for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
+            victims.get(index).newLife();}
+        }
     }
 
     //______________________________CHOOSE CELL______________________________________________________________________//
@@ -646,5 +651,29 @@ public boolean getEndturn(){
 
 public void setEndTurn(boolean bool){this.endTurn=bool;}
 
+//________________________GIVE POINTS__________________________________//
+public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
+    for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
+    {
+        for(int indexVictims=0;indexVictims<victims.size();indexVictims++){
+            for(int indexTracks=0; indexTracks< allPlayers.get(indexPlayer).getTrackSize();indexTracks++)
+            {
+                if(allPlayers.get(indexPlayer).getColor()==victims.get(indexVictims).getTrack()[indexTracks])
+                {
+                    //player get points
+                   givePoints(indexTracks,allPlayers.get(indexPlayer));
+                    if (indexTracks==allPlayers.get(indexPlayer).getTrackSize()-1)//additional Marks
+                        allPlayers.get(indexPlayer).addMarks(victims.get(indexVictims),1);
+                }
+            }}
+    }
 
+
+}
+
+    public void givePoints(int trackPosition,Player player){
+
+        player.setPoints(player.getPointTrack()[trackPosition]);
+
+    }
 }
