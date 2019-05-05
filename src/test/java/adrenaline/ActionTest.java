@@ -62,7 +62,6 @@ public class ActionTest {
         action.reload(player,w, Action.PayOption.AMMOPOWER);//
         action.reload(player,w, Action.PayOption.NONE);//
         action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
-        action.proposeCellsRunBeforeShootFrenzy(c1,m.getMapUsed().getGameBoard());//
 
 
         action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//

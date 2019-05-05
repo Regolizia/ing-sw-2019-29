@@ -143,19 +143,19 @@ public class VirtualClientGUI {
             System.out.println("color->"+singleColors[index]);
             switch (singleColors[index]) {
                 case ("GREEN"):
-                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\GREEN.jpg");
+                    image = new ImageIcon("src\\main\\resources\\images\\GREEN.jpg");
                     break;
                 case ("BLUE"):
-                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\BLUE.jpg");
+                    image = new ImageIcon("src\\main\\resources\\images\\BLUE.jpg");
                     break;
                 case ("PURPLE"):
-                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\PURPLE.jpg");
+                    image = new ImageIcon("src\\main\\resources\\images\\PURPLE.jpg");
                     break;
                 case ("YELLOW"):
-                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\YELLOW.jpg");
+                    image = new ImageIcon("src\\main\\resources\\images\\YELLOW.jpg");
                     break;
                 case ("GRAY"):
-                    image = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\GRAY.jpg");
+                    image = new ImageIcon("src\\main\\resources\\images\\GRAY.jpg");
                     break;
             }
             playerBoards[index] = new JLabel(image, SwingConstants.CENTER);
@@ -218,21 +218,21 @@ public class VirtualClientGUI {
         if(n!=0) {
             switch(n) {
                 case (1):
-                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part1.jpg");
-                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part4.jpg");
+                    imageA = new ImageIcon("src\\main\\resources\\images\\Part1.jpg");
+                    imageB = new ImageIcon("src\\main\\resources\\images\\Part4.jpg");
                     break;
                 case (2):
-                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part3.jpg");
-                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part4.jpg");
+                    imageA = new ImageIcon("src\\main\\resources\\images\\Part3.jpg");
+                    imageB = new ImageIcon("src\\main\\resources\\images\\Part4.jpg");
                     break;
                 case (3):
-                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part1.jpg");
-                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part2.jpg");
+                    imageA = new ImageIcon("src\\main\\resources\\images\\Part1.jpg");
+                    imageB = new ImageIcon("src\\main\\resources\\images\\Part2.jpg");
                     break;
                 case (4):
                 default:
-                    imageA = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part3.jpg");
-                    imageB = new ImageIcon("D:\\Documents\\Git\\ing-sw-2019-29\\src\\main\\resources\\images\\Part2.jpg");
+                    imageA = new ImageIcon("src\\main\\resources\\images\\Part3.jpg");
+                    imageB = new ImageIcon("src\\main\\resources\\images\\Part2.jpg");
                     break;
             }
             labelA = new JLabel(imageA, SwingConstants.CENTER);
