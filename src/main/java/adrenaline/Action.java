@@ -12,7 +12,7 @@ public class Action {
     final private int numMaxAlternativeOptions = 2; //(0=base 1=alternative)
     final private int numMaxAmmoToPay = 3;//(0:first price 1:second price 2:second price)
     final private int numMaxWeaponYouCanHave=3;
-    GameBoard g = new GameBoard();
+
 
     boolean executedFirstAction=false;
     boolean executedSecondAction=false;
@@ -84,7 +84,7 @@ public class Action {
                             cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
                         else cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
                         player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
-                        shoot(weapon, cChoosen, player, payEff, m);
+                        shoot(weapon, cChoosen, player, payEff, m,g);
                         weapon.setNotReload();// i've lost base effect payment
                         deletedAction=false;
                     }
@@ -114,11 +114,16 @@ public class Action {
 
         for(int index=0;index< players.size();index++)
         { if(players.get(index).isDead()){
+            g.pickASkull();
             victims.add(players.get(index));
         }
         canGetPoints(victims,players);
         for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
             victims.get(index).newLife();}
+        }
+        /////
+        if(endOfTheGame(g)){
+            //
         }
     }
 
@@ -271,7 +276,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
 }
 
     //______________________________________SHOOT_____________________________________________________________________//
-    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m) {
+    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m,GameBoard g) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         EffectAndNumber effectNumber=new EffectAndNumber(AmmoCube.Effect.BASE,0);
         for(int index=0;index<effectsList.size();index++) {
@@ -653,39 +658,84 @@ public void setEndTurn(boolean bool){this.endTurn=bool;}
 
 //________________________GIVE POINTS_______& ENDOFTHEGAME___________________________//
 public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
-    for(int indexPlayer=0;indexPlayer<allPlayers.size();indexPlayer++)
-    {
-        for(int indexVictims=0;indexVictims<victims.size();indexVictims++){
-            for(int indexTracks=0; indexTracks< allPlayers.get(indexPlayer).getTrackSize();indexTracks++)
-            {
-                if(allPlayers.get(indexPlayer).getColor()==victims.get(indexVictims).getTrack()[indexTracks])
-                {
-                    //player get points
-                   givePoints(indexTracks,allPlayers.get(indexPlayer));
-                    if (indexTracks==allPlayers.get(indexPlayer).getTrackSize()-1)//additional Marks
-                        allPlayers.get(indexPlayer).addMarks(victims.get(indexVictims),1);
-                }
-            }}
-    }
+   LinkedList<Player> bestPlayerOrderForVictim=new LinkedList<>();
+        for(int indexVictims=0;indexVictims<victims.size();indexVictims++) {
+                bestPlayerOrderForVictim=bestShooterOrder(allPlayers,victims.get(indexVictims));
+                givePoints(victims.get(indexVictims),bestPlayerOrderForVictim);
+                //call to give points
+        }
+
 
 
 }
 
-    public void givePoints(int trackPosition,Player player){
-        if(player.getSkullTrack()[trackPosition]==false)
-            player.setPoints(player.getPointTrack()[trackPosition]);
-        else{
-            for(int indexTrack=trackPosition;indexTrack<player.getTrackSize();indexTrack++)
-            {
-                if(player.getSkullTrack()[indexTrack]==false)
-                    player.setPoints(player.getPointTrack()[indexTrack]);
+    public void givePoints(Player victim,LinkedList<Player>shooters){
+        // max point - 2 x death if maxpoint-2<=0 give 1 point
+        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
+        if(victim.getMaxPointAssignableCounter()>=victim.getTrackPointSize()){
+                for (int indexPlayer=0; indexPlayer<shooters.size();indexPlayer++)
+                {  shooters.get(indexPlayer).setPoints(1); //every player get 1 points
+                 }
+        return;}
+
+        shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+        for(int indexPlayer=1;indexPlayer<shooters.size();indexPlayer++)
+        {
+            if(victim.getTrack()[0]==shooters.get(indexPlayer).getColor())
+                shooters.get(indexPlayer).setPoints(1);//firstBloodPoints
+            if(victim.getTrack()[victim.getTrackSize()-1]==shooters.get(indexPlayer).getColor())
+                shooters.get(indexPlayer).addMarks(victim,1);//12°hit
+            if(victim.damageByShooter(shooters.get(indexPlayer))==victim.damageByShooter(shooters.get(indexPlayer-1)))
+                shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+            else{
+                victim.setMaxPointAssignableCounter(victim.getMaxPointAssignableCounter()+1);
+                if(victim.getMaxPointAssignableCounter()>=victim.getTrackPointSize())
+                    shooters.get(indexPlayer).setPoints(1);
+                else
+                shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
             }
         }
+
     }
 
-    public boolean endOfTheGame(){          //8||5 skulls
+    public boolean endOfTheGame(GameBoard g){  //every time a player dies
+        //8||5 skulls
         //if(countSkull-1<=0)
+
+        if(g.getNumSkull()<=0)
         return true;
-        //esle return false
-    }}
+        //else return false
+        else return false;
+    }
+
+    public LinkedList<Player> bestShooterOrder(LinkedList<Player> players,Player victim){
+        LinkedList<Player> bestShooterOrder=new LinkedList<>();
+        int maxDamage=0;
+        for (int i=0;i<players.size();i++){
+            if(victim.damageByShooter(players.get(i))>0) {
+                if(victim.damageByShooter(players.get(i))>=maxDamage) {
+                    maxDamage = victim.damageByShooter(players.get(i));
+                    bestShooterOrder.addFirst(players.get(i));
+                }
+                else
+                    {for(int indexBestShooterOrder=0; indexBestShooterOrder<bestShooterOrder.size();indexBestShooterOrder++)
+                        {
+                    if (victim.damageByShooter(players.get(i))>=victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder)))
+                        bestShooterOrder.add(indexBestShooterOrder,players.get(i));
+                        break;
+                        }
+                     //here we get out from the for 2 options: our player is the last in the list or it is the one with least points of all and
+                     // it's still to be add
+                     if(!bestShooterOrder.contains(players.get(i)))
+                         bestShooterOrder.addLast(players.get(i));
+                }
+            }
+
+            //if ==0 no points to add to the player
+        }
+
+
+        return bestShooterOrder;
+    }
+}
 
