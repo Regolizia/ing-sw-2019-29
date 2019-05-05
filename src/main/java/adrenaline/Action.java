@@ -55,8 +55,10 @@ public class Action {
                     break;
                 case GRAB:
                     // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-                    CoordinatesWithRoom coordinatesG=chooseCell(proposeCellsGrab(c, g, player));
-                   // CoordinatesWithRoom coordinatesG = null;
+                    CoordinatesWithRoom coordinatesG;
+                    if(player.checkDamage()==1||player.checkDamage()==2)
+                    coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
+                    else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
                     deletedAction=!(grab(player, coordinatesG, g,option));
                     break;
 
@@ -77,7 +79,10 @@ public class Action {
                         LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,option);
                         if(payEff==null)
                         {deletedAction=true;break;}
-                        CoordinatesWithRoom cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
+                        CoordinatesWithRoom cChoosen;
+                        if(player.checkDamage()==2)
+                            cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
+                        else cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
                         player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
                         shoot(weapon, cChoosen, player, payEff, m);
                         weapon.setNotReload();// i've lost base effect payment
@@ -134,11 +139,13 @@ public class Action {
 
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShoot(CoordinatesWithRoom c,GameBoard g){
         LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
+        list.add(c);
     return list;}
-    //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT FRENZY_______________________________________________//
-    public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootFrenzy(CoordinatesWithRoom c,GameBoard g){
+    //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT ADRENALINE_______________________________________________//
+    public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootAdrenaline(CoordinatesWithRoom c,GameBoard g){
         LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
         list.addAll(c.XTilesDistant(g,2));
+        list.add(c);
         return list;
     }
 
@@ -152,11 +159,12 @@ public class Action {
     public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
         list.add(c);
-
-        // IF ADRENALINE GRAB IS POSSIBLE
-        if (p.checkDamage() == 1) {
-            list.addAll(c.XTilesDistant(g, 2));
-        }
+        return list;
+    }
+    //____________PROPOSE CELLS GRAB WITH ADRENALINE checkDamage=(1||2)
+    public LinkedList<CoordinatesWithRoom> proposeCellsGrabAdrenaline(CoordinatesWithRoom c, GameBoard g, Player p) {
+        LinkedList<CoordinatesWithRoom> list = proposeCellsGrab(c,g,p);
+        list.addAll(c.XTilesDistant(g, 2));
         return list;
     }
 
