@@ -13,9 +13,10 @@ public class DeathmatchBoard extends GameBoard {
     /**
      * Default constructor
      */
-    public DeathmatchBoard() {
-        super();
+    public DeathmatchBoard(int numSkull) {
+        super (numSkull);
         rooms = new LinkedList<RoomDeath>();
+
     }
 
 
@@ -24,6 +25,7 @@ public class DeathmatchBoard extends GameBoard {
         // The room's token is the index of the array
         r.setToken(rooms.indexOf(r));
     }
+
 
     public RoomDeath getRoom(int i){
        return rooms.get(i);
