@@ -721,8 +721,8 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
                     {for(int indexBestShooterOrder=0; indexBestShooterOrder<bestShooterOrder.size();indexBestShooterOrder++)
                         {
                     if (victim.damageByShooter(players.get(i))>=victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder)))
-                        bestShooterOrder.add(indexBestShooterOrder,players.get(i));
-                        break;
+                    { bestShooterOrder.add(indexBestShooterOrder,players.get(i));
+                        break;}
                         }
                      //here we get out from the for 2 options: our player is the last in the list or it is the one with least points of all and
                      // it's still to be add
