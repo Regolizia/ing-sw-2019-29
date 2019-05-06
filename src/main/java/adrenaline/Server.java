@@ -43,7 +43,7 @@ public class Server {
         var pool = Executors.newFixedThreadPool(500);
         try (var listener = new ServerSocket(59001)) {
            
-            while (true) {
+            while (connectionsCount>=0) {
                 pool.execute(new Handler(listener.accept()));
                
             }
@@ -74,7 +74,7 @@ public class Server {
                 }, 0, 1000);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                //
             }
 
         }
@@ -177,7 +177,7 @@ public class Server {
                     writer.println("MESSAGE" + name + " has chosen " + color);
                 }
 
-                if(names.get(0)==name){
+                if(name.equals(names.get(0))){
                     System.out.println("BOARD SELECTION ");
                     System.out.println(names.get(0));
                     while(true){

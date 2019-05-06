@@ -409,14 +409,14 @@ return true;}
 ///////////////////////////______________choose weapon & canPay_________________////////////////////////////////////////
 
     public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand) {
-        int j;
-        for (j = 0; j < hand.size(); j++) {
+        int j=0;
+       // for (j = 0; j < hand.size(); j++) {
             //WHEN A WEAPON IS CHOOSEN....,then BREAK
             return hand.get(j);
-        }
+     /*   }
 
 
-    return null;}
+    return null;*/}
 ///____________________________________canPayCard(TRUE if can pay base effect)____________________________________///
 
     public boolean canPayCard(WeaponCard weapon, Player player,PayOption option) {
