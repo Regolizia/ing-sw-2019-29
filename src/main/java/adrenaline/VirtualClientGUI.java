@@ -38,6 +38,8 @@ public class VirtualClientGUI {
     JTextArea messageArea = new JTextArea();
     JLabel labelA;
     JLabel labelB;
+    JLabel labelC;
+    JLabel labelD;
     ImageIcon imageA;
     ImageIcon imageB;
     Font font;
@@ -169,6 +171,24 @@ public class VirtualClientGUI {
             playerBoards[index].repaint();
             System.out.println(playerBoards[index].getLocation());
         }
+        labelC = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+        labelC.setSize(446,250);
+        size = labelC.getPreferredSize();
+        labelC.setBounds(1054 + insets.left, insets.bottom,
+                size.width, size.height);
+        frame.getContentPane().add(labelC);
+        labelC.repaint();
+        System.out.println("LabelC--> "+labelC.getLocation());
+
+        if(numberOfCommas!=4){
+            labelD = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+            labelD.setSize(446,250);
+            size = labelC.getPreferredSize();
+            labelD.setBounds(1054 + insets.left, 550 + insets.top,
+                    size.width, size.height);
+            frame.getContentPane().add(labelD);
+            labelD.repaint();
+        }
 
         frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
         frame.revalidate();
@@ -190,10 +210,11 @@ public class VirtualClientGUI {
 
             playerNames[index] = new JLabel("", SwingConstants.CENTER);
             playerNames[index].setText(singleNames[index]);
-            playerNames[index].setOpaque(true);
+            playerNames[index].setOpaque(false);
+            playerNames[index].setForeground(Color.black);
 
             size = playerNames[index].getPreferredSize();
-            playerNames[index].setBounds(1054 +40+ insets.left, insets.top + (index)*110 + 250 +5,
+            playerNames[index].setBounds(1054 +40+ insets.left, insets.top + (index)*110 + 250 +10,
                     size.width, size.height);
             frame.getContentPane().add(playerNames[index]);
             playerNames[index].repaint();
@@ -207,7 +228,8 @@ public class VirtualClientGUI {
     }
 
     public void setGameBoardImages(int n){
-
+       ImageIcon img = new ImageIcon("src\\main\\resources\\images\\icon.jpg");
+        frame.setIconImage(img.getImage());
         frame.getContentPane().setLayout(null);
         frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
         frame.getContentPane().setBackground(Color.black);
@@ -259,8 +281,8 @@ public class VirtualClientGUI {
         messageArea.setBounds(1054 + insets.left, insets.bottom,
                 size.width, size.height);
 
-        messageArea.setBackground(Color.BLACK);
-        messageArea.setForeground(Color.blue);
+        messageArea.setOpaque(false);
+        messageArea.setForeground(Color.white);
 
         messageArea.setSize(446,250);
         messageArea.setEditable(false);
