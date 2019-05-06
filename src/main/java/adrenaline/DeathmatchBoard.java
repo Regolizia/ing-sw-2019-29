@@ -13,8 +13,10 @@ public class DeathmatchBoard extends GameBoard {
     /**
      * Default constructor
      */
-    public DeathmatchBoard(int numSkull) {
-        super (numSkull);
+    public DeathmatchBoard(//int numSkull
+                           ) {
+        super (//numSkull
+        );
         rooms = new LinkedList<RoomDeath>();
 
     }

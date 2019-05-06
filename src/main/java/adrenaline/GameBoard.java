@@ -17,10 +17,11 @@ public class GameBoard {
     /**
      * Default constructor
      */
-    public GameBoard(int numSkull) {
+    public GameBoard(//int numSkull
+    ) {
         doors = new LinkedList<Door>();
         walls = new LinkedList<Wall>();
-        this.numSkull=numSkull;
+        //this.numSkull=numSkull;
     }
 
 
