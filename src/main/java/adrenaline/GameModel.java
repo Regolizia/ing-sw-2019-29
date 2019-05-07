@@ -14,7 +14,9 @@ public class GameModel {
     public static enum Bot {
         BOT, NOBOT
     }
-
+    public static enum FrenzyMode{
+        ON,OFF
+    }
     protected Mode mode;
     protected Map mapUsed;
     protected Bot bot;

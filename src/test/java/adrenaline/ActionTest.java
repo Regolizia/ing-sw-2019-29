@@ -64,11 +64,11 @@ public class ActionTest {
         action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
 
 
-        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
        // action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
         action.setEndTurn(true);//
-        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);//
+        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
 
     }
 }

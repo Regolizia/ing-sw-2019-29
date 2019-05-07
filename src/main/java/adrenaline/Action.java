@@ -31,7 +31,7 @@ public class Action {
   //  private ActionType actionSelected;
 
 
-    public Action(Boolean newStart) {
+    public Action(boolean newStart) {
         this.newStart=newStart;
         if(this.newStart){
        this.executedFirstAction=false;
@@ -39,12 +39,13 @@ public class Action {
        setEndTurn(false);
        this. deletedAction=false;}
     }
+    public Action(){}
 
     //________________________________DO ACTION_____________________________________________________________________//
-    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option){
+    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option,GameModel.FrenzyMode frenzyMode){
       //  actionSelected = chosen;
 
-        if(!getEndturn()) {
+        if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
                 case RUN:
                     // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
@@ -87,8 +88,7 @@ public class Action {
                         shoot(weapon, cChoosen, player, payEff, m,g);
                         weapon.setNotReload();// i've lost base effect payment
                         deletedAction=false;
-                    }
-                    break;
+                    }                    break;
 
                 default:
                     //INVALID CHOICE
@@ -123,7 +123,36 @@ public class Action {
         }
         /////
         if(endOfTheGame(g)){
-            //
+            if(frenzyMode== GameModel.FrenzyMode.ON)
+            {
+                int notDeleted=0;
+                FreneticAction fAction=new FreneticAction();
+                //start by the player in the turn
+                LinkedList<Player>players=m.getPlayers();
+                int initialPlayerIndex=players.indexOf(player);
+                for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
+                {
+                    notDeleted=0;
+                    //here we get the frenzy turns
+                    if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex)
+                    {
+                        while (notDeleted<2)
+                        {
+                            if(fAction.selectFrenzyActionBeforFirstPlayer(actionSelected,player,c,g,m,option))
+                                notDeleted++;
+                        }
+                    }
+                   if(players.get(indexPlayer)==(m.getPlayers()).getFirst()||indexPlayer<initialPlayerIndex)
+                    while(notDeleted<2) {
+                       if(fAction.selectFrenzyActionAfterFirstPlayer(actionSelected, player, c, g, m, option))
+                           notDeleted++;
+                    }
+
+                }
+
+            }
+            //if endOfTheGame && frenzy then for everyplayer calls a frenzy action
+            //then stop the game
         }
     }
 
