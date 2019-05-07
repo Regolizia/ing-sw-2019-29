@@ -1,11 +1,8 @@
 package adrenaline;
 import javax.swing.*;
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import javax.swing.ImageIcon;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -13,7 +10,6 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import java.awt.BorderLayout;
-import javax.swing.*;
 
 /**
  * A simple Swing-based client for the chat server. Graphically it is a frame with a text
@@ -40,14 +36,79 @@ public class VirtualClientGUI {
     JLabel labelB;
     JLabel labelC;
     JLabel labelD;
+    JLabel labelE;
     ImageIcon imageA;
     ImageIcon imageB;
     Font font;
 
+    JTextField textField= new JTextField(42);
+    JTextField messageTextField= new JTextField(42);
+
     public VirtualClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);
+        textField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                out.println(textField.getText());
+                textField.setText("");
+            }
+        });
+        textField.setEditable(false);
     }
+
+    ///////////////////////7
+    public void setTextField() {
+        Insets insets = frame.getContentPane().getInsets();
+        textField.setSize(10,20);
+        Dimension size = textField.getPreferredSize();
+        textField.setBackground(Color.black);
+        textField.setForeground(Color.WHITE);
+        textField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        textField.setBounds(1040 + insets.left, insets.top + 625,
+                size.width, size.height);
+        frame.getContentPane().add(textField, BorderLayout.SOUTH);
+        textField.setEditable(true);
+        frame.setVisible(true);
+    }
+
+    public void closeTextField(){
+    textField.setSize(0,0);
+    textField.setEditable(false);
+    }
+
+    public void setMessageTextField(String s){
+        messageTextField.setText(s);
+        messageTextField.setSize(10,20);
+        Dimension size = messageTextField.getPreferredSize();
+        messageTextField.setForeground(Color.WHITE);
+        messageTextField.setBackground(Color.BLACK);
+        Insets insets = frame.getContentPane().getInsets();
+        messageTextField.setBounds(1040 + insets.left, insets.top + 605,
+                size.width, size.height);
+        frame.getContentPane().add(messageTextField, BorderLayout.SOUTH);
+        messageTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        messageTextField.setEditable(false);
+        frame.setVisible(true);
+    }
+    public void setStartImage(){
+        labelE = new JLabel(new ImageIcon("src\\main\\resources\\images\\adrenalin.jpg"), SwingConstants.CENTER);
+        labelE.setSize(1200,355);
+        Dimension size = labelE.getPreferredSize();
+        Insets insets = frame.getContentPane().getInsets();
+        labelE.setBounds(150 + insets.left, insets.top + 250,
+                size.width, size.height);
+        frame.getContentPane().add(labelE);
+        labelE.repaint();
+        frame.setVisible(true);
+    }
+    public void closeMessageTextField(){
+        messageTextField.setSize(0,0);
+    }
+    public void closeStartImage(){
+        labelE.setSize(0,0);
+    }
+    //////////////////////7
+/*
 
     private String getName() {
         return JOptionPane.showInputDialog(
@@ -65,6 +126,7 @@ public class VirtualClientGUI {
                 JOptionPane.PLAIN_MESSAGE
         );
     }
+*/
 
    /* // TODO SCELTA MAPPA CON IMMAGINI INVECE CHE NUMERI
     private String getBoard(){
@@ -89,12 +151,29 @@ public class VirtualClientGUI {
             while (in.hasNextLine()) {
                 var line = in.nextLine();
                 if (line.startsWith("ENTER")) {
-                    out.println(getName());
+                    setMessageTextField("Insert nickname: ");
+                    setTextField();
+                    setStartImage();
                 } else if (line.startsWith("NAME ACCEPTED")) {
                     this.frame.setTitle("Player: " + line.substring(13)); // FRAME TITLE
-                  //  textField.setEditable(true);
                 } else if (line.startsWith("CHOOSE COLOR ")) {
-                    out.println(getColor());
+                    setMessageTextField("Choose color: "+ in.nextLine());
+                    //setTextField();
+                } else if (line.startsWith("DUPLICATE NAME ")) {
+                    closeMessageTextField();
+                    setMessageTextField("This nickname is already taken, insert again:");
+                /*} else if (line.startsWith("WORD NOT ACCEPTED ")) {
+                    System.out.println("rjbhkeb");
+                    //closeMessageTextField();
+                    messageTextField.setText("Word not accepted, insert again:");
+                    messageTextField.repaint();
+                    //setMessageTextField("Word not accepted, insert again:");
+                } else if (line.startsWith("NOT ACCEPTED, TRY AGAIN")) {
+                    closeMessageTextField();
+                    setMessageTextField("Not accepted, insert again:");*/
+                } else if (line.startsWith("COLOR ACCEPTED ")) {
+                    closeTextField();
+                    closeMessageTextField();
                 } else if (line.startsWith("MESSAGE")) {
                     messageArea.append(line.substring(7) + "\n");
                 } else if (line.startsWith("CHOOSE BOARD ")) {
@@ -108,6 +187,7 @@ public class VirtualClientGUI {
                 }
                 if (line.startsWith("MESSAGE" + "The chosen board is number ")) {
                     // SET IMAGES AS BACKGROUND
+                    closeStartImage();
                     setGameBoardImages(Integer.valueOf(line.substring(34)));
                 }
             }}finally {socket.close();}
