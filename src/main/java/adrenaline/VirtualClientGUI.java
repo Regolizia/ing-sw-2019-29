@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import javax.swing.ImageIcon;
+import javax.swing.text.DefaultCaret;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -39,7 +40,12 @@ public class VirtualClientGUI {
     JLabel labelE;
     ImageIcon imageA;
     ImageIcon imageB;
+    JButton buttonA;
+    JButton buttonB;
+    JButton buttonC;
+    JButton buttonD;
     Font font;
+    boolean isFirst = false;
 
     JTextField textField= new JTextField(30);
     JTextField messageTextField= new JTextField(42);
@@ -107,6 +113,75 @@ public class VirtualClientGUI {
     public void closeStartImage(){
         labelE.setSize(0,0);
     }
+
+    public void setMapChoice(){
+        isFirst = true;
+        buttonA = new JButton(new ImageIcon("src\\main\\resources\\images\\Map1.jpg"));
+        buttonA.setActionCommand("1");
+        buttonB = new JButton(new ImageIcon("src\\main\\resources\\images\\Map2.jpg"));
+        buttonA.setActionCommand("2");
+        buttonC = new JButton(new ImageIcon("src\\main\\resources\\images\\Map3.jpg"));
+        buttonA.setActionCommand("3");
+        buttonD = new JButton(new ImageIcon("src\\main\\resources\\images\\Map4.jpg"));
+        buttonA.setActionCommand("4");
+        buttonA.setSize(180,137);
+        buttonB.setSize(180,137);
+        buttonC.setSize(180,137);
+        buttonD.setSize(180,137);
+        buttonA.setBorder(BorderFactory.createEmptyBorder());
+        buttonB.setBorder(BorderFactory.createEmptyBorder());
+        buttonC.setBorder(BorderFactory.createEmptyBorder());
+        buttonD.setBorder(BorderFactory.createEmptyBorder());
+        Dimension size = buttonA.getPreferredSize();
+        Insets insets = frame.getContentPane().getInsets();
+        buttonA.setBounds(216 + insets.left, insets.top + 500,
+                size.width, size.height);
+        size = buttonB.getPreferredSize();
+        buttonB.setBounds(216 + insets.left + 53 + 180, insets.top + 500,
+                size.width, size.height);
+        size = buttonC.getPreferredSize();
+        buttonC.setBounds(216 + insets.left + 106 + 360, insets.top + 500,
+                size.width, size.height);
+        size = buttonD.getPreferredSize();
+        buttonD.setBounds(216 + insets.left + 159 + 540, insets.top + 500,
+                size.width, size.height);
+        frame.getContentPane().add(buttonA);
+        frame.getContentPane().add(buttonB);
+        frame.getContentPane().add(buttonC);
+        frame.getContentPane().add(buttonD);
+        buttonA.repaint();
+        buttonB.repaint();
+        buttonC.repaint();
+        buttonD.repaint();
+        frame.setVisible(true);
+        buttonA.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                out.println("1");
+            }
+        });
+        buttonB.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                out.println("2");
+            }
+        });
+        buttonC.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                out.println("3");
+            }
+        });
+        buttonD.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                out.println("4");
+            }
+        });
+
+    }
+    public void closeMapChoice(){
+        buttonA.setSize(0,0);
+        buttonB.setSize(0,0);
+        buttonC.setSize(0,0);
+        buttonD.setSize(0,0);
+    }
     //////////////////////7
 /*
 
@@ -135,12 +210,12 @@ public class VirtualClientGUI {
         JLabel thumb = new JLabel();
         thumb.setIcon(icon);
     }*/
-   private int getBoard() {
+   /*private int getBoard() {
        String[] options = new String[]{"1", "2", "3", "4"};
        return JOptionPane.showOptionDialog(null, "Choose game board: ", "Game board selection",
                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                null, options, options[0]) +1 ;  // +1 BECAUSE IT STARTS FROM 0
-   }
+   }*/
 
     private void run() throws IOException {
         try {
@@ -177,7 +252,7 @@ public class VirtualClientGUI {
                 } else if (line.startsWith("MESSAGE")) {
                     messageArea.append(line.substring(7) + "\n");
                 } else if (line.startsWith("CHOOSE BOARD ")) {
-                    out.println(getBoard());
+                    setMapChoice();
                 } else if (line.startsWith("PLAYER BOARDS ")) {
                     var original = in.nextLine();
                     addPlayerBoards(original);
@@ -189,6 +264,10 @@ public class VirtualClientGUI {
                     // SET IMAGES AS BACKGROUND
                     closeStartImage();
                     setGameBoardImages(Integer.valueOf(line.substring(34)));
+                }
+                if (line.startsWith("MESSAGE" + "Waiting for other players...")) {
+                    if(isFirst)
+                    closeMapChoice();
                 }
             }}finally {socket.close();}
         } catch (IOException e){
@@ -363,7 +442,8 @@ public class VirtualClientGUI {
             labelA.repaint();
             labelB.repaint();
         }
-
+        DefaultCaret caret = (DefaultCaret)messageArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         size = messageArea.getPreferredSize();
         messageArea.setBounds(922 + insets.left, insets.bottom,
                 size.width, size.height);
