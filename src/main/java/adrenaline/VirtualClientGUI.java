@@ -41,7 +41,7 @@ public class VirtualClientGUI {
     ImageIcon imageB;
     Font font;
 
-    JTextField textField= new JTextField(42);
+    JTextField textField= new JTextField(30);
     JTextField messageTextField= new JTextField(42);
 
     public VirtualClientGUI(String serverAddress) {
@@ -61,10 +61,10 @@ public class VirtualClientGUI {
         Insets insets = frame.getContentPane().getInsets();
         textField.setSize(10,20);
         Dimension size = textField.getPreferredSize();
-        textField.setBackground(Color.black);
+        textField.setBackground(Color.DARK_GRAY);
         textField.setForeground(Color.WHITE);
         textField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        textField.setBounds(1040 + insets.left, insets.top + 625,
+        textField.setBounds(790 + insets.left, insets.top + 505,
                 size.width, size.height);
         frame.getContentPane().add(textField, BorderLayout.SOUTH);
         textField.setEditable(true);
@@ -83,7 +83,7 @@ public class VirtualClientGUI {
         messageTextField.setForeground(Color.WHITE);
         messageTextField.setBackground(Color.BLACK);
         Insets insets = frame.getContentPane().getInsets();
-        messageTextField.setBounds(1040 + insets.left, insets.top + 605,
+        messageTextField.setBounds(790 + insets.left, insets.top + 485,
                 size.width, size.height);
         frame.getContentPane().add(messageTextField, BorderLayout.SOUTH);
         messageTextField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
@@ -92,10 +92,10 @@ public class VirtualClientGUI {
     }
     public void setStartImage(){
         labelE = new JLabel(new ImageIcon("src\\main\\resources\\images\\adrenalin.jpg"), SwingConstants.CENTER);
-        labelE.setSize(1200,355);
+        labelE.setSize(879,260);
         Dimension size = labelE.getPreferredSize();
         Insets insets = frame.getContentPane().getInsets();
-        labelE.setBounds(150 + insets.left, insets.top + 250,
+        labelE.setBounds(216 + insets.left, insets.top + 220,
                 size.width, size.height);
         frame.getContentPane().add(labelE);
         labelE.repaint();
@@ -242,19 +242,19 @@ public class VirtualClientGUI {
             }
             playerBoards[index] = new JLabel(image, SwingConstants.CENTER);
 
-            playerBoards[index].setSize(446, 110);
+            playerBoards[index].setSize(390, 96);
 
             size = playerBoards[index].getPreferredSize();
-            playerBoards[index].setBounds(1054 + insets.left, insets.top + (index)*image.getIconHeight() + 250,
+            playerBoards[index].setBounds(922 + insets.left, insets.top + (index)*image.getIconHeight() + 220,
                     size.width, size.height);
             frame.getContentPane().add(playerBoards[index]);
             playerBoards[index].repaint();
             System.out.println(playerBoards[index].getLocation());
         }
         labelC = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
-        labelC.setSize(446,250);
+        labelC.setSize(390,219);
         size = labelC.getPreferredSize();
-        labelC.setBounds(1054 + insets.left, insets.bottom,
+        labelC.setBounds(922 + insets.left, insets.bottom,
                 size.width, size.height);
         frame.getContentPane().add(labelC);
         labelC.repaint();
@@ -262,15 +262,15 @@ public class VirtualClientGUI {
 
         if(numberOfCommas!=4){
             labelD = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
-            labelD.setSize(446,250);
+            labelD.setSize(390,219);
             size = labelC.getPreferredSize();
-            labelD.setBounds(1054 + insets.left, 550 + insets.top,
+            labelD.setBounds(922 + insets.left, 481 + insets.top,
                     size.width, size.height);
             frame.getContentPane().add(labelD);
             labelD.repaint();
         }
 
-        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.setSize(1312 + frame.getInsets().right + frame.getInsets().left,700+ frame.getInsets().top+ frame.getInsets().bottom);
         frame.revalidate();
         frame.repaint();
         frame.setVisible(true);
@@ -297,14 +297,14 @@ public class VirtualClientGUI {
             playerNames[index].setBorder(javax.swing.BorderFactory.createEmptyBorder());
 
             size = playerNames[index].getPreferredSize();
-            playerNames[index].setBounds(1054 +35+ insets.left, insets.top + (index)*110 + 250 +10,
+            playerNames[index].setBounds(922 +35+ insets.left, insets.top + (index)*96 + 220 +10,
                     size.width, size.height);
             frame.getContentPane().add(playerNames[index]);
             playerNames[index].repaint();
             System.out.println(playerNames[index].getLocation());
         }
 
-        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.setSize(1312 + frame.getInsets().right + frame.getInsets().left,700+ frame.getInsets().top+ frame.getInsets().bottom);
         frame.revalidate();
         frame.repaint();
         frame.setVisible(true);
@@ -314,7 +314,11 @@ public class VirtualClientGUI {
        ImageIcon img = new ImageIcon("src\\main\\resources\\images\\icon.jpg");
         frame.setIconImage(img.getImage());
         frame.getContentPane().setLayout(null);
-        frame.setSize(1500 + frame.getInsets().right + frame.getInsets().left,800+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.setSize(1312 + frame.getInsets().right + frame.getInsets().left,700+ frame.getInsets().top+ frame.getInsets().bottom);
+        System.out.println("top "+frame.getInsets().top);
+        System.out.println("bottom "+frame.getInsets().bottom);
+        System.out.println("left "+frame.getInsets().left);
+        System.out.println("right "+frame.getInsets().right);
         frame.getContentPane().setBackground(Color.black);
         frame.setResizable(false);
         Insets insets = frame.getContentPane().getInsets();
@@ -343,14 +347,14 @@ public class VirtualClientGUI {
             labelA = new JLabel(imageA, SwingConstants.CENTER);
             labelB = new JLabel(imageB, SwingConstants.CENTER);
 
-            labelA.setSize(560, 800);
-            labelB.setSize(560, 800);
+            labelA.setSize(434, 700);
+            labelB.setSize(488, 700);
 
             size = labelA.getPreferredSize();
             labelA.setBounds(insets.left, insets.top,
                     size.width, size.height);
             size = labelB.getPreferredSize();
-            labelB.setBounds(496 + insets.left, insets.top,
+            labelB.setBounds(434 + insets.left, insets.top,
                     size.width, size.height);
             frame.getContentPane().add(labelA);
             frame.getContentPane().add(labelB);
@@ -361,13 +365,13 @@ public class VirtualClientGUI {
         }
 
         size = messageArea.getPreferredSize();
-        messageArea.setBounds(1054 + insets.left, insets.bottom,
+        messageArea.setBounds(922 + insets.left, insets.bottom,
                 size.width, size.height);
 
         messageArea.setOpaque(false);
         messageArea.setForeground(Color.white);
 
-        messageArea.setSize(446,250);
+        messageArea.setSize(390,220);
         messageArea.setEditable(false);
         frame.getContentPane().add(messageArea);
         frame.setLocationRelativeTo(null);
