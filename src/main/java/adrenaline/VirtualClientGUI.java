@@ -185,7 +185,7 @@ public class VirtualClientGUI {
                     var original = in.nextLine();
                     addPlayerNames(original);
                 }
-                if (line.startsWith("MESSAGE" + "The chosen board is number ")) {
+                if (line.startsWith("MESSAGE" + "The board chosen is number ")) {
                     // SET IMAGES AS BACKGROUND
                     closeStartImage();
                     setGameBoardImages(Integer.valueOf(line.substring(34)));
@@ -282,19 +282,22 @@ public class VirtualClientGUI {
         System.out.println("commas "+ numberOfCommas);
 
         String[] singleNames = o.split(",");
-        JLabel[] playerNames = new JLabel[numberOfCommas +1];
+        JTextField[] playerNames = new JTextField[numberOfCommas +1];
         Insets insets = frame.getContentPane().getInsets();
         Dimension size;
         for(int index=0;index<singleNames.length;index++) {
             System.out.println("names->"+singleNames[index]);
 
-            playerNames[index] = new JLabel("", SwingConstants.CENTER);
+            playerNames[index] = new JTextField("", SwingConstants.CENTER);
             playerNames[index].setText(singleNames[index]);
-            playerNames[index].setOpaque(false);
-            playerNames[index].setForeground(Color.black);
+            playerNames[index].setOpaque(true);
+            playerNames[index].setEditable(false);
+            playerNames[index].setForeground(Color.WHITE);
+            playerNames[index].setBackground(Color.GRAY);
+            playerNames[index].setBorder(javax.swing.BorderFactory.createEmptyBorder());
 
             size = playerNames[index].getPreferredSize();
-            playerNames[index].setBounds(1054 +40+ insets.left, insets.top + (index)*110 + 250 +10,
+            playerNames[index].setBounds(1054 +35+ insets.left, insets.top + (index)*110 + 250 +10,
                     size.width, size.height);
             frame.getContentPane().add(playerNames[index]);
             playerNames[index].repaint();

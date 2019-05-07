@@ -268,7 +268,7 @@ public class Server {
         String pn = String.join(",", names);  // SEND COLORS
 
         for (PrintWriter writer : writers) {
-            writer.println("MESSAGE" + "The chosen board is number " + boardChosen);
+            writer.println("MESSAGE" + "The board chosen is number " + boardChosen);
             writer.println("MESSAGE" + "The game is starting...");
 
             writer.println("PLAYER NAMES ");
