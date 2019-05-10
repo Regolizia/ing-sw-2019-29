@@ -14,11 +14,12 @@ public class Action {
     final private int numMaxWeaponYouCanHave=3;
 
 
-    boolean executedFirstAction=false;
-    boolean executedSecondAction=false;
-    boolean endTurn=false;
-    boolean newStart=false;
-    boolean deletedAction=false;
+   private boolean executedFirstAction=false;
+    private  boolean executedSecondAction=false;
+    private  boolean endTurn=false;
+    private  boolean newStart=false;
+    private  boolean deletedAction=false;
+    private int notDeleted;
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, RELOAD;      //reload is an  optional action //ADRENALINESHOOT
@@ -37,7 +38,8 @@ public class Action {
        this.executedFirstAction=false;
        this.executedSecondAction=false;
        setEndTurn(false);
-       this. deletedAction=false;}
+       this. deletedAction=false;
+        this.notDeleted=0;}
     }
     public Action(){}
 
@@ -60,7 +62,9 @@ public class Action {
                     if(player.checkDamage()==1||player.checkDamage()==2)
                     coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
                     else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
-                    deletedAction=!(grab(player, coordinatesG, g,option));
+                    if(!(grab(player, coordinatesG, g,option)))
+                    deletedAction=true;
+                    else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
                     break;
 
                 case SHOOT:
@@ -125,28 +129,38 @@ public class Action {
         if(endOfTheGame(g)){
             if(frenzyMode== GameModel.FrenzyMode.ON)
             {
-                int notDeleted=0;
+
                 FreneticAction fAction=new FreneticAction();
                 //start by the player in the turn
                 LinkedList<Player>players=m.getPlayers();
                 int initialPlayerIndex=players.indexOf(player);
                 for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
                 {
-                    notDeleted=0;
-                    //here we get the frenzy turns
-                    if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex)
-                    {
-                        while (notDeleted<2)
+                    if(players.get(initialPlayerIndex)==m.getPlayers().getFirst()&&notDeleted<2) {
+                        if (fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.AFTER))
+                            notDeleted++;
+                    }
+
+                    else{
+                        if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex&& notDeleted<2)
                         {
-                            if(fAction.selectFrenzyActionBeforFirstPlayer(actionSelected,player,c,g,m,option))
+                            if(fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.FIRST))
                                 notDeleted++;
+
                         }
+                        if(players.get(indexPlayer)==(m.getPlayers()).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
+                                if(fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
+                                    notDeleted++;
+
+
+                         }
+
+
                     }
-                   if(players.get(indexPlayer)==(m.getPlayers()).getFirst()||indexPlayer<initialPlayerIndex)
-                    while(notDeleted<2) {
-                       if(fAction.selectFrenzyActionAfterFirstPlayer(actionSelected, player, c, g, m, option))
-                           notDeleted++;
-                    }
+                    if(notDeleted>=2)
+                        notDeleted=0; //reset for next player
+                    else
+                        indexPlayer--;//repeat this player until he doesn't have two actions
 
                 }
 
