@@ -2,25 +2,34 @@ package adrenaline;
 
 import java.util.*;
 
+/**
+ * Extends Room adding a list of Spawnpoints.
+ */
 public class RoomDeath extends Room {
 
 
     private LinkedList<Spawnpoint> spawnpoints;
 
-
     /**
-     * Default constructor
+     * Constructor of a Room that has also a list Of Spawnpoints
+     * @param x the width
+     * @param y the length
+     * @see Spawnpoint
      */
     public RoomDeath(int x, int y) {
         super(x, y);
         spawnpoints = new LinkedList<Spawnpoint>();
 
     }
-/*
-    public LinkedList<Spawnpoint> getSpawnpoints(){
-        return spawnpoints;
-    }*/
+
+    /**
+     * Adds a Spawnpoint to the Room's list.
+     *
+     * @param s the Spawnpoint to add
+     * @see Spawnpoint
+     */
     public void addSpawnpoint(Spawnpoint s) {
+
         spawnpoints.add(s);
     }
 }

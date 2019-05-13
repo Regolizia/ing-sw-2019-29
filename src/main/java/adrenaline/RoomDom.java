@@ -3,24 +3,30 @@ package adrenaline;
 import java.util.*;
 
 /**
- *
+ * Extends Room adding a list of SpawnpointsDom.
  */
 public class RoomDom extends Room{
 
     private LinkedList<SpawnpointDom> spawnpoints;
 
     /**
-     * Default constructor
+     * Constructor of a Room that has also a list Of SpawnpointsDom
+     * @param x the width
+     * @param y the length
+     * @see SpawnpointDom
      */
     public RoomDom(int x, int y) {
         super(x, y);
         spawnpoints = new LinkedList<SpawnpointDom>();
 
     }
-/*
-    public LinkedList<SpawnpointDom> getSpawnpoints(){
-        return spawnpoints;
-    }*/
+
+    /**
+     * Adds a SpawnpointDom to the Room's list.
+     *
+     * @param s the SpawnpointDom to add
+     * @see SpawnpointDom
+     */
     public void addSpawnpoint(Spawnpoint s){
         spawnpoints.add((SpawnpointDom) s);
     }

@@ -3,6 +3,13 @@ package adrenaline;
 import java.util.*;
 
 /**
+ * Is the class that represents the Rooms of the Board.
+ * It contains:
+ * <ul>
+ *     <li> The width and the length as Coordinates
+ *     <li> The list of AmmoTiles inside the Room
+ *     <li> A token representing the Room
+ * </ul>
  * 
  */
 public class Room {
@@ -18,6 +25,11 @@ public class Room {
         this.size = new Coordinates();
     }
 
+    /**
+     * Constructor of a Room of size x y
+     * @param x the width to set
+     * @param y the length to set
+     */
     public Room(int x, int y) {
 
         this.tiles = new LinkedList<AmmoTile>();
@@ -25,21 +37,48 @@ public class Room {
         setToken(99);
     }
 
+    /**
+     * Adds a Spawnpoint to the Room's list.
+     * It's overridden.
+     *
+     * @param s the Spawnpoint to add
+     * @see Spawnpoint
+     */
     public void addSpawnpoint(Spawnpoint s){
     }
 
 
-
+    /**
+     * Gets the list of Spawnpoints inside the Room.
+     * The list could be empty. Usually a Room has at most
+     * one Spawnpoint.
+     *
+     * @return the list of Spawnpoints
+     * @see Spawnpoint
+     */
     public LinkedList<Spawnpoint> getSpawnpoints(){
         LinkedList<Spawnpoint> n = new LinkedList<>();
         return n;
     }
 
+    /**
+     * Adds the given AmmoTile to the Room's list.
+     *
+     * @param t the tile to add
+     * @see AmmoTile
+     */
     public void addAmmoTile(AmmoTile t){
         tiles.add(t);
     }
 
 
+    /**
+     * Gets the AmmoTile at the given coordinates.
+     *
+     * @param coordinates a position inside the Room
+     * @return the AmmoTile
+     * @see Coordinates
+     */
     public AmmoTile getAmmoTile(Coordinates coordinates){
         int index=0;
         for(index=0;index<getTiles().size();index++)
@@ -52,21 +91,48 @@ public class Room {
     }
 
 
-
+    /**
+     * Sets the room Token to the parameter i.
+     *
+     * @param i, an <code>int</code>
+     */
     public void setToken(int i){
         this.token = i;
     }
 
+    /**
+     * Gets the width of the Room.
+     *
+     * @return the x-coordinate
+     */
     public int getRoomSizeX(){
         return this.size.getX();
     }
+
+    /**
+     * Gets the length of the Room.
+     *
+     * @return the y-coordinate
+     */
     public int getRoomSizeY(){
         return this.size.getY();
     }
+
+    /**
+     * Gets the token that represents the Room in the Board.
+     *
+     * @return the token of the Room
+     */
     public int getToken(){
         return this.token;
     }
 
+    /**
+     * Gets the list of AmmoTiles that are in the Room.
+     *
+     * @return the list of AmmoTiles
+     * @see AmmoTile
+     */
     public LinkedList<AmmoTile> getTiles(){
         return tiles;
     }
