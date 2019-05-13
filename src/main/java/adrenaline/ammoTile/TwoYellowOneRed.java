@@ -2,12 +2,12 @@ package adrenaline.ammoTile;
 
 import adrenaline.AmmoCube;
 import adrenaline.AmmoTile;
-import adrenaline.Coordinates;
+import adrenaline.CoordinatesWithRoom;
 
 public class TwoYellowOneRed extends AmmoTile {
 
 
-    public TwoYellowOneRed(Coordinates p){
+    public TwoYellowOneRed(CoordinatesWithRoom p){
         super(p, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.RED);
     }
 }
