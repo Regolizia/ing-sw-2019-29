@@ -14,7 +14,7 @@ public class AmmoTileTest {
         AmmoTile b = new AmmoTile(c1, AmmoCube.CubeColor.POWERUP, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE);
         Coordinates d = a.getCoordinates();
         a.setCoordinates(2,3);
-        LinkedList<AmmoCube> f = a.getAmmoTile();
+        LinkedList<AmmoCube> f = a.getAmmoCubes();
     }
 
 

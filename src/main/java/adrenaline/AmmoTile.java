@@ -1,32 +1,43 @@
 package adrenaline;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
- * 
+ * Is the class that represents the tile of ammo.
+ * The Tile can have 3 AmmoCubes or 2 AmmoCubes and
+ * one indication to pick a PowerUp
+ * It has:
+ * <ul>
+ *     <li> a position
+ *     <li> a list of AmmoCubes
+ * </ul>
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
  */
 public class AmmoTile{
 
     private Coordinates coordinates;
-    private LinkedList<AmmoCube> ammoTile;
+    private LinkedList<AmmoCube> ammoCubes;
+
 
     /**
-     * Default constructor
-
-    public AmmoTile() {
-        ammoTile = new LinkedList<>();
-    }
+     * Constructor of AmmoTile.
+     * AMMO + AMMO + AMMO or AMMO + AMMO + POWERUP (ONE CUBECOLOR MEANS PICK POWERUP)
+     *
+     * @param p the position
+     * @param ac the first AmmoCube
+     * @param bc the second AmmoCube
+     * @param cc the third AmmoCube
      */
-
-    // AMMO + AMMO + AMMO or POWERUP + AMMO + AMMO (ONE CUBECOLOR MEANS PICK POWERUP)
     public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
         this.coordinates = p;
-        ammoTile = new LinkedList<>();
-        ammoTile.add(new AmmoCube(ac)); // WE HAVE TO CHECK IF THIS AMMOCUBE MEANS POWERUP, IF SO PICK CARD FROM DECK
-        ammoTile.add(new AmmoCube(bc));
-        ammoTile.add(new AmmoCube(cc));
+        ammoCubes = new LinkedList<>();
+        ammoCubes.add(new AmmoCube(ac)); // WE HAVE TO CHECK IF THIS AMMOCUBE MEANS POWERUP, IF SO PICK CARD FROM DECK
+        ammoCubes.add(new AmmoCube(bc));
+        ammoCubes.add(new AmmoCube(cc));
     }
-
 
     public Coordinates getCoordinates(){
         return coordinates;
@@ -34,11 +45,8 @@ public class AmmoTile{
     public void setCoordinates(int x, int y){
         this.coordinates.setCoordinates(x,y);
     }
-    public LinkedList<AmmoCube> getAmmoTile(){
-        return ammoTile;
+    public List<AmmoCube> getAmmoCubes(){
+        return ammoCubes;
     }
-    /*public void setAmmoTile(come costruttore){
-        this.y = y;
-    }*/
 
 }

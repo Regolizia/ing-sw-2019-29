@@ -1,8 +1,6 @@
 package adrenaline;
 
 
-import adrenaline.weapons.RocketLaucher;
-
 import java.util.LinkedList;
 
 import static adrenaline.AmmoCube.CubeColor.*;
@@ -273,9 +271,9 @@ public class Action {
 
         //TODO a way to convert propose to grab cells in AmmoTile
       //  PowerUpCard toBeGrabbedPowerUp=null;
-        for(int index=0;index<toBeGrabbedTile.getAmmoTile().size();index++)
+        for(int index = 0; index<toBeGrabbedTile.getAmmoCubes().size(); index++)
         {
-            if(toBeGrabbedTile.getAmmoTile().get(index).getCubeColor().equals(POWERUP))
+            if(toBeGrabbedTile.getAmmoCubes().get(index).getCubeColor().equals(POWERUP))
                 return (grabPowerUp(player,c)&&grabCube(player,c,toBeGrabbedTile));
 
         }
@@ -291,7 +289,7 @@ public class Action {
         }
         for(int i=0;i<3;i++)
         {
-            switch (a.getAmmoTile().get(i).getCubeColor())
+            switch (a.getAmmoCubes().get(i).getCubeColor())
 
                 {
                     case YELLOW:
