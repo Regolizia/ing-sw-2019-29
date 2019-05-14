@@ -7,19 +7,24 @@ import static adrenaline.Door.Direction.*;
 public class CoordinatesWithRoom extends Coordinates {
     private Room room;
 
-
+    /**
+     * Default constructor.
+     */
     public CoordinatesWithRoom() {
     }
 
-    ;
-
+    /**
+     * Constructor with two int and a Room.
+     *
+     * @param x first int
+     * @param y second int
+     * @param r a Room
+     */
     public CoordinatesWithRoom(int x, int y, Room r) {
         this.room = r;
         setX(x);
         setY(y);
     }
-
-    ;
 
     public Room getRoom() {
         return this.room;
@@ -34,9 +39,15 @@ public class CoordinatesWithRoom extends Coordinates {
         return this.getX() + ", " + this.getY() + " Room: " + this.getRoom().getToken();
     }
 
-/////////////////////////////////////////////////////////////////////////////
-
-
+    /**
+     * Gets the tiles that are distant 1 from the caller.
+     * Can get also those behind Walls.
+     *
+     * @param g the Gameboard
+     * @param withWalls the indication if with or without Walls
+     * @return a list of Coordinates
+     * @see CoordinatesWithRoom
+     */
     public LinkedList<CoordinatesWithRoom> oneTileDistant(GameBoard g, boolean withWalls) {
 
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
@@ -85,8 +96,12 @@ public class CoordinatesWithRoom extends Coordinates {
     }
 
 
-///////////////////////////////////////////////
-
+    /**
+     * Removes the caller from the list passed.
+     *
+     * @param list the list to remove the cell from
+     * @return the list without the cell
+     */
     public LinkedList<CoordinatesWithRoom> removeThisCell(LinkedList<CoordinatesWithRoom> list) {
         for (int i = list.size() - 1; i >= 0; i--) {
             if (list.get(i).getRoom().getToken() == this.getRoom().getToken() && list.get(i).getX() == this.getX() && list.get(i).getY() == this.getY()) {
