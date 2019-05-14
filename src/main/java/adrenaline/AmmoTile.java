@@ -14,6 +14,7 @@ import java.util.List;
  * </ul>
  *
  * @author Eleonora Toscano
+ * @author Giulia Valcamonica
  * @version 1.0
  */
 public class AmmoTile{
@@ -21,20 +22,18 @@ public class AmmoTile{
     private Coordinates coordinates;
     private LinkedList<AmmoCube> ammoCubes;
 
-
     /**
      * Constructor of AmmoTile.
      * AMMO + AMMO + AMMO or AMMO + AMMO + POWERUP (ONE CUBECOLOR MEANS PICK POWERUP)
      *
-     * @param p the position
      * @param ac the first AmmoCube
      * @param bc the second AmmoCube
      * @param cc the third AmmoCube
      */
-    public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
-        this.coordinates = p;
+public AmmoTile(AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
+        coordinates=new Coordinates();
         ammoCubes = new LinkedList<>();
-        ammoCubes.add(new AmmoCube(ac)); // WE HAVE TO CHECK IF THIS AMMOCUBE MEANS POWERUP, IF SO PICK CARD FROM DECK
+        ammoCubes.add(new AmmoCube(ac));
         ammoCubes.add(new AmmoCube(bc));
         ammoCubes.add(new AmmoCube(cc));
     }
