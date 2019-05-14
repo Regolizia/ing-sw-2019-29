@@ -19,7 +19,7 @@ public class MapTwo extends Map{
      * to the Map.
      * Also Walls, Doors and Spawnpoints are created.
      *
-     * @param m
+     * @param m the Game Mode
      * @see adrenaline.GameModel.Mode
      * @see RoomDeath
      * @see RoomDom

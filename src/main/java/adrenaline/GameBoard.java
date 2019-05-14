@@ -4,62 +4,87 @@ import java.util.*;
 import static adrenaline.Door.Direction.*;
 
 /**
- *
+ * Is the class that represents the Board.
+ * It contains:
+ * <ul>
+ *     <li> A list of Doors
+ *     <li> A list of Walls
+ * </ul>
  *
  * @author Eleonora Toscano
  * @version 1.0
  */
 public class GameBoard {
 
-    protected LinkedList<Door> doors;
-    protected LinkedList<Wall> walls;
+    private LinkedList<Door> doors;
+    private LinkedList<Wall> walls;
     int numSkull;
-
 
     /**
      * Default constructor
      */
     public GameBoard(//int numSkull
     ) {
-        doors = new LinkedList<Door>();
-        walls = new LinkedList<Wall>();
+        doors = new LinkedList<>();
+        walls = new LinkedList<>();
         //this.numSkull=numSkull;
     }
 
-
-// VORREI NON FARGLI FARE NULLA PERCHé I METODI SONO NEI RISPETTIVI BOARD MA VUOLE CHE RITORNI QUALCOSA
+    /**
+     * Overridden.
+     * @return r A Room
+     */
     public Room getRoom(int i) {
         return new Room();
     }
-    public void addRoom(Room r){
-    }
-    public void addRoom(RoomDeath r){
-    }
-    public void addRoom(RoomDom r){
-    }
-
+    /**
+     * Overridden.
+     */
+    public void addRoom(Room r){    }
+    /**
+     * Overridden.
+     */
+    public void addRoom(RoomDeath r){    }
+    /**
+     * Overridden.
+     */
+    public void addRoom(RoomDom r){    }
+    /**
+     * Adds a Door to the list.
+     */
     public void addDoor(Door d){
         doors.add(d);
     }
+    /**
+     * Gets the Doors list
+     */
     public LinkedList<Door> getDoors(){
         return doors;
     }
-
+    /**
+     * Adds a Wall to the list.
+     */
     public void addWall(Wall w){
         walls.add(w);
     }
+    /**
+     * Gets the Walls list
+     */
     public LinkedList<Wall> getWalls(){
         return walls;
     }
 
-    // MOVED DISTANCE METHODS IN COORDINATES WITH ROOM
-
-    // NS -> 1
-    // SN -> 2
-    // WE -> 3
-    // EW -> 4
-    // C AND C1 NEED TO BE NEAR EACH OTHER
-    // FROM C TO C1
+    /**
+     * Gets the Direction between two adjoining cells.
+     * C and C1 need to be adjacent.
+     * The Direction is from C to C1.
+     * The cells can be separated by a Wall or a Door.
+     *
+     * @param c the starting cell
+     * @param c1 the final cell
+     * @return a Direction
+     * @see adrenaline.Door.Direction
+     */
     public Door.Direction getDirection(CoordinatesWithRoom c, CoordinatesWithRoom c1) {
         if (c.getRoom().getToken() == c1.getRoom().getToken()) {   // SAME ROOM
             if (c1.getX() == c.getX() + 1) return WE;
@@ -121,17 +146,10 @@ public class GameBoard {
         return NS;
     }
 
- /*   // GIVEN DIRECTION OF MOVEMENT, SEARCHES A CELL AFTER THAT
-    public void addNextCellToListGivenDirection(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom Cell, Door.Direction dir){
-        if(dir==SN){
-
-        }
-    }
-    */
- public int getNumSkull(){
+    public int getNumSkull(){
      return this.numSkull;
  }
-public void pickASkull(){
+    public void pickASkull(){
      this.numSkull--;
 }
 }
