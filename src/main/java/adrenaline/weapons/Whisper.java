@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -19,9 +20,9 @@ public class Whisper extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
-        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        List<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
+        List<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
         listOne.add(c);
 
         for(int k=list.size()-1;k>=0;k--){
@@ -37,7 +38,7 @@ public class Whisper extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
 
         switch (e.getEffect()) {

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -56,7 +57,7 @@ public class FurnaceTest {
             }
             //
 
-            LinkedList<Object> targets = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enBase);
+            List<Object> targets = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enBase);
             for (Object o : targets) {
                 System.out.println(o);
             }
@@ -76,11 +77,11 @@ public class FurnaceTest {
             assertTrue(m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4))==1);
 
           // ALT EFFECT
-            LinkedList<CoordinatesWithRoom> list2 = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enAlt, m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list2 = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enAlt, m.getMapUsed().getGameBoard());
 
             list2.remove(1);
 
-            LinkedList<Object> targets2 = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list2, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enAlt);
+            List<Object> targets2 = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list2, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enAlt);
             for (Object o : targets2) {
                 System.out.println(o);
             }

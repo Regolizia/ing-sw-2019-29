@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -20,7 +21,7 @@ public class Thor extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
             switch (e.getEffect()) {
                 case BASE:  // 2 DAMAGE, 1 TARGET

@@ -1,6 +1,7 @@
 package adrenaline;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.Door.Direction.*;
 
@@ -48,9 +49,9 @@ public class CoordinatesWithRoom extends Coordinates {
      * @return a list of Coordinates
      * @see CoordinatesWithRoom
      */
-    public LinkedList<CoordinatesWithRoom> oneTileDistant(GameBoard g, boolean withWalls) {
+    public List<CoordinatesWithRoom> oneTileDistant(GameBoard g, boolean withWalls) {
 
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
+        List<CoordinatesWithRoom> list = new LinkedList<>();
 
         // COORDINATES OF MY CELL
         int x = getX();
@@ -95,14 +96,13 @@ public class CoordinatesWithRoom extends Coordinates {
 
     }
 
-
     /**
      * Removes the caller from the list passed.
      *
      * @param list the list to remove the cell from
      * @return the list without the cell
      */
-    public LinkedList<CoordinatesWithRoom> removeThisCell(LinkedList<CoordinatesWithRoom> list) {
+    public List<CoordinatesWithRoom> removeThisCell(List<CoordinatesWithRoom> list) {
         for (int i = list.size() - 1; i >= 0; i--) {
             if (list.get(i).getRoom().getToken() == this.getRoom().getToken() && list.get(i).getX() == this.getX() && list.get(i).getY() == this.getY()) {
                 list.remove(i);
@@ -111,9 +111,13 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
-///////////////////////////////////////////////////////////////////////
-
-    public LinkedList<CoordinatesWithRoom> removeDuplicates(LinkedList<CoordinatesWithRoom> list) {
+    /**
+     * Removes the duplicates from the given list.
+     *
+     * @param list the list
+     * @return the list without the duplicates
+     */
+    private List<CoordinatesWithRoom> removeDuplicates(List<CoordinatesWithRoom> list) {
         for (int k = 0; k < list.size(); k++) {
             for (int j = k + 1; j < list.size(); j++) {
                 if (list.get(k).getRoom() == list.get(j).getRoom()
@@ -127,13 +131,19 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
-///////////////////////////////////////////////////////////////////////
+    /**
+     * Returns a list of cells distant n or less from the caller.
+     * The list is without duplicates and without the caller.
+     *
+     * @param g the Game Board
+     * @param distance the n distance
+     * @return the list of cells
+     */
+    public List<CoordinatesWithRoom> xTilesDistant(GameBoard g, int distance) {
 
-    public LinkedList<CoordinatesWithRoom> XTilesDistant(GameBoard g, int distance) {
-
-        LinkedList<CoordinatesWithRoom> listTemp;
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listTemp2;
+        List<CoordinatesWithRoom> listTemp;
+        List<CoordinatesWithRoom> list = new LinkedList<>();
+        List<CoordinatesWithRoom> listTemp2;
         list.add(this);
 
         for (int i = 1; i <= distance; i++) {
@@ -150,14 +160,19 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // LIST ORIGINAL MOVES CONTAINS WHAT SHOOTER SEES
-    public boolean isCWRInTwoLists(LinkedList<CoordinatesWithRoom> listMoves, LinkedList<CoordinatesWithRoom> listOriginalMoves, WeaponCard w, EffectAndNumber en, GameBoard g) {
-        for (int i = 0; i < listMoves.size(); i++) {
-            for (int l = 0; l < listOriginalMoves.size(); l++) {
-                if (listMoves.get(i).getX() == listOriginalMoves.get(l).getX() &&
-                        listMoves.get(i).getY() == listOriginalMoves.get(l).getY() &&
-                        listMoves.get(i).getRoom().getToken() == listOriginalMoves.get(l).getRoom().getToken()) {
+    /**
+     * Checks if the caller is in both lists.
+     *
+     * @param listMoves the first list
+     * @param listOriginalMoves the second list
+     * @return true if cell in both lists, else false
+     */
+    public boolean isCWRInTwoLists(List<CoordinatesWithRoom> listMoves, List<CoordinatesWithRoom> listOriginalMoves) {
+        for (CoordinatesWithRoom listMove : listMoves) {
+            for (CoordinatesWithRoom listOriginalMove : listOriginalMoves) {
+                if (listMove.getX() == listOriginalMove.getX() &&
+                        listMove.getY() == listOriginalMove.getY() &&
+                        listMove.getRoom().getToken() == listOriginalMove.getRoom().getToken()) {
                     return true;
                 }
             }
@@ -165,15 +180,18 @@ public class CoordinatesWithRoom extends Coordinates {
         return false;
     }
 
-
-///////////////////////////////////////////////////////////////////////
-
-    // SAME DIRECTION,  ------NOT----- THROUGH WALLS
-
-    public LinkedList<CoordinatesWithRoom> tilesSameDirection(int moves, GameBoard g, boolean withWalls) {
+    /**
+     * Returns a list of cells distant n or less in cardinal directions.
+     *
+     * @param moves the number n
+     * @param g the GameBoard
+     * @param withWalls the indication if it can go through walls(true) or not(false)
+     * @return a list of cells
+     */
+    public List<CoordinatesWithRoom> tilesSameDirection(int moves, GameBoard g, boolean withWalls) {
         CoordinatesWithRoom c0;
 
-        LinkedList<CoordinatesWithRoom> listOne = this.oneTileDistant(g, withWalls); // CELL TO CHECK FOR NEXT
+        List<CoordinatesWithRoom> listOne = this.oneTileDistant(g, withWalls); // CELL TO CHECK FOR NEXT
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(listOne);
         list.add(this);
 
@@ -194,11 +212,16 @@ public class CoordinatesWithRoom extends Coordinates {
         return list;
     }
 
-/////////////////////////////////////////////////////////////
-
-    // C PREVIOUS CELL, C1 THIS CELL, C2 NEXT CELL
-    // IF WITHWALLS =false NO WALLS, =true WALLS
-    public CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g, boolean withWalls){
+    /**
+     * Returns the next cell given the previous and the current one.
+     *
+     * @param c the previous cell
+     * @param c1 the current cell
+     * @param g the Game Board
+     * @param withWalls the indication if it can go through walls
+     * @return the next cell
+     */
+    private CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g, boolean withWalls){
 
                         if ((c1.getX() + 1) <= c1.getRoom().getRoomSizeX() && g.getDirection(c, c1) == WE) {
                             return (new CoordinatesWithRoom(c1.getX() + 1, c1.getY(), c1.getRoom()));
@@ -228,9 +251,6 @@ public class CoordinatesWithRoom extends Coordinates {
 
                                 CoordinatesWithRoom c2 = new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),
                                         g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getCoordinates2().getRoom());
-
-                                Door.Direction dir0 = g.getDirection(c, c1);
-                                Door.Direction dir1 =g.getDirection(c1, c2);
 
                                 if (g.getDirection(c1, c2) == EW && g.getDirection(c, c1) == EW ||
                                         g.getDirection(c1, c2) == WE && g.getDirection(c, c1) == WE ||

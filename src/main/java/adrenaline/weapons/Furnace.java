@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -21,8 +22,8 @@ public class Furnace extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        List<CoordinatesWithRoom> list = new LinkedList<>();
         if(en.getEffect()== AmmoCube.Effect.BASE) {
 
             LinkedList<Room> possibleRooms = new LinkedList<>();
@@ -73,7 +74,7 @@ public class Furnace extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
 

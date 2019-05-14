@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -38,11 +39,11 @@ public class MachineGunTest {
             EffectAndNumber enOp1 = new EffectAndNumber(AmmoCube.Effect.OP1,0);
             EffectAndNumber enOp2 = new EffectAndNumber(AmmoCube.Effect.OP2,0);
 
-            LinkedList<CoordinatesWithRoom> list= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5,enBase,m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5,enBase,m.getMapUsed().getGameBoard());
             for(CoordinatesWithRoom c : list){
                 System.out.println(c);
             }
-            LinkedList<Object> targets =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enBase);
+            List<Object> targets =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enBase);
             for(Object o : targets){
                 System.out.println(o);
             }

@@ -58,7 +58,7 @@ switch (actionSelected){
         if(!canPayCard(weapon,player,paymentOption))
             return false;
 
-        LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,paymentOption);
+        List<EffectAndNumber> payEff = paidEffect(weapon, player,paymentOption);
             if(payEff==null)
             {return false;}
 
@@ -83,37 +83,37 @@ switch (actionSelected){
 
 
     public LinkedList<CoordinatesWithRoom> proposeCellsRunFrenzy(CoordinatesWithRoom c, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
-        list.addAll(c.XTilesDistant(g, 2));
-        list.addAll(c.XTilesDistant(g, 3));
-        list.addAll(c.XTilesDistant(g,4));
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
+        list.addAll(c.xTilesDistant(g, 2));
+        list.addAll(c.xTilesDistant(g, 3));
+        list.addAll(c.xTilesDistant(g,4));
         return list;
     }
 
 
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabFrenzy(CoordinatesWithRoom c, GameBoard g, Player player){
-            LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
-            list.addAll(c.XTilesDistant(g,2));
+            LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
+            list.addAll(c.xTilesDistant(g,2));
             list.add(c);
             return list;
 
     }
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabFrenzy(CoordinatesWithRoom c, GameBoard g, Player player,PlayerOrder order){
         LinkedList<CoordinatesWithRoom> list = proposeCellsGrabFrenzy(c,g,player);
-        list.addAll(c.XTilesDistant(g,3));
+        list.addAll(c.xTilesDistant(g,3));
         list.add(c);
         return list;
 
     }
 
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootFrenzy(CoordinatesWithRoom c,GameBoard g){
-        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
+        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.xTilesDistant(g,1));
         list.add(c);
         return list;
     }
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootFrenzy(CoordinatesWithRoom c,GameBoard g,PlayerOrder order){
         LinkedList<CoordinatesWithRoom>list=proposeCellsRunBeforeShootFrenzy(c,g);
-        list.addAll(c.XTilesDistant(g,2));
+        list.addAll(c.xTilesDistant(g,2));
         return list;
     }
 }

@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -18,8 +19,8 @@ public class GrenadeLaucher extends WeaponCard {
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        LinkedList<Object> targets = new LinkedList<>();
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        List<Object> targets = new LinkedList<>();
 
         // I HAD TO COMMENT OUT THE IF BECAUSE, WITHOUT THE INPUT, IT WAS THE SAME
 
@@ -42,7 +43,7 @@ public class GrenadeLaucher extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1 TARGET, THEN CAN MOVE IT

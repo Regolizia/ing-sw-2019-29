@@ -1,8 +1,7 @@
 package adrenaline.weapons;
 
 import adrenaline.*;
-
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -19,26 +18,23 @@ public class Flamethrower extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
 
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
-
-
-        list = c.tilesSameDirection(2,g,false);
+        List<CoordinatesWithRoom> list = c.tilesSameDirection(2,g,false);
         list.remove(c);
 
         return list;
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
 
         //ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
 
-        LinkedList<Object> targets = new LinkedList<>();
-        LinkedList<Object> targets1 = new LinkedList<>();
-        LinkedList<Object> targets2 = new LinkedList<>();
-        LinkedList<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
+        List<Object> targets;
+        List<Object> targets1;
+        List<Object> targets2;
+        List<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
         en.setNumber(listOne.size());
 
         if (en.getEffect() == AmmoCube.Effect.BASE) {
@@ -66,7 +62,7 @@ public class Flamethrower extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1-2 TARGETS, 2 SQUARES

@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -19,7 +20,7 @@ public class PowerGlove extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.BASE)
             return c.oneTileDistant(g, false);
 
@@ -31,9 +32,9 @@ public class PowerGlove extends WeaponCard {
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
 
-        LinkedList<Object> targets = new LinkedList<>();
+        List<Object> targets = new LinkedList<>();
 
         if(en.getEffect() == AmmoCube.Effect.BASE) {
             targets = super.fromCellsToTargets(list, c, g, p, m, en);
@@ -74,7 +75,7 @@ public class PowerGlove extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 2 MARKS, 1 TARGET

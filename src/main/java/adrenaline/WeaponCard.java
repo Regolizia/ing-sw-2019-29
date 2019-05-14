@@ -7,10 +7,9 @@ public class WeaponCard extends Card{
 
     protected LinkedList<AmmoCube> price;
     private EffectAndNumber effectAndNumber;
-    //private LinkedList<Object> targets;
     private boolean reload;
     public WeaponCard() {
-        price = new LinkedList<AmmoCube>();
+        price = new LinkedList<>();
         reload =false;
     }
 
@@ -29,11 +28,11 @@ public class WeaponCard extends Card{
 
     // CELLS IN WEAPON RANGE
     // TO BE OVERRIDDEN
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g){
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g){
 
         // CELLS OF EVERY ROOM I SEE
         // MAYBE OVERRIDDEN
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
+        List<CoordinatesWithRoom> list = new LinkedList<>();
         int x = c.getRoom().getRoomSizeX();
         int y = c.getRoom().getRoomSizeY();
 
@@ -74,7 +73,7 @@ public class WeaponCard extends Card{
 
     // GETS EVERYBODY IN WEAPON RANGE (DEPENDING ON THE WEAPON getPossibleTargetCells)
     // IT JUST TRANSFORMS CELLS INTO PLAYERS
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         LinkedList<Object> targetList = new LinkedList<>();
 
         // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
@@ -99,12 +98,12 @@ public class WeaponCard extends Card{
 
     //THIS METHOD WILL HAVE ALL THE THINGS SINGLE CARDS NEED TO DO THEIR STUFF
     // TO BE OVERRIDDEN
-    public void weaponShoot(LinkedList<Object> targets, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m){
+    public void weaponShoot(List<Object> targets, CoordinatesWithRoom c, Player p, List<EffectAndNumber> effectsList, GameModel m){
         for(int i=0;i<effectsList.size();i++){
             //FOR EVERY EFFECT IT DAMAGES THE CORRESPONDING TARGETS
             applyDamage(targets,p,effectsList.get(i));
             for(int j = 1; j<=effectsList.get(i).getNumber(); j++) {
-                effectsList.removeFirst();
+                ((LinkedList)effectsList).removeFirst();
             }
 
         }
@@ -113,21 +112,15 @@ public class WeaponCard extends Card{
 
 
     // TO BE OVERRIDDEN
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e){
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e){
     }
 
-  /*  public LinkedList<Object> getTargets(){
-        return targets;
-    }*/
-    public LinkedList<AmmoCube> getPrice(){
+    public List<AmmoCube> getPrice(){
         return price;
     }
 
-    // CAN SELECT WEAPON IF CHARGED (EVERY AMMOCUBE BASE MUST BE PAID)
-
-
-    public void setReload(){reload=true;}
+    void setReload(){reload=true;}
 // reload to pay baseEffect
-    public void setNotReload(){reload=false;}
-    public boolean getReload(){return reload;}
+    void setNotReload(){reload=false;}
+    boolean getReload(){return reload;}
 }

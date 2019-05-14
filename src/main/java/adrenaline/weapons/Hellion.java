@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -20,9 +21,9 @@ public class Hellion extends WeaponCard {
 
     // NOT YOUR SQUARE
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
-        LinkedList<CoordinatesWithRoom> listOne = new LinkedList();
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        List<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);
+        List<CoordinatesWithRoom> listOne = new LinkedList();
         listOne = c.oneTileDistant(g, false);
         listOne.add(c);
 
@@ -40,9 +41,9 @@ public class Hellion extends WeaponCard {
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
 
-        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
 
         // GET JUST ONE TARGET OUT OF FROMCELLSTOTARGETS
         // ASK WHICH TARGET
@@ -71,7 +72,7 @@ public class Hellion extends WeaponCard {
 
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1 TARGET, 1 MARK, EVERY PLAYER IN THAT SQUARE

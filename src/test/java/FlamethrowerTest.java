@@ -7,8 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedList;
+    import java.util.List;
 
-import static adrenaline.GameModel.Mode.DEATHMATCH;
+    import static adrenaline.GameModel.Mode.DEATHMATCH;
 
     public class FlamethrowerTest {
 
@@ -39,13 +40,13 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
             EffectAndNumber enBase = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
             EffectAndNumber enAlt = new EffectAndNumber(AmmoCube.Effect.ALT, 0);
 
-            LinkedList<CoordinatesWithRoom> list = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enBase, m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enBase, m.getMapUsed().getGameBoard());
             for (CoordinatesWithRoom c : list) {
                 System.out.println(c);
             }
 
             System.out.print(list.size());
-            LinkedList<Object> targets = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enBase);
+            List<Object> targets = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enBase);
             for (Object o : targets) {
                 System.out.println(o);
             }
@@ -74,14 +75,14 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 
             // IF I USE ALT ON 1,2 R3 AND 1,1 R4
-            LinkedList<CoordinatesWithRoom> listTwo = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enBase, m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> listTwo = m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5, enBase, m.getMapUsed().getGameBoard());
             listTwo.remove(1);
             listTwo.remove(1);
             for (CoordinatesWithRoom c : listTwo) {
                 System.out.println(c);
             }
 
-            LinkedList<Object> targetsTwo = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(listTwo, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enAlt);
+            List<Object> targetsTwo = m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(listTwo, c5, m.getMapUsed().getGameBoard(), m.getPlayers().get(4), m, enAlt);
             for (Object o : targetsTwo) {
                 System.out.println(o);
             }

@@ -5,6 +5,7 @@ import adrenaline.MapOne;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -20,7 +21,7 @@ public class TwoTilesDistanceTest {
             c.setRoom(map.getGameBoard().getRoom(1));
             c.setX(2);
             c.setY(1);
-            LinkedList<CoordinatesWithRoom> listOne = c.XTilesDistant(g,2);
+            List<CoordinatesWithRoom> listOne = c.xTilesDistant(g,2);
 
             for (int j = 0; j < listOne.size(); j++) {
                 System.out.printf(listOne.get(j).getX() + "," +

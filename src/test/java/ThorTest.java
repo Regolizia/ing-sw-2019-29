@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -37,11 +38,11 @@ public class ThorTest {
             EffectAndNumber enOp1 = new EffectAndNumber(AmmoCube.Effect.OP1,0);
             EffectAndNumber enOp2 = new EffectAndNumber(AmmoCube.Effect.OP2,0);
 
-            LinkedList<CoordinatesWithRoom> list= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5,enBase,m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c5,enBase,m.getMapUsed().getGameBoard());
             for(CoordinatesWithRoom c : list){
                 System.out.println(c);
             }
-            LinkedList<Object> targets =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enBase);
+            List<Object> targets =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enBase);
             for(Object o : targets){
                 System.out.println(o);
             }
@@ -56,11 +57,11 @@ public class ThorTest {
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==2);
 
            // OP1 EFFECT, BLUE TARGET (PASSED THE POSITION OF GREEN)
-            LinkedList<CoordinatesWithRoom> list2= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c1,enOp1,m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list2= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c1,enOp1,m.getMapUsed().getGameBoard());
             for(CoordinatesWithRoom c : list2){
                 System.out.println(c);
             }
-            LinkedList<Object> targets2 =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list2,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enOp1);
+            List<Object> targets2 =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list2,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enOp1);
             for(Object o : targets2){
                 System.out.println(o);
             }
@@ -74,11 +75,11 @@ public class ThorTest {
             assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4))==1);
 
             // OP2 EFFECT, PURPLE TARGET (PASSED THE POSITION OF BLUE)
-            LinkedList<CoordinatesWithRoom> list3= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c2,enOp2,m.getMapUsed().getGameBoard());
+            List<CoordinatesWithRoom> list3= m.getPlayers().get(4).getHand().get(0).getPossibleTargetCells(c2,enOp2,m.getMapUsed().getGameBoard());
             for(CoordinatesWithRoom c : list3){
                 System.out.println(c);
             }
-            LinkedList<Object> targets3 =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list3,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enOp2);
+            List<Object> targets3 =m.getPlayers().get(4).getHand().get(0).fromCellsToTargets(list3,c5,m.getMapUsed().getGameBoard(),m.getPlayers().get(4),m,enOp2);
             for(Object o : targets3){
                 System.out.println(o);
             }

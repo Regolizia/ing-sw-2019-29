@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -20,8 +21,8 @@ public class VortexCannon extends WeaponCard {
 
     // THE COORDINATE PASSED C IS THE VORTEX
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = super.getPossibleTargetCells(c,en,g);
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        List<CoordinatesWithRoom> list = super.getPossibleTargetCells(c,en,g);
 /*
         // ASK PLAYER WHERE TO PUT VORTEX (CELL THAT ARE SEEN)
         CoordinatesWithRoom vortex = new CoordinatesWithRoom(); // TODO GET SELECTED CELL FROM LIST, PUT IT HERE
@@ -32,7 +33,7 @@ public class VortexCannon extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 2 DAMAGE, 1 TARGET, MOVE IT

@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -21,10 +22,10 @@ public class TractorBeam extends WeaponCard {
 
     // USED FOR ALT EFFECT
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.ALT){
-            LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
-            list.addAll(c.XTilesDistant(g,2));
+            List<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
+            list.addAll(c.xTilesDistant(g,2));
             list.add(c);
             return list;
         }
@@ -36,10 +37,10 @@ public class TractorBeam extends WeaponCard {
     // USED FOR BASE EFFECT
     // MOVE 0-1-2 1 TARGET TO A CELL YOU SEE
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         if(en.getEffect()== AmmoCube.Effect.BASE) {
             LinkedList<Object> listOne = new LinkedList<>();
-            LinkedList<CoordinatesWithRoom> listMoves;
+            List<CoordinatesWithRoom> listMoves;
             CoordinatesWithRoom c1 = new CoordinatesWithRoom();
             for (Player element : m.getPlayers()) {
                 if (element.getColor() != p.getColor()) {   // ADD OTHER PLAYERS TO listOne IF, MOVING THEM, I SEE THEM
@@ -47,10 +48,10 @@ public class TractorBeam extends WeaponCard {
                     c1.setY(element.getPlayerPositionY());
                     c1.setRoom(element.getPlayerRoom());
                     listMoves = c1.oneTileDistant(g, false);
-                    listMoves.addAll(c1.XTilesDistant(g, 2));
+                    listMoves.addAll(c1.xTilesDistant(g, 2));
                     listMoves.add(c1);  // MUST BE AFTER XTILES, ELSE IT IS REMOVED
 
-                    if(c1.isCWRInTwoLists(listMoves,list,this,en,g)){
+                    if(c1.isCWRInTwoLists(listMoves,list)){
                         listOne.add(element);
                     }
                 }
@@ -69,7 +70,7 @@ public class TractorBeam extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // MOVE 0-1-2 1 TARGET (NOT SPAWNPOINT)

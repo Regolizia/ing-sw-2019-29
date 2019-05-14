@@ -5,6 +5,7 @@ import adrenaline.MapOne;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -19,7 +20,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
             CoordinatesWithRoom c = new CoordinatesWithRoom();
             c.setRoom(map.getGameBoard().getRoom(3));
             c.setCoordinates(1,2);
-            LinkedList<CoordinatesWithRoom> listOne = c.XTilesDistant(g,3);
+            List<CoordinatesWithRoom> listOne = c.xTilesDistant(g,3);
 
             for (int j = 0; j < listOne.size(); j++) {
                 System.out.printf(listOne.get(j).getX() + "," +

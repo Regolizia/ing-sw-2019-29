@@ -3,6 +3,7 @@ package adrenaline.weapons;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
@@ -18,14 +19,14 @@ public class Shockwave extends WeaponCard {
     }
 
     @Override
-    public LinkedList<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+        List<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
         return list;
     }
 
     @Override
-    public LinkedList<Object> fromCellsToTargets(LinkedList<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        LinkedList<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
 
         if(en.getEffect()== AmmoCube.Effect.BASE) {
             // ASK WHICH TARGETS TO DAMAGE
@@ -36,7 +37,7 @@ public class Shockwave extends WeaponCard {
     }
 
     @Override
-    public void applyDamage(LinkedList<Object> targetList, Player p, EffectAndNumber e) {
+    public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, UP TO 3 TARGETS, DIFFERENT SQUARES

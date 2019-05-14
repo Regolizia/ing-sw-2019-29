@@ -2,6 +2,7 @@ package adrenaline;
 
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.AmmoCube.CubeColor.*;
 
@@ -79,7 +80,7 @@ public class Action {
                         break;
                     }
                     if(canPayCard(weapon,player,option)){
-                        LinkedList<EffectAndNumber> payEff = paidEffect(weapon, player,option);
+                        List<EffectAndNumber> payEff = paidEffect(weapon, player,option);
                         if(payEff==null)
                         {deletedAction=true;break;}
                         CoordinatesWithRoom cChoosen;
@@ -111,7 +112,7 @@ public class Action {
             WeaponCard weaponToReload = chooseWeaponCard(weaponList);
             if (!weaponToReload.getReload())
                 reload(player, weaponToReload,option); }
-        LinkedList<Player> players=m.getPlayers();
+        List<Player> players=m.getPlayers();
             LinkedList<Player>victims=new LinkedList<>();
 
         for(int index=0;index< players.size();index++)
@@ -130,11 +131,11 @@ public class Action {
 
                 FreneticAction fAction=new FreneticAction();
                 //start by the player in the turn
-                LinkedList<Player>players=m.getPlayers();
+                List<Player> players=m.getPlayers();
                 int initialPlayerIndex=players.indexOf(player);
                 for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
                 {
-                    if(players.get(initialPlayerIndex)==m.getPlayers().getFirst()&&notDeleted<2) {
+                    if(players.get(initialPlayerIndex)==((LinkedList<Player>)m.getPlayers()).getFirst()&&notDeleted<2) {
                         if (fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.AFTER))
                             notDeleted++;
                     }
@@ -146,7 +147,7 @@ public class Action {
                                 notDeleted++;
 
                         }
-                        if(players.get(indexPlayer)==(m.getPlayers()).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
+                        if(players.get(indexPlayer)==(((LinkedList<Player>)m.getPlayers())).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
                                 if(fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
                                     notDeleted++;
 
@@ -181,21 +182,21 @@ public class Action {
 
     //___________________________ PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)___________________________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c, GameBoard g) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
-        list.addAll(c.XTilesDistant(g, 2));
-        list.addAll(c.XTilesDistant(g, 3));
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
+        list.addAll(c.xTilesDistant(g, 2));
+        list.addAll(c.xTilesDistant(g, 3));
         return list;
     }
     //__________________________PROPOSE CELL TO MOVE BEFORE SHOOT NOT FRENZY_____________________________________________//
 
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShoot(CoordinatesWithRoom c,GameBoard g){
-        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
+        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.xTilesDistant(g,1));
         list.add(c);
     return list;}
     //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT ADRENALINE_______________________________________________//
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootAdrenaline(CoordinatesWithRoom c,GameBoard g){
-        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.XTilesDistant(g,1));
-        list.addAll(c.XTilesDistant(g,2));
+        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.xTilesDistant(g,1));
+        list.addAll(c.xTilesDistant(g,2));
         list.add(c);
         return list;
     }
@@ -208,14 +209,14 @@ public class Action {
 
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.XTilesDistant(g, 1));
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
         list.add(c);
         return list;
     }
     //____________PROPOSE CELLS GRAB WITH ADRENALINE checkDamage=(1||2)
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabAdrenaline(CoordinatesWithRoom c, GameBoard g, Player p) {
         LinkedList<CoordinatesWithRoom> list = proposeCellsGrab(c,g,p);
-        list.addAll(c.XTilesDistant(g, 2));
+        list.addAll(c.xTilesDistant(g, 2));
         return list;
     }
 
@@ -317,7 +318,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
 }
 
     //______________________________________SHOOT_____________________________________________________________________//
-    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, LinkedList<EffectAndNumber> effectsList, GameModel m,GameBoard g) {
+    public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, List<EffectAndNumber> effectsList, GameModel m,GameBoard g) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         EffectAndNumber effectNumber=new EffectAndNumber(AmmoCube.Effect.BASE,0);
         for(int index=0;index<effectsList.size();index++) {
@@ -328,10 +329,10 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
                 case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
                 case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
             }
-            LinkedList<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
+            List<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
            // w.fromCellsToTargets(target,c,g,p,m,effectNumber);
             //here controller gives back choosen opponents
-            LinkedList<Object>effectiveTarget=new LinkedList<>();
+            List<Object>effectiveTarget;
             effectNumber.setNumber(3);//just to remove bug
                 effectiveTarget=chooseTargets(w.fromCellsToTargets(target,c,g,p,m,effectNumber),effectNumber.getNumber());
            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
@@ -382,7 +383,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
     /*todo frenzyShoot frenzyRun frenzyGrab*/
     ////////////////////////////_______________choose targets_________________________________________/////////////
 
-    public LinkedList<Object>chooseTargets(LinkedList<Object> possibleTarget,int number){
+    public List<Object>chooseTargets(List<Object> possibleTarget,int number){
         LinkedList<Object>effectiveTargets=new LinkedList<>();
         for(int i=0;i<possibleTarget.size();i++){
             //when a target is choosen add to effective player
@@ -481,7 +482,7 @@ return true;}
     ///////////////////////________________canPayOnlyCube______________________________________________________________________////////////////////////
 
     public boolean canPayAmmo(WeaponCard weapon, Player player,int red,int yellow,int blue) {
-        LinkedList<AmmoCube> cost = weapon.getPrice();
+        List<AmmoCube> cost = weapon.getPrice();
         int i;
         int redToPay=0;
         int blueToPay=0;
@@ -564,7 +565,7 @@ return true;}
 
     //////////////////_____________________payMethods______________________________________________///////////////////////
 
-    public LinkedList<EffectAndNumber> paidEffect(WeaponCard weapon, Player player,PayOption option) {
+    public List<EffectAndNumber> paidEffect(WeaponCard weapon, Player player,PayOption option) {
 
         switch(option){
             case AMMO: return payAmmo(player,weapon);
@@ -574,7 +575,7 @@ return true;}
        return null; }
        //_________________________________________________payAmmoPlusPowerUp________________________________________________________//
 
-    public LinkedList<EffectAndNumber>payAmmoPlusPowerUp(Player player,WeaponCard weapon,PayOption option){
+    public List<EffectAndNumber>payAmmoPlusPowerUp(Player player,WeaponCard weapon,PayOption option){
        LinkedList<PowerUpCard>choosenPowerUp=choosePowerUp(player);
        EffectAndNumber effectAndNumber;
         if(!canPayAmmoPower(weapon,player,choosenPowerUp))
@@ -617,13 +618,13 @@ return true;}
     }
         //_______________________________________________payOnlyAmmo________________________________________________________________//
 
-    public LinkedList<EffectAndNumber>payAmmo(Player player,WeaponCard weapon){
+    public List<EffectAndNumber>payAmmo(Player player,WeaponCard weapon){
         // if pay base don't psy alt
         int i = 0;
         LinkedList<EffectAndNumber> paid = new LinkedList<>();
         EffectAndNumber effectAndNumber;
         int k=0;
-        LinkedList<AmmoCube> cost = weapon.getPrice();
+        List<AmmoCube> cost = weapon.getPrice();
         if(!weapon.getReload())
         {for (i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
@@ -674,7 +675,7 @@ return true;}
                 }
             }
             //_____________________________________effective pay with powerUp___________________________________________________//
-    public void payPowerUp(WeaponCard weapon,LinkedList<PowerUpCard>choosenPowerUp,Player player){
+    public void payPowerUp(WeaponCard weapon,List<PowerUpCard>choosenPowerUp,Player player){
         for(int index=0;index<choosenPowerUp.size();index++)
         {
             for(int j=0;j<weapon.getPrice().size();j++)
@@ -698,8 +699,8 @@ public boolean getEndturn(){
 public void setEndTurn(boolean bool){this.endTurn=bool;}
 
 //________________________GIVE POINTS_______& ENDOFTHEGAME___________________________//
-public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers){
-   LinkedList<Player> bestPlayerOrderForVictim=new LinkedList<>();
+public void canGetPoints(List<Player> victims,List<Player>allPlayers){
+   List<Player> bestPlayerOrderForVictim;
         for(int indexVictims=0;indexVictims<victims.size();indexVictims++) {
                 bestPlayerOrderForVictim=bestShooterOrder(allPlayers,victims.get(indexVictims));
                 givePoints(victims.get(indexVictims),bestPlayerOrderForVictim);
@@ -710,7 +711,7 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
 
 }
 
-    public void givePoints(Player victim,LinkedList<Player>shooters){
+    public void givePoints(Player victim,List<Player>shooters){
         // max point - 2 x death if maxpoint-2<=0 give 1 point
         victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
         if(victim.getMaxPointAssignableCounter()>=victim.getTrackPointSize()){
@@ -719,7 +720,7 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
                  }
         return;}
 
-        shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+        ((Player) ((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
         for(int indexPlayer=1;indexPlayer<shooters.size();indexPlayer++)
         {
             if(victim.getTrack()[0]==shooters.get(indexPlayer).getColor())
@@ -727,13 +728,13 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
             if(victim.getTrack()[victim.getTrackSize()-1]==shooters.get(indexPlayer).getColor())
                 shooters.get(indexPlayer).addMarks(victim,1);//12°hit
             if(victim.damageByShooter(shooters.get(indexPlayer))==victim.damageByShooter(shooters.get(indexPlayer-1)))
-                shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+                ((Player)((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
             else{
                 victim.setMaxPointAssignableCounter(victim.getMaxPointAssignableCounter()+1);
                 if(victim.getMaxPointAssignableCounter()>=victim.getTrackPointSize())
                     shooters.get(indexPlayer).setPoints(1);
                 else
-                shooters.getFirst().setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+                    ((Player)((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
             }
         }
 
@@ -749,7 +750,7 @@ public void canGetPoints(LinkedList<Player> victims,LinkedList<Player>allPlayers
         else return false;
     }
 
-    public LinkedList<Player> bestShooterOrder(LinkedList<Player> players,Player victim){
+    public List<Player> bestShooterOrder(List<Player> players,Player victim){
         LinkedList<Player> bestShooterOrder=new LinkedList<>();
         int maxDamage=0;
         for (int i=0;i<players.size();i++){

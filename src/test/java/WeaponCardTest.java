@@ -2,6 +2,7 @@ import adrenaline.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
@@ -23,7 +24,7 @@ public class WeaponCardTest {
         WeaponCard w = new WeaponCard();
         LinkedList<Object> targets = new LinkedList<>();
         EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.ALT,1);
-        LinkedList<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, en, map.getGameBoard());
+        List<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, en, map.getGameBoard());
         w.weaponShoot(targets,c1,p,list,m);
         EffectAndNumber en1 = new EffectAndNumber(AmmoCube.Effect.ALT,1);
         w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, en1);
