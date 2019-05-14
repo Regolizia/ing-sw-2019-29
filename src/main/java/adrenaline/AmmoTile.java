@@ -19,8 +19,8 @@ public class AmmoTile{
      */
 
     // AMMO + AMMO + AMMO or POWERUP + AMMO + AMMO (ONE CUBECOLOR MEANS PICK POWERUP)
-    public AmmoTile(Coordinates p, AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
-        this.coordinates = p;
+    public AmmoTile(AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor cc) {
+        coordinates=new Coordinates();
         ammoTile = new LinkedList<>();
         ammoTile.add(new AmmoCube(ac)); // WE HAVE TO CHECK IF THIS AMMOCUBE MEANS POWERUP, IF SO PICK CARD FROM DECK
         ammoTile.add(new AmmoCube(bc));
