@@ -1,9 +1,10 @@
 package adrenaline;
 
-import java.util.*;
-
 /**
- * 
+ * Is the class that represents the Game Figures.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
  */
 public class Figure {
 
@@ -12,20 +13,12 @@ public class Figure {
     }
     private PlayerColor color;
 
-
-
     /**
      * Default constructor
      */
     public Figure(PlayerColor c) {
         this.color = c;
     }
-
-    /**
-     * 
-     */
-    //public player choose;
-
 
     public PlayerColor getPlayerColor(){
         return color;

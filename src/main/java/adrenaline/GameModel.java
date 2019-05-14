@@ -1,27 +1,45 @@
 package adrenaline;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
+/**
+ * Is the class that represents a Deck.
+ * It has:
+ * <ul>
+ *     <li> a list of Players
+ *     <li> a Game Mode
+ *     <li> a Map
+ * </ul>
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
 public class GameModel {
 
     private LinkedList<Player> players;
-    //privatePlayer next = new Player();
 
-    public static enum Mode {
+    public enum Mode {
         DEATHMATCH, DOMINATION
     }
-    public static enum Bot {
+    public enum Bot {
         BOT, NOBOT
     }
-    public static enum FrenzyMode{
+    public enum FrenzyMode{
         ON,OFF
     }
     protected Mode mode;
-    protected Map mapUsed;
+    private Map mapUsed;
     protected Bot bot;
 
 
+    /**
+     * Constructor with Mode, Bot and choice of map.
+     *
+     * @param m the mode
+     * @param b the bot choice
+     * @param chosenMap the map chosen
+     */
     public GameModel(Mode m, Bot b, int chosenMap) {
 
         players = new LinkedList<>();
@@ -37,57 +55,30 @@ public class GameModel {
                 mapUsed = new MapThree(m);
                 break;
             case 4:
-                mapUsed = new MapFour(m);
-                break;
             default:
-                System.out.printf("Invalid input");
+                mapUsed = new MapFour(m);
                 break;
         }
         mode = m;
         bot = b;
     }
 
+    /**
+     * Adds a Player to the list.
+     *
+     * @param p a player to add
+     */
     public void addPlayer(Player p){
         getPlayers().add(p);
     }
 
-/*
-    public Player nextPlayer(Player player){
-      //  return next.getToken(next);
-        return next;
-    }*/
-
     public Map getMapUsed(){
         return mapUsed;
     }
-/*    public void setMapUsed(Map m){
-        this.mapUsed = m;
-    }*/
 
-    public LinkedList<Player> getPlayers(){
+    public List<Player> getPlayers(){
         return players;
     }
-
-
-
-    /*
-    public void assignDeathPoints(Player dead){
-
-
-        ArrayList<ColorAndScore> array = new ArrayList<>();
-        for(int i=0;i<players.size();i++){
-            array.add(new ColorAndScore(players.get(i).getColor(),--------score-associato----))
-        }
-    }*/
-
-/*
-
-  public void setTurn(){};
-
-    public void getTurn(){
-*/
-
-
 
     }
 
