@@ -1,32 +1,62 @@
 package adrenaline;
 
-import adrenaline.ammoTile.*;
-
 import java.util.LinkedList;
 
 public class AmmoTileDeck extends Deck {
     private final static int numMaxAmmoTyleForType = 3;
     private LinkedList<AmmoTile> deck;
     private LinkedList<AmmoTile>typeOfAmmoTile;
+    //here i put every AmmoTile which has already been used
+    //when deck.size() will be 0 i will shaffle usedAmmotile and then deck=usedAmmotile
+    //then i will remove every ammoTile from usedAmmoTile
+    private LinkedList<AmmoTile> usedAmmoTile;
     public AmmoTileDeck() {
         deck = new LinkedList<AmmoTile>();
+        usedAmmoTile=new LinkedList<AmmoTile>();
         typeOfAmmoTile=new LinkedList<AmmoTile>();
-       /** typeOfAmmoTile.add(new RedBluePowerUp());
-        typeOfAmmoTile.add(new TwoBlueOnePowerUp());
-        typeOfAmmoTile.add(new TwoBlueOneRed());
-        typeOfAmmoTile.add(new TwoBlueOneYellow());
-        typeOfAmmoTile.add(new TwoRedOneBlue());
-        typeOfAmmoTile.add(new TwoRedOnePowerUp());
-        typeOfAmmoTile.add(new TwoRedOneYellow());
-        typeOfAmmoTile.add(new TwoYellowOneBlue());
-        typeOfAmmoTile.add(new TwoYellowOnePowerUp());
-        typeOfAmmoTile.add(new TwoYellowOneRed());
-        typeOfAmmoTile.add(new YellowBluePowerUp());
-        typeOfAmmoTile.add(new YellowRedPowerUp());**/
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED,AmmoCube.CubeColor.BLUE,AmmoCube.CubeColor.POWERUP));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.POWERUP));
+
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.YELLOW));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.POWERUP));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.YELLOW));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.BLUE));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.POWERUP));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.RED));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.POWERUP));
+        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.POWERUP));
+
         for (int i = 0; i <typeOfAmmoTile.size(); i++) {
            for(int j=0;j<numMaxAmmoTyleForType;j++){
                deck.add(typeOfAmmoTile.get(i));
            }
+
+
+
         }
     }
+
+public LinkedList<AmmoTile> getDeck(){
+        return this.deck;
+}
+//when there is an empty cell on the map i need to put an ammoTile
+public AmmoTile pickUpAmmoTile(){
+        if(this.deck.size()>0){
+        setUsedAmmoTile(this.deck.getFirst());
+        return this.deck.getFirst();
+        }
+
+        else {
+            shuffleCards(usedAmmoTile);
+            deck=usedAmmoTile;
+            usedAmmoTile.clear();
+        return deck.getFirst();}
+}
+
+public void setUsedAmmoTile(AmmoTile ammotile){
+        usedAmmoTile.add(ammotile);
+}
+
 }
