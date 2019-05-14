@@ -18,6 +18,8 @@ import java.util.List;
 public class GameModel {
 
     private LinkedList<Player> players;
+    protected boolean firstTurn;
+    protected int currentPlayer;
 
     public enum Mode {
         DEATHMATCH, DOMINATION
@@ -65,6 +67,9 @@ public class GameModel {
         }
         mode = m;
         bot = b;
+
+        firstTurn=false;
+        currentPlayer=0;
 
         weaponDeck = new WeaponDeck();
         weaponDeck.shuffleCards();

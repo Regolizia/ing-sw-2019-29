@@ -102,7 +102,10 @@ public class VirtualClientCLI {
                  System.out.println("Not accepted, insert again");
              }
              if (line.startsWith("CHOOSE SPAWNPOINT ")) {
-
+                 System.out.println("Choose a card: ");
+                 System.out.println(in.nextLine());
+                 input = scanner.nextLine();
+                 out.println(input);
              }
          }
          while (in.hasNextLine());

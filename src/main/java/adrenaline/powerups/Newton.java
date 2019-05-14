@@ -12,4 +12,8 @@ public class Newton extends PowerUpCard {
         setPowerUpColor(color);
     }
 
+    @Override
+    public String toString() {
+        return "Newton, "+getPowerUpColor();
+    }
 }

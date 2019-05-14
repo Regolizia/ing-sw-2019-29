@@ -14,11 +14,11 @@ public class PowerUpDeck{
 
 
 
-    private LinkedList<PowerUpCard> deck;
+    LinkedList<PowerUpCard> deck;
 
 
     public PowerUpDeck() {
-        deck = new LinkedList<PowerUpCard>();
+        deck = new LinkedList<>();
 
         for (int i = 0; i <= 1; i++) {
             deck.add(new Newton(AmmoCube.CubeColor.RED));
@@ -43,7 +43,7 @@ public class PowerUpDeck{
     /**
      * Shuffles the deck.
      */
-    public void shuffleCards() {
+    void shuffleCards() {
         Collections.shuffle(deck);
     }
 

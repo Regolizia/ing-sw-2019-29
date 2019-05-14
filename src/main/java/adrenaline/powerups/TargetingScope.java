@@ -12,4 +12,8 @@ public class TargetingScope  extends PowerUpCard {
         setPowerUpColor(color);
     }
 
+    @Override
+    public String toString() {
+        return "TargetingScope, "+getPowerUpColor();
+    }
 }

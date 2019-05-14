@@ -339,4 +339,7 @@ public class Player {
     return death;
     }
 
+    public boolean isFirstTurn(){
+        return (getPlayerPositionX()==0);
+    }
 }

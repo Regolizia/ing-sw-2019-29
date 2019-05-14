@@ -12,4 +12,8 @@ public class Teleporter  extends PowerUpCard {
         setPowerUpColor(color);
     }
 
+    @Override
+    public String toString() {
+        return "Teleporter, "+getPowerUpColor();
+    }
 }

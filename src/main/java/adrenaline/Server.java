@@ -32,8 +32,7 @@ public class Server {
     private static ArrayList<String> names = new ArrayList<>();
 
     // The set of all the print writers for all the clients, used for broadcast.
-    private static Set<PrintWriter> writers = new HashSet<>();
-
+    private static List<PrintWriter> writers = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         TIME =Integer.parseInt(args[0]);
@@ -91,21 +90,11 @@ public class Server {
         private Scanner in;
         private PrintWriter out;
 
-        /**
-         * Constructs a handler thread, squirreling away the socket. All the interesting
-         * work is done in the run method. Remember the constructor is called from the
-         * server's main method, so this has to be as short as possible.
-         */
+
         public Handler(Socket socket) {
             this.socket = socket;
         }
 
-        /**
-         * Services this thread's client by repeatedly requesting a screen name until a
-         * unique one has been submitted, then acknowledges the name and registers the
-         * output stream for the client in a global set, then repeatedly gets inputs and
-         * broadcasts them.
-         */
         public void run() {
             try {
                 Server.connectionsCount++;
@@ -133,9 +122,6 @@ public class Server {
                     }
                 }
 
-                // Now that a successful name has been chosen, add the socket's print writer
-                // to the set of all writers so this client can receive broadcast messages.
-                // But BEFORE THAT, let everyone else know that the new person has joined!
                 System.out.println("NAME ACCEPTED " + name);    // WHAT I SEE IN SERVER
                 out.println("NAME ACCEPTED " + name);   // WHAT I SEND TO CLIENT
                 for (PrintWriter writer : writers) {
@@ -279,5 +265,37 @@ public class Server {
         }
 
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
+    }
+
+    public void Turn(){
+        //Draw 2 Powerups, choose one
+            if (model.getPlayers().get(model.currentPlayer).isFirstTurn()){
+                ArrayList<PowerUpCard> twoCards= new ArrayList<>();
+                ArrayList<String> twoCardsNames= new ArrayList<>();
+                twoCards.add(model.powerUpDeck.deck.removeFirst());
+                twoCards.add(model.powerUpDeck.deck.removeFirst());
+                twoCardsNames.add(twoCards.get(0).toString());
+                twoCardsNames.add(twoCards.get(1).toString());
+                String cards = String.join(", ", twoCardsNames);
+                writers.get(model.currentPlayer).println("CHOOSE SPAWNPOINT ");
+                writers.get(model.currentPlayer).println(cards);
+
+                // GET RESPONSE
+
+
+
+            }
+            // TODO DO THE STUFF TO MAKE THE ACTIONS
+
+    }
+
+    /**
+     * Updates index of next Player.
+     * If everybody has played, it resets.
+     */
+    public void nextPlayer(){
+        model.currentPlayer++;
+        if(model.currentPlayer==model.getPlayers().size())
+            model.currentPlayer=0;
     }
 }
