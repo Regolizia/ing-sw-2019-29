@@ -4,13 +4,17 @@ import java.util.*;
 
 /**
  * Extends Room adding a list of SpawnpointsDom.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
  */
 public class RoomDom extends Room{
 
     private LinkedList<SpawnpointDom> spawnpoints;
 
     /**
-     * Constructor of a Room that has also a list Of SpawnpointsDom
+     * Constructor of a Room that has also a list Of SpawnpointsDom.
+     *
      * @param x the width
      * @param y the length
      * @see SpawnpointDom

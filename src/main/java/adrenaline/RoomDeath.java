@@ -4,6 +4,9 @@ import java.util.*;
 
 /**
  * Extends Room adding a list of Spawnpoints.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
  */
 public class RoomDeath extends Room {
 
@@ -11,7 +14,8 @@ public class RoomDeath extends Room {
     private LinkedList<Spawnpoint> spawnpoints;
 
     /**
-     * Constructor of a Room that has also a list Of Spawnpoints
+     * Constructor of a Room that has also a list Of Spawnpoints.
+     *
      * @param x the width
      * @param y the length
      * @see Spawnpoint

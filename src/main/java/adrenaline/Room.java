@@ -10,7 +10,11 @@ import java.util.*;
  *     <li> The list of AmmoTiles inside the Room
  *     <li> A token representing the Room
  * </ul>
- * 
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Coordinates
+ * @see AmmoTile
  */
 public class Room {
 
@@ -27,6 +31,7 @@ public class Room {
 
     /**
      * Constructor of a Room of size x y
+     *
      * @param x the width to set
      * @param y the length to set
      */

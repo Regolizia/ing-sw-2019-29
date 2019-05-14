@@ -2,6 +2,20 @@ package adrenaline;
 
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
+/**
+ Is the class that represents the Map of the Board.
+ * It contains:
+ * <ul>
+ *     <li> The Game Board
+ *     <li> Two arrays with the measures of the Rooms
+ *     <li> Three arrays with the location of the Spawnpoints
+ *     <li> Six arrays with the location of the Doors
+ *     <li> Six arrays with the location of the Walls
+ * </ul>
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
 public class Map {
 
     private GameBoard gameboard;
@@ -27,17 +41,25 @@ public class Map {
     protected int[] wallY2;
     protected Door.Direction[] wallDir;
 
+    /**
+     * Default constructor.
+     */
     public Map() {
 
     }
 
-    public Map(GameModel.Mode m) {
-
-    }
+    /**
+     * Constructor with Game Mode.
+     * Overridden.
+     *
+     * @param m
+     */
+    public Map(GameModel.Mode m) { }
 
     public GameBoard getGameBoard(){
         return gameboard;
     }
+
     public void setGameBoard(GameBoard g){
         this.gameboard = g;
     }

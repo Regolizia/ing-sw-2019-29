@@ -1,11 +1,13 @@
 package adrenaline;
 
 import java.util.*;
-
 import static adrenaline.Door.Direction.*;
 
 /**
- * 
+ *
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
  */
 public class GameBoard {
 

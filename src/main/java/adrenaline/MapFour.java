@@ -3,9 +3,27 @@ package adrenaline;
 import static adrenaline.Door.Direction.*;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
-// MapFour is the third little map in the rules
+/**
+ * MapFour is the third little map in the rules.
+ * It extends Map.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Map
+ */
 public class MapFour extends Map {
 
+    /**
+     * Constructor with parameter Mode.
+     * Depending on the Mode RoomDeaths or RoomDoms are added
+     * to the Map.
+     * Also Walls, Doors and Spawnpoints are created.
+     *
+     * @param m
+     * @see adrenaline.GameModel.Mode
+     * @see RoomDeath
+     * @see RoomDom
+     */
     public MapFour(GameModel.Mode m) {
 
         arrayX = new int[]{2,1,2,2,1,1};

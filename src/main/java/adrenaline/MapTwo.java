@@ -1,12 +1,29 @@
 package adrenaline;
 
-
 import static adrenaline.Door.Direction.*;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
-// MapTwo is the big map in the rules near the little maps
+/**
+ * MapTwo is the big map in the rules near the little maps.
+ * It extends Map.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Map
+ */
 public class MapTwo extends Map{
 
+    /**
+     * Constructor with parameter Mode.
+     * Depending on the Mode RoomDeaths or RoomDoms are added
+     * to the Map.
+     * Also Walls, Doors and Spawnpoints are created.
+     *
+     * @param m
+     * @see adrenaline.GameModel.Mode
+     * @see RoomDeath
+     * @see RoomDom
+     */
     public MapTwo(GameModel.Mode m) {
 
         arrayX = new int[]{2,1,2,3,1};

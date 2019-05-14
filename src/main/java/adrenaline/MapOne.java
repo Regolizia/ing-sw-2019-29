@@ -3,9 +3,27 @@ package adrenaline;
 import static adrenaline.Door.Direction.*;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
-// MapOne is the first little map in the rules
+/**
+ * MapOne is the first little map in the rules.
+ * It extends Map.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Map
+ */
 public class MapOne extends Map {
 
+    /**
+     * Constructor with parameter Mode.
+     * Depending on the Mode RoomDeaths or RoomDoms are added
+     * to the Map.
+     * Also Walls, Doors and Spawnpoints are created.
+     *
+     * @param m
+     * @see adrenaline.GameModel.Mode
+     * @see RoomDeath
+     * @see RoomDom
+     */
      public MapOne(GameModel.Mode m) {
 
         arrayX = new int[]{3,3,2,1};
