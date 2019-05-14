@@ -268,7 +268,7 @@ public class Action {
     }
     //_____________________________________GRAB OPTION TILE ___________________________________________________________//
     public boolean grabTile(Player player, CoordinatesWithRoom c){
-        AmmoTile toBeGrabbedTile=new AmmoTile(c,RED,RED,RED);
+        AmmoTile toBeGrabbedTile=new AmmoTile(RED,RED,RED);
         // grab ammo or powerUp
 
         //TODO a way to convert propose to grab cells in AmmoTile
