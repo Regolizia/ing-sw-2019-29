@@ -1,16 +1,17 @@
 package adrenaline;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
-public class AmmoTileDeck extends Deck {
+public class AmmoTileDeck{
     private final static int numMaxAmmoTyleForType = 3;
     private LinkedList<AmmoTile> deck;
-    private LinkedList<AmmoTile>typeOfAmmoTile;
     //here i put every AmmoTile which has already been used
     //when deck.size() will be 0 i will shaffle usedAmmotile and then deck=usedAmmotile
     //then i will remove every ammoTile from usedAmmoTile
     private LinkedList<AmmoTile> usedAmmoTile;
     public AmmoTileDeck() {
+        LinkedList<AmmoTile>typeOfAmmoTile;
         deck = new LinkedList<AmmoTile>();
         usedAmmoTile=new LinkedList<AmmoTile>();
         typeOfAmmoTile=new LinkedList<AmmoTile>();
@@ -49,7 +50,7 @@ public AmmoTile pickUpAmmoTile(){
         }
 
         else {
-            shuffleCards(usedAmmoTile);
+            shuffleUsedCards();
             deck=usedAmmoTile;
             usedAmmoTile.clear();
         return deck.getFirst();}
@@ -58,5 +59,19 @@ public AmmoTile pickUpAmmoTile(){
 public void setUsedAmmoTile(AmmoTile ammotile){
         usedAmmoTile.add(ammotile);
 }
+
+    /**
+     * Shuffles the given list.
+     */
+    public void shuffleCards() {
+        Collections.shuffle(deck);
+    }
+     /**
+     * Shuffles used cards.
+     */
+    public void shuffleUsedCards() {
+        Collections.shuffle(usedAmmoTile);
+    }
+
 
 }

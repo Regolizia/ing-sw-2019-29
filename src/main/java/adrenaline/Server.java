@@ -13,7 +13,7 @@ import java.util.stream.*;
 
 public class Server {
 
-    GameModel model;
+    private static GameModel model;
 
     private static int TIME = 0;
     private static int connectionsCount = 0;
@@ -261,6 +261,7 @@ public class Server {
     public static void setBoardChosen(int i){
         boardChosen = i;
     }
+
     public static void startGame(){
         gameIsOn = true;
 
@@ -276,5 +277,7 @@ public class Server {
             writer.println("PLAYER BOARDS ");
             writer.println(pbc);
         }
+
+        model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
     }
 }

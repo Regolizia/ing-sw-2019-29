@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * 
  */
-public class WeaponDeck extends Deck {
+public class WeaponDeck{
 
    private LinkedList<WeaponCard> deck;
 
@@ -40,6 +40,12 @@ public class WeaponDeck extends Deck {
 
     public LinkedList<WeaponCard> getList(){
         return deck;
+    }
+    /**
+     * Shuffles the deck.
+     */
+    public void shuffleCards() {
+        Collections.shuffle(deck);
     }
 
 }

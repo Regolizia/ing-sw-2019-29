@@ -10,13 +10,11 @@ import java.util.*;
 /**
  * 
  */
-public class PowerUpDeck extends Deck {
+public class PowerUpDeck{
 
 
 
     private LinkedList<PowerUpCard> deck;
-
-
 
 
     public PowerUpDeck() {
@@ -41,8 +39,13 @@ public class PowerUpDeck extends Deck {
     public LinkedList<PowerUpCard> getPowerUpDeck(){
         return deck;
     }
-    //public void setPowerUpDeck(){    }
 
+    /**
+     * Shuffles the deck.
+     */
+    public void shuffleCards() {
+        Collections.shuffle(deck);
+    }
 
 
 }

@@ -32,6 +32,9 @@ public class GameModel {
     private Map mapUsed;
     protected Bot bot;
 
+    protected WeaponDeck weaponDeck;
+    protected PowerUpDeck powerUpDeck;
+    protected AmmoTileDeck ammoTileDeck;
 
     /**
      * Constructor with Mode, Bot and choice of map.
@@ -40,7 +43,8 @@ public class GameModel {
      * @param b the bot choice
      * @param chosenMap the map chosen
      */
-    public GameModel(Mode m, Bot b, int chosenMap) {
+    public GameModel(Mode m, Bot b,
+                     int chosenMap) {
 
         players = new LinkedList<>();
 
@@ -61,6 +65,13 @@ public class GameModel {
         }
         mode = m;
         bot = b;
+
+        weaponDeck = new WeaponDeck();
+        weaponDeck.shuffleCards();
+        powerUpDeck = new PowerUpDeck();
+        powerUpDeck.shuffleCards();
+        ammoTileDeck = new AmmoTileDeck();
+        ammoTileDeck.shuffleCards();
     }
 
     /**
