@@ -40,4 +40,7 @@ public class DeathmatchBoard extends GameBoard {
        return rooms.get(i);
     }
 
+    @Override
+    public int getNumberOfRooms(){return this.rooms.size();}
+
 }
