@@ -15,11 +15,11 @@ public class PowerUpDeck{
 
 
     LinkedList<PowerUpCard> deck;
-
+    LinkedList<PowerUpCard> usedPowerUp;
 
     public PowerUpDeck() {
         deck = new LinkedList<>();
-
+        usedPowerUp=new LinkedList<>();
         for (int i = 0; i <= 1; i++) {
             deck.add(new Newton(AmmoCube.CubeColor.RED));
             deck.add(new TagbackGrenade(AmmoCube.CubeColor.RED));
@@ -47,5 +47,33 @@ public class PowerUpDeck{
         Collections.shuffle(deck);
     }
 
+
+
+
+
+    public PowerUpCard pickPoweUp(){
+        if(this.deck.size()>0){
+            setUsedPowerUp(this.deck.getFirst());
+            return this.deck.getFirst();
+        }
+
+        else {
+            shuffleUsedPowerUp();
+            deck=usedPowerUp;
+            usedPowerUp.clear();
+            return deck.getFirst();}
+    }
+
+    public void setUsedPowerUp(PowerUpCard powerUp){
+        usedPowerUp.add(powerUp);
+    }
+
+    /**
+     * Shuffles used cards.
+     */
+
+    public void shuffleUsedPowerUp() {
+        Collections.shuffle(usedPowerUp);
+    }
 
 }
