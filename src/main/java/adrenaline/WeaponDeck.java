@@ -10,11 +10,11 @@ import java.util.*;
 public class WeaponDeck{
 
    private LinkedList<WeaponCard> deck;
-
+    private LinkedList<WeaponCard> usedWeaponCard;
 
     public WeaponDeck() {
-        deck =  new LinkedList<WeaponCard>();
-
+        deck =  new LinkedList<>();
+        usedWeaponCard=new LinkedList<>();
         deck.add(new Cyberblade());
         deck.add(new Electroscythe());
         deck.add(new Flamethrower());
@@ -47,5 +47,33 @@ public class WeaponDeck{
     public void shuffleCards() {
         Collections.shuffle(deck);
     }
+
+
+
+    public WeaponCard pickUpWeapon(){
+        if(this.deck.size()>0){
+            setUsedAmmoTile(this.deck.getFirst());
+            return this.deck.getFirst();
+        }
+
+        else {
+            shuffleUsedWeaponCards();
+            deck=usedWeaponCard;
+            usedWeaponCard.clear();
+            return deck.getFirst();}
+    }
+
+    public void setUsedAmmoTile(WeaponCard weaponCard){
+        usedWeaponCard.add(weaponCard);
+    }
+
+    /**
+     * Shuffles used cards.
+     */
+
+    public void shuffleUsedWeaponCards() {
+        Collections.shuffle(usedWeaponCard);
+    }
+
 
 }
