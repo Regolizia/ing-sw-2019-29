@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class GameModel {
 
+    final private int numMaxWeaponSpawnpoin=3;
     private LinkedList<Player> players;
     protected boolean firstTurn;
     protected int currentPlayer;
@@ -96,7 +97,36 @@ public class GameModel {
         return players;
     }
 
+    public void populateMap(Map mapUsed){
+        int indexOfRoom;
+        int xCoordinate;
+        int yCoordinate;
+        Coordinates coordinates;
+        for(indexOfRoom=0;indexOfRoom<mapUsed.getGameBoard().getNumberOfRooms();indexOfRoom++){
+            //here check all the rooms one by one
+            for(xCoordinate=0;xCoordinate<mapUsed.arrayX[indexOfRoom];xCoordinate++)
+            {
+                for(yCoordinate=0;yCoordinate<mapUsed.arrayY[indexOfRoom];yCoordinate++){
+                   if(xCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeX()&&yCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeY()){
+                       //now i check inside the room
+                       for (Spawnpoint spawnpoint:mapUsed.getGameBoard().getRoom(indexOfRoom).getSpawnpoints()) {
+                           if(spawnpoint.getSpawnpointY()==yCoordinate&&spawnpoint.getSpawnpointX()==xCoordinate&&spawnpoint.getWeaponCards().size()<numMaxWeaponSpawnpoin)
+                               spawnpoint.addWeaponCard(weaponDeck.pickUpWeapon());
+
+                       }
+                       for (AmmoTile ammoTile:mapUsed.getGameBoard().getRoom(indexOfRoom).getTiles()) {
+                           if(ammoTile.getCoordinates()==null)
+                               mapUsed.getGameBoard().getRoom(indexOfRoom).addAmmoTile(ammoTileDeck.pickUpAmmoTile());
+                       }
+                   }
+
+                }
+            }
+
+        }
     }
+
+}
 
 
 
