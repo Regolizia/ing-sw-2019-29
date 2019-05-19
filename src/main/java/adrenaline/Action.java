@@ -22,6 +22,8 @@ public class Action {
     private  boolean executedSecondAction;
     private  boolean endTurn;
     private  boolean deletedAction;
+    private boolean executedFirstActionFrenetic;
+    private boolean executedSecondActionFrenetic;
     private int notDeleted;
 
     public static enum ActionType {
@@ -41,6 +43,8 @@ public class Action {
     public Action() {
        this.executedFirstAction=false;
        this.executedSecondAction=false;
+       this.executedFirstActionFrenetic=false;
+       this.executedSecondActionFrenetic=false;
        setEndTurn(false);
        this. deletedAction=false;
         this.notDeleted=0;
@@ -175,6 +179,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *              would be the same action of the player after him
      *
      */
+    //todo better frenetic action
     public void doEndTurn(Action.ActionType actionSelected, Player player, PayOption option, GameBoard g, GameModel m, GameModel.FrenzyMode frenzyMode,CoordinatesWithRoom c){
         if(frenzyMode== GameModel.FrenzyMode.ON)
         {
@@ -240,6 +245,12 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
             //then stop the game
         }
     }
+    /**
+     * chooseCell: a method to select the desired cell to do an action
+     * @param coordinates: a LinkedList of selectable cells
+     * this action can't be deleted
+     *                   only one can be selected
+     */
     //______________________________CHOOSE CELL______________________________________________________________________//
     public CoordinatesWithRoom chooseCell(LinkedList<CoordinatesWithRoom>coordinates){
         CoordinatesWithRoom choosenCell=new CoordinatesWithRoom();
@@ -250,7 +261,17 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         return choosenCell;
     }
 
-
+    /**
+     * proposeCellsRun
+     * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to run
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * this action can't be deleted
+    CONV:
+     *      i)this is the not Frenzy option method
+     *      ii) move at least by one cell
+     *      iii) move max by three cell
+     */
     //___________________________ PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)___________________________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
@@ -258,12 +279,35 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         list.addAll(c.xTilesDistant(g, 3));
         return list;
     }
+    /**
+     * proposeCellsRunBeforeShoot
+     * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to run before shooting
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * this action can't be deleted
+     * CONV:
+     *      i)this is the not Frenzy option method
+     *      ii) you can move only by one cell
+     */
     //__________________________PROPOSE CELL TO MOVE BEFORE SHOOT NOT FRENZY_____________________________________________//
 
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShoot(CoordinatesWithRoom c,GameBoard g){
         LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.xTilesDistant(g,1));
         list.add(c);
     return list;}
+
+    /**
+     * proposeCellsRunBeforeShootAdrenaline
+     * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to run before shooting
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * this action can't be deleted
+     * CONV:
+     *      i)this is the not Frenzy option method
+     *      ii) you can move by all the cells in proposeCellsRunBeforeShoot
+     *      iii) you can move max by two cells
+     */
+
     //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT ADRENALINE_______________________________________________//
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootAdrenaline(CoordinatesWithRoom c,GameBoard g){
         LinkedList<CoordinatesWithRoom>list=new LinkedList<>(c.xTilesDistant(g,1));
@@ -271,26 +315,63 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         list.add(c);
         return list;
     }
-
+    /**
+     * run: to do effective run action
+     * @param c: player position
+     * @param p: running player
+     * this action can't be deleted
+     */
     //_______________________________________________RUN______________________________________________________________//
     public void run(Player p, CoordinatesWithRoom c) {
 
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
     }
-
+    /**
+     * proposeCellsGrab
+     * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to Grab
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * @param p: player who does the action
+     * this action can't be deleted
+     * CONV:
+     *      i)this is the not Frenzy option method
+     *      ii) you can grab on your position
+     *      iii) you can grab max one cell distant (includes moving)
+     */
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
         list.add(c);
         return list;
     }
+    /**
+     * proposeCellsGrabAdrenaline
+     * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to Grab
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * @param p: player who does the action
+     * this action can't be deleted
+     * CONV:
+     *      i)this is the not Frenzy option method
+     *      ii) you can grab in the same cells of proposeCellsGrab
+     *      iii) you can grab max two cells distant (includes moving)
+     */
     //____________PROPOSE CELLS GRAB WITH ADRENALINE checkDamage=(1||2)
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabAdrenaline(CoordinatesWithRoom c, GameBoard g, Player p) {
         LinkedList<CoordinatesWithRoom> list = proposeCellsGrab(c,g,p);
         list.addAll(c.xTilesDistant(g, 2));
         return list;
     }
-
+    /**
+     * proposeCellsGrabAdrenaline
+     * check the selected cell where to grab and calls the right grabbing method
+     * @return boolean : to know if the action is good ended
+     * @param c: player position
+     * @param g: GameBoard choosen
+     * @param p: player who does the action
+     * @param option: payment option to grab
+     * this action can be deleted by returning false if player doesn't grab
+     */
     //________________________________________________GRAB____________________________________________________________//
     public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g,PayOption option) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
@@ -308,7 +389,14 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         return grabTile(p,c);
 
     }
-
+    /**
+     * proposeCellsGrabAdrenaline
+     *  @return boolean : to know if the action is good ended
+     *@param c: player position
+     * @param player: player who does the action
+     * @param option: payment option to grab
+     * this action can be deleted if the player can't grab the weapon
+     */
     //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
     public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option){
