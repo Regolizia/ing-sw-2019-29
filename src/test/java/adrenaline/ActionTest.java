@@ -12,7 +12,7 @@ public class ActionTest {
     private Action action;
     @Test
     void constructor(){
-        action = new Action(true); //constructor
+        action = new Action(); //constructor
         WeaponCard w=new Thor();//
         Action.ActionType actionType= Action.ActionType.RUN; //enum
         Action.PayOption payOption= Action.PayOption.AMMO;  //enum
