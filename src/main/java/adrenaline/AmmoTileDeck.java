@@ -45,15 +45,16 @@ public LinkedList<AmmoTile> getDeck(){
 //when there is an empty cell on the map i need to put an ammoTile
 public AmmoTile pickUpAmmoTile(){
         if(this.deck.size()>0){
-        setUsedAmmoTile(this.deck.getFirst());
-        return this.deck.getFirst();
+            setUsedAmmoTile(this.deck.getFirst());
+            return this.deck.getFirst();
         }
 
         else {
             shuffleUsedCards();
             deck=usedAmmoTile;
             usedAmmoTile.clear();
-        return deck.getFirst();}
+            return deck.getFirst();
+        }
 }
 
 public void setUsedAmmoTile(AmmoTile ammotile){
@@ -74,4 +75,7 @@ public void setUsedAmmoTile(AmmoTile ammotile){
     }
 
 
+    public LinkedList<AmmoTile> getUsedAmmoTile() {
+        return usedAmmoTile;
+    }
 }
