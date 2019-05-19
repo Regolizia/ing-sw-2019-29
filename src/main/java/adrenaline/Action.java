@@ -6,6 +6,11 @@ import java.util.List;
 
 import static adrenaline.AmmoCube.CubeColor.*;
 
+/**
+ * Is the class that describes players' turn.
+ * @author Giulia Valcamonica
+ * @version 1.0
+ **/
 
 public class Action {
     final private int numMaxAlternativeOptions = 2; //(0=base 1=alternative)
@@ -13,35 +18,47 @@ public class Action {
     final private int numMaxWeaponYouCanHave=3;
 
 
-   private boolean executedFirstAction=false;
-    private  boolean executedSecondAction=false;
-    private  boolean endTurn=false;
-    private  boolean newStart=false;
-    private  boolean deletedAction=false;
+   private boolean executedFirstAction;
+    private  boolean executedSecondAction;
+    private  boolean endTurn;
+    private  boolean deletedAction;
     private int notDeleted;
 
     public static enum ActionType {
-        GRAB, RUN, SHOOT, RELOAD;      //reload is an  optional action //ADRENALINESHOOT
+        GRAB, RUN, SHOOT, RELOAD;
     }
 
     public static enum PayOption {
-        AMMO,AMMOPOWER,NONE;      //reload is an  optional action //ADRENALINESHOOT
+        AMMO,AMMOPOWER,NONE;
     }
 
-  //  private ActionType actionSelected;
 
+    /**
+     * Class constructor.
+     *  * @version 1.0
+     */
 
-    public Action(boolean newStart) {
-        this.newStart=newStart;
-        if(this.newStart){
+    public Action() {
        this.executedFirstAction=false;
        this.executedSecondAction=false;
        setEndTurn(false);
        this. deletedAction=false;
-        this.notDeleted=0;}
+        this.notDeleted=0;
     }
-    public Action(){}
 
+    /**
+     * doAction : to do the action choosen by the player
+     * can be repeat two times per turn
+     * on the third time doAction accepts only reload
+     * switch on @param actionSelected to get the right method to be called
+     * @param  actionSelected : choosen action
+     * @param  player: name of the player who wants to do the action
+     * @param c: player's position on the board
+     * @param g: gameboard choosen for the game
+     * @param m: model choosen for the game
+     * @param option: payment option choosen to buy weapons/reloads/...
+     * @param frenzyMode: to know if frenzy mode is enabled
+     */
     //________________________________DO ACTION_____________________________________________________________________//
     public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option,GameModel.FrenzyMode frenzyMode){
       //  actionSelected = chosen;
@@ -49,126 +66,180 @@ public class Action {
         if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
                 case RUN:
-                    // PROPOSE WHERE TO GO, SELECT ONE (with proposeCellsRun method)
-                    //proposeCellsRun(c, g);
-                    CoordinatesWithRoom coordinatesR=chooseCell(proposeCellsRun(c,g));
-                    run(player, coordinatesR);
-                    deletedAction=false;
+                    doRun(c,g,player);
                     break;
                 case GRAB:
-                    // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-                    CoordinatesWithRoom coordinatesG;
-                    if(player.checkDamage()==1||player.checkDamage()==2)
-                    coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
-                    else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
-                    if(!(grab(player, coordinatesG, g,option)))
-                    deletedAction=true;
-                    else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
+                    doGrab(player,c,g,option);
                     break;
-
                 case SHOOT:
-                    // HERE JUST WEAPON AND PAYMENTS, EVERYTHING ELSE IN CORRECT WEAPONCARD
-
-                    // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
-                    LinkedList<WeaponCard> hand = player.getHand();
-                    // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
-                    WeaponCard weapon = chooseWeaponCard(hand);
-                    // Boolean payCard()
-                    if (weapon.getReload() == false) {
-                        if (!canPayCard(weapon, player,option))
-                            deletedAction=true;
-                        break;
-                    }
-                    if(canPayCard(weapon,player,option)){
-                        List<EffectAndNumber> payEff = paidEffect(weapon, player,option);
-                        if(payEff==null)
-                        {deletedAction=true;break;}
-                        CoordinatesWithRoom cChoosen;
-                        if(player.checkDamage()==2)
-                            cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
-                        else cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
-                        player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
-                        shoot(weapon, cChoosen, player, payEff, m,g);
-                        weapon.setNotReload();// i've lost base effect payment
-                        deletedAction=false;
-                    }                    break;
+                    doShoot(player,option,m,g,c);
+                    break;
 
                 default:
                     //INVALID CHOICE
-
             }
 
             if(executedFirstAction&&!deletedAction&&!executedSecondAction)this.executedSecondAction=true;
-            else if(!executedFirstAction&&deletedAction&&!executedSecondAction){this.executedFirstAction=false;this.executedSecondAction=false;}
-            else if(executedFirstAction&&deletedAction&&!executedSecondAction)this.executedSecondAction=false;
             else if(!executedFirstAction&&!deletedAction&&!executedSecondAction) {this.executedFirstAction=true;this.executedSecondAction=false;}
             if(executedFirstAction&&executedSecondAction)setEndTurn(true);
         }
         //HERE ENDS TURN
+        doEndTurn(actionSelected,player,option,g,m,frenzyMode,c);
+    }
+    /**
+     * doRun : to do run methods
+     * @param  player: name of the player who wants to move
+     * @param c: player's position on the board
+     * @param g: gameboard choosen for the game
+     * this action can't be deleted
+     */
+public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
+{
+    CoordinatesWithRoom coordinatesR=chooseCell(proposeCellsRun(c,g));
+    run(player, coordinatesR);
+    deletedAction=false;
+}
+    /**
+     * doGrab : to do grab methods
+     * @param  player: name of the player who wants to grab
+     * @param c: player's position on the board
+     * @param g: gameboard choosen for the game
+     * @param option: payment option choosen to grab objects on the board
+     * this action can be deleted if grab method returns false
+     */
+    public void doGrab(Player player,CoordinatesWithRoom c,GameBoard g,PayOption option){
+        // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
+        CoordinatesWithRoom coordinatesG;
+        if(player.checkDamage()==1||player.checkDamage()==2)
+            coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
+        else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
+        if(!(grab(player, coordinatesG, g,option)))
+            deletedAction=true;
+        else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
+    }
+    /**
+     * doShoot : to do shoot methods
+     * @param  player: name of the player who wants to shoot
+     * @param c: player's position on the board
+     * @param g: gameboard choosen for the game
+     * @param m: choosen GameModel
+     * @param g: choosen Gameboard
+     * @param option: payment option choosen to pay weapon effects
+     *
+     * this action can be deleted if
+     *              i) weapon is not reload and can't be reload
+     *              ii)the player doesn't have selected any base/alternative effect
+     */
+    public void doShoot(Player player,PayOption option,GameModel m,GameBoard g,CoordinatesWithRoom c){
+        // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
+        LinkedList<WeaponCard> hand = player.getHand();
+        // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
+        WeaponCard weapon = chooseWeaponCard(hand);
+
+        if (!weapon.getReload()&&!canPayCard(weapon, player,option)) {
+                deletedAction = true;
+                return;
+        }
+
+        if(canPayCard(weapon,player,option)){
+            List<EffectAndNumber> payEff = paidEffect(weapon, player,option);
+            if(payEff==null)
+            {deletedAction=true;
+            return;}
+            CoordinatesWithRoom cChoosen;
+            if(player.checkDamage()==2)
+                cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
+            else cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
+            player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
+            shoot(weapon, cChoosen, player, payEff, m,g);
+            weapon.setNotReload();// i've lost base effect payment
+            deletedAction=false;}
+    }
+    /**
+     * doEndTurn : methods to end the turn/game
+     * @param  player: name of the player who has ended his turn
+     * @param actionSelected:action selected by the player
+     * @param c: player's position on the board
+     * @param g: gameboard choosen for the game
+     * @param m: choosen GameModel
+     * @param g: choosen Gameboard
+     * @param frenzyMode: to know if frenzy mode is enable
+     * @param option: payment option choosen to pay weapon effects
+     *
+     * this action can't be deleted
+     *              if frenzyMode is off the only action accepeted is reload otherwise it doesn't considered the selected action
+     *              if frenzyMode is on player get plus two actions, those depend on players' order
+     * CONVENTIONS:
+     *      i)if the player selected is the one who starts frenetic Mode his actions would be the same actions of the player before him
+     *      ii)if the player selected is the one who starts the frenetic Mode and also he is the first player of the game all players' (even our player's)actions
+     *              would be the same action of the player after him
+     *
+     */
+    public void doEndTurn(Action.ActionType actionSelected, Player player, PayOption option, GameBoard g, GameModel m, GameModel.FrenzyMode frenzyMode,CoordinatesWithRoom c){
+        if(frenzyMode== GameModel.FrenzyMode.ON)
+        {
+
+            FreneticAction fAction=new FreneticAction();
+            //start by the player in the turn
+            List<Player> players=m.getPlayers();
+            int initialPlayerIndex=players.indexOf(player);
+            for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
+            {
+                if(players.get(initialPlayerIndex)==((LinkedList<Player>)m.getPlayers()).getFirst()&&notDeleted<2) {
+                    if (fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.AFTER))
+                        notDeleted++;
+                }
+
+                else{
+                    if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex&& notDeleted<2)
+                    {
+                        if(fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.FIRST))
+                            notDeleted++;
+
+                    }
+                    if(players.get(indexPlayer)==(((LinkedList<Player>)m.getPlayers())).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
+                        if(fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
+                            notDeleted++;
+
+
+                    }
+
+
+                }
+                if(notDeleted>=2)
+                    notDeleted=0; //reset for next player
+                else
+                    indexPlayer--;//repeat this player until he doesn't have two actions
+
+            }
+
+        }
         else if(getEndturn()){
 
-        if(actionSelected.equals(ActionType.RELOAD)){
-            LinkedList<WeaponCard> weaponList = player.getHand();
-            WeaponCard weaponToReload = chooseWeaponCard(weaponList);
-            if (!weaponToReload.getReload())
-                reload(player, weaponToReload,option); }
-        List<Player> players=m.getPlayers();
+            if(actionSelected.equals(ActionType.RELOAD)){
+                LinkedList<WeaponCard> weaponList = player.getHand();
+                WeaponCard weaponToReload = chooseWeaponCard(weaponList);
+                if (!weaponToReload.getReload())
+                    reload(player, weaponToReload,option); }
+            List<Player> players=m.getPlayers();
             LinkedList<Player>victims=new LinkedList<>();
 
-        for(int index=0;index< players.size();index++)
-        { if(players.get(index).isDead()){
-            g.pickASkull();
-            victims.add(players.get(index));
-        }
-        canGetPoints(victims,players);
-        for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
-            victims.get(index).newLife();}
+            for(int index=0;index< players.size();index++)
+            { if(players.get(index).isDead()){
+                g.pickASkull();
+                victims.add(players.get(index));
+            }
+                canGetPoints(victims,players);
+                for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
+                    victims.get(index).newLife();}
         }
         /////
         if(endOfTheGame(g)){
-            if(frenzyMode== GameModel.FrenzyMode.ON)
-            {
 
-                FreneticAction fAction=new FreneticAction();
-                //start by the player in the turn
-                List<Player> players=m.getPlayers();
-                int initialPlayerIndex=players.indexOf(player);
-                for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
-                {
-                    if(players.get(initialPlayerIndex)==((LinkedList<Player>)m.getPlayers()).getFirst()&&notDeleted<2) {
-                        if (fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.AFTER))
-                            notDeleted++;
-                    }
-
-                    else{
-                        if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex&& notDeleted<2)
-                        {
-                            if(fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.FIRST))
-                                notDeleted++;
-
-                        }
-                        if(players.get(indexPlayer)==(((LinkedList<Player>)m.getPlayers())).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
-                                if(fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
-                                    notDeleted++;
-
-
-                         }
-
-
-                    }
-                    if(notDeleted>=2)
-                        notDeleted=0; //reset for next player
-                    else
-                        indexPlayer--;//repeat this player until he doesn't have two actions
-
-                }
-
-            }
             //if endOfTheGame && frenzy then for everyplayer calls a frenzy action
             //then stop the game
         }
     }
-
     //______________________________CHOOSE CELL______________________________________________________________________//
     public CoordinatesWithRoom chooseCell(LinkedList<CoordinatesWithRoom>coordinates){
         CoordinatesWithRoom choosenCell=new CoordinatesWithRoom();
@@ -380,7 +451,7 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         return false;
     }
 
-    /*todo frenzyShoot frenzyRun frenzyGrab*/
+
     ////////////////////////////_______________choose targets_________________________________________/////////////
 
     public List<Object>chooseTargets(List<Object> possibleTarget,int number){
@@ -462,8 +533,6 @@ return true;}
 ///____________________________________canPayCard(TRUE if can pay base effect)____________________________________///
 
     public boolean canPayCard(WeaponCard weapon, Player player,PayOption option) {
-
-        //todo ask pay option: only ammo or ammo+power-up
         if(option!=null){
         switch(option){
 
