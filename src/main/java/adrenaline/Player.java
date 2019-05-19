@@ -331,9 +331,10 @@ public class Player {
 //_________________________how Many Deaths____________________________________________________________//
     public int numberOfDeaths(){
         int death=0;
-        for(int i=0; i<getTrackSize();i++)
+
+        for(int i=0; i<getSkullTrack().length;i++)
         {
-            if (getSkullTrack()[i]==true)
+            if (getSkullTrack()[i])
                 death++;
         }
     return death;
