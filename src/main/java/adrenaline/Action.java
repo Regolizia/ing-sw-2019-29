@@ -390,12 +390,14 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
 
     }
     /**
-     * proposeCellsGrabAdrenaline
+     * grabCard
+     * this is the method to grab a weapon card
      *  @return boolean : to know if the action is good ended
      *@param c: player position
      * @param player: player who does the action
      * @param option: payment option to grab
      * this action can be deleted if the player can't grab the weapon
+     *              CONV: if you can grab the card you can't delete the action
      */
     //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
@@ -417,6 +419,12 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         canBeGrabbedWeapon.get(index).setReload(); //when i grab a weapon i've already paid its base effect
         return true;
     }
+    /**
+     * dropWeaponCard
+     * this method is called when a player wants to grab a weapon card but already has three of them, so
+     * he needs to drop one
+     * this action can't be deleted
+     */
     public void dropWeaponCard(LinkedList<WeaponCard> hand){
         int index;
         for (index = 0; index < hand.size(); index++) {
@@ -424,6 +432,16 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         }
         hand.remove(index);
     }
+    /**
+     * grabTile
+     * this is the method to grab an ammo tile
+     * @return boolean : to know if the action is good ended
+     * @param c: player position
+     * @param player: player who does the action
+     *
+     * this action can be deleted if the player doesn't grab anything
+     *
+     */
     //_____________________________________GRAB OPTION TILE ___________________________________________________________//
     public boolean grabTile(Player player, CoordinatesWithRoom c){
         AmmoTile toBeGrabbedTile=new AmmoTile(RED,RED,RED);
@@ -439,14 +457,22 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         }
                     return grabCube(player,c, toBeGrabbedTile);
     }
+
+    /**
+     * grabCube
+     * this is the method to grab a color cube
+     * @return boolean : to know if the action is good ended
+     * @param c: player position
+     * @param player: player who does the action
+     * @param a: ammo tile to be grabbed
+     *
+     *              CONV: if the player has already three  cube of one color, he can't pick up more cube of that color
+     */
+
+
     //____________________________ADDING CUBE______________________________________________________________________//
     public boolean grabCube(Player player, CoordinatesWithRoom c, AmmoTile a){
 
-        for(int i=0;i<3;i++)
-        {
-            if(player.getAmmoBox()[i]>=3)
-                return false;
-        }
         for(int i=0;i<3;i++)
         {
             switch (a.getAmmoCubes().get(i).getCubeColor())
@@ -466,6 +492,16 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
 
         return true;
     }
+    /**
+     * grabPowerUp
+     * this is the method to grab a power up card
+     * it is called only when an ammo tile has field POWER
+     *  @return boolean : to know if the action is good ended
+     * @param c: player position  //todo delete position player
+     * @param p: player who does the action
+     * this action can be deleted if the player can't grab the power up
+     *              CONV: if you can grab the card you can't delete the action
+     */
 public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         if(!p.canGrabPowerUp()) return false;
 
@@ -475,6 +511,18 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         return true;
 
 }
+    /**
+     * shoot
+     * this is the method to shoot
+     *@param c: player position
+     * @param p: player who does the action
+     * @param w: weapon card choosen to shoot
+     * @param effectsList: shooting effect paid by the player
+     * @param g :gameboard
+     * @param m :model
+     *      * this action can't
+     *          CONV: you can shoot even at empty cells
+     */
 
     //______________________________________SHOOT_____________________________________________________________________//
     public void shoot(WeaponCard w, CoordinatesWithRoom c, Player p, List<EffectAndNumber> effectsList, GameModel m,GameBoard g) {
@@ -525,7 +573,17 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
 
         //  // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
     }
-
+    /**
+     * reload
+     * this is the method to reload a weapon card
+     * you can choose if reload by AMMO or by AMMOPOWER
+     *  @return boolean : to know if the action is good ended
+     * @param p: player who does the action
+     * @param option: payment option to reload
+     * @param w: weapon card to be reload
+     * this action can be deleted if the player can't reload the weapon
+     *              CONV: if you can reload the card you can't delete the action
+     */
 //_____________________________________RELOAD________________________________________________________________________//
     public boolean reload(Player p, WeaponCard w,PayOption option) {
 
@@ -539,7 +597,16 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         return false;
     }
 
-
+    /**
+     * chooseTargets
+     * this is the method to choose targets for shooting action
+     *
+     * @return List<Object> : list of selected targets
+     * @param possibleTarget : list of all targets that player can hit
+     * @param number : number of the targets that player can hit
+     *
+     * CONV: targets can be other players or spawnpoints
+     */
     ////////////////////////////_______________choose targets_________________________________________/////////////
 
     public List<Object>chooseTargets(List<Object> possibleTarget,int number){
@@ -553,7 +620,15 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
         return effectiveTargets;
     }
 
-
+    /**
+     * reloadAmmoPower
+     * this is the method to reload a weapon card with powerUp+cubeColor
+     *  @return boolean : to know if the action is good ended
+     * @param player: player who does the action
+     * @param weapon: weapon card to be reloaded
+     * this action can be deleted if the player can't reload the weapon
+     *              CONV: if you can reload the card you can't delete the action
+     */
 
 
     ///////////////////////////_______________reloadAmmoPower_____________________________________///////////////////////////////////////////
@@ -575,6 +650,20 @@ public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
             player.getPowerUp().remove(wallet.get(i));
         return true;
     }
+    /**
+     * reloadAmmoPower
+     * this is the method to reload a weapon card with cubeColor (also with power up)
+     *  @return boolean : to know if the action is good ended
+     * @param p: player who does the action
+     * @param w: weapon card to be reloaded
+     * @param blue: number of blue cube color
+     * @param red :number of red cube color
+     * @param yellow :number of yellow cube color
+     * this action can be deleted if the player can't reload the weapon
+     *              CONV:
+     *               i)if you can reload the card you can't delete the action
+     *               ii)if you pay with power up blu,red,yellow get number of player's cube color plus powerup's colors
+     */
 ///////////////////////////___________________reloadAmmo__________________________________/////////////////////////////////////
 public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow){
     int blueToPay=0;
@@ -607,6 +696,13 @@ public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow){
 
     }
 return true;}
+    /**
+     * chooseWeaponCard
+     * this is the method to choose a weapon card
+     *  @return WeaponCard : weapon selected
+     * @param hand: player's weapon hand
+     * this action can't be deleted
+     */
 ///////////////////////////______________choose weapon & canPay_________________////////////////////////////////////////
 
     public WeaponCard chooseWeaponCard(LinkedList<WeaponCard> hand) {
@@ -618,6 +714,15 @@ return true;}
 
 
     return null;*/}
+    /**
+     * canPayCard
+     * this is the method to know if player can pay a weapon card
+     *  @return boolean: to know if method has a good end
+     * @param weapon: weapon selected
+     * @param player : player who does the action
+     * @param option : payment option
+     * this action can be deleted if can't pay weapon
+     */
 ///____________________________________canPayCard(TRUE if can pay base effect)____________________________________///
 
     public boolean canPayCard(WeaponCard weapon, Player player,PayOption option) {
@@ -636,6 +741,18 @@ return true;}
         }}
       return false;
     }
+    /**
+     * canPayAmmo
+     * this is the method to know if can pay a weapon card whit only cube colors (also power up)
+     *  @return boolean: to know if good ended
+     * @param player: player
+     * @param red: number of player's red cube color
+     * @param yellow :number of player's yellow cube color
+     * @param blue :number of player's blue color
+     *             this method can be deleted if player can't pay any BASE/ALT weapon card effect
+     *  CONV:
+     *             if payment method is with power up red,yellow,cube + powerup's colors
+     */
     ///////////////////////________________canPayOnlyCube______________________________________________________________________////////////////////////
 
     public boolean canPayAmmo(WeaponCard weapon, Player player,int red,int yellow,int blue) {
@@ -680,7 +797,17 @@ return true;}
                 return false;
         }
     return true;}
-
+    /**
+     * canPayAmmoPower
+     * this is the method to know if can pay a weapon card whit only cube colors+ power up
+     *  @return boolean: to know if good ended
+     * @param player: player
+     * @param weapon: weapon selected
+     * @param powerUpCards: list of all player's powerups
+     *             this method can be deleted if player can't pay any BASE/ALT weapon card effect
+     *  CONV:
+     *    if player selects a powerup that doesn't need to be used that power up is lost
+     */
     ////////////////////___________________canPayAmmoPower pay bse effect with power up_____________________________________________________________//////////////
 
     public boolean canPayAmmoPower(WeaponCard weapon, Player player, LinkedList<PowerUpCard>powerUpCards){
@@ -707,9 +834,14 @@ return true;}
         return canPayAmmo(weapon,player,redCube,blueCube,yellowCube);
 
     }
-
+    /**
+     * choosePowerUp
+     * this is the method to choose powerups to be used as a payment
+     *             this method can't be deleted
+     *
+     */
     public LinkedList<PowerUpCard>choosePowerUp(Player player){
-        int j=0;
+        int j;
         LinkedList<PowerUpCard>power=player.getPowerUp();
         LinkedList<PowerUpCard>powerChoosen=new LinkedList<>();
         for (j = 0; j < power.size(); j++) {
@@ -719,7 +851,15 @@ return true;}
         return powerChoosen;
 
     }
-
+    /**
+     * paidEffect
+     * this is the method to choose weapon's effect to pay and pay
+     * @return  List<EffectAndNumber>: paid effects
+     * @param player: player
+     * @param weapon: weapon choosen
+     * @param option: option payment
+     *             this method can be deleted if returned list is null
+     */
     //////////////////_____________________payMethods______________________________________________///////////////////////
 
     public List<EffectAndNumber> paidEffect(WeaponCard weapon, Player player,PayOption option) {
@@ -730,6 +870,18 @@ return true;}
             default:
         }
        return null; }
+    /**
+     * payAmmoPlusPowerUp
+     * this is the method to choose weapon's effect to pay and pay with power up
+     *  @return  List<EffectAndNumber>: paid effects
+     * @param player: player
+     * @param weapon: weapon card choosen
+     * @param option : payment option //todo delete option
+     *
+     *               CONV:
+     *               i) can pay only one between BASE and ALT
+     *               ii) must pay i) before pay OPTIONS
+     */
        //_________________________________________________payAmmoPlusPowerUp________________________________________________________//
 
     public List<EffectAndNumber>payAmmoPlusPowerUp(Player player,WeaponCard weapon,PayOption option){
@@ -772,7 +924,18 @@ return true;}
         return paid;
 
 
-    }
+    }  /**
+     * payAmmoPlusPowerUp
+     * this is the method to choose weapon's effect to pay and pay with only cube colors
+     *  @return  List<EffectAndNumber>: paid effects
+     * @param player: player
+     * @param weapon: weapon card choosen
+     *
+     *
+     *               CONV:
+     *               i) can pay only one between BASE and ALT
+     *               ii) must pay i) before pay OPTIONS
+     */
         //_______________________________________________payOnlyAmmo________________________________________________________________//
 
     public List<EffectAndNumber>payAmmo(Player player,WeaponCard weapon){
@@ -814,6 +977,15 @@ return true;}
         return paid;
 
     }
+    /**
+     * pay
+     * this is the method to pay
+     * pay one cube at time
+     * @param player: player
+     * @param cube: color to pay
+     *               CONV:
+     *               doesn't check if can pay (already checked in previous methods)
+     */
         //_______________________________________________effective pay_______________________________________________________________//
 
             public void pay (Player player, AmmoCube cube){
@@ -831,6 +1003,16 @@ return true;}
                         default:
                 }
             }
+    /**
+     * payPowerUp
+     * this is the method to pay whit cube colors and powerups
+     * @param player: player
+     * @param choosenPowerUp : selected powerups
+     * @param weapon: selected weapon
+     *               CONV:
+     *            i)doesn't check if can pay (already checked in previous methods)
+     *            ii)if player selects a powerup that doesn't need to be used that power up is lost
+     */
             //_____________________________________effective pay with powerUp___________________________________________________//
     public void payPowerUp(WeaponCard weapon,List<PowerUpCard>choosenPowerUp,Player player){
         for(int index=0;index<choosenPowerUp.size();index++)
@@ -847,14 +1029,27 @@ return true;}
             }
         }
     }
+    /**
+     * getEndTurn
+     * @return  boolean: to know if turn is ended
+     */
     //____________________________getter and setter________________//
 public boolean getEndturn(){
         return this.endTurn;
 }
 
-
+    /**
+     *setEndTurn
+     * set when turn is ended
+     */
 public void setEndTurn(boolean bool){this.endTurn=bool;}
-
+    /**
+     * canGetPoints
+     * this is the method to know if players can get points
+     * @param allPlayers
+     * @param victims
+     *
+     */
 //________________________GIVE POINTS_______& ENDOFTHEGAME___________________________//
 public void canGetPoints(List<Player> victims,List<Player>allPlayers){
    List<Player> bestPlayerOrderForVictim;
@@ -867,6 +1062,13 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
 
 
 }
+    /**
+     * givePoints
+     * this is the method to distribute points
+     * @param victim: player who has been damaged
+     * @param shooters: all players which have given damage to victim
+     *
+     */
 
     public void givePoints(Player victim,List<Player>shooters){
         // max point - 2 x death if maxpoint-2<=0 give 1 point
@@ -896,7 +1098,10 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
         }
 
     }
-
+    /**
+     * endOfTheGame
+     * @return boolean:to know if the game is over
+     * **/
     public boolean endOfTheGame(GameBoard g){  //every time a player dies
         //8||5 skulls
         //if(countSkull-1<=0)
@@ -906,7 +1111,13 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
         //else return false
         else return false;
     }
-
+/**
+ * bestShooterOrder
+ * Order by how much damage a player has done to victim
+ * @return List<Player>: order list of player
+ * @param players all players
+ * @param victim: selected victim
+ * **/
     public List<Player> bestShooterOrder(List<Player> players,Player victim){
         LinkedList<Player> bestShooterOrder=new LinkedList<>();
         int maxDamage=0;
