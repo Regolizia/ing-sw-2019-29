@@ -119,6 +119,8 @@ public class WeaponCard extends Card{
         return price;
     }
 
+
+
     void setReload(){reload=true;}
 // reload to pay baseEffect
     void setNotReload(){reload=false;}
