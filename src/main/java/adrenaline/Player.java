@@ -321,7 +321,7 @@ public class Player {
     public void setMaxPointAssignableCounter(int max){this.indexPointCounter=max;}
     //______________________________________________putASkullOnTrack__________________________________________________________________________//
     public void putASkullOnTrack() {
-        for(int i=0;i<getTrackSize();i++){
+        for(int i=0;i<getSkullTrack().length;i++){
             if(getSkullTrack()[i]==false) {
                 getSkullTrack()[i]=true;
                 break;
@@ -331,9 +331,10 @@ public class Player {
 //_________________________how Many Deaths____________________________________________________________//
     public int numberOfDeaths(){
         int death=0;
-        for(int i=0; i<getTrackSize();i++)
+
+        for(int i=0; i<getSkullTrack().length;i++)
         {
-            if (getSkullTrack()[i]==true)
+            if (getSkullTrack()[i])
                 death++;
         }
     return death;
