@@ -52,7 +52,7 @@ public class WeaponDeck{
 
     public WeaponCard pickUpWeapon(){
         if(this.deck.size()>0){
-            setUsedAmmoTile(this.deck.getFirst());
+            setUsedWeaponCard(this.deck.getFirst());
             return this.deck.getFirst();
         }
 
@@ -63,13 +63,21 @@ public class WeaponDeck{
             return deck.getFirst();}
     }
 
-    public void setUsedAmmoTile(WeaponCard weaponCard){
+    public void setUsedWeaponCard(WeaponCard weaponCard){
         usedWeaponCard.add(weaponCard);
+    }
+
+
+    public LinkedList<WeaponCard> getUsedWeaponCard() {
+        return usedWeaponCard;
     }
 
     /**
      * Shuffles used cards.
      */
+
+
+
 
     public void shuffleUsedWeaponCards() {
         Collections.shuffle(usedWeaponCard);
