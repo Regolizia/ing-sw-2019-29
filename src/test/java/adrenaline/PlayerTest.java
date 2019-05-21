@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerTest {
     private Player player;
 
-
     @BeforeEach
     void setUp() {
         CoordinatesWithRoom coordinatesWithRoom = new CoordinatesWithRoom();
@@ -18,6 +17,6 @@ class PlayerTest {
 
     @Test
     void numberOfDeaths() {
-        assertEquals(player.numberOfDeaths(), 0);
+        assertEquals(player.numberOfDeaths(),0);
     }
 }

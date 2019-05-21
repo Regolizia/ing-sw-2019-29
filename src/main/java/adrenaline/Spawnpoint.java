@@ -28,9 +28,10 @@ public class Spawnpoint {
         return y;
     }
     public void addWeaponCard(WeaponCard weaponCard){
-    this.weaponCards.add(weaponCard);
+        this.weaponCards.add(weaponCard);
     }
     public LinkedList<WeaponCard> getWeaponCards(){
         return this.weaponCards;
     }
+
 }
