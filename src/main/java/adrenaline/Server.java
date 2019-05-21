@@ -130,7 +130,7 @@ public class Server {
                 writers.add(out);
 
                 while (true) {
-                    String csv = String.join(",", possibleColors);  // SEND POSSIBLE COLORS
+                    String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
                     out.println("CHOOSE COLOR ");
                     out.println(csv);
                     color = in.nextLine();
@@ -251,8 +251,8 @@ public class Server {
     public static void startGame(){
         gameIsOn = true;
 
-        String pbc = String.join(",", colorsChosen);  // SEND COLORS
-        String pn = String.join(",", names);  // SEND COLORS
+        String pbc = String.join(", ", colorsChosen);  // SEND COLORS
+        String pn = String.join(", ", names);  // SEND COLORS
 
         for (PrintWriter writer : writers) {
             writer.println("MESSAGE" + "The board chosen is number " + boardChosen);

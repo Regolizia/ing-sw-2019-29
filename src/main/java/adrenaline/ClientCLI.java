@@ -7,10 +7,9 @@ import java.net.Socket;
 import java.util.Scanner;
 
 // RMI
-import java.rmi.Naming;
 
 
-public class VirtualClientCLI {
+public class ClientCLI {
 
     String serverAddress;
     Scanner in;
@@ -23,12 +22,12 @@ public class VirtualClientCLI {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        var client = new VirtualClientCLI(args[0]);
+        var client = new ClientCLI(args[0]);
         client.run();
     }
 
 
-    public VirtualClientCLI(String serverAddress) {
+    public ClientCLI(String serverAddress) {
         this.serverAddress = serverAddress;
      }
 
