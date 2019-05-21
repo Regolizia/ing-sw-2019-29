@@ -12,11 +12,12 @@ public class ActionTest {
     private Action action;
     @Test
     void constructor(){
-        action = new Action(); //constructor
+        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);// to do coordinatesWithRoom
+        action = new Action(m); //constructor
         WeaponCard w=new Thor();//
         Action.ActionType actionType= Action.ActionType.RUN; //enum
         Action.PayOption payOption= Action.PayOption.AMMO;  //enum
-        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);// to do coordinatesWithRoom
+
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));//to do doAction
         Player player=new Player(c1, Figure.PlayerColor.GREEN);//to do doAction()
         Player victim=new Player(c1, Figure.PlayerColor.BLUE);//
@@ -47,7 +48,7 @@ public class ActionTest {
 
         action.chooseWeaponCard(player.getHand());//
         action.chooseTargets(victims,1);//
-        action.grab(player,c1,m.getMapUsed().getGameBoard(), Action.PayOption.AMMO);// to do grab();
+        action.grab(player,c1,m.getMapUsed().getGameBoard(), Action.PayOption.AMMO,m);// to do grab();
         action.paidEffect(new Thor(),player, Action.PayOption.AMMO);//
         action.paidEffect(new Thor(),player, Action.PayOption.AMMOPOWER);//
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.RED));// pay()
