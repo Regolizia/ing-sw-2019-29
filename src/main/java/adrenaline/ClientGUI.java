@@ -1,8 +1,9 @@
 package adrenaline;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
@@ -13,50 +14,35 @@ import java.util.Scanner;
 
 import java.awt.BorderLayout;
 
-/**
- * A simple Swing-based client for the chat server. Graphically it is a frame with a text
- * field for entering messages and a textarea to see the whole dialog.
- *
- * The client follows the following Chat Protocol. When the server sends "SUBMITNAME" the
- * client replies with the desired screen name. The server will keep sending "SUBMITNAME"
- * requests as long as the client submits screen names that are already in use. When the
- * server sends a line beginning with "NAMEACCEPTED" the client is now allowed to start
- * sending the server arbitrary strings to be broadcast to all chatters connected to the
- * server. When the server sends a line beginning with "MESSAGE" then all characters
- * following this string should be displayed in its message area.
- */
-//added try finally to close socket
-
 public class ClientGUI {
 
     String serverAddress;
     Scanner in;
     PrintWriter out;
-    JFrame frame = new JFrame("ClientGUI");
-    JTextArea messageArea = new JTextArea();
-    JLabel leftBoard;
-    JLabel rightBoard;
-    JLabel underMessageArea;
-    JLabel emptyRightCorner;
-    JLabel adrenalin;
-    ImageIcon imageA;
-    ImageIcon imageB;
+
+    private JFrame frame = new JFrame("ClientGUI");
+    private JTextArea messageArea = new JTextArea();
+    private JLabel adrenalin;
     //MAPS
-    JButton buttonA;
-    JButton buttonB;
-    JButton buttonC;
-    JButton buttonD;
+    private JButton buttonA;
+    private JButton buttonB;
+    private JButton buttonC;
+    private JButton buttonD;
     Font font;
-    boolean isFirst = false;
+    private boolean isFirst = false;
 
-    JRadioButton[] radioButtons;
-    JButton okButton;
-    JTextField questionField;
+    private JRadioButton[] radioButtons;
+    private JButton okButton;
+    private JTextField questionField;
 
-            JTextField textField= new JTextField(30);
-    JTextField messageTextField= new JTextField(42);
+    private JTextField textField= new JTextField(30);
+    private JTextField messageTextField= new JTextField(42);
 
-    public ClientGUI(String serverAddress) {
+    JLabel[] redArray = new JLabel[3];
+    JLabel[] blueArray = new JLabel[3];
+    JLabel[] yellowArray = new JLabel[3];
+
+    private ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);
         textField.addActionListener(new ActionListener() {
@@ -70,7 +56,7 @@ public class ClientGUI {
 
     ///////////////////////
 
-    public void selectOne(String question, String options){
+    private void selectOne(String question, String options){
 
         if(!question.equals("")&&!options.equals("")) {
             messageArea.setVisible(false);
@@ -141,7 +127,7 @@ public class ClientGUI {
         frame.setVisible(true);
     }
 
-    public void restoreMessageArea(){
+    private void restoreMessageArea(){
         for(JRadioButton b : radioButtons){
         if(b!=null) {
             b.setVisible(false);
@@ -152,7 +138,7 @@ public class ClientGUI {
         messageArea.setVisible(true);
     }
 
-    public void setTextField() {
+    private void setTextField() {
         Insets insets = frame.getContentPane().getInsets();
         textField.setSize(10,20);
         Dimension size = textField.getPreferredSize();
@@ -167,12 +153,12 @@ public class ClientGUI {
         frame.setVisible(true);
     }
 
-    public void closeTextField(){
+    private void closeTextField(){
     textField.setSize(0,0);
     textField.setEditable(false);
     }
 
-    public void setMessageTextField(String s){
+    private void setMessageTextField(String s){
         messageTextField.setText(s);
         messageTextField.setSize(10,20);
         Dimension size = messageTextField.getPreferredSize();
@@ -186,7 +172,7 @@ public class ClientGUI {
         messageTextField.setEditable(false);
         frame.setVisible(true);
     }
-    public void setStartImage(){
+    private void setStartImage(){
         adrenalin = new JLabel(new ImageIcon("src\\main\\resources\\images\\adrenalin.jpg"), SwingConstants.CENTER);
         adrenalin.setSize(879,260);
         Dimension size = adrenalin.getPreferredSize();
@@ -197,14 +183,14 @@ public class ClientGUI {
         adrenalin.repaint();
         frame.setVisible(true);
     }
-    public void closeMessageTextField(){
+    private void closeMessageTextField(){
         messageTextField.setSize(0,0);
     }
-    public void closeStartImage(){
+    private void closeStartImage(){
         adrenalin.setSize(0,0);
     }
 
-    public void setMapChoice(){
+    private void setMapChoice(){
         isFirst = true;
         buttonA = new JButton(new ImageIcon("src\\main\\resources\\images\\Map1.jpg"));
         buttonA.setActionCommand("1");
@@ -266,7 +252,7 @@ public class ClientGUI {
         });
 
     }
-    public void closeMapChoice(){
+    private void closeMapChoice(){
         buttonA.setSize(0,0);
         buttonB.setSize(0,0);
         buttonC.setSize(0,0);
@@ -274,7 +260,7 @@ public class ClientGUI {
     }
     //////////////////////7
 
-    private void run() throws IOException {
+    private void run(){
         try {
             var socket = new Socket(serverAddress, 59001);
             in = new Scanner(socket.getInputStream());
@@ -286,7 +272,7 @@ public class ClientGUI {
 
                     // TODO REMOVE
                     selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
-
+                    spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
 
                     setMessageTextField("Insert nickname: ");
                     setTextField();
@@ -331,7 +317,7 @@ public class ClientGUI {
                 }
                 if (line.startsWith("MESSAGE" + "Waiting for other players...")) {
                     if(isFirst)
-                    closeMapChoice();
+                    {closeMapChoice();}
                 }
             }}finally {socket.close();}
         } catch (IOException e){
@@ -342,7 +328,7 @@ public class ClientGUI {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
         if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
@@ -354,7 +340,7 @@ public class ClientGUI {
 
     }
 
-    public void addPlayerBoards(String o){
+    private void addPlayerBoards(String o){
        System.out.println(o);
        int numberOfCommas = o.replaceAll("[^,] ","").length();
         System.out.println("commas "+ numberOfCommas);
@@ -394,7 +380,7 @@ public class ClientGUI {
             playerBoards[index].repaint();
             System.out.println(playerBoards[index].getLocation());
         }
-        underMessageArea = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+        JLabel underMessageArea = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
         underMessageArea.setSize(390,219);
         size = underMessageArea.getPreferredSize();
         underMessageArea.setBounds(922 + insets.left, insets.bottom,
@@ -404,7 +390,7 @@ public class ClientGUI {
         System.out.println("LabelC--> "+ underMessageArea.getLocation());
 
         if(numberOfCommas!=4){
-            emptyRightCorner = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+            JLabel emptyRightCorner = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
             emptyRightCorner.setSize(390,219);
             size = underMessageArea.getPreferredSize();
             emptyRightCorner.setBounds(922 + insets.left, 481 + insets.top,
@@ -419,7 +405,7 @@ public class ClientGUI {
         frame.setVisible(true);
     }
 
-    public void addPlayerNames(String o){
+    private void addPlayerNames(String o){
        System.out.println(o);
        int numberOfCommas = o.replaceAll("[^,] ","").length();
         System.out.println("commas "+ numberOfCommas);
@@ -453,7 +439,7 @@ public class ClientGUI {
         frame.setVisible(true);
     }
 
-    public void setGameBoardImages(int n){
+    private void setGameBoardImages(int n){
        ImageIcon img = new ImageIcon("src\\main\\resources\\images\\icon.jpg");
         frame.setIconImage(img.getImage());
         frame.getContentPane().setLayout(null);
@@ -468,6 +454,8 @@ public class ClientGUI {
         Dimension size;
         System.out.println(n);
         if(n!=0) {
+            ImageIcon imageA;
+            ImageIcon imageB;
             switch(n) {
                 case (1):
                     imageA = new ImageIcon("src\\main\\resources\\images\\Part1.jpg");
@@ -487,8 +475,8 @@ public class ClientGUI {
                     imageB = new ImageIcon("src\\main\\resources\\images\\Part2.jpg");
                     break;
             }
-            leftBoard = new JLabel(imageA, SwingConstants.CENTER);
-            rightBoard = new JLabel(imageB, SwingConstants.CENTER);
+            JLabel leftBoard = new JLabel(imageA, SwingConstants.CENTER);
+            JLabel rightBoard = new JLabel(imageB, SwingConstants.CENTER);
 
             leftBoard.setSize(434, 700);
             rightBoard.setSize(488, 700);
@@ -544,6 +532,146 @@ public class ClientGUI {
 */
     }
 
+    // 90 OR -90
+    public ImageIcon rotateImag (ImageIcon img, int n) {
+        BufferedImage bi = new BufferedImage(
+                img.getIconWidth(),
+                img.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.createGraphics();
+        img.paintIcon(null, g, 0,0);
+        g.dispose();
+        if(n<0){n += 360;}
+        double rotationRequired = Math.toRadians (n);
+        double locationX = bi.getWidth() / 2;
+        double locationY = bi.getHeight() / 2;
+        AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage newImage =new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+        op.filter(bi, newImage);
+
+        return(new ImageIcon(newImage));
+    }
+
+    public void spawnpointsSetup(String red, String blue, String yellow){
+        // TODO REMOVE
+        redArray = new JLabel[3];
+        blueArray = new JLabel[3];
+        yellowArray = new JLabel[3];
+        ImageIcon img = new ImageIcon();
+
+        int numberOfCommas = blue.replaceAll("[^,] ", "").length();
+        System.out.println("commas blue " + numberOfCommas);
+
+        String[] singleWeapons = blue.split(", ");
+        for(int i=0; i<3;i++){
+            switch (singleWeapons[i]){
+
+                case "Cyberblade":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+                    break;
+
+                case "Electroscythe":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+                    break;
+
+                case "Flamethrower":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+                    break;
+
+                case "Furnace":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+                    break;
+
+                case "GrenadeLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+                    break;
+
+                case "Heatseeker":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+                    break;
+
+                case "Hellion":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+                    break;
+
+                case "LockRifle":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+                    break;
+
+                case "MachineGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+                    break;
+
+                case "PlasmaGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+                    break;
+
+                case "PowerGlove":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+                    break;
+
+                case "Railgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+                    break;
+
+                case "RocketLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+                    break;
+
+                case "Shockwave":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+                    break;
+
+                case "Shotgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+                    break;
+
+                case "Sledgehammer":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+                    break;
+
+                case "Thor":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+                    break;
+
+                case "TractorBeam":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+                    break;
+
+                case "VortexCannon":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+                    break;
+
+                case "Whisper":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+                    break;
+
+                case "Zx_2":
+                    default:
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+                    break;
+            }
+            blueArray[i] = new JLabel(img, SwingConstants.CENTER);
+
+            Insets insets = frame.getContentPane().getInsets();
+            Dimension size;
+
+            blueArray[i].setSize(390, 96);
+
+            size = blueArray[i].getPreferredSize();
+            blueArray[i].setBounds(490 + insets.left + (i)*(img.getIconWidth() + 10), insets.top,
+                    size.width, size.height);
+            frame.getContentPane().add(blueArray[i]);
+            blueArray[i].repaint();
+            System.out.println(blueArray[i].getLocation());
+
+
+
+
+        }
+
+    }
 
     }
 
