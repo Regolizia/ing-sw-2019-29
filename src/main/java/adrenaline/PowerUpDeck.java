@@ -51,7 +51,7 @@ public class PowerUpDeck{
 
 
 
-    public PowerUpCard pickPoweUp(){
+    public PowerUpCard pickPowerUp(){
         if(this.deck.size()>0){
             setUsedPowerUp(this.deck.getFirst());
             return this.deck.getFirst();
@@ -76,4 +76,8 @@ public class PowerUpDeck{
         Collections.shuffle(usedPowerUp);
     }
 
+
+    public LinkedList<PowerUpCard> getUsedPowerUp() {
+        return usedPowerUp;
+    }
 }
