@@ -1,5 +1,7 @@
 package adrenaline;
 
+import adrenaline.gameboard.*;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -104,9 +106,9 @@ public class GameModel {
         Coordinates coordinates;
         for(indexOfRoom=0;indexOfRoom<mapUsed.getGameBoard().getNumberOfRooms();indexOfRoom++){
             //here check all the rooms one by one
-            for(xCoordinate=0;xCoordinate<mapUsed.arrayX[indexOfRoom];xCoordinate++)
+            for(xCoordinate=0;xCoordinate<mapUsed.getArrayX()[indexOfRoom];xCoordinate++)
             {
-                for(yCoordinate=0;yCoordinate<mapUsed.arrayY[indexOfRoom];yCoordinate++){
+                for(yCoordinate=0;yCoordinate<mapUsed.getArrayY()[indexOfRoom];yCoordinate++){
                    if(xCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeX()&&yCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeY()){
                        //now i check inside the room
                        for (Spawnpoint spawnpoint:mapUsed.getGameBoard().getRoom(indexOfRoom).getSpawnpoints()) {

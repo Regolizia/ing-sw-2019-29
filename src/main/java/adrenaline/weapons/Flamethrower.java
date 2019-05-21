@@ -1,6 +1,8 @@
 package adrenaline.weapons;
 
 import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
 import java.util.List;
 
 /**

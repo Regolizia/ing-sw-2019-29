@@ -1,9 +1,11 @@
 package adrenaline;
 
+import adrenaline.gameboard.GameBoard;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import static adrenaline.Door.Direction.*;
+import static adrenaline.gameboard.Door.Direction.*;
 
 public class CoordinatesWithRoom extends Coordinates {
     private Room room;

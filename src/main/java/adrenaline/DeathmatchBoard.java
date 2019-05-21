@@ -1,5 +1,7 @@
 package adrenaline;
 
+import adrenaline.gameboard.GameBoard;
+
 import java.util.*;
 
 /**

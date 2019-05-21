@@ -1,5 +1,7 @@
 package adrenaline;
 
+import adrenaline.gameboard.GameBoard;
+
 import java.util.*;
 
 /**
@@ -20,7 +22,7 @@ public class FreneticAction extends Action {
         FIRST,AFTER      //reload is an  optional action //ADRENALINESHOOT
     }
 
-    public boolean selectFrenzyAction(ActionType actionSelected,Player player,CoordinatesWithRoom c,GameBoard g,GameModel m,PayOption paymentOption,PlayerOrder order){
+    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order){
 /*FIRST
 * move up to 4 squares
 * move uo to 2 squares and grab
