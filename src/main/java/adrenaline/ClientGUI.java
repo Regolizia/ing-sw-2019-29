@@ -1,6 +1,9 @@
 package adrenaline;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
@@ -34,6 +37,10 @@ public class ClientGUI {
 
     private JTextField textField= new JTextField(30);
     private JTextField messageTextField= new JTextField(42);
+
+    JLabel[] redArray = new JLabel[3];
+    JLabel[] blueArray = new JLabel[3];
+    JLabel[] yellowArray = new JLabel[3];
 
     private ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -265,7 +272,7 @@ public class ClientGUI {
 
                     // TODO REMOVE
                     selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
-
+                    spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
 
                     setMessageTextField("Insert nickname: ");
                     setTextField();
@@ -525,6 +532,146 @@ public class ClientGUI {
 */
     }
 
+    // 90 OR -90
+    public ImageIcon rotateImag (ImageIcon img, int n) {
+        BufferedImage bi = new BufferedImage(
+                img.getIconWidth(),
+                img.getIconHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.createGraphics();
+        img.paintIcon(null, g, 0,0);
+        g.dispose();
+        if(n<0){n += 360;}
+        double rotationRequired = Math.toRadians (n);
+        double locationX = bi.getWidth() / 2;
+        double locationY = bi.getHeight() / 2;
+        AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage newImage =new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
+        op.filter(bi, newImage);
+
+        return(new ImageIcon(newImage));
+    }
+
+    public void spawnpointsSetup(String red, String blue, String yellow){
+        // TODO REMOVE
+        redArray = new JLabel[3];
+        blueArray = new JLabel[3];
+        yellowArray = new JLabel[3];
+        ImageIcon img = new ImageIcon();
+
+        int numberOfCommas = blue.replaceAll("[^,] ", "").length();
+        System.out.println("commas blue " + numberOfCommas);
+
+        String[] singleWeapons = blue.split(", ");
+        for(int i=0; i<3;i++){
+            switch (singleWeapons[i]){
+
+                case "Cyberblade":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+                    break;
+
+                case "Electroscythe":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+                    break;
+
+                case "Flamethrower":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+                    break;
+
+                case "Furnace":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+                    break;
+
+                case "GrenadeLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+                    break;
+
+                case "Heatseeker":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+                    break;
+
+                case "Hellion":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+                    break;
+
+                case "LockRifle":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+                    break;
+
+                case "MachineGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+                    break;
+
+                case "PlasmaGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+                    break;
+
+                case "PowerGlove":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+                    break;
+
+                case "Railgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+                    break;
+
+                case "RocketLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+                    break;
+
+                case "Shockwave":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+                    break;
+
+                case "Shotgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+                    break;
+
+                case "Sledgehammer":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+                    break;
+
+                case "Thor":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+                    break;
+
+                case "TractorBeam":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+                    break;
+
+                case "VortexCannon":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+                    break;
+
+                case "Whisper":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+                    break;
+
+                case "Zx_2":
+                    default:
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+                    break;
+            }
+            blueArray[i] = new JLabel(img, SwingConstants.CENTER);
+
+            Insets insets = frame.getContentPane().getInsets();
+            Dimension size;
+
+            blueArray[i].setSize(390, 96);
+
+            size = blueArray[i].getPreferredSize();
+            blueArray[i].setBounds(490 + insets.left + (i)*(img.getIconWidth() + 10), insets.top,
+                    size.width, size.height);
+            frame.getContentPane().add(blueArray[i]);
+            blueArray[i].repaint();
+            System.out.println(blueArray[i].getLocation());
+
+
+
+
+        }
+
+    }
 
     }
 
