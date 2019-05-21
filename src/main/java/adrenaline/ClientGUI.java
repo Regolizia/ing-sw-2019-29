@@ -1,9 +1,10 @@
 package adrenaline;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import javax.swing.ImageIcon;
-import javax.swing.text.DefaultCaret;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -26,20 +27,21 @@ import java.awt.BorderLayout;
  */
 //added try finally to close socket
 
-public class VirtualClientGUI {
+public class ClientGUI {
 
     String serverAddress;
     Scanner in;
     PrintWriter out;
     JFrame frame = new JFrame("ClientGUI");
     JTextArea messageArea = new JTextArea();
-    JLabel labelA;
-    JLabel labelB;
-    JLabel labelC;
-    JLabel labelD;
-    JLabel labelE;
+    JLabel leftBoard;
+    JLabel rightBoard;
+    JLabel underMessageArea;
+    JLabel emptyRightCorner;
+    JLabel adrenalin;
     ImageIcon imageA;
     ImageIcon imageB;
+    //MAPS
     JButton buttonA;
     JButton buttonB;
     JButton buttonC;
@@ -47,10 +49,14 @@ public class VirtualClientGUI {
     Font font;
     boolean isFirst = false;
 
-    JTextField textField= new JTextField(30);
+    JRadioButton[] radioButtons;
+    JButton okButton;
+    JTextField questionField;
+
+            JTextField textField= new JTextField(30);
     JTextField messageTextField= new JTextField(42);
 
-    public VirtualClientGUI(String serverAddress) {
+    public ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);
         textField.addActionListener(new ActionListener() {
@@ -62,12 +68,96 @@ public class VirtualClientGUI {
         textField.setEditable(false);
     }
 
-    ///////////////////////7
+    ///////////////////////
+
+    public void selectOne(String question, String options){
+
+        if(!question.equals("")&&!options.equals("")) {
+            messageArea.setVisible(false);
+
+            questionField = new JTextField(question);
+            Insets insets = frame.getContentPane().getInsets();
+            questionField.setSize(10,20);
+            Dimension size = questionField.getPreferredSize();
+            questionField.setBackground(Color.DARK_GRAY);
+            questionField.setForeground(Color.WHITE);
+            questionField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+            questionField.setBounds(922 + insets.left +10, insets.top + 10,
+                    size.width, size.height);
+            frame.getContentPane().add(questionField, BorderLayout.SOUTH);
+
+            okButton = new JButton("OK");
+            okButton.setSize(10,20);
+            okButton.setForeground(Color.WHITE);
+            okButton.setBackground(Color.DARK_GRAY);
+            okButton.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+            okButton.setBounds(922 + insets.left + 300, insets.top + 200,
+                    size.width, size.height);
+            frame.getContentPane().add(okButton, BorderLayout.SOUTH);
+
+            int numberOfCommas = options.replaceAll("[^,] ", "").length();
+            System.out.println("commas options " + numberOfCommas);
+
+            String[] singleOptions = options.split(", ");
+            radioButtons = new JRadioButton[numberOfCommas + 1];
+            // DO
+
+            for(int index=0;index<singleOptions.length;index++) {
+                System.out.println("options->"+singleOptions[index]);
+
+                radioButtons[index] = new JRadioButton(singleOptions[index]);
+                radioButtons[index].setText(singleOptions[index]);
+                radioButtons[index].setOpaque(true);
+                radioButtons[index].setForeground(Color.WHITE);
+                radioButtons[index].setBackground(Color.DARK_GRAY);
+                radioButtons[index].setBorder(javax.swing.BorderFactory.createEmptyBorder());
+
+                size = radioButtons[index].getPreferredSize();
+                radioButtons[index].setBounds(922 +10+ insets.left, insets.top + (index)*25 +40,
+                        size.width, size.height);
+                frame.getContentPane().add(radioButtons[index]);
+                radioButtons[index].repaint();
+                System.out.println(radioButtons[index].getLocation());
+            }
+            okButton.addActionListener(new ActionListener(){
+                public void actionPerformed(ActionEvent e){
+                    for(JRadioButton b : radioButtons) {
+                        if (b!=null && b.isSelected()) {
+
+                            System.out.println(b.getText());
+                            out.println(b.getText());
+
+                            // TODO MOVE MAYBE
+                            restoreMessageArea();
+
+                        }
+                    }
+                }
+            });
+
+        }
+        frame.revalidate();
+        frame.repaint();
+        frame.setVisible(true);
+    }
+
+    public void restoreMessageArea(){
+        for(JRadioButton b : radioButtons){
+        if(b!=null) {
+            b.setVisible(false);
+        }
+        }
+        okButton.setVisible(false);
+        questionField.setVisible(false);
+        messageArea.setVisible(true);
+    }
+
     public void setTextField() {
         Insets insets = frame.getContentPane().getInsets();
         textField.setSize(10,20);
         Dimension size = textField.getPreferredSize();
         textField.setBackground(Color.DARK_GRAY);
+        textField.setCaretColor(Color.WHITE);
         textField.setForeground(Color.WHITE);
         textField.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         textField.setBounds(790 + insets.left, insets.top + 505,
@@ -97,21 +187,21 @@ public class VirtualClientGUI {
         frame.setVisible(true);
     }
     public void setStartImage(){
-        labelE = new JLabel(new ImageIcon("src\\main\\resources\\images\\adrenalin.jpg"), SwingConstants.CENTER);
-        labelE.setSize(879,260);
-        Dimension size = labelE.getPreferredSize();
+        adrenalin = new JLabel(new ImageIcon("src\\main\\resources\\images\\adrenalin.jpg"), SwingConstants.CENTER);
+        adrenalin.setSize(879,260);
+        Dimension size = adrenalin.getPreferredSize();
         Insets insets = frame.getContentPane().getInsets();
-        labelE.setBounds(216 + insets.left, insets.top + 220,
+        adrenalin.setBounds(216 + insets.left, insets.top + 220,
                 size.width, size.height);
-        frame.getContentPane().add(labelE);
-        labelE.repaint();
+        frame.getContentPane().add(adrenalin);
+        adrenalin.repaint();
         frame.setVisible(true);
     }
     public void closeMessageTextField(){
         messageTextField.setSize(0,0);
     }
     public void closeStartImage(){
-        labelE.setSize(0,0);
+        adrenalin.setSize(0,0);
     }
 
     public void setMapChoice(){
@@ -183,39 +273,6 @@ public class VirtualClientGUI {
         buttonD.setSize(0,0);
     }
     //////////////////////7
-/*
-
-    private String getName() {
-        return JOptionPane.showInputDialog(
-                frame,
-                "Choose nickname:",
-                "Nickname selection",
-                JOptionPane.PLAIN_MESSAGE
-        );
-    }
-    private String getColor() {
-        return JOptionPane.showInputDialog(
-                frame,
-                "Choose color: " + in.nextLine(),
-                "Color selection",
-                JOptionPane.PLAIN_MESSAGE
-        );
-    }
-*/
-
-   /* // TODO SCELTA MAPPA CON IMMAGINI INVECE CHE NUMERI
-    private String getBoard(){
-        Image image=GenerateImage.toImage(true);  //this generates an image file
-        ImageIcon icon = new ImageIcon(image);
-        JLabel thumb = new JLabel();
-        thumb.setIcon(icon);
-    }*/
-   /*private int getBoard() {
-       String[] options = new String[]{"1", "2", "3", "4"};
-       return JOptionPane.showOptionDialog(null, "Choose game board: ", "Game board selection",
-               JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-               null, options, options[0]) +1 ;  // +1 BECAUSE IT STARTS FROM 0
-   }*/
 
     private void run() throws IOException {
         try {
@@ -226,6 +283,11 @@ public class VirtualClientGUI {
             while (in.hasNextLine()) {
                 var line = in.nextLine();
                 if (line.startsWith("ENTER")) {
+
+                    // TODO REMOVE
+                    selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
+
+
                     setMessageTextField("Insert nickname: ");
                     setTextField();
                     setStartImage();
@@ -251,6 +313,7 @@ public class VirtualClientGUI {
                     closeMessageTextField();
                 } else if (line.startsWith("MESSAGE")) {
                     messageArea.append(line.substring(7) + "\n");
+                    messageArea.setCaretPosition(messageArea.getText().length() - 1);
                 } else if (line.startsWith("CHOOSE BOARD ")) {
                     setMapChoice();
                 } else if (line.startsWith("PLAYER BOARDS ")) {
@@ -263,6 +326,7 @@ public class VirtualClientGUI {
                 if (line.startsWith("MESSAGE" + "The board chosen is number ")) {
                     // SET IMAGES AS BACKGROUND
                     closeStartImage();
+                    selectOne("","");
                     setGameBoardImages(Integer.valueOf(line.substring(34)));
                 }
                 if (line.startsWith("MESSAGE" + "Waiting for other players...")) {
@@ -283,7 +347,7 @@ public class VirtualClientGUI {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        var client = new VirtualClientGUI(args[0]);
+        var client = new ClientGUI(args[0]);
         client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         client.frame.setVisible(true);
         client.run();
@@ -292,10 +356,10 @@ public class VirtualClientGUI {
 
     public void addPlayerBoards(String o){
        System.out.println(o);
-       int numberOfCommas = o.replaceAll("[^,]","").length();
+       int numberOfCommas = o.replaceAll("[^,] ","").length();
         System.out.println("commas "+ numberOfCommas);
 
-        String[] singleColors = o.split(",");
+        String[] singleColors = o.split(", ");
         JLabel[] playerBoards = new JLabel[numberOfCommas +1];
         Insets insets = frame.getContentPane().getInsets();
         Dimension size;
@@ -330,23 +394,23 @@ public class VirtualClientGUI {
             playerBoards[index].repaint();
             System.out.println(playerBoards[index].getLocation());
         }
-        labelC = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
-        labelC.setSize(390,219);
-        size = labelC.getPreferredSize();
-        labelC.setBounds(922 + insets.left, insets.bottom,
+        underMessageArea = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+        underMessageArea.setSize(390,219);
+        size = underMessageArea.getPreferredSize();
+        underMessageArea.setBounds(922 + insets.left, insets.bottom,
                 size.width, size.height);
-        frame.getContentPane().add(labelC);
-        labelC.repaint();
-        System.out.println("LabelC--> "+labelC.getLocation());
+        frame.getContentPane().add(underMessageArea);
+        underMessageArea.repaint();
+        System.out.println("LabelC--> "+ underMessageArea.getLocation());
 
         if(numberOfCommas!=4){
-            labelD = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
-            labelD.setSize(390,219);
-            size = labelC.getPreferredSize();
-            labelD.setBounds(922 + insets.left, 481 + insets.top,
+            emptyRightCorner = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
+            emptyRightCorner.setSize(390,219);
+            size = underMessageArea.getPreferredSize();
+            emptyRightCorner.setBounds(922 + insets.left, 481 + insets.top,
                     size.width, size.height);
-            frame.getContentPane().add(labelD);
-            labelD.repaint();
+            frame.getContentPane().add(emptyRightCorner);
+            emptyRightCorner.repaint();
         }
 
         frame.setSize(1312 + frame.getInsets().right + frame.getInsets().left,700+ frame.getInsets().top+ frame.getInsets().bottom);
@@ -357,7 +421,7 @@ public class VirtualClientGUI {
 
     public void addPlayerNames(String o){
        System.out.println(o);
-       int numberOfCommas = o.replaceAll("[^,]","").length();
+       int numberOfCommas = o.replaceAll("[^,] ","").length();
         System.out.println("commas "+ numberOfCommas);
 
         String[] singleNames = o.split(",");
@@ -423,27 +487,25 @@ public class VirtualClientGUI {
                     imageB = new ImageIcon("src\\main\\resources\\images\\Part2.jpg");
                     break;
             }
-            labelA = new JLabel(imageA, SwingConstants.CENTER);
-            labelB = new JLabel(imageB, SwingConstants.CENTER);
+            leftBoard = new JLabel(imageA, SwingConstants.CENTER);
+            rightBoard = new JLabel(imageB, SwingConstants.CENTER);
 
-            labelA.setSize(434, 700);
-            labelB.setSize(488, 700);
+            leftBoard.setSize(434, 700);
+            rightBoard.setSize(488, 700);
 
-            size = labelA.getPreferredSize();
-            labelA.setBounds(insets.left, insets.top,
+            size = leftBoard.getPreferredSize();
+            leftBoard.setBounds(insets.left, insets.top,
                     size.width, size.height);
-            size = labelB.getPreferredSize();
-            labelB.setBounds(434 + insets.left, insets.top,
+            size = rightBoard.getPreferredSize();
+            rightBoard.setBounds(434 + insets.left, insets.top,
                     size.width, size.height);
-            frame.getContentPane().add(labelA);
-            frame.getContentPane().add(labelB);
+            frame.getContentPane().add(leftBoard);
+            frame.getContentPane().add(rightBoard);
 
 
-            labelA.repaint();
-            labelB.repaint();
+            leftBoard.repaint();
+            rightBoard.repaint();
         }
-        DefaultCaret caret = (DefaultCaret)messageArea.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         size = messageArea.getPreferredSize();
         messageArea.setBounds(922 + insets.left, insets.bottom,
                 size.width, size.height);
@@ -469,7 +531,7 @@ public class VirtualClientGUI {
             File fontFile = new File(this.getClass().getResource("\\fonts\\ethnocentric.ttf").toURI());
             fontFile.getAbsolutePath();
             fontFile.canRead();
-            //InputStream is = VirtualClientGUI.class.getResourceAsStream("fonts/ethnocentric.ttf");
+            //InputStream is = ClientGUI.class.getResourceAsStream("fonts/ethnocentric.ttf");
             font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
         } catch(FontFormatException e){
             e.printStackTrace();
