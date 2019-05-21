@@ -1,7 +1,5 @@
 package adrenaline;
 
-import adrenaline.gameboard.GameBoard;
-
 import java.util.*;
 
 /**
@@ -14,15 +12,15 @@ import java.util.*;
     // else chooses another action
 public class FreneticAction extends Action {
 
-    public FreneticAction(){
-        super();
+    public FreneticAction(GameModel m){
+        super(m);
     }
 
     public static enum PlayerOrder {
         FIRST,AFTER      //reload is an  optional action //ADRENALINESHOOT
     }
 
-    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order){
+    public boolean selectFrenzyAction(ActionType actionSelected,Player player,CoordinatesWithRoom c,GameBoard g,GameModel m,PayOption paymentOption,PlayerOrder order){
 /*FIRST
 * move up to 4 squares
 * move uo to 2 squares and grab
@@ -43,7 +41,7 @@ switch (actionSelected){
                         coordinatesG=chooseCell(proposeCellsGrabFrenzy(c, g, player));
                     else
                         coordinatesG=chooseCell(proposeCellsGrabFrenzy(c,g,player,order));
-               if((grab(player, coordinatesG, g,paymentOption))){
+               if((grab(player, coordinatesG, g,paymentOption,m))){
                    player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
                    return true;
                }
