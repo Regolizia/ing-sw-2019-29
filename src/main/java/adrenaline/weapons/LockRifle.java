@@ -65,7 +65,10 @@ public class LockRifle extends WeaponCard {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "LockRifle";
+    }
 
 
 }

@@ -125,4 +125,9 @@ public class WeaponCard extends Card{
 // reload to pay baseEffect
     void setNotReload(){reload=false;}
     boolean getReload(){return reload;}
+
+    @Override
+    public String toString() {
+        return "Generic weapon card";
+    }
 }

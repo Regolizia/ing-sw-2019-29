@@ -54,5 +54,8 @@ public class Zx_2 extends WeaponCard {
         }
 
     }
-
+    @Override
+    public String toString() {
+        return "Zx_2";
+    }
 }

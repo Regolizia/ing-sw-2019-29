@@ -112,4 +112,8 @@ public class PowerGlove extends WeaponCard {
                 break;
         }
     }
+    @Override
+    public String toString() {
+        return "PowerGlove";
+    }
 }

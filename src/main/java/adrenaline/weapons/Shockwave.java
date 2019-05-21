@@ -53,4 +53,8 @@ public class Shockwave extends WeaponCard {
                 break;
         }
     }
+    @Override
+    public String toString() {
+        return "Shockwave";
+    }
 }

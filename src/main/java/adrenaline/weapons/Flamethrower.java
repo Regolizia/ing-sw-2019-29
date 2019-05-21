@@ -104,4 +104,8 @@ public class Flamethrower extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "Flamethrower";
+    }
 }

@@ -59,4 +59,8 @@ public class PlasmaGun extends WeaponCard {
 
 
     }
+    @Override
+    public String toString() {
+        return "PlasmaGun";
+    }
 }

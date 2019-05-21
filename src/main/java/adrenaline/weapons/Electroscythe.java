@@ -55,4 +55,8 @@ public class Electroscythe extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "Electroscythe";
+    }
 }

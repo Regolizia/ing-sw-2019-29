@@ -41,6 +41,7 @@ public class ClientGUI {
     JLabel[] redArray = new JLabel[3];
     JLabel[] blueArray = new JLabel[3];
     JLabel[] yellowArray = new JLabel[3];
+    JLabel[] playerCards = new JLabel[3];
 
     private ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
@@ -181,6 +182,9 @@ public class ClientGUI {
                 size.width, size.height);
         frame.getContentPane().add(adrenalin);
         adrenalin.repaint();
+        frame.setSize(1312 + frame.getInsets().right + frame.getInsets().left,700+ frame.getInsets().top+ frame.getInsets().bottom);
+        frame.revalidate();
+        frame.repaint();
         frame.setVisible(true);
     }
     private void closeMessageTextField(){
@@ -270,10 +274,6 @@ public class ClientGUI {
                 var line = in.nextLine();
                 if (line.startsWith("ENTER")) {
 
-                    // TODO REMOVE
-                    selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
-                    spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
-
                     setMessageTextField("Insert nickname: ");
                     setTextField();
                     setStartImage();
@@ -311,9 +311,23 @@ public class ClientGUI {
                 }
                 if (line.startsWith("MESSAGE" + "The board chosen is number ")) {
                     // SET IMAGES AS BACKGROUND
+
+                    // TODO REMOVE
+                    selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
+                    spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
+                    setupPlayerCards();
+                    addPlayerCard("Shotgun");
+                    addPlayerCard("Shockwave");
+                    addPlayerCard("Flamethrower");
+                    /////
+                    /// TODO INSERT EMPTY SETUP
+
                     closeStartImage();
                     selectOne("","");
                     setGameBoardImages(Integer.valueOf(line.substring(34)));
+
+
+
                 }
                 if (line.startsWith("MESSAGE" + "Waiting for other players...")) {
                     if(isFirst)
@@ -533,7 +547,7 @@ public class ClientGUI {
     }
 
     // 90 OR -90
-    public ImageIcon rotateImag (ImageIcon img, int n) {
+    public ImageIcon rotateImag(ImageIcon img, int degrees) {
         BufferedImage bi = new BufferedImage(
                 img.getIconWidth(),
                 img.getIconHeight(),
@@ -541,16 +555,27 @@ public class ClientGUI {
         Graphics g = bi.createGraphics();
         img.paintIcon(null, g, 0,0);
         g.dispose();
-        if(n<0){n += 360;}
-        double rotationRequired = Math.toRadians (n);
-        double locationX = bi.getWidth() / 2;
-        double locationY = bi.getHeight() / 2;
-        AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        BufferedImage newImage =new BufferedImage(bi.getWidth(), bi.getHeight(), bi.getType());
-        op.filter(bi, newImage);
 
-        return(new ImageIcon(newImage));
+        double radians = Math.toRadians(degrees);
+        double sin = Math.abs(Math.sin(radians));
+        double cos = Math.abs(Math.cos(radians));
+        int newWidth = (int) Math.round(bi.getWidth() * cos + bi.getHeight() * sin);
+        int newHeight = (int) Math.round(bi.getWidth() * sin + bi.getHeight() * cos);
+
+        BufferedImage rotate = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = rotate.createGraphics();
+        int x = (newWidth - bi.getWidth()) / 2;
+        int y = (newHeight - bi.getHeight()) / 2;
+
+        AffineTransform at = new AffineTransform();
+        at.setToRotation(radians, x + (bi.getWidth() / 2), y + (bi.getHeight() / 2));
+        at.translate(x, y);
+        g2d.setTransform(at);
+
+        g2d.drawImage(bi, 0, 0, null);
+        g2d.dispose();
+
+        return(new ImageIcon(rotate));
     }
 
     public void spawnpointsSetup(String red, String blue, String yellow){
@@ -657,8 +682,6 @@ public class ClientGUI {
             Insets insets = frame.getContentPane().getInsets();
             Dimension size;
 
-            blueArray[i].setSize(390, 96);
-
             size = blueArray[i].getPreferredSize();
             blueArray[i].setBounds(490 + insets.left + (i)*(img.getIconWidth() + 10), insets.top,
                     size.width, size.height);
@@ -666,13 +689,338 @@ public class ClientGUI {
             blueArray[i].repaint();
             System.out.println(blueArray[i].getLocation());
 
-
-
-
         }
+
+        numberOfCommas = red.replaceAll("[^,] ", "").length();
+        System.out.println("commas red " + numberOfCommas);
+
+        singleWeapons = red.split(", ");
+        for(int i=0; i<3;i++) {
+            switch (singleWeapons[i]) {
+
+                case "Cyberblade":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+                    break;
+
+                case "Electroscythe":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+                    break;
+
+                case "Flamethrower":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+                    break;
+
+                case "Furnace":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+                    break;
+
+                case "GrenadeLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+                    break;
+
+                case "Heatseeker":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+                    break;
+
+                case "Hellion":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+                    break;
+
+                case "LockRifle":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+                    break;
+
+                case "MachineGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+                    break;
+
+                case "PlasmaGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+                    break;
+
+                case "PowerGlove":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+                    break;
+
+                case "Railgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+                    break;
+
+                case "RocketLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+                    break;
+
+                case "Shockwave":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+                    break;
+
+                case "Shotgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+                    break;
+
+                case "Sledgehammer":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+                    break;
+
+                case "Thor":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+                    break;
+
+                case "TractorBeam":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+                    break;
+
+                case "VortexCannon":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+                    break;
+
+                case "Whisper":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+                    break;
+
+                case "Zx_2":
+                default:
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+                    break;
+            }
+
+            redArray[i] = new JLabel(rotateImag(img, 270), SwingConstants.CENTER);
+
+            Insets insets = frame.getContentPane().getInsets();
+            Dimension size;
+
+            size = redArray[i].getPreferredSize();
+            redArray[i].setBounds(insets.left , insets.top + 260 + (i) * (img.getIconWidth() + 10),
+                    size.width, size.height);
+            frame.getContentPane().add(redArray[i]);
+            redArray[i].repaint();
+            System.out.println(redArray[i].getLocation());
+        }
+
+        numberOfCommas = yellow.replaceAll("[^,] ", "").length();
+        System.out.println("commas red " + numberOfCommas);
+
+        singleWeapons = yellow.split(", ");
+        for(int i=0; i<3;i++) {
+            switch (singleWeapons[i]) {
+
+                case "Cyberblade":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+                    break;
+
+                case "Electroscythe":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+                    break;
+
+                case "Flamethrower":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+                    break;
+
+                case "Furnace":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+                    break;
+
+                case "GrenadeLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+                    break;
+
+                case "Heatseeker":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+                    break;
+
+                case "Hellion":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+                    break;
+
+                case "LockRifle":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+                    break;
+
+                case "MachineGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+                    break;
+
+                case "PlasmaGun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+                    break;
+
+                case "PowerGlove":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+                    break;
+
+                case "Railgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+                    break;
+
+                case "RocketLauncher":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+                    break;
+
+                case "Shockwave":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+                    break;
+
+                case "Shotgun":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+                    break;
+
+                case "Sledgehammer":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+                    break;
+
+                case "Thor":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+                    break;
+
+                case "TractorBeam":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+                    break;
+
+                case "VortexCannon":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+                    break;
+
+                case "Whisper":
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+                    break;
+
+                case "Zx_2":
+                default:
+                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+                    break;
+            }
+
+            yellowArray[i] = new JLabel(rotateImag(img, 90), SwingConstants.CENTER);
+
+            Insets insets = frame.getContentPane().getInsets();
+            Dimension size;
+
+            size = yellowArray[i].getPreferredSize();
+            yellowArray[i].setBounds(776 + insets.left , insets.top + 400 + (i) * (img.getIconWidth() + 10),
+                    size.width, size.height);
+            frame.getContentPane().add(yellowArray[i]);
+            yellowArray[i].repaint();
+            System.out.println(yellowArray[i].getLocation());
+        }
+    }
+
+    public void addPlayerCard(String cardName){
+        int i;
+        for(i=0;i<3;i++) {
+            if ((playerCards[i].getIcon()==null)) {
+                break;
+            }
+        }
+        ImageIcon img;
+        switch (cardName) {
+
+            case "Cyberblade":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+                break;
+
+            case "Electroscythe":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+                break;
+
+            case "Flamethrower":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+                break;
+
+            case "Furnace":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+                break;
+
+            case "GrenadeLauncher":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+                break;
+
+            case "Heatseeker":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+                break;
+
+            case "Hellion":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+                break;
+
+            case "LockRifle":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+                break;
+
+            case "MachineGun":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+                break;
+
+            case "PlasmaGun":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+                break;
+
+            case "PowerGlove":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+                break;
+
+            case "Railgun":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+                break;
+
+            case "RocketLauncher":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+                break;
+
+            case "Shockwave":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+                break;
+
+            case "Shotgun":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+                break;
+
+            case "Sledgehammer":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+                break;
+
+            case "Thor":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+                break;
+
+            case "TractorBeam":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+                break;
+
+            case "VortexCannon":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+                break;
+
+            case "Whisper":
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+                break;
+
+            case "Zx_2":
+            default:
+                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+                break;
+        }
+
+        playerCards[i] = new JLabel(img, SwingConstants.CENTER);
+
+        Insets insets = frame.getContentPane().getInsets();
+        Dimension size;
+
+        size = playerCards[i].getPreferredSize();
+        playerCards[i].setBounds(insets.left + 6 + (i) * (img.getIconWidth()+ 8), insets.top + 553 ,
+                size.width, size.height);
+        frame.getContentPane().add(playerCards[i]);
+        playerCards[i].repaint();
+        System.out.println(playerCards[i].getLocation());
+        playerCards[i].setVisible(true);
+        // TODO SET VISIBLE(FALSE) WHEN WE REMOVE CARD FROM PLAYER
 
     }
 
+    public void setupPlayerCards(){
+        playerCards[0]= new JLabel();
+        playerCards[1]= new JLabel();
+        playerCards[2]= new JLabel();
+    }
     }
 
 

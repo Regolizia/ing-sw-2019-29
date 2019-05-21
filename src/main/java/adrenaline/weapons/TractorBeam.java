@@ -104,5 +104,8 @@ public class TractorBeam extends WeaponCard {
         }
 
     }
-
+    @Override
+    public String toString() {
+        return "TractorBeam";
+    }
 }

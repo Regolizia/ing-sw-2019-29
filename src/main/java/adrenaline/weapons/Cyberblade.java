@@ -62,4 +62,9 @@ public class Cyberblade extends WeaponCard {
 
         }
     }
+
+    @Override
+    public String toString() {
+        return "Cyberblade";
+    }
 }

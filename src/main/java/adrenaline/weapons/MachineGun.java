@@ -74,4 +74,8 @@ public class MachineGun extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "MachineGun";
+    }
 }

@@ -52,5 +52,8 @@ public class Thor extends WeaponCard {
             }
 
         }
-
+    @Override
+    public String toString() {
+        return "Thor";
+    }
     }

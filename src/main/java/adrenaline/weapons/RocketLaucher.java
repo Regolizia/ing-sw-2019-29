@@ -80,4 +80,8 @@ public class RocketLaucher extends WeaponCard {
                 break;
         }
     }
+    @Override
+    public String toString() {
+        return "RocketLauncher";
+    }
 }

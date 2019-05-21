@@ -75,4 +75,8 @@ public class GrenadeLaucher extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "GrenadeLauncher";
+    }
 }

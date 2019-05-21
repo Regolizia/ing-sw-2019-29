@@ -104,4 +104,8 @@ public class Hellion extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "Hellion";
+    }
 }

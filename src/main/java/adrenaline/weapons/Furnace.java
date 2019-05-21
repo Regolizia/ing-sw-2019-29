@@ -101,4 +101,8 @@ public class Furnace extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "Furnace";
+    }
 }

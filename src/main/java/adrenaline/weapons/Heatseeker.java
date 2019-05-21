@@ -60,4 +60,8 @@ public class Heatseeker extends WeaponCard {
 
         }
     }
+    @Override
+    public String toString() {
+        return "Heatseeker";
+    }
 }

@@ -74,4 +74,8 @@ public class Shotgun extends WeaponCard {
                 break;
         }
     }
+    @Override
+    public String toString() {
+        return "Shotgun";
+    }
 }

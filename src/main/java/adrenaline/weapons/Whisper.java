@@ -60,5 +60,8 @@ public class Whisper extends WeaponCard {
         }
 
     }
-
+    @Override
+    public String toString() {
+        return "Whisper";
+    }
     }

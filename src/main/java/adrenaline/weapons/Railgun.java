@@ -72,4 +72,8 @@ public class Railgun extends WeaponCard {
                 }break;
                 }
         }
+    @Override
+    public String toString() {
+        return "Railgun";
+    }
     }

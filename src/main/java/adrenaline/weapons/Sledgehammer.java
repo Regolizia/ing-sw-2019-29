@@ -10,7 +10,10 @@ import java.util.List;
  * 
  */
 public class Sledgehammer extends WeaponCard {
-
+    @Override
+    public String toString() {
+        return "Sledgehammer";
+    }
     /**
      * Default constructor
      */

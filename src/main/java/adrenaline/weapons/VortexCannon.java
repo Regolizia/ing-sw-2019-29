@@ -64,4 +64,8 @@ public class VortexCannon extends WeaponCard {
                 //TODO MOVE THEM
         }
     }
+    @Override
+    public String toString() {
+        return "VortexCannon";
+    }
 }
