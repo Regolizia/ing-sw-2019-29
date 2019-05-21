@@ -1,8 +1,6 @@
 package adrenaline;
 
 
-import adrenaline.gameboard.GameBoard;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,14 +17,13 @@ public class Action {
     final private int numMaxAmmoToPay = 3;//(0:first price 1:second price 2:second price)
     final private int numMaxWeaponYouCanHave=3;
 
-
+    private int numOfRemainingPlayer;
    private boolean executedFirstAction;
     private  boolean executedSecondAction;
     private  boolean endTurn;
     private  boolean deletedAction;
-    private boolean executedFirstActionFrenetic;
-    private boolean executedSecondActionFrenetic;
     private int notDeleted;
+    private int initialPlayerIndex;
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, RELOAD;
@@ -42,14 +39,15 @@ public class Action {
      *  * @version 1.0
      */
 
-    public Action() {
+    public Action(GameModel m) {
        this.executedFirstAction=false;
        this.executedSecondAction=false;
-       this.executedFirstActionFrenetic=false;
-       this.executedSecondActionFrenetic=false;
+
        setEndTurn(false);
        this. deletedAction=false;
         this.notDeleted=0;
+        this.numOfRemainingPlayer=m.getPlayers().size();
+       this.initialPlayerIndex=000;
     }
 
     /**
@@ -66,16 +64,15 @@ public class Action {
      * @param frenzyMode: to know if frenzy mode is enabled
      */
     //________________________________DO ACTION_____________________________________________________________________//
-    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode){
+    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option,GameModel.FrenzyMode frenzyMode){
       //  actionSelected = chosen;
-
         if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
                 case RUN:
                     doRun(c,g,player);
                     break;
                 case GRAB:
-                    doGrab(player,c,g,option);
+                    doGrab(player,c,g,option,m);
                     break;
                 case SHOOT:
                     doShoot(player,option,m,g,c);
@@ -113,13 +110,13 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * @param option: payment option choosen to grab objects on the board
      * this action can be deleted if grab method returns false
      */
-    public void doGrab(Player player,CoordinatesWithRoom c,GameBoard g,PayOption option){
+    public void doGrab(Player player,CoordinatesWithRoom c,GameBoard g,PayOption option,GameModel m){
         // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
         CoordinatesWithRoom coordinatesG;
         if(player.checkDamage()==1||player.checkDamage()==2)
             coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
         else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
-        if(!(grab(player, coordinatesG, g,option)))
+        if(!(grab(player, coordinatesG, g,option,m)))
             deletedAction=true;
         else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
     }
@@ -183,45 +180,33 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      */
     //todo better frenetic action
     public void doEndTurn(Action.ActionType actionSelected, Player player, PayOption option, GameBoard g, GameModel m, GameModel.FrenzyMode frenzyMode,CoordinatesWithRoom c){
-        if(frenzyMode== GameModel.FrenzyMode.ON)
-        {
-
-            FreneticAction fAction=new FreneticAction();
+        if(frenzyMode== GameModel.FrenzyMode.ON&&notDeleted<2&&endOfTheGame(g)) {
+            if (initialPlayerIndex == 000)
+                initialPlayerIndex = m.getPlayers().indexOf(player);
+            FreneticAction fAction = new FreneticAction(m);
             //start by the player in the turn
-            List<Player> players=m.getPlayers();
-            int initialPlayerIndex=players.indexOf(player);
-            for(int indexPlayer=initialPlayerIndex;indexPlayer<initialPlayerIndex+players.size();indexPlayer++)
-            {
-                if(players.get(initialPlayerIndex)==((LinkedList<Player>)m.getPlayers()).getFirst()&&notDeleted<2) {
-                    if (fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.AFTER))
+
+            if (m.getPlayers().get(initialPlayerIndex) == ((LinkedList<Player>) m.getPlayers()).getFirst() && notDeleted < 2) {
+                if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
+                    notDeleted++;
+            } else {
+                if (initialPlayerIndex == m.getPlayers().indexOf(player) || m.getPlayers().indexOf(player) > initialPlayerIndex && notDeleted < 2) {
+                    if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.FIRST))
                         notDeleted++;
+
                 }
-
-                else{
-                    if(players.get(initialPlayerIndex)==players.get(indexPlayer)||indexPlayer>initialPlayerIndex&& notDeleted<2)
-                    {
-                        if(fAction.selectFrenzyAction(actionSelected,player,c,g,m,option, FreneticAction.PlayerOrder.FIRST))
-                            notDeleted++;
-
-                    }
-                    if(players.get(indexPlayer)==(((LinkedList<Player>)m.getPlayers())).getFirst()||indexPlayer<initialPlayerIndex&&notDeleted<2){
-                        if(fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
-                            notDeleted++;
-
-
-                    }
+                if (m.getPlayers().indexOf(player) == 0 || m.getPlayers().indexOf(player) < initialPlayerIndex && notDeleted < 2) {
+                    if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER))
+                        notDeleted++;
 
 
                 }
-                if(notDeleted>=2)
-                    notDeleted=0; //reset for next player
-                else
-                    indexPlayer--;//repeat this player until he doesn't have two actions
+
 
             }
-
         }
-        else if(getEndturn()){
+
+        else {
 
             if(actionSelected.equals(ActionType.RELOAD)){
                 LinkedList<WeaponCard> weaponList = player.getHand();
@@ -239,12 +224,12 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
                 canGetPoints(victims,players);
                 for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
                     victims.get(index).newLife();}
+            //ending no frenetic
         }
         /////
-        if(endOfTheGame(g)){
-
-            //if endOfTheGame && frenzy then for everyplayer calls a frenzy action
-            //then stop the game
+        if(endOfTheGame(g)&&notDeleted>=2&&getRemaingPlayer(numOfRemainingPlayer)<=0){
+        //here we end frenetic game
+        //points count
         }
     }
     /**
@@ -375,7 +360,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * this action can be deleted by returning false if player doesn't grab
      */
     //________________________________________________GRAB____________________________________________________________//
-    public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g,PayOption option) {
+    public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g,PayOption option,GameModel m) {
         p.setPlayerPosition(c.getX(),c.getY(),c.getRoom());
         // IF THERE IS A SPAWNPOINT HERE
         LinkedList<Spawnpoint> spawnpoints=c.getRoom().getSpawnpoints();
@@ -386,9 +371,9 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
        c.getRoom().getSpawnpoints().get(i).getSpawnpointY()== c.getY())
        {
         //CHOOSE WEAPON IF CANGRAB IT
-        return   grabCard(p,p.getHand(),c,option);}}
+        return   grabCard(p,p.getHand(),c,option,m);}}
 
-        return grabTile(p,c);
+        return grabTile(p,c,m);
 
     }
     /**
@@ -399,11 +384,16 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * @param player: player who does the action
      * @param option: payment option to grab
      * this action can be deleted if the player can't grab the weapon
-     *              CONV: if you can grab the card you can't delete the action
+     *              CONV:
+     *              i)if you can grab the card you can't delete the action
+     *              ii) if you buy a weapon card you have already paid its BASE effect
+     *                  so you can't use its ALT effect (if you can pay BASE)
+     *              iii) if you can't pay the BASE effect check if you can pay ALT effect
+     *                      in that case tou have ALT effect and you can't use BASE effect
      */
     //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
-    public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option){
+    public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option,GameModel m){
         int index;
         //TODO a way to convert propose to grab cells in weaponCard/Card
         LinkedList <WeaponCard> canBeGrabbedWeapon=new LinkedList<>();
@@ -413,11 +403,11 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         }
         if(!canPayCard(canBeGrabbedWeapon.get(index),player,option))
             return false;
+        //todo a can pay base effect
         if(canPayCard(canBeGrabbedWeapon.get(index),player,option)&&hand.size()>=numMaxWeaponYouCanHave)
         dropWeaponCard(hand); //I need to drop that card
-
-
         hand.add(canBeGrabbedWeapon.get(index));
+        m.populateMap(m.getMapUsed());//todo SEE IF IT DOES WORK HERE
         canBeGrabbedWeapon.get(index).setReload(); //when i grab a weapon i've already paid its base effect
         return true;
     }
@@ -445,7 +435,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *
      */
     //_____________________________________GRAB OPTION TILE ___________________________________________________________//
-    public boolean grabTile(Player player, CoordinatesWithRoom c){
+    public boolean grabTile(Player player, CoordinatesWithRoom c,GameModel m){
         AmmoTile toBeGrabbedTile=new AmmoTile(RED,RED,RED);
         // grab ammo or powerUp
 
@@ -454,7 +444,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
         for(int index = 0; index<toBeGrabbedTile.getAmmoCubes().size(); index++)
         {
             if(toBeGrabbedTile.getAmmoCubes().get(index).getCubeColor().equals(POWERUP))
-                return (grabPowerUp(player,c)&&grabCube(player,c,toBeGrabbedTile));
+                return (grabPowerUp(player,c,m)&&grabCube(player,c,toBeGrabbedTile));
 
         }
                     return grabCube(player,c, toBeGrabbedTile);
@@ -502,14 +492,14 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * @param c: player position  //todo delete position player
      * @param p: player who does the action
      * this action can be deleted if the player can't grab the power up
-     *              CONV: if you can grab the card you can't delete the action
+     *              CONV:
+     *         i)     if you can grab the card you can't delete the action
+     *         ii)    if you have already three powerups you can't pickup this ammotile
      */
-public boolean grabPowerUp(Player p, CoordinatesWithRoom c){
+public boolean grabPowerUp(Player p, CoordinatesWithRoom c, GameModel m){
         if(!p.canGrabPowerUp()) return false;
+                p.getPowerUp().add(m.powerUpDeck.pickPoweUp());
 
-        PowerUpCard power=new PowerUpCard();
-        p.getPowerUp().add(power);
-        //missing method to get PowerUpCard from deck
         return true;
 
 }
@@ -1148,6 +1138,9 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
 
 
         return bestShooterOrder;
+    }
+    public int getRemaingPlayer(int numPlayer){
+        return numPlayer--;
     }
 }
 
