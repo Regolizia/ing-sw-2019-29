@@ -17,7 +17,6 @@ class AmmoTileDeckTest {
     void setUsedAmmoTile() {
         AmmoTile ammoTile = new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.YELLOW);
         ammoTileDeck.setUsedAmmoTile(ammoTile);
-
         assertTrue(ammoTileDeck.getUsedAmmoTile().contains(ammoTile));
     }
 
@@ -26,7 +25,14 @@ class AmmoTileDeckTest {
         assertTrue(ammoTileDeck.getDeck().size() > 0);
         AmmoTile ammoTile;
         ammoTile = ammoTileDeck.pickUpAmmoTile();
-
         assertEquals(ammoTile, ammoTileDeck.getDeck().getFirst());
+
     }
+
+    @Test
+    void shuffleUsedCards() {
+        ammoTileDeck.shuffleUsedCards();
+
+    }
+
 }
