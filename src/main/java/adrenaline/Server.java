@@ -298,4 +298,15 @@ public class Server {
         if(model.currentPlayer==model.getPlayers().size())
             model.currentPlayer=0;
     }
+    //______________________________getter&server_______________________________________//
+    public boolean getGameIsOn(){
+        return gameIsOn;
+    }
+    public int getBoardChosen(){
+        return boardChosen;
+    }
+
+    public static String getFirstPlayer() {
+        return firstPlayer;
+    }
 }
