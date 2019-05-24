@@ -1,6 +1,8 @@
 package adrenaline;
 
 
+import adrenaline.gameboard.GameBoard;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class Action {
      * @param frenzyMode: to know if frenzy mode is enabled
      */
     //________________________________DO ACTION_____________________________________________________________________//
-    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m,PayOption option,GameModel.FrenzyMode frenzyMode){
+    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode){
       //  actionSelected = chosen;
         if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
@@ -498,7 +500,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      */
 public boolean grabPowerUp(Player p, CoordinatesWithRoom c, GameModel m){
         if(!p.canGrabPowerUp()) return false;
-                p.getPowerUp().add(m.powerUpDeck.pickPoweUp());
+                p.getPowerUp().add(m.powerUpDeck.pickPowerUp());
 
         return true;
 
