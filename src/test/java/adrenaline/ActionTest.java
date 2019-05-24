@@ -45,31 +45,32 @@ public class ActionTest {
         player.getHand().get(0);//
 
         new Thor().getPrice().get(0).getCubeColor().equals(AmmoCube.CubeColor.BLUE);//
-
+        Spawnpoint s=new Spawnpoint(0,1);
+        c1.getRoom().addSpawnpoint(s);
         action.chooseWeaponCard(player.getHand());//
         action.chooseTargets(victims,1);//
-        action.grab(player,c1,m.getMapUsed().getGameBoard(), Action.PayOption.AMMO,m);// to do grab();
-        action.paidEffect(new Thor(),player, Action.PayOption.AMMO);//
-        action.paidEffect(new Thor(),player, Action.PayOption.AMMOPOWER);//
+
+        action.paidEffect(new Thor(),player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
+        action.paidEffect(new Thor(),player, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.RED));// pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.BLUE));//pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.YELLOW));//pay()
-        action.canPayAmmo(w,player,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue());//
-        action.canPayCard(w,player, Action.PayOption.AMMOPOWER);//
-        action.canPayCard(w,player, Action.PayOption.AMMO);//
-        action.canPayCard(w,player, Action.PayOption.NONE);//
-        action.payPowerUp(new Thor(),powers,player);//
-        action.reload(player,w, Action.PayOption.AMMO);//
-        action.reload(player,w, Action.PayOption.AMMOPOWER);//
-        action.reload(player,w, Action.PayOption.NONE);//
+        action.canPayAmmo(w,player,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(),Action.SelectedBaseorAltorNone.NONE);//
+        action.canPayCard(w,player, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
+        action.canPayCard(w,player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
+        action.canPayCard(w,player, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
+        action.payPowerUp(new Thor(),powers,player,Action.SelectedBaseorAltorNone.NONE);//
+        action.reload(player,w, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
+        action.reload(player,w, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
+        action.reload(player,w, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
         action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
 
 
-        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
+        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
        // action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
+        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
         action.setEndTurn(true);//
-        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF);//
+        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
 
     }
 }
