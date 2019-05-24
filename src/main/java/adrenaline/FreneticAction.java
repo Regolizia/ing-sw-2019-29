@@ -22,7 +22,7 @@ public class FreneticAction extends Action {
         FIRST,AFTER      //reload is an  optional action //ADRENALINESHOOT
     }
 
-    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order){
+    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order,SelectedBaseorAltorNone firstEffectToPay){
 /*FIRST
 * move up to 4 squares
 * move uo to 2 squares and grab
@@ -43,7 +43,7 @@ switch (actionSelected){
                         coordinatesG=chooseCell(proposeCellsGrabFrenzy(c, g, player));
                     else
                         coordinatesG=chooseCell(proposeCellsGrabFrenzy(c,g,player,order));
-               if((grab(player, coordinatesG, g,paymentOption,m))){
+               if((grab(player, coordinatesG, g,paymentOption,m,firstEffectToPay))){
                    player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
                    return true;
                }
@@ -53,14 +53,14 @@ switch (actionSelected){
                 WeaponCard weapon = chooseWeaponCard(hand);
 
         if (weapon.getReload() == false) {
-            if (!canPayCard(weapon, player,paymentOption))
+            if (!canPayCard(weapon, player,paymentOption,firstEffectToPay))
                return false;
             
         }
-        if(!canPayCard(weapon,player,paymentOption))
+        if(!canPayCard(weapon,player,paymentOption,firstEffectToPay))
             return false;
 
-        List<EffectAndNumber> payEff = paidEffect(weapon, player,paymentOption);
+        List<EffectAndNumber> payEff = paidEffect(weapon, player,paymentOption,firstEffectToPay);
             if(payEff==null)
             {return false;}
 
