@@ -3,6 +3,7 @@ package adrenaline;
 
 import adrenaline.gameboard.GameBoard;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,7 +72,6 @@ public class Action {
      */
     //________________________________DO ACTION_____________________________________________________________________//
     public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode,SelectedBaseorAltorNone firstEffectToPay){
-      //  actionSelected = chosen;
         if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
                 case RUN:
@@ -198,17 +198,14 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
                     if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER,firstOptionToPay))
                         notDeleted++;
                 } else {
-                    if (initialPlayerIndex == m.getPlayers().indexOf(player) || m.getPlayers().indexOf(player) > initialPlayerIndex && notDeleted < 2) {
-                        if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.FIRST,firstOptionToPay))
+                    if (initialPlayerIndex == m.getPlayers().indexOf(player) || m.getPlayers().indexOf(player) > initialPlayerIndex && notDeleted < 2&&fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.FIRST,firstOptionToPay))
                             notDeleted++;
 
-                    }
-                    if (m.getPlayers().indexOf(player) == 0 || m.getPlayers().indexOf(player) < initialPlayerIndex && notDeleted < 2) {
-                        if (fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER,firstOptionToPay))
+                    if (m.getPlayers().indexOf(player) == 0 || m.getPlayers().indexOf(player) < initialPlayerIndex && notDeleted < 2&&fAction.selectFrenzyAction(actionSelected, player, c, g, m, option, FreneticAction.PlayerOrder.AFTER,firstOptionToPay))
                             notDeleted++;
 
 
-                    }
+
 
 
                 }
@@ -421,9 +418,11 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
 
         switch (firstOptionToPay) {
             case BASE: canBeGrabbedWeapons.get(index).setReload(); //when i grab a weapon i've already paid its base effect or alt
+                        break;
             case NONE: //invalid
                 return false;
             case ALT:  canBeGrabbedWeapons.get(index).setReloadAlt(true);
+                                break;
         }
 
         return true;
@@ -535,13 +534,14 @@ public void grabPowerUp(Player p, GameModel m){
         for(int index=0;index<effectsList.size();index++) {
             ///todo choose effect order
             switch (effectsList.get(index).getEffect()) {
-                case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
-                case ALT: effectNumber = new EffectAndNumber(AmmoCube.Effect.ALT, 0);
-                case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0);
-                case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0);
+                case BASE: effectNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 0); break;
+                case ALT: effectNumber = new EffectAndNumber(AmmoCube.Effect.ALT, 0); break;
+                case OP1: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP1, 0); break;
+                case OP2: effectNumber = new EffectAndNumber(AmmoCube.Effect.OP2, 0); break;
+                default: //invalid
             }
             List<CoordinatesWithRoom> target= w.getPossibleTargetCells(c, effectNumber, g);
-           // w.fromCellsToTargets(target,c,g,p,m,effectNumber);
+
             //here controller gives back choosen opponents
             List<Object>effectiveTarget;
             effectNumber.setNumber(3);//just to remove bug
@@ -549,9 +549,7 @@ public void grabPowerUp(Player p, GameModel m){
            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
         }
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
-        //w.getPossibleTargetCells();
 
-        //w.fromCellsToTargets();
         //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
         //TODO CHECK THAT IT FOLLOWS THE RULES
         //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
@@ -597,6 +595,7 @@ public void grabPowerUp(Player p, GameModel m){
                 return reloadAmmo(p,w,p.getCubeBlue(),p.getCubeRed(),p.getCubeYellow(),firstOptionToPay);
             case AMMOPOWER:
                 return reloadAmmoPower(p,w,firstOptionToPay);
+            default: //invalid
         }
         return false;
     }
@@ -646,6 +645,9 @@ public void grabPowerUp(Player p, GameModel m){
                 case RED: redCube++;break;
                 case YELLOW:yellowCube++;break;
                 case BLUE:blueCube++;break;
+                case POWERUP: //invalid
+                    break;
+                case FREE://invalid
             }
         }
         if(!reloadAmmo(player,weapon,blueCube,redCube,yellowCube,firstOptionToPay))
@@ -741,7 +743,8 @@ return true;}
                return canPayAmmo(weapon,player, player.getCubeRed(), player.getCubeYellow(), player.getCubeBlue(),firstOptionToPay);
                 }//nope
 
-
+            case NONE: //invalid
+                break;
         }}
       return false;
     }
@@ -765,7 +768,6 @@ return true;}
         int redToPay=0;
         int blueToPay=0;
         int yellowToPay=0;
-        boolean no = false;
         if(weapon.getReload())
             return true;
         //can you pay base effect or you can pay alt
@@ -873,7 +875,7 @@ return true;}
             case AMMOPOWER:return payAmmoPlusPowerUp(player,weapon,firstOptionToPay);
             default:
         }
-       return null; }
+       return Collections.emptyList(); }
     /**
      * payAmmoPlusPowerUp
      * this is the method to choose weapon's effect to pay and pay with power up
@@ -892,7 +894,7 @@ return true;}
        LinkedList<PowerUpCard>choosenPowerUp=choosePowerUp(player);
        EffectAndNumber effectAndNumber;
         if(!canPayAmmoPower(weapon,player,choosenPowerUp,firstOptionToPay))
-            return null;
+            return Collections.emptyList();
         LinkedList<EffectAndNumber>paid=new LinkedList<>();
         if(!weapon.getReload()){
         for (int i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
@@ -904,7 +906,7 @@ return true;}
             }
             paid.get(0).setEffect(weapon.price.get(i).getEffect());
             if(paid.get(0).getEffect()==AmmoCube.Effect.BASE||paid.get(0).getEffect()==AmmoCube.Effect.ALT)
-            break;  // i can pay only one
+                break;  // i can pay only one
         }}
         if(weapon.getReload()){
             paid.get(0).setEffect(AmmoCube.Effect.BASE);
@@ -1108,12 +1110,11 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
      * **/
     public boolean endOfTheGame(GameBoard g){  //every time a player dies
         //8||5 skulls
-        //if(countSkull-1<=0)
 
         if(g.getNumSkull()<=0)
-        return true;
+            return true;
         //else return false
-        else return false;
+        return false;
     }
 /**
  * bestShooterOrder
