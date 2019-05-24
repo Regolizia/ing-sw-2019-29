@@ -380,7 +380,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
        c.getRoom().getSpawnpoints().get(i).getSpawnpointY()== c.getY())
        {
         //CHOOSE WEAPON IF CANGRAB IT
-        return   grabCard(p,p.getHand(),c,option,m,firstOptionToPay, c.getRoom().getSpawnpoint(c.getX(),c.getY()));}}
+        return   grabCard(p,p.getHand(),option,m,firstOptionToPay, c.getRoom().getSpawnpoint(c.getX(),c.getY()));}}
 
         return grabTile(p,c,m);
 
@@ -389,7 +389,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * grabCard
      * this is the method to grab a weapon card
      *  @return boolean : to know if the action is good ended
-     *@param c: grab position
+
      * @param player: player who does the action
      * @param option: payment option to grab
      * this action can be deleted if the player can't grab the weapon
@@ -402,7 +402,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      */
     //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
-    public boolean grabCard(Player player,LinkedList<WeaponCard> hand, CoordinatesWithRoom c,PayOption option,GameModel m,SelectedBaseorAltorNone firstOptionToPay,Spawnpoint s){
+    public boolean grabCard(Player player,LinkedList<WeaponCard> hand,PayOption option,GameModel m,SelectedBaseorAltorNone firstOptionToPay,Spawnpoint s){
         int index;
 
         LinkedList <WeaponCard> canBeGrabbedWeapons=s.getWeaponCards();
