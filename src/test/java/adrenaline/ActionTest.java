@@ -51,15 +51,14 @@ public class ActionTest {
         action.chooseTargets(victims,1);//
 
         action.paidEffect(new Thor(),player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
-        action.paidEffect(new Thor(),player, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.RED));// pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.BLUE));//pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.YELLOW));//pay()
-        action.canPayAmmo(w,player,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(),Action.SelectedBaseorAltorNone.NONE);//
+        action.canPayAmmo(w,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(),Action.SelectedBaseorAltorNone.NONE);//
         action.canPayCard(w,player, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
         action.canPayCard(w,player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
         action.canPayCard(w,player, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
-        action.payPowerUp(new Thor(),powers,player,Action.SelectedBaseorAltorNone.NONE);//
+        action.payPowerUp(new Thor(),powers,player, AmmoCube.Effect.BASE);//
         action.reload(player,w, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
         action.reload(player,w, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
         action.reload(player,w, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
