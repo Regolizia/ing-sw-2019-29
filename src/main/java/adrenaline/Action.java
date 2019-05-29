@@ -212,7 +212,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
             if(getEndturn()&& frenzyMode== GameModel.FrenzyMode.ON&&notDeleted<2&&getRemaingPlayer()>0){
                 FreneticAction fAction= new FreneticAction(m);
                 if(g.getNumSkull()==0){
-                     initialPlayerIndex = m.getPlayers().indexOf(player);
+                     initialPlayerIndex = m.getPlayers().indexOf(player)-1;
                     //todo prepareFrenzyMode
                 }
 
@@ -1139,6 +1139,7 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
                     shooters.get(indexPlayer).setPoints(1);
                 else
                     ((Player)((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+
             }
         }
 
