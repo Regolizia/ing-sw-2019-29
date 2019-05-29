@@ -21,6 +21,7 @@ public class Player {
     private int indexPointCounter; //to indicate max points assegnable
     private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
     private boolean[] skullTrack;
+
     public Player() {
 
     }
@@ -47,6 +48,7 @@ public class Player {
         this.pointTrack = new int[]{8,6,4,2,1};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
+        points=0;
     }
 
     @Override
@@ -306,9 +308,7 @@ public class Player {
         return this.pointTrack;
     }
 
-    public int getPoints() {
-        return this.points;
-    }
+
 
     public int getTrackSize() {
         return this.trackSize;
@@ -342,5 +342,12 @@ public class Player {
 
     public boolean isFirstTurn(){
         return (getPlayerPositionX()==0);
+    }
+
+    public void addPoints(int add){this.points+=add;}
+    public int returnPoints(){return this.points;}
+
+    public CoordinatesWithRoom getCoordinatesWithRooms(){
+        return coordinates;
     }
 }
