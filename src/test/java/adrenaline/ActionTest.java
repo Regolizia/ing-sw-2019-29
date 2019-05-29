@@ -25,7 +25,7 @@ public class ActionTest {
         victims.add(victim);//
         LinkedList<Player>players=new LinkedList<>();
         players.add(player);players.add(victim);
-        LinkedList<CoordinatesWithRoom> c=action.proposeCellsGrab(c1,m.getMapUsed().getGameBoard(),player);//to do grab()
+        LinkedList<CoordinatesWithRoom> c=action.proposeCellsGrab(c1,m.getMapUsed().getGameBoard());//to do grab()
         LinkedList<PowerUpCard>powers=new LinkedList<>();//to do payPowerUp()
         PowerUpCard powerOne=new PowerUpCard(AmmoCube.CubeColor.RED);//
         PowerUpCard powerTwo=new PowerUpCard(AmmoCube.CubeColor.BLUE);//
@@ -50,26 +50,27 @@ public class ActionTest {
         action.chooseWeaponCard(player.getHand());//
         action.chooseTargets(victims,1);//
 
-        action.paidEffect(new Thor(),player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
+        action.paidEffect(new Thor(),player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,m);//
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.RED));// pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.BLUE));//pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.YELLOW));//pay()
-        action.canPayAmmo(w,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(),Action.SelectedBaseorAltorNone.NONE);//
-        action.canPayCard(w,player, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
-        action.canPayCard(w,player, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
-        action.canPayCard(w,player, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
+        action.canPayAmmo(w,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(), AmmoCube.Effect.BASE);//
+        action.canPayCard(w,player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE);//
+        action.canPayCard(w,player, Action.PayOption.AMMO, AmmoCube.Effect.BASE);//
+        action.canPayCard(w,player, Action.PayOption.NONE, AmmoCube.Effect.BASE);//
         action.payPowerUp(new Thor(),powers,player, AmmoCube.Effect.BASE);//
-        action.reload(player,w, Action.PayOption.AMMO,Action.SelectedBaseorAltorNone.NONE);//
-        action.reload(player,w, Action.PayOption.AMMOPOWER,Action.SelectedBaseorAltorNone.NONE);//
-        action.reload(player,w, Action.PayOption.NONE,Action.SelectedBaseorAltorNone.NONE);//
+        action.reload(player,w, Action.PayOption.AMMO, AmmoCube.Effect.BASE,m);//
+        action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,m);//
+        action.reload(player,w, Action.PayOption.NONE, AmmoCube.Effect.BASE,m);//
         action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
 
-
-        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
+LinkedList<AmmoCube.Effect> list=new LinkedList<>();
+list.add(AmmoCube.Effect.BASE);
+        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF, list);//
        // action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
+        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF, list);//
         action.setEndTurn(true);//
-        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,Action.SelectedBaseorAltorNone.NONE);//
+        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,list);//
 
     }
 }
