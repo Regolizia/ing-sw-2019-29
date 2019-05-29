@@ -22,9 +22,12 @@ import static adrenaline.AmmoCube.CubeColor.*;
 * 4) knowing if a player has done the same damage of prec player
 * */
 public class Action {
-    final private int numMaxAlternativeOptions = 2; //(0=base 1=alternative)
-    final private int numMaxAmmoToPay = 3;//(0:first price 1:second price 2:second price)
+    final private int numMaxAlternativeOptions = 2;
+    //(0=base 1=alternative)
+    final private int numMaxAmmoToPay = 3;
+    //(0:first price 1:second price 2:third price)
     final private int numMaxWeaponYouCanHave=3;
+    //(0:first weapon 1:second weapon 2:third weapon)
 
     private int numOfRemainingPlayer;
     private boolean executedFirstAction;
@@ -42,9 +45,7 @@ public class Action {
         AMMO,AMMOPOWER,NONE
     }
 
-    public static enum SelectedBaseorAltorNone{
-        BASE,NONE,ALT
-    }
+
 
     /**
      * Class constructor.
@@ -56,10 +57,10 @@ public class Action {
        this.executedSecondAction=false;
 
        setEndTurn(false);
-       this. deletedAction=false;
+        this. deletedAction=false;
         this.notDeleted=0;
-        this.numOfRemainingPlayer=m.getPlayers().size();
-       this.initialPlayerIndex=000;
+        this.numOfRemainingPlayer=m.getPlayers().size(); //to know if frenetic action is ended for all
+        this.initialPlayerIndex=0;
     }
 
     /**
@@ -74,20 +75,22 @@ public class Action {
      * @param m: model choosen for the game
      * @param option: payment option choosen to buy weapons/reloads/...
      * @param frenzyMode: to know if frenzy mode is enabled
-     * @param firstEffectToPay : if player needs to reload/shoot/grab, he can choose which primary effect wants
+     * @param effectToPay : if player needs to reload/shoot/grab, he can choose which primary effect wants and the other effects
      */
+
+    //tobe modified it contains some controller actions
     //________________________________DO ACTION_____________________________________________________________________//
-    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode,SelectedBaseorAltorNone firstEffectToPay){
+    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode, LinkedList<AmmoCube.Effect> effectToPay){
         if(!getEndturn()&&!endOfTheGame(g)) {
             switch (actionSelected) {
                 case RUN:
                     doRun(c,g,player);
                     break;
                 case GRAB:
-                    doGrab(player,c,g,option,m,firstEffectToPay);
+                    doGrab(player,c,g,option,m,effectToPay);
                     break;
                 case SHOOT:
-                    doShoot(player,option,m,g,c,firstEffectToPay);
+                    doShoot(player,option,m,g,c,effectToPay);
                     break;
 
                 default:
@@ -99,7 +102,7 @@ public class Action {
             if(executedFirstAction&&executedSecondAction)setEndTurn(true);
         }
         //HERE ENDS TURN
-        doEndTurn(actionSelected,player,option,g,m,frenzyMode,c,firstEffectToPay);
+        doEndTurn(actionSelected,player,option,g,m,frenzyMode,c,effectToPay);
     }
     /**
      * doRun : to do run methods
@@ -121,14 +124,15 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * @param g: gameboard choosen for the game
      * @param option: payment option choosen to grab objects on the board
      * this action can be deleted if grab method returns false
+     *              CONV: effectToPay order is BASE||ALT && OTHERS||-
      */
-    public void doGrab(Player player,CoordinatesWithRoom c,GameBoard g,PayOption option,GameModel m,SelectedBaseorAltorNone firstOptionToPay){
+    public void doGrab(Player player, CoordinatesWithRoom c, GameBoard g, PayOption option, GameModel m, LinkedList<AmmoCube.Effect> effectToPay){
         // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
         CoordinatesWithRoom coordinatesG;
         if(player.checkDamage()==1||player.checkDamage()==2)
             coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
-        else coordinatesG=chooseCell(proposeCellsGrab(c,g,player));
-        if(!(grab(player, coordinatesG, g,option,m,firstOptionToPay)))
+        else coordinatesG=chooseCell(proposeCellsGrab(c,g));
+        if(!(grab(player, coordinatesG,option,m,effectToPay.getFirst())))
             deletedAction=true;
         else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
     }
@@ -145,22 +149,30 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *              i) weapon is not reload and can't be reload
      *              ii)the player doesn't have selected any base/alternative effect
      */
-    public void doShoot(Player player,PayOption option,GameModel m,GameBoard g,CoordinatesWithRoom c,SelectedBaseorAltorNone firstOptionToPay){
+    public void doShoot(Player player,PayOption option,GameModel m,GameBoard g,CoordinatesWithRoom c, LinkedList<AmmoCube.Effect> effectToPay){
         // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
         LinkedList<WeaponCard> hand = player.getHand();
         // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
         WeaponCard weapon = chooseWeaponCard(hand);
 
-        if (!weapon.getReload()&&!weapon.getReloadAlt()&&!canPayCard(weapon, player,option,firstOptionToPay)) {
+        if (!weapon.getReload()&&!weapon.getReloadAlt()&&!canPayCard(weapon, player,option,effectToPay.getFirst())) {
                 deletedAction = true;
                 return;
         }
 
-        if(canPayCard(weapon,player,option,firstOptionToPay)){
-            List<EffectAndNumber> payEff = paidEffect(weapon, player,option,firstOptionToPay);
+        if(canPayCard(weapon,player,option,effectToPay.getFirst())){
+            List<EffectAndNumber> payEff = paidEffect(weapon, player,option,effectToPay.getFirst(),m);
+            effectToPay.removeFirst();
             if(payEff.isEmpty())
             {deletedAction=true;
             return;}
+            for (AmmoCube.Effect effect:effectToPay
+                 ) {
+               if(canPayCard(weapon,player,option,effect)){
+                   paidEffect(weapon,player,option,effect,m);
+                    payEff.addAll(paidEffect(weapon, player,option,effect,m));
+               effectToPay.removeFirst();}
+            }
             CoordinatesWithRoom cChoosen;
             if(player.checkDamage()==2)
                 cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
@@ -170,7 +182,11 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
             weapon.setNotReload();// i've lost base effect payment
             weapon.setReloadAlt(false);// i've lost alt effect
             deletedAction=false;}
+
     }
+
+
+
     /**
      * doEndTurn : methods to end the turn/game
      * @param  player: name of the player who has ended his turn
@@ -192,7 +208,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode,SelectedBaseorAltorNone firstEffectToPay
      */
 
-    public void doEndTurn(ActionType actionSelected,Player player,PayOption option,GameBoard g,GameModel m,GameModel.FrenzyMode frenzyMode,CoordinatesWithRoom c,SelectedBaseorAltorNone firstOptionToPay){
+    public void doEndTurn(ActionType actionSelected,Player player,PayOption option,GameBoard g,GameModel m,GameModel.FrenzyMode frenzyMode,CoordinatesWithRoom c,LinkedList<AmmoCube.Effect> firstOptionToPay){
             if(getEndturn()&& frenzyMode== GameModel.FrenzyMode.ON&&notDeleted<2&&getRemaingPlayer()>0){
                 FreneticAction fAction= new FreneticAction(m);
                 if(g.getNumSkull()==0){
@@ -226,7 +242,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
                 LinkedList<WeaponCard> weaponList = player.getHand();
                 WeaponCard weaponToReload = chooseWeaponCard(weaponList);
                 if (!weaponToReload.getReload())
-                    reload(player, weaponToReload,option,firstOptionToPay); }
+                    reload(player, weaponToReload,option,firstOptionToPay.getFirst(),m); }
             List<Player> players=m.getPlayers();
             LinkedList<Player>victims=new LinkedList<>();
 
@@ -238,6 +254,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
                 canGetPoints(victims,players);
                 for(int indexVictims=0;indexVictims<victims.size();indexVictims++)
                     victims.get(index).newLife();}
+            m.populateMap(m.getMapUsed());
             //ending no frenetic
         }
         /////
@@ -332,7 +349,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * @return LinkedList<CoordinatesWithRoom> : a LinkedList of selectable cells where to Grab
      * @param c: player position
      * @param g: GameBoard choosen
-     * @param p: player who does the action
+
      * this action can't be deleted
      * CONV:
      *      i)this is the not Frenzy option method
@@ -340,7 +357,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *      iii) you can grab max one cell distant (includes moving)
      */
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
-    public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g, Player p) {
+    public LinkedList<CoordinatesWithRoom> proposeCellsGrab(CoordinatesWithRoom c, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
         list.add(c);
         return list;
@@ -359,7 +376,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      */
     //____________PROPOSE CELLS GRAB WITH ADRENALINE checkDamage=(1||2)
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabAdrenaline(CoordinatesWithRoom c, GameBoard g, Player p) {
-        LinkedList<CoordinatesWithRoom> list = proposeCellsGrab(c,g,p);
+        LinkedList<CoordinatesWithRoom> list = proposeCellsGrab(c,g);
         list.addAll(c.xTilesDistant(g, 2));
         return list;
     }
@@ -368,26 +385,24 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      * check the selected cell where to grab and calls the right grabbing method
      * @return boolean : to know if the action is good ended
      * @param c: grab position
-     * @param g: GameBoard choosen
+
      * @param p: player who does the action
      * @param option: payment option to grab
      * this action can be deleted by returning false if player doesn't grab
      */
     //________________________________________________GRAB____________________________________________________________//
-    public boolean grab(Player p, CoordinatesWithRoom c, GameBoard g,PayOption option,GameModel m,SelectedBaseorAltorNone firstOptionToPay) {
-        // IF THERE IS A SPAWNPOINT HERE
-        LinkedList<Spawnpoint> spawnpoints=c.getRoom().getSpawnpoints();
+    public boolean grab(Player p, CoordinatesWithRoom c, PayOption option,GameModel m, AmmoCube.Effect effectToPay) {
+        // IF THERE IS A SPAWNPOINT HERE grab a weapon
+        for (Spawnpoint s:c.getRoom().getSpawnpoints()) {
+            if(s.getSpawnpointX()==c.getX()&&s.getSpawnpointY()==c.getY()){
+                return   grabCard(p,p.getHand(),option,m,effectToPay, c.getRoom().getSpawnpoint(c.getX(),c.getY()));}
+            else
+                return grabTile(p,c,m);
 
-     for (int i=0;i<spawnpoints.size();i++){
-       if(!c.getRoom().getSpawnpoints().isEmpty() && c.getRoom().getSpawnpoints().get(i).getSpawnpointX()==c.getX()&&
-       c.getRoom().getSpawnpoints().get(i).getSpawnpointY()== c.getY())
-       {
-        //CHOOSE WEAPON IF CANGRAB IT
-        return   grabCard(p,p.getHand(),option,m,firstOptionToPay, c.getRoom().getSpawnpoint(c.getX(),c.getY()));}}
+        }
 
-        return grabTile(p,c,m);
-
-    }
+        return false;
+                }
     /**
      * grabCard
      * this is the method to grab a weapon card
@@ -405,47 +420,35 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      */
     //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________________//
 
-    public boolean grabCard(Player player,LinkedList<WeaponCard> hand,PayOption option,GameModel m,SelectedBaseorAltorNone firstOptionToPay,Spawnpoint s){
+    public boolean grabCard(Player player, LinkedList<WeaponCard> hand, PayOption option, GameModel m, AmmoCube.Effect firstOptionToPay, Spawnpoint s){
         int index;
 
         LinkedList <WeaponCard> canBeGrabbedWeapons=s.getWeaponCards();
 
-        for (index = 0; index <canBeGrabbedWeapons.size() ; index++) {
-            //WHEN A WEAPON IS CHOOSEN BREAK
-        }
+        WeaponCard wChoosen=chooseWeaponCard(canBeGrabbedWeapons);
 
-        if(!canPayCard(canBeGrabbedWeapons.get(index),player,option,firstOptionToPay))
+        if(!canPayCard(wChoosen,player,option,firstOptionToPay))
             return false;
 
-        if(canPayCard(canBeGrabbedWeapons.get(index),player,option,firstOptionToPay)&&hand.size()>=numMaxWeaponYouCanHave)
-            dropWeaponCard(hand); //I need to drop that card
-        hand.add(canBeGrabbedWeapons.get(index));
-        m.populateMap(m.getMapUsed()); //does it works here?
-
+        if(canPayCard(wChoosen,player,option,firstOptionToPay)&&hand.size()>=numMaxWeaponYouCanHave)
+        {WeaponCard dropThatWeapon=chooseWeaponCard(hand);
+            m.weaponDeck.getList().addLast(dropThatWeapon);
+            hand.remove(dropThatWeapon);
+             }
+        hand.add(wChoosen);
+        s.getWeaponCards().remove(wChoosen);
         switch (firstOptionToPay) {
-            case BASE: canBeGrabbedWeapons.get(index).setReload(); //when i grab a weapon i've already paid its base effect or alt
+            case BASE: wChoosen.setReload(); //when i grab a weapon i've already paid its base effect or alt
                         break;
-            case NONE: //invalid
-                return false;
-            case ALT:  canBeGrabbedWeapons.get(index).setReloadAlt(true);
+
+            case ALT:  wChoosen.setReloadAlt(true);
                                 break;
+                                default://
         }
 
         return true;
     }
-    /**
-     * dropWeaponCard
-     * this method is called when a player wants to grab a weapon card but already has three of them, so
-     * he needs to drop one
-     * this action can't be deleted
-     */
-    public void dropWeaponCard(LinkedList<WeaponCard> hand){
-        int index;
-        for (index = 0; index < hand.size(); index++) {
-            //WHEN A WEAPON IS CHOOSEN BREAK
-        }
-        hand.remove(index);
-    }
+
     /**
      * grabTile
      * this is the method to grab an ammo tile
@@ -466,7 +469,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
             if(cube.getCubeColor()== POWERUP)
                 grabPowerUp(player,m);
         }
-                    return grabCube(player, toBeGrabbedTile);
+                    return grabCube(player, toBeGrabbedTile,m);
     }
 
     /**
@@ -482,7 +485,7 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
 
 
     //____________________________ADDING CUBE______________________________________________________________________//
-    public boolean grabCube(Player player, AmmoTile a){
+    public boolean grabCube(Player player, AmmoTile a,GameModel m){
 
         for(int i=0;i<3;i++)
         {
@@ -499,7 +502,8 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
                 default:player.setCube(0,0,0);
                 }
         }
-
+       player.getCoordinatesWithRooms().xTilesDistant(m.getMapUsed().getGameBoard(),0).remove(a);
+        m.ammoTileDeck.getDeck().addLast(a);
 
         return true;
 
@@ -517,8 +521,10 @@ public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
      *         ii)    if you have already three powerups you can't pickup this ammotile
      */
 public void grabPowerUp(Player p, GameModel m){
-        if(p.canGrabPowerUp())
-            p.getPowerUp().add(m.powerUpDeck.pickPowerUp());
+        if(p.canGrabPowerUp()){
+            PowerUpCard power=m.powerUpDeck.pickPowerUp();
+            p.getPowerUp().add(power);
+            m.powerUpDeck.getPowerUpDeck().remove(power);}
 }
     /**
      * shoot
@@ -585,14 +591,14 @@ public void grabPowerUp(Player p, GameModel m){
      *              CONV: if you can reload the card you can't delete the action
      */
 //_____________________________________RELOAD________________________________________________________________________//
-    public boolean reload(Player p, WeaponCard w,PayOption option,SelectedBaseorAltorNone firstOptionToPay) {
+    public boolean reload(Player p, WeaponCard w, PayOption option, AmmoCube.Effect firstOptionToPay,GameModel m) {
 
 
         switch(option){
             case AMMO:
                 return reloadAmmo(p,w,p.getCubeBlue(),p.getCubeRed(),p.getCubeYellow(),firstOptionToPay);
             case AMMOPOWER:
-                return reloadAmmoPower(p,w,firstOptionToPay);
+                return reloadAmmoPower(p,w,firstOptionToPay,m);
             default: //invalid
         }
         return false;
@@ -612,6 +618,7 @@ public void grabPowerUp(Player p, GameModel m){
 
     public List<Object>chooseTargets(List<Object> possibleTarget,int number){
         LinkedList<Object>effectiveTargets=new LinkedList<>();
+        //todo select target
         for(int i=0;i<possibleTarget.size();i++){
             //when a target is choosen add to effective player
             if(effectiveTargets.size()<=number)
@@ -633,7 +640,8 @@ public void grabPowerUp(Player p, GameModel m){
 
 
     ///////////////////////////_______________reloadAmmoPower_____________________________________///////////////////////////////////////////
-    public boolean reloadAmmoPower(Player player,WeaponCard weapon,SelectedBaseorAltorNone firstOptionToPay){
+
+    public boolean reloadAmmoPower(Player player, WeaponCard weapon, AmmoCube.Effect firstOptionToPay,GameModel m){
         LinkedList<PowerUpCard>wallet=choosePowerUp(player);
         int redCube=player.getCubeRed();
         int blueCube=player.getCubeBlue();
@@ -650,8 +658,10 @@ public void grabPowerUp(Player p, GameModel m){
         }
         if(!reloadAmmo(player,weapon,blueCube,redCube,yellowCube,firstOptionToPay))
             return false;
-        for(int i=0;i<wallet.size();i++)
+        for(int i=0;i<wallet.size();i++){
             player.getPowerUp().remove(wallet.get(i));
+            m.powerUpDeck.getPowerUpDeck().addLast(wallet.get(i));
+                }
         return true;
     }
     /**
@@ -669,13 +679,13 @@ public void grabPowerUp(Player p, GameModel m){
      *               ii)if you pay with power up blu,red,yellow get number of player's cube color plus powerup's colors
      */
 ///////////////////////////___________________reloadAmmo__________________________________/////////////////////////////////////
-public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow,SelectedBaseorAltorNone firstOptionToPay){
+public boolean reloadAmmo(Player p, WeaponCard w, int blue, int red, int yellow, AmmoCube.Effect firstOptionToPay){
     int blueToPay=0;
     int yellowToPay=0;
     int redToPay=0;
     for (int i = 0; i < w.price.size(); i++) {
-        if (w.price.get(i).getEffect() == AmmoCube.Effect.BASE&&firstOptionToPay==SelectedBaseorAltorNone.BASE||
-                w.price.get(i).getEffect()== AmmoCube.Effect.ALT&&firstOptionToPay==SelectedBaseorAltorNone.ALT) {
+        if (w.price.get(i).getEffect() == AmmoCube.Effect.BASE&&firstOptionToPay== AmmoCube.Effect.BASE||
+                w.price.get(i).getEffect()== AmmoCube.Effect.ALT&&firstOptionToPay== AmmoCube.Effect.ALT) {
             if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.BLUE)
                 blueToPay++;
             if (w.price.get(i).getCubeColor() == AmmoCube.CubeColor.RED)
@@ -694,14 +704,14 @@ public boolean reloadAmmo(Player p,WeaponCard w,int blue,int red,int yellow,Sele
 
     }
         for (int i = 0; i < w.price.size(); i++) {
-            if (w.price.get(i).getEffect() == AmmoCube.Effect.BASE&&firstOptionToPay==SelectedBaseorAltorNone.BASE||
-                    w.price.get(i).getEffect()== AmmoCube.Effect.ALT&&firstOptionToPay==SelectedBaseorAltorNone.ALT) {
+            if (w.price.get(i).getEffect() == AmmoCube.Effect.BASE&&firstOptionToPay==AmmoCube.Effect.BASE||
+                    w.price.get(i).getEffect()== AmmoCube.Effect.ALT&&firstOptionToPay==AmmoCube.Effect.ALT) {
                 w.price.get(i).setPaid(true);
                switch (firstOptionToPay)
                {
-                   case ALT: w.setReloadAlt(true);
-                   case BASE:w.setReload();
-                   case NONE: //invalid
+                   case ALT: w.setReloadAlt(true); break;
+                   case BASE:w.setReload(); break;
+                   default: //invalid
                        break;
                }
             }
@@ -741,7 +751,7 @@ return true;}
      */
 ///____________________________________canPayCard(TRUE if can pay base effect)____________________________________///
 
-    public boolean canPayCard(WeaponCard weapon, Player player,PayOption option,SelectedBaseorAltorNone firstOptionToPay) {
+    public boolean canPayCard(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay) {
         if(option!=null){
         switch(option){
 
@@ -771,7 +781,7 @@ return true;}
      */
     ///////////////////////________________canPayOnlyCube______________________________________________________________________////////////////////////
 
-    public boolean canPayAmmo(WeaponCard weapon,int red,int yellow,int blue,SelectedBaseorAltorNone firstOptionToPay) {
+    public boolean canPayAmmo(WeaponCard weapon, int red, int yellow, int blue, AmmoCube.Effect firstOptionToPay) {
         List<AmmoCube> cost = weapon.getPrice();
         int i;
         int redToPay=0;
@@ -781,10 +791,11 @@ return true;}
             return true;
         //can you pay base effect or you can pay alt
         for (i = 0; i < cost.size(); i++) {
-            if ((((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)&&firstOptionToPay==SelectedBaseorAltorNone.BASE ||
-                    cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==SelectedBaseorAltorNone.ALT )&& !weapon.getReload()
-                    &&!weapon.getReloadAlt()
-            )) {
+            if ((((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE)&&firstOptionToPay==AmmoCube.Effect.BASE ||
+                    cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==AmmoCube.Effect.ALT )&& !weapon.getReload()
+                    &&!weapon.getReloadAlt() ||((cost.get(i).getEffect().equals(AmmoCube.Effect.OP1)&&firstOptionToPay==AmmoCube.Effect.OP1 )||
+                    cost.get(i).getEffect().equals(AmmoCube.Effect.OP2)&&firstOptionToPay==AmmoCube.Effect.OP2 )&&(weapon.getReloadAlt()||weapon.getReload())))
+            {
 
                 for (int j = 0; j < numMaxAmmoToPay; j++) {
 
@@ -828,7 +839,7 @@ return true;}
      */
     ////////////////////___________________canPayAmmoPower pay bse effect with power up_____________________________________________________________//////////////
 
-    public boolean canPayAmmoPower(WeaponCard weapon, Player player, LinkedList<PowerUpCard>powerUpCards,SelectedBaseorAltorNone firstOptionToPay){
+    public boolean canPayAmmoPower(WeaponCard weapon, Player player, LinkedList<PowerUpCard>powerUpCards,AmmoCube.Effect firstOptionToPay){
 
        int redPower=0;
        int bluePower=0;
@@ -849,6 +860,7 @@ return true;}
         int redCube=player.getCubeRed()+redPower;
         int blueCube=player.getCubeBlue()+bluePower;
         int yellowCube=player.getCubeYellow()+yellowPower;
+
         return canPayAmmo(weapon,redCube,blueCube,yellowCube,firstOptionToPay);
 
     }
@@ -880,11 +892,11 @@ return true;}
      */
     //////////////////_____________________payMethods______________________________________________///////////////////////
 
-    public List<EffectAndNumber> paidEffect(WeaponCard weapon, Player player,PayOption option,SelectedBaseorAltorNone firstOptionToPay) {
+    public List<EffectAndNumber> paidEffect(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay,GameModel m) {
 
         switch(option){
             case AMMO: return payAmmo(player,weapon,firstOptionToPay);
-            case AMMOPOWER:return payAmmoPlusPowerUp(player,weapon,firstOptionToPay);
+            case AMMOPOWER:return payAmmoPlusPowerUp(player,weapon,firstOptionToPay,m);
             default:
         }
        return Collections.emptyList(); }
@@ -902,7 +914,7 @@ return true;}
      */
        //_________________________________________________payAmmoPlusPowerUp________________________________________________________//
 
-    public List<EffectAndNumber>payAmmoPlusPowerUp(Player player,WeaponCard weapon,SelectedBaseorAltorNone firstOptionToPay){
+    public List<EffectAndNumber>payAmmoPlusPowerUp(Player player, WeaponCard weapon, AmmoCube.Effect firstOptionToPay,GameModel m){
        LinkedList<PowerUpCard>choosenPowerUp=choosePowerUp(player);
        EffectAndNumber effectAndNumber;
         if(!canPayAmmoPower(weapon,player,choosenPowerUp,firstOptionToPay))
@@ -914,40 +926,42 @@ return true;}
         {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++)
             {
-                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect())&&((weapon.price.get(i).getEffect().equals(AmmoCube.Effect.BASE))&&firstOptionToPay==SelectedBaseorAltorNone.BASE||
-                        (weapon.price.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==SelectedBaseorAltorNone.ALT))
+                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect())&&((weapon.price.get(i).getEffect().equals(AmmoCube.Effect.BASE))&&firstOptionToPay==AmmoCube.Effect.BASE||
+                        (weapon.price.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==AmmoCube.Effect.ALT))
                 {
                     payPowerUp(weapon,choosenPowerUp,player,weapon.price.get(i).getEffect());
                 }
             }
             paid.get(0).setEffect(weapon.price.get(i).getEffect());
-            if(paid.get(0).getEffect()==AmmoCube.Effect.BASE&&firstOptionToPay==SelectedBaseorAltorNone.BASE||paid.get(0).getEffect()==AmmoCube.Effect.ALT&&firstOptionToPay==SelectedBaseorAltorNone.ALT)
+            if(paid.get(0).getEffect()==AmmoCube.Effect.BASE&&firstOptionToPay==AmmoCube.Effect.BASE||paid.get(0).getEffect()==AmmoCube.Effect.ALT&&firstOptionToPay==AmmoCube.Effect.ALT)
                 break;  // i can pay only one
         }
         }
 
         switch(paid.get(0).getEffect()){
-            case ALT: weapon.setReloadAlt(true);
-            case BASE:weapon.setReload();
+            case ALT: weapon.setReloadAlt(true);break;
+            case BASE:weapon.setReload();break;
             default: //invalid
         }
 
         //now pay options
 
-        //todo better
-        for (int i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
+
+        for (int i = 0; i < weapon.getPrice().size(); i++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect()) && (weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP1) ||
-                        weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP2))) {
+                if (weapon.price.get(i).getEffect().equals(weapon.price.get(j).getEffect()) && (weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP1)&&firstOptionToPay== AmmoCube.Effect.OP1||
+                        weapon.price.get(j).getEffect() .equals( AmmoCube.Effect.OP2))&&firstOptionToPay== AmmoCube.Effect.OP2) {
                     payPowerUp(weapon,choosenPowerUp,player,weapon.price.get(i).getEffect());
                 }
 
 
             }
-            effectAndNumber=new EffectAndNumber(weapon.price.get(i).getEffect(),0);
-            paid.add(k,effectAndNumber);
+            effectAndNumber=new EffectAndNumber(firstOptionToPay,0); //todo add number
+            paid.add(effectAndNumber);
         }
 
+        m.powerUpDeck.getPowerUpDeck().addAll(choosenPowerUp);
+        player.getPowerUp().removeAll(choosenPowerUp);
         return paid;
 
 
@@ -965,18 +979,17 @@ return true;}
      */
         //_______________________________________________payOnlyAmmo________________________________________________________________//
 
-    public List<EffectAndNumber>payAmmo(Player player,WeaponCard weapon,SelectedBaseorAltorNone firstOptionToPay){
+    public List<EffectAndNumber>payAmmo(Player player,WeaponCard weapon,AmmoCube.Effect firstOptionToPay){
         // if pay base don't psy alt
-        int i = 0;
+        int i ;
         LinkedList<EffectAndNumber> paid = new LinkedList<>();
         EffectAndNumber effectAndNumber;
-        int k=0;
         List<AmmoCube> cost = weapon.getPrice();
         if(!weapon.getReload()&&!weapon.getReloadAlt())
         {for (i = 0; i < numMaxAlternativeOptions; i++) {        //missing choose your effect base/alt here you source option position
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (cost.get(i).getEffect().equals(cost.get(j).getEffect())&&((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE))&&firstOptionToPay==SelectedBaseorAltorNone.BASE||
-                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==SelectedBaseorAltorNone.ALT)) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect())&&((cost.get(i).getEffect().equals(AmmoCube.Effect.BASE))&&firstOptionToPay==AmmoCube.Effect.BASE||
+                        (cost.get(i).getEffect().equals(AmmoCube.Effect.ALT))&&firstOptionToPay==AmmoCube.Effect.ALT)) {
                     pay(player, cost.get(j));
                 }
             }
@@ -984,22 +997,22 @@ return true;}
             paid.add(0,effectAndNumber);
         }}
         switch(paid.get(0).getEffect()){
-            case ALT: weapon.setReloadAlt(true);
-            case BASE:weapon.setReload();
+            case ALT: weapon.setReloadAlt(true);break;
+            case BASE:weapon.setReload();break;
             default: //invalid
         }
         //then you can pay options
-        for (i = 0,k=1; i < weapon.getPrice().size(); i++,k++) {
+        for (i = 0; i < weapon.getPrice().size(); i++) {
             for (int j = 0; j < numMaxAmmoToPay; j++) {
-                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() .equals( AmmoCube.Effect.OP1) ||
-                        cost.get(j).getEffect() .equals( AmmoCube.Effect.OP2))) {
+                if (cost.get(i).getEffect().equals(cost.get(j).getEffect()) && (cost.get(j).getEffect() .equals( AmmoCube.Effect.OP1)&&firstOptionToPay== AmmoCube.Effect.OP1||
+                        cost.get(j).getEffect() .equals( AmmoCube.Effect.OP2))&&firstOptionToPay== AmmoCube.Effect.OP2) {
                     pay(player, cost.get(j));
                 }
 
 
             }
             effectAndNumber=new EffectAndNumber(weapon.price.get(i).getEffect(),0);
-            paid.add(k,effectAndNumber);
+            paid.add(effectAndNumber);
         }
 
         return paid;
@@ -1058,6 +1071,9 @@ return true;}
             }
         }
     }
+
+
+
     /**
      * getEndTurn
      * @return  boolean: to know if turn is ended
