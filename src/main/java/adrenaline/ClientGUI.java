@@ -43,7 +43,7 @@ public class ClientGUI {
     JLabel[] yellowArray = new JLabel[3];
     JLabel[] playerCards = new JLabel[3];
 
-    private ClientGUI(String serverAddress) {
+    public ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);
         textField.addActionListener(new ActionListener() {

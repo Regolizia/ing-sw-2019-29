@@ -142,4 +142,14 @@ public class Room {
         return tiles;
     }
 
+    public Spawnpoint getSpawnpoint(int x, int y){
+        for (Spawnpoint s: getSpawnpoints()) {
+            if(s.getSpawnpointX()==x&& s.getSpawnpointY()== y)
+                return s;
+        }
+        return null;
+    }
+
+
+
 }

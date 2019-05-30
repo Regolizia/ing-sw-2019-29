@@ -9,7 +9,9 @@ public class WeaponCard extends Card{
 
     protected LinkedList<AmmoCube> price;
     private EffectAndNumber effectAndNumber;
+    private CoordinatesWithRoom coordinates;
     private boolean reload;
+    private boolean reloadAlt;
     public WeaponCard() {
         price = new LinkedList<>();
         reload =false;
@@ -121,12 +123,17 @@ public class WeaponCard extends Card{
         return price;
     }
 
-
-
-    void setReload(){reload=true;}
-// reload to pay baseEffect
-    void setNotReload(){reload=false;}
-    boolean getReload(){return reload;}
+    public void placeWeaponOnMap(CoordinatesWithRoom c){
+        this.coordinates=c;
+    }
+    public CoordinatesWithRoom getCoordinatesOnMap(){
+        return this.coordinates;
+    }
+    public  void setReload(){this.reload=true;}
+    public  void setNotReload(){reload=false;}
+    public  void setReloadAlt(boolean reloadStatus){this.reloadAlt=reloadStatus;}
+    public  boolean getReloadAlt(){return reloadAlt;}
+    public  boolean getReload(){return reload;}
 
     @Override
     public String toString() {

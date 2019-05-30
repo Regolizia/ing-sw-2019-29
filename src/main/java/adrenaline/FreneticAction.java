@@ -14,15 +14,15 @@ import java.util.*;
     // else chooses another action
 public class FreneticAction extends Action {
 
-    public FreneticAction(){
-        super();
+    public FreneticAction(GameModel m){
+        super(m);
     }
 
     public static enum PlayerOrder {
         FIRST,AFTER      //reload is an  optional action //ADRENALINESHOOT
     }
 
-    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order){
+    public boolean selectFrenzyAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption paymentOption, PlayerOrder order,LinkedList<AmmoCube.Effect> effectToPay){
 /*FIRST
 * move up to 4 squares
 * move uo to 2 squares and grab
@@ -40,10 +40,10 @@ switch (actionSelected){
                 return true;
     case GRAB: CoordinatesWithRoom coordinatesG;
                     if(order==PlayerOrder.FIRST)
-                        coordinatesG=chooseCell(proposeCellsGrabFrenzy(c, g, player));
+                        coordinatesG=chooseCell(proposeCellsGrabFrenzy(c, g));
                     else
                         coordinatesG=chooseCell(proposeCellsGrabFrenzy(c,g,player,order));
-               if((grab(player, coordinatesG, g,paymentOption))){
+               if((grab(player, coordinatesG,paymentOption,m,effectToPay.getFirst()))){
                    player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
                    return true;
                }
@@ -51,16 +51,14 @@ switch (actionSelected){
 
     case SHOOT: LinkedList<WeaponCard> hand = player.getHand();
                 WeaponCard weapon = chooseWeaponCard(hand);
-
-        if (weapon.getReload() == false) {
-            if (!canPayCard(weapon, player,paymentOption))
-               return false;
+                if (weapon.getReload() == false&&!canPayCard(weapon, player,paymentOption,effectToPay.getFirst())) {
+                    return false;
             
         }
-        if(!canPayCard(weapon,player,paymentOption))
+        if(!canPayCard(weapon,player,paymentOption,effectToPay.getFirst()))
             return false;
 
-        List<EffectAndNumber> payEff = paidEffect(weapon, player,paymentOption);
+        List<EffectAndNumber> payEff = paidEffect(weapon,player,paymentOption,effectToPay.getFirst(),m);
             if(payEff==null)
             {return false;}
 
@@ -76,8 +74,9 @@ switch (actionSelected){
             weapon.setNotReload();// i've lost base effect payment
 
             return true;
-
+default: //
         }
+
 
         return false;
     }
@@ -93,7 +92,7 @@ switch (actionSelected){
     }
 
 
-    public LinkedList<CoordinatesWithRoom> proposeCellsGrabFrenzy(CoordinatesWithRoom c, GameBoard g, Player player){
+    public LinkedList<CoordinatesWithRoom> proposeCellsGrabFrenzy(CoordinatesWithRoom c, GameBoard g){
             LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(g, 1));
             list.addAll(c.xTilesDistant(g,2));
             list.add(c);
@@ -101,7 +100,7 @@ switch (actionSelected){
 
     }
     public LinkedList<CoordinatesWithRoom> proposeCellsGrabFrenzy(CoordinatesWithRoom c, GameBoard g, Player player,PlayerOrder order){
-        LinkedList<CoordinatesWithRoom> list = proposeCellsGrabFrenzy(c,g,player);
+        LinkedList<CoordinatesWithRoom> list = proposeCellsGrabFrenzy(c,g);
         list.addAll(c.xTilesDistant(g,3));
         list.add(c);
         return list;

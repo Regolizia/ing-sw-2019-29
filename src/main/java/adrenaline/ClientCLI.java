@@ -1,6 +1,7 @@
 package adrenaline;
 
 // SOCKET
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -113,9 +114,12 @@ public class ClientCLI {
                 socket.close();
         }
     }
-    public void printPlayerDetails(String playerName, int score, String color) {
+    public void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {
         System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
     }
 
+    public void sendMessage(String message){
+        System.out.println(message);
+    }
 
 }
