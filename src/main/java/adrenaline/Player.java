@@ -25,6 +25,7 @@ public class Player {
     private int indexPointCounter; //to indicate max points assegnable
     private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
     private boolean[] skullTrack;
+    private String name;
 
     /**
      * Class constructor.
@@ -62,6 +63,7 @@ public class Player {
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
+        name="";
     }
     /**
      * toString
@@ -505,4 +507,8 @@ public class Player {
     public CoordinatesWithRoom getCoordinatesWithRooms(){
         return coordinates;
     }
+
+    public void setName(String newName){this.name=newName;}
+    public String getName(){return this.name;}
+    public CoordinatesWithRoom getRespawnCoordinates(){return this.respawnCoordinates;}
 }
