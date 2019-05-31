@@ -19,22 +19,22 @@ public class GameController {
             for (Player player2 : model.getPlayers()
             ) {
                 if (player2.getName().equals(name)) {
-                    viewCli.sendMessage("this name is already taken");
+                   // viewCli.sendMessage("this name is already taken");
                     return;
                 }
                 if (player2.getColor().equals(color)) {
-                    viewCli.sendMessage("this color is already taken");
+                  //  viewCli.sendMessage("this color is already taken");
                     return;
                 }
                 if(player2.getRespawnCoordinates().equals(spw)){
-                    viewCli.sendMessage("this spawnpoint is already taken");
+                  //  viewCli.sendMessage("this spawnpoint is already taken");
                 }
             }
             Player player= new Player(spw,color);
             player.setName(name);
             model.getPlayers().add(player);
         }
-        else viewCli.sendMessage("can't add another player");
+        //else viewCli.sendMessage("can't add another player");
 
     }
 

@@ -5,6 +5,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 
 // RMI
@@ -12,114 +14,182 @@ import java.util.Scanner;
 
 public class ClientCLI {
 
-    String serverAddress;
-    Scanner in;
-    PrintWriter out;
-    Socket socket;
-    boolean isRMI;   // FALSE FOR SOCKET, TRUE FOR RMI
+    public static Scanner scanner = new Scanner(System.in);
+
+    private static ArrayList mainMenu;
+    private static boolean quit = false;
+
 
     public static void main(String[] args) throws Exception {
+        String serverAddress = args[0];
+        int socketPort = 59001, rmiPort = 59002;
+
         if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        var client = new ClientCLI(args[0]);
-        client.run();
+        new ClientCLI(serverAddress, socketPort, rmiPort);
     }
 
 
-    public ClientCLI(String serverAddress) {
-        this.serverAddress = serverAddress;
+    public ClientCLI(String serverAddress, int socketPort, int rmiPort) {
+
+        System.out.print("[R]MI or [S]ocket? (Default: [S]): ");
+        String inText = scanner.nextLine().toUpperCase();
+
+        if (!(inText.equals("S") || inText.equals("R"))){
+            inText = "S"; // SOCKET DEFAULT
+        }
+
+        mainMenu = setMainMenu(); // Maybe it can be moved
+
+        boolean connected = false;
+        // TODO CONNECTION TO CLIENT
+        // START CLIENT
+        // client.startClient(inText...
+        // inText is the choice if Socket or Rmi
+        // IF SUCCESS
+        if(connected){
+            ClientCLI.login();
+        }
+
      }
 
-    private void run() throws IOException, Exception {
-        Scanner scanner = new Scanner(System.in);
+    private static void login(){
+         System.out.println("Enter nickname: ");
 
-        /*while (true) {
-            System.out.println("Do you want to use Socket or RMI? s/r");
-            String type= scanner.nextLine();
-            if(type.equals("s")){
-            */    isRMI=false;
-                socket = new Socket(serverAddress, 59001);
-                in = new Scanner(socket.getInputStream());
-                out = new PrintWriter(socket.getOutputStream(), true);
-         /*       break;
-            } else if (type.equals("r")){
+          String input = scanner.nextLine();
+         // TODO SEND input to check, (message ENTER)
 
-                InterfaceRMI serv = (InterfaceRMI)Naming.lookup("//localhost/RmiServer");
-                isRMI=true;
-                toSend="true";*//*
-                break;
+     }
+
+     private static void chooseColor(// TODO SEND List of colors
+     ){
+         System.out.println("Choose a color: ");
+         //System.out.println(list of colors); TODO
+         String input = scanner.nextLine();
+         // TODO SEND input to check, (message CHOOSE COLOR)
+
+         // TODO GET ANSWER IF PLAYER IS FIRST AND DO THIS IF IT IS:
+         //chooseBoard();
+     }
+
+     private static void chooseBoard(){
+
+         System.out.println("Choose board number: 1, 2, 3, 4");
+         String input = scanner.nextLine();
+         // TODO SEND input to check, (message CHOOSE BOARD)
+     }
+
+     private static void chooseSpawnpoint(// TODO SEND Two cards or names
+     ){
+
+         System.out.println("Choose a card: ");
+         //System.out.println(Cards to print
+         String input = scanner.nextLine();
+         // TODO SEND input to check, (message CHOOSE SPAWNPOINT)
+     }
+
+     private static void printMessage(String message){
+         System.out.println(message);
+         // TODO change in server (message MESSAGE)
+     }
+
+    public static void showMainMenu() {
+        do {
+            System.out.println("Main Menu:\n" +
+                    "Z: Exit\n" +
+                    "S: Show Board Info\n" +
+                    "B: Show your player board\n" +
+                    "C: Show other players' information\n" +
+                    "A: Perform an action\n"
+                    //"E: Pass the turn\n" +
+                    //"F: Suggest game's interruption\n" +
+                    //"I: Show Card Information\n"
+                    );
+            String s = scanner.nextLine();
+            s = s.trim().toUpperCase();
+            if (isPresentCommand(mainMenu, s)) {
+                switch (s) {
+                    case "S": showBoardInfo(); break;
+                    case "B": showPlayerBoard(); break;
+                    case "C": showOtherPlayers(); break;
+                    case "A": showActionMenu(); break;
+                    //case "E": passTurn(); break;
+                    //case "F": suggestGameInterruption(); break;
+                    case "Z": quit = true;
+                    System.exit(0);
+                        break;
+                    //case "I": showCardInformation(); break;
+                    default: break;
+                }
             }
-        }*/
+            else
+                System.out.println("Sorry, your choice \""+ s +"\" is not valid\n");
+        }while (!quit);
+    }
 
-            String input;
-            String line;
-        try{
-            do {
-                line = in.nextLine();
-                //System.out.println("line: "+line);
-
-                if (line.startsWith("MESSAGE")) {
-                    System.out.println(line.substring(7));
-                    //   System.out.println(4);
-                } else if (line.startsWith("ENTER")) {
-                 //// ALTRIMENTI
-                 System.out.println("Enter nickname: ");
-                 //Scanner scanner = new Scanner(System.in);
-                 input = scanner.nextLine();
-                 out.println(input);
-              //   System.out.println(2);
-             }
-             if (line.startsWith("NAME ACCEPTED ")) {
-                 System.out.println("Nickname accepted!");
-               //  System.out.println(3);
-             }
-             if (line.startsWith("CHOOSE COLOR ")) {
-                 System.out.println("Choose a color: ");
-                System.out.println(in.nextLine());
-                 input = scanner.nextLine();
-                 out.println(input);
-             }
-             if (line.startsWith("COLOR ACCEPTED ")) {
-                 System.out.println("Color accepted!");
-             }
-             if (line.startsWith("DUPLICATE COLOR ")) {
-                 System.out.println("You have chosen a color already selected by another player, choose again");
-             }
-             if (line.startsWith("DUPLICATE NAME ")) {
-                 System.out.println("You have entered a nickname already chosen by another player!");
-             }
-             if (line.startsWith("WORD NOT ACCEPTED ")) {
-                 System.out.println("Word not accepted, insert again");
-             }
-             if (line.startsWith("CHOOSE BOARD ")) {
-                 System.out.println("Choose board number: 1, 2, 3, 4");
-                 input = scanner.nextLine();
-                 out.println(input);
-             }
-             if (line.startsWith("NOT ACCEPTED, TRY AGAIN")) {
-                 System.out.println("Not accepted, insert again");
-             }
-             if (line.startsWith("CHOOSE SPAWNPOINT ")) {
-                 System.out.println("Choose a card: ");
-                 System.out.println(in.nextLine());
-                 input = scanner.nextLine();
-                 out.println(input);
-             }
-         }
-         while (in.hasNextLine());
-       } finally {
-           // if(!isRMI)
-                socket.close();
+    private static void showActionMenu() {
+        System.out.println("Action Menu:\n" +
+                        "S: Shoot\n" +
+                        "G: Grab\n" +
+                        "M: Move\n" +
+                        "B: Go back to Main Menu\n"
+        );
+        String s = scanner.nextLine();
+        s = s.trim().toUpperCase();
+        switch (s) {
+            case "S": shoot(); break;
+            case "G": grab(); break;
+            case "M": move(); break;
+            case "B": back(); break;
+            default: break;
         }
     }
-    public void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {
-        System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
+
+    private static void back() {
+        // GO BACK TO MAIN MENU
     }
 
-    public void sendMessage(String message){
-        System.out.println(message);
+    private static void move() {
+    }
+
+    private static void grab() {
+    }
+
+    private static void shoot() {
+    }
+
+    private static void showOtherPlayers() {
+        // SHOW INFO ABOUT OTHER PLAYERS
+    }
+
+    private static void showPlayerBoard() {
+        // SHOW INFO ABOUT PLAYER, CARDS ETC...
+    }
+
+    private static void showBoardInfo() {
+        // TODO PRINT BOARD OR SOMETHING
+    }
+
+    private static ArrayList setMainMenu() {
+
+        ArrayList commands = new ArrayList<String>();
+        commands.add("Z");
+        commands.add("A");
+        commands.add("B");
+        commands.add("C");
+        commands.add("D");
+        return commands;
+    }
+
+    private static boolean isPresentCommand(ArrayList menu, String s) {
+        Optional<String> command = menu.stream().filter(str -> str.equals(s)).findFirst();
+        return command.isPresent();
+    }
+
+    public static void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {
+        System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
     }
 
 }
