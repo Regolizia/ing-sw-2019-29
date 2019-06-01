@@ -21,6 +21,5 @@ public class PowerUpDeckTest {
         AmmoCube.CubeColor a = c.getPowerUpColor();
 
 
-
     }
 }
