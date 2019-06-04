@@ -218,6 +218,12 @@ public class Server {
            case GRAB:
                grab(player);
                break;
+           case RUN:
+               run(player);
+               break;
+           case SHOOT:
+               shoot(player);
+               break;
        }
 */
 
@@ -264,6 +270,16 @@ public class Server {
         }
     }
 
+    public void run(Player player){
+        LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+        // PROPONI LE CELLE E PRENDINE UNA
+        CoordinatesWithRoom c = null;
+        action.run(player,c);
+    }
+
+    public void shoot(Player player){
+
+    }
 
     /**
      * Updates index of next Player.
