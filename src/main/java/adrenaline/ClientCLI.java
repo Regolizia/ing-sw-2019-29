@@ -41,14 +41,15 @@ public class ClientCLI {
             inText = "S"; // SOCKET DEFAULT
         }
 
-        mainMenu = setMainMenu(); // Maybe it can be moved
-
         boolean connected = false;
         // TODO CONNECTION TO CLIENT
         // START CLIENT
         // client.startClient(inText...
         // inText is the choice if Socket or Rmi
+
         // IF SUCCESS
+        connected=true;
+
         if(connected){
             ClientCLI.login();
         }
@@ -133,7 +134,7 @@ public class ClientCLI {
         System.out.println("Action Menu:\n" +
                         "S: Shoot\n" +
                         "G: Grab\n" +
-                        "M: Move\n" +
+                        "R: Run\n" +
                         "B: Go back to Main Menu\n"
         );
         String s = scanner.nextLine();
@@ -141,7 +142,7 @@ public class ClientCLI {
         switch (s) {
             case "S": shoot(); break;
             case "G": grab(); break;
-            case "M": move(); break;
+            case "R": run(); break;
             case "B": back(); break;
             default: break;
         }
@@ -151,7 +152,7 @@ public class ClientCLI {
         // GO BACK TO MAIN MENU
     }
 
-    private static void move() {
+    private static void run() {
     }
 
     private static void grab() {
@@ -172,16 +173,6 @@ public class ClientCLI {
         // TODO PRINT BOARD OR SOMETHING
     }
 
-    private static ArrayList setMainMenu() {
-
-        ArrayList commands = new ArrayList<String>();
-        commands.add("Z");
-        commands.add("A");
-        commands.add("B");
-        commands.add("C");
-        commands.add("D");
-        return commands;
-    }
 
     private static boolean isPresentCommand(ArrayList menu, String s) {
         Optional<String> command = menu.stream().filter(str -> str.equals(s)).findFirst();

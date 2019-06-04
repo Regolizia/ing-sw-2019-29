@@ -2,11 +2,7 @@ package adrenaline;
 
 // SOCKET
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.*;
-import java.util.concurrent.Executors;
-import  java.lang.*;
 import java.util.stream.*;
 
 // RMI
@@ -14,12 +10,14 @@ import java.util.stream.*;
 public class Server {
 
     private static GameModel model;
+    private static Action action;
 
-    private static int TIME = 0;
+    private static int currentPlayer = 0;
+    private static boolean isFirstTurn = true;
+
+    private static int time = 0;
     private static int connectionsCount = 0;
-    private static String firstPlayer;
     private static int boardChosen = 0;
-    private static boolean gameIsOn = false;
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -31,14 +29,18 @@ public class Server {
     // All client names, so we can check for duplicates upon registration.
     private static ArrayList<String> names = new ArrayList<>();
 
+    // IS THIS USEFUL?
     // The set of all the print writers for all the clients, used for broadcast.
-    private static List<PrintWriter> writers = new ArrayList<>();
+    //private static List<PrintWriter> writers = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
-        TIME =Integer.parseInt(args[0]);
+        time =Integer.parseInt(args[0]);
         possibleColors.remove("NONE");
 
-        System.out.println("The server is running...");
+        // TODO SEARCH FOR NEW CLIENTS
+        // IF FOUND SET CONNECTIONSCOUNT++
+
+      /*  System.out.println("The server is running...");
         var pool = Executors.newFixedThreadPool(500);
         try (var listener = new ServerSocket(59001)) {
            
@@ -46,21 +48,23 @@ public class Server {
                 pool.execute(new Handler(listener.accept()));
                
             }
-        }
+        }*/
     }
 
+    // TIMER
     private static class Countdown{
         public Countdown(){
             final Timer timer = new Timer();
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = TIME;
+                    int i = time;
 
                     public void run() {
                         System.out.println(i--);
                         if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
+
                                 Server.startGame();
                             // DO SOMETHING TO START THE GAME
                             }
@@ -79,150 +83,87 @@ public class Server {
         }
     }
 
+    public void clientLogin(){
+        String name = null;
+        checkName(name);
 
-    /**
-     * The client handler task.
-     */
-    private static class Handler implements Runnable {
-        private String name;
-        private String color;
-        private Socket socket;
-        private Scanner in;
-        private PrintWriter out;
+        String color = null;
+        checkColor(color);
 
+        addPlayerToGame(name, color);
 
-        public Handler(Socket socket) {
-            this.socket = socket;
-        }
+        chooseBoard(name);
 
-        public void run() {
-            try {
-                Server.connectionsCount++;
-                if(connectionsCount==3){
-                    Countdown c = new Countdown();
-                }
+    }
 
-                in = new Scanner(socket.getInputStream());
-                out = new PrintWriter(socket.getOutputStream(), true);
+    public void checkName(String name){
+        // TODO name = GET NAME FROM CLIENT
 
-                // Keep requesting a name until we get a unique one.
-                while (true) {
-                    out.println("ENTER NICKNAME");
-                    name = in.nextLine();
-                    if (!name.equals("null")) {
-                        synchronized (names) {
-                            if (!isBlank(name) && !names.contains(name)) {
-                                names.add(name);
-                                break;
-                            } else if (names.contains(name)) {
-                                System.out.println("DUPLICATE NAME ");    // WHAT I SEE IN SERVER
-                                out.println("DUPLICATE NAME ");   // WHAT I SEND TO CLIENT
-                            }
-                        }
+        // Keep requesting a name until we get a unique one.
+        while (true) {
+            if (name != null || !name.equals("null")) {
+                synchronized (names) {
+                    if (!isBlank(name) && !names.contains(name)) {
+                        names.add(name);
+                        break;
+                    } else if (names.contains(name)) {
+                        // TODO name = GET NAME BECAUSE DUPLICATE
                     }
-                }
-
-                System.out.println("NAME ACCEPTED " + name);    // WHAT I SEE IN SERVER
-                out.println("NAME ACCEPTED " + name);   // WHAT I SEND TO CLIENT
-                for (PrintWriter writer : writers) {
-                    writer.println("MESSAGE" + name + " has joined");
-                }
-                writers.add(out);
-
-                while (true) {
-                    String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
-                    out.println("CHOOSE COLOR ");
-                    out.println(csv);
-                    color = in.nextLine();
-                    if (color == null) {
-                        System.out.println("color null");
-                        return;
-                    }
-                    synchronized (possibleColors) {
-                        if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color) )
-                                && (colorsChosen.isEmpty() || (!colorsChosen.contains(color) && !colorsChosen.contains(color.toUpperCase())))) {
-                            colorsChosen.add(color.toUpperCase());
-                            possibleColors.remove(color.toUpperCase());
-                            break;
-                        }
-                        else if((!possibleColors.contains(color.toUpperCase()) || !possibleColors.contains(color) )
-                            && !colorsChosen.contains(color.toUpperCase()) && !colorsChosen.contains(color)) {
-                            System.out.println("WORD NOT ACCEPTED ");    // WHAT I SEE IN SERVER
-                            out.println("WORD NOT ACCEPTED ");   // WHAT I SEND TO CLIENT
-
-                        }
-                        else if(colorsChosen.contains(color.toUpperCase()) || colorsChosen.contains(color)){
-                            System.out.println("DUPLICATE COLOR ");    // WHAT I SEE IN SERVER
-                            out.println("DUPLICATE COLOR ");   // WHAT I SEND TO CLIENT
-                        }
-                    }
-                }
-                System.out.println("COLOR ACCEPTED " + color);    // WHAT I SEE IN SERVER
-                out.println("COLOR ACCEPTED " + color);   // WHAT I SEND TO CLIENT
-                for (PrintWriter writer : writers) {
-                    writer.println("MESSAGE" + name + " has chosen " + color);
-                }
-
-                if(name.equals(names.get(0))){
-                    System.out.println("BOARD SELECTION ");
-                    System.out.println(names.get(0));
-                    while(true){
-                        out.println("CHOOSE BOARD ");
-                        int result = isInteger(in.nextLine());
-                        System.out.println(result);
-                            if (result == 1 || result == 2 || result == 3 || result == 4) {
-                                Server.setBoardChosen(result);
-                                System.out.println("BOARD CHOSEN " + result);
-                                Server.firstPlayer = name;
-                                break;
-                            } else {
-                                System.out.println("NOT ACCEPTED, TRY AGAIN");
-                                out.println("NOT ACCEPTED, TRY AGAIN");
-                            }
-
-                    }
-                }
-
-                out.println("MESSAGE" + "Waiting for other players...");
-
-
-
-                // TODO DO SOMETHING IF NAME DISCONNECTED, SOMEONE ELSES CHOOSES
-
-                // Accept messages from this client and broadcast them.
-                while (true) {
-                    String input = in.nextLine();
-                    if (input.toLowerCase().startsWith("/quit")) {
-                        return;
-                    }
-                    for (PrintWriter writer : writers) {
-                        System.out.println(writer);
-                        writer.println("MESSAGE" + name + ": " + input);
-                    }
-                }
-            } catch (Exception e) {
-                // PLAYER DISCONNECTED
-                System.out.println(e);
-                System.out.println(e.getStackTrace()[0].getLineNumber());
-            } finally {
-                connectionsCount--;
-                if (out != null) {
-                    writers.remove(out);
-                }
-                if (name != null) {
-                    System.out.println(name + " is leaving");
-                    names.remove(name);
-                    for (PrintWriter writer : writers) {
-                        writer.println("MESSAGE" + name + " has left");
-                    }
-                }
-                try {
-                    socket.close();
-                } catch (IOException e) {
                 }
             }
         }
     }
+
+    public void checkColor(String color){
+
+        while (true) {
+            String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
+            // TODO color = GET COLOR FROM CLIENT. MUST SEND csv TO CLIENT
+
+            if (color != null) {
+                synchronized (possibleColors) {
+                    if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color))
+                            && (colorsChosen.isEmpty() || (!colorsChosen.contains(color) && !colorsChosen.contains(color.toUpperCase())))) {
+                        colorsChosen.add(color.toUpperCase());
+                        possibleColors.remove(color.toUpperCase());
+                        break;
+                    } else if ((!possibleColors.contains(color.toUpperCase()) || !possibleColors.contains(color))
+                            && !colorsChosen.contains(color.toUpperCase()) && !colorsChosen.contains(color)) {
+                        // TODO ASK AGAIN FOR COLOR, IT WASN'T ACCEPTED
+
+                    } else if (colorsChosen.contains(color.toUpperCase()) || colorsChosen.contains(color)) {
+                        // TODO ASK AGAIN FOR COLOR, IT WAS A DUPLICATE COLOR
+                    }
+                }
+            }
+        }
+    }
+
+    public void addPlayerToGame(String name, String color){
+        //model.addPlayer(new Player()); TODO
+
+        // TODO BROADCAST NAME HAS JOINED
+    }
+
+    public void chooseBoard(String name){
+        if(name.equals(model.getPlayers().get(0))){
+
+            while(true){
+                int result = 0;
+                // TODO ASK FOR MAP 1-2-3-4
+
+                if (result == 1 || result == 2 || result == 3 || result == 4) {
+                    Server.setBoardChosen(result);
+                    System.out.println("BOARD CHOSEN " + result);
+                    break;
+                } else {
+                    // TODO ASK AGAIN BECAUSE NOT ACCEPTED
+                }
+
+            }
+        }
+    }
+
     public static boolean isBlank(String str) {
                 int strLen;
                     if (str == null || (strLen = str.length()) == 0) {
@@ -249,43 +190,25 @@ public class Server {
     }
 
     public static void startGame(){
-        gameIsOn = true;
-
-        String pbc = String.join(", ", colorsChosen);  // SEND COLORS
-        String pn = String.join(", ", names);  // SEND COLORS
-
-        for (PrintWriter writer : writers) {
-            writer.println("MESSAGE" + "The board chosen is number " + boardChosen);
-            writer.println("MESSAGE" + "The game is starting...");
-
-            writer.println("PLAYER NAMES ");
-            writer.println(pn);
-            writer.println("PLAYER BOARDS ");
-            writer.println(pbc);
-        }
-
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
+        action = new Action(model);
+
+        // TODO SAY number boardChosen TO EVERYBODY
     }
 
     public void Turn(){
-        //Draw 2 Powerups, choose one
-            if (model.getPlayers().get(model.currentPlayer).isFirstTurn()){
-                ArrayList<PowerUpCard> twoCards= new ArrayList<>();
-                ArrayList<String> twoCardsNames= new ArrayList<>();
+
+            if (isFirstTurn){
+                LinkedList<PowerUpCard> twoCards= new LinkedList<>();
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
-                twoCardsNames.add(twoCards.get(0).toString());
-                twoCardsNames.add(twoCards.get(1).toString());
-                String cards = String.join(", ", twoCardsNames);
-                writers.get(model.currentPlayer).println("CHOOSE SPAWNPOINT ");
-                writers.get(model.currentPlayer).println(cards);
 
-                // GET RESPONSE
+                // TODO CHIEDI QUALE CARTA DA TENERE (0) E QUALE DA USARE COME RESPAWN (Invertile se necessario))
 
-
+                //action.firstTurn(model.getPlayers().get(currentPlayer, twoCards));
 
             }
-            // TODO DO THE STUFF TO MAKE THE ACTIONS
+            // TODO START TURN IN CURRENTPLAYER/CLIENT
 
     }
 
@@ -293,20 +216,12 @@ public class Server {
      * Updates index of next Player.
      * If everybody has played, it resets.
      */
-    public void nextPlayer(){
-        model.currentPlayer++;
-        if(model.currentPlayer==model.getPlayers().size())
-            model.currentPlayer=0;
-    }
-    //______________________________getter&server_______________________________________//
-    public boolean getGameIsOn(){
-        return gameIsOn;
-    }
-    public int getBoardChosen(){
-        return boardChosen;
+    public static void nextPlayer(){
+        currentPlayer++;
+        if(currentPlayer==model.getPlayers().size()) {
+            currentPlayer = 0;
+        isFirstTurn= false;
+        }
     }
 
-    public static String getFirstPlayer() {
-        return firstPlayer;
-    }
 }
