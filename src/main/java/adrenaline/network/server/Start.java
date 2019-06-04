@@ -1,6 +1,4 @@
-package adrenaline.network.ServerWithSocket;
-
-import java.io.IOException;
+package adrenaline.network.server;
 
 public class Start {
     public static void main(String[] args){

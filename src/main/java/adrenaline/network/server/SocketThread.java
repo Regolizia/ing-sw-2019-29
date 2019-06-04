@@ -1,4 +1,4 @@
-package adrenaline.network.ServerWithSocket;
+package adrenaline.network.server;
 
 
 import java.io.IOException;
