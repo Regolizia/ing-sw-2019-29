@@ -332,7 +332,26 @@ public class CoordinatesWithRoom extends Coordinates {
                     return (new CoordinatesWithRoom(0, 0, c.getRoom()));
             }
 
+    public boolean containsSpawnpoint(GameModel model){
+        for(Room r : model.getMapUsed().getGameBoard().getRooms()){
+            if(!r.getSpawnpoints().isEmpty() && (r.getSpawnpoints().get(0).getSpawnpointX()==this.getX() &&
+                        r.getSpawnpoints().get(0).getSpawnpointY()==this.getY() &&
+                        r.getToken()==this.getRoom().getToken())){
+                    return true;
+            }
+        }
+        return false;
+    }
 
-
+    public Spawnpoint getSpawnpoint(GameModel model){
+        for(Room r : model.getMapUsed().getGameBoard().getRooms()){
+            if(!r.getSpawnpoints().isEmpty() && (r.getSpawnpoints().get(0).getSpawnpointX()==this.getX() &&
+                    r.getSpawnpoints().get(0).getSpawnpointY()==this.getY() &&
+                    r.getToken()==this.getRoom().getToken())){
+                return r.getSpawnpoint(this.getX(),this.getY());
+            }
+        }
+        return new Spawnpoint();
+    }
 
 }

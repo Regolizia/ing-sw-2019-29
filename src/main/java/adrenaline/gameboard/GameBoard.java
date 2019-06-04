@@ -35,6 +35,10 @@ public class GameBoard {
         //this.numSkull=numSkull;
     }
 
+    public List<RoomDeath> getRooms(){
+        return new LinkedList<>();
+    }
+
     /**
      * Overridden.
      * @return r A Room

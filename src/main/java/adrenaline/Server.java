@@ -92,7 +92,7 @@ public class Server {
 
         addPlayerToGame(name, color);
 
-        chooseBoard(name);
+        chooseBoard(name); // it checks if is firstPlayer
 
     }
 
@@ -197,6 +197,7 @@ public class Server {
     }
 
     public void Turn(){
+        Player player = model.getPlayers().get(currentPlayer);
 
             if (isFirstTurn){
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
@@ -209,8 +210,60 @@ public class Server {
 
             }
             // TODO START TURN IN CURRENTPLAYER/CLIENT
+        // yourTurn()
+
+/*
+
+       switch (choice) {
+           case GRAB:
+               grab(player);
+               break;
+       }
+*/
 
     }
+
+
+    public void grab(Player player){
+        // IF MI DICE GRAB
+        LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+        // CHIEDI QUALE, RETURN chosenCell
+        CoordinatesWithRoom chosenCell = null;
+
+        if(chosenCell.containsSpawnpoint(model)) {
+            // cerca nel model se c'è uno spawnpoint lì o no
+            //  TODO se spawn fai scegliere quale e mettila in card
+            Spawnpoint s = chosenCell.getSpawnpoint(model);
+            LinkedList<WeaponCard> weaponCards = s.getWeaponCards();
+            // TODO SCEGLI CARTA, mettila in card
+            WeaponCard card = null;
+
+            // CHIEDI COME PAGARE AMMO O AMMOPOWER
+            if (action.canPayCard(card, player, Action.PayOption.AMMO, AmmoCube.Effect.BASE)) {
+                action.payAmmo(player, card, AmmoCube.Effect.BASE);
+
+                if (player.canGrabWeapon()) {
+                    // se va bene gliela passo
+                    //action.grabCard(player, card, Action.PayOption.AMMOPOWER,model, AmmoCube.Effect.BASE,s);
+                    // incrementa turno
+                }
+            }
+            if (action.canPayCard(card, player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE)) {
+                action.payAmmoPlusPowerUp(player, card, AmmoCube.Effect.BASE, model);
+
+                if (player.canGrabWeapon()) {
+                    // se va bene gliela passo
+                    //action.grabCard(player, card, Action.PayOption.AMMOPOWER,model, AmmoCube.Effect.BASE,s);
+                    // incrementa turno
+                }
+            }
+        }
+        else {
+            //se non spawnpoint
+            action.grabTile(player, chosenCell, model);
+        }
+    }
+
 
     /**
      * Updates index of next Player.
