@@ -10,17 +10,10 @@ import java.util.List;
 import static adrenaline.AmmoCube.CubeColor.*;
 
 /**
- * Is the class that describes players' turn.
+ * Is the class that describes players' actions
  * @author Giulia Valcamonica
- * @version 1.0
+ * @version 2.0
  **/
-//todo better code
-/*
-* 1) canPay selected option
-* 2) pay selected option power&ammo,ammo
-* 3) separated methods to know how much damage a player does to an other
-* 4) knowing if a player has done the same damage of prec player
-* */
 public class Action {
     final private int numMaxAlternativeOptions = 2;
     //(0=base 1=alternative)
@@ -37,6 +30,8 @@ public class Action {
     private int notDeleted;
     private int initialPlayerIndex;
 
+    private GameModel model;
+
     public static enum ActionType {
         GRAB, RUN, SHOOT, RELOAD
     }
@@ -49,143 +44,13 @@ public class Action {
 
     /**
      * Class constructor.
-     *  * @version 1.0
+     *  * @version 2.0
      */
 
-    public Action(GameModel m) {
-       this.executedFirstAction=false;
-       this.executedSecondAction=false;
-
-       setEndTurn(false);
-        this. deletedAction=false;
-        this.notDeleted=0;
-        this.numOfRemainingPlayer=m.getPlayers().size(); //to know if frenetic action is ended for all
-        this.initialPlayerIndex=0;
+    public Action(GameModel m)
+    {
+      this.model=m;
     }
-
-    /**
-     * doAction : to do the action choosen by the player
-     * can be repeat two times per turn
-     * on the third time doAction accepts only reload
-     * switch on @param actionSelected to get the right method to be called
-     * @param  actionSelected : choosen action
-     * @param  player: name of the player who wants to do the action
-     * @param c: player's position on the board
-     * @param g: gameboard choosen for the game
-     * @param m: model choosen for the game
-     * @param option: payment option choosen to buy weapons/reloads/...
-     * @param frenzyMode: to know if frenzy mode is enabled
-     * @param effectToPay : if player needs to reload/shoot/grab, he can choose which primary effect wants and the other effects
-     */
-
-    //tobe modified it contains some controller actions
-    //________________________________DO ACTION_____________________________________________________________________//
-    public void doAction(ActionType actionSelected, Player player, CoordinatesWithRoom c, GameBoard g, GameModel m, PayOption option, GameModel.FrenzyMode frenzyMode, LinkedList<AmmoCube.Effect> effectToPay){
-        if(!getEndturn()&&!endOfTheGame(g)) {
-            switch (actionSelected) {
-                case RUN:
-                    doRun(c,g,player);
-                    break;
-                case GRAB:
-                    doGrab(player,c,g,option,m,effectToPay);
-                    break;
-                case SHOOT:
-                    doShoot(player,option,m,g,c,effectToPay);
-                    break;
-
-                default:
-                    //INVALID CHOICE
-            }
-
-            if(executedFirstAction&&!deletedAction&&!executedSecondAction)this.executedSecondAction=true;
-            else if(!executedFirstAction&&!deletedAction&&!executedSecondAction) {this.executedFirstAction=true;this.executedSecondAction=false;}
-            if(executedFirstAction&&executedSecondAction)setEndTurn(true);
-        }
-        //HERE ENDS TURN
-        doEndTurn(actionSelected,player,option,g,m,frenzyMode,c,effectToPay);
-    }
-    /**
-     * doRun : to do run methods
-     * @param  player: name of the player who wants to move
-     * @param c: player's position on the board
-     * @param g: gameboard choosen for the game
-     * this action can't be deleted
-     */
-public void doRun(CoordinatesWithRoom c,GameBoard g,Player player)
-{
-    CoordinatesWithRoom coordinatesR=chooseCell(proposeCellsRun(c,g));
-    run(player, coordinatesR);
-    deletedAction=false;
-}
-    /**
-     * doGrab : to do grab methods
-     * @param  player: name of the player who wants to grab
-     * @param c: player's position on the board
-     * @param g: gameboard choosen for the game
-     * @param option: payment option choosen to grab objects on the board
-     * this action can be deleted if grab method returns false
-     *              CONV: effectToPay order is BASE||ALT && OTHERS||-
-     */
-    public void doGrab(Player player, CoordinatesWithRoom c, GameBoard g, PayOption option, GameModel m, LinkedList<AmmoCube.Effect> effectToPay){
-        // PROPOSE CELL WHERE TO GRAB (EVERY CELL HAS SOMETHING) (DISTANCE 0-1 OR 0-1-2) (with proposeCellsGrab)
-        CoordinatesWithRoom coordinatesG;
-        if(player.checkDamage()==1||player.checkDamage()==2)
-            coordinatesG=chooseCell(proposeCellsGrabAdrenaline(c, g, player));
-        else coordinatesG=chooseCell(proposeCellsGrab(c,g));
-        if(!(grab(player, coordinatesG,option,m,effectToPay.getFirst())))
-            deletedAction=true;
-        else player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
-    }
-    /**
-     * doShoot : to do shoot methods
-     * @param  player: name of the player who wants to shoot
-     * @param c: player's position on the board
-     * @param g: gameboard choosen for the game
-     * @param m: choosen GameModel
-     * @param g: choosen Gameboard
-     * @param option: payment option choosen to pay weapon effects
-     *
-     * this action can be deleted if
-     *              i) weapon is not reload and can't be reload
-     *              ii)the player doesn't have selected any base/alternative effect
-     */
-    public void doShoot(Player player,PayOption option,GameModel m,GameBoard g,CoordinatesWithRoom c, LinkedList<AmmoCube.Effect> effectToPay){
-        // WeaponList player.checkWeapon() // GIVES ALL THE WEAPON OWNED BY THE PLAYER
-        LinkedList<WeaponCard> hand = player.getHand();
-        // WeaponCard chooseWeaponCard()// GIVES THE SELECTED WEAPON
-        WeaponCard weapon = chooseWeaponCard(hand);
-
-        if (!weapon.getReload()&&!weapon.getReloadAlt()&&!canPayCard(weapon, player,option,effectToPay.getFirst())) {
-                deletedAction = true;
-                return;
-        }
-
-        if(canPayCard(weapon,player,option,effectToPay.getFirst())){
-            List<EffectAndNumber> payEff = paidEffect(weapon, player,option,effectToPay.getFirst(),m);
-            effectToPay.removeFirst();
-            if(payEff.isEmpty())
-            {deletedAction=true;
-            return;}
-            for (AmmoCube.Effect effect:effectToPay
-                 ) {
-               if(canPayCard(weapon,player,option,effect)){
-                   paidEffect(weapon,player,option,effect,m);
-                    payEff.addAll(paidEffect(weapon, player,option,effect,m));
-               effectToPay.removeFirst();}
-            }
-            CoordinatesWithRoom cChoosen;
-            if(player.checkDamage()==2)
-                cChoosen=chooseCell(proposeCellsRunBeforeShootAdrenaline(c,g));
-            else cChoosen=chooseCell(proposeCellsRunBeforeShoot(c,g));
-            player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
-            shoot(weapon, cChoosen, player, payEff, m,g);
-            weapon.setNotReload();// i've lost base effect payment
-            weapon.setReloadAlt(false);// i've lost alt effect
-            deletedAction=false;}
-
-    }
-
-
 
     /**
      * doEndTurn : methods to end the turn/game
