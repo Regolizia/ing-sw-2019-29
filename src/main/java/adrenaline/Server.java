@@ -7,7 +7,8 @@ import java.util.stream.*;
 
 // RMI
 
-public class Server {
+public class
+Server {
 
     private static GameModel model;
     private static Action action;
@@ -278,8 +279,71 @@ public class Server {
     }
 
     public void shoot(Player player){
+        Action.PayOption payOption=null;
 
+        //just in case he can't shoot
+        LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
+        CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
+        //ask if the player wants to move before shooting
+        // if yes
+        LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+        //choose cell
+        CoordinatesWithRoom playerPosition=null;
+        //set new position
+        action.run(player,playerPosition);
+        //send player's hand , player chooses weapon
+        WeaponCard weaponCard =null;
+        //check if reload
+      // if(weaponCard.getReloadAlt())
+         //   paidEffect.add(0,AmmoCube.Effect.ALT,);
+        // if(weaponCard.getReload())
+        //   paidEffect.add(0,AmmoCube.Effect.BASE,);
+
+        if(!weaponCard.getReloadAlt()&&!weaponCard.getReload()){
+            //ask if he wants to pay BASE/ALT
+            AmmoCube.Effect effect=null;
+            //send message and delete the action
+            if(!effect.equals(AmmoCube.Effect.BASE)&&!effect.equals(AmmoCube.Effect.ALT))
+                return;
+            //ask payment methods
+            if(action.canPayCard(weaponCard,player,payOption,effect))
+                {
+                    paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,effect,model));
+                    if(effect.equals(AmmoCube.Effect.BASE))
+                        weaponCard.setReload();
+                    if(effect.equals(AmmoCube.Effect.ALT))
+                        weaponCard.setReloadAlt(true);
+                }
+            //if he can't delete action and send message
+        }
+        if(weaponCard.getReload()||weaponCard.getReloadAlt()){
+            //ask if he wants to add more effects
+            LinkedList<AmmoCube.Effect> effect=null;
+            //ask payment option can be different for each effect
+            for (AmmoCube.Effect e:effect
+            ) {
+
+                if(!effect.equals( AmmoCube.Effect.ALT)&&!effect.equals(AmmoCube.Effect.BASE)&&
+                        action.canPayCard(weaponCard,player,payOption,e)){
+                    paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,e,model));
+                }
+            }
+            //send possible target
+            for (EffectAndNumber e:paidEffect
+                 ) {
+                weaponCard.getPossibleTargetCells(playerPosition,e,model.getMapUsed().getGameBoard());
+                //chose effective target
+                //check if a player || spawnpoint (<--- if we choose this alternative)
+                Object victim=null;
+                action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
+                //todo add vixtim to shoot
+            }
+        }
+        weaponCard.setNotReload();
+        weaponCard.setReloadAlt(false);
     }
+
+
 
     /**
      * Updates index of next Player.
@@ -291,6 +355,6 @@ public class Server {
             currentPlayer = 0;
         isFirstTurn= false;
         }
-    }
+    }}
 
-}
+
