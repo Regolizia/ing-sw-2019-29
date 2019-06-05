@@ -66,11 +66,6 @@ public class ActionTest {
 
 LinkedList<AmmoCube.Effect> list=new LinkedList<>();
 list.add(AmmoCube.Effect.BASE);
-        action.doAction(Action.ActionType.RUN,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF, list);//
-       // action.doAction(Action.ActionType.GRAB,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO);
-        action.doAction(Action.ActionType.SHOOT,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF, list);//
-        action.setEndTurn(true);//
-        action.doAction(Action.ActionType.RELOAD,player,c1,m.getMapUsed().getGameBoard(),m, Action.PayOption.AMMO, GameModel.FrenzyMode.OFF,list);//
 
     }
 }
