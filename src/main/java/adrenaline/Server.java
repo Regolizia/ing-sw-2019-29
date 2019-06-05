@@ -233,11 +233,19 @@ Server {
 
     public void grab(Player player){
         // IF MI DICE GRAB
-        LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+      //  LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
         // CHIEDI QUALE, RETURN chosenCell
         CoordinatesWithRoom chosenCell = null;
 
         if(chosenCell.containsSpawnpoint(model)) {
+            /*
+            * controllo io se può pagarla + ricarica ma tu devi:
+            * 0-controllare che ti dica o effetto base o effetto alt nient'altro altrimenti non funziona il metodo
+            * 1-controllare che abbia meno di 3 carte in mano
+            * 2-una volta raccolta devi rimuoverla dalle carte dello spawnpoint
+            * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
+            * se scarta una carta rimettila nel deck
+            * */
             // cerca nel model se c'è uno spawnpoint lì o no
             //  TODO se spawn fai scegliere quale e mettila in card
             Spawnpoint s = chosenCell.getSpawnpoint(model);
@@ -256,7 +264,7 @@ Server {
                 }
             }
             if (action.canPayCard(card, player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE)) {
-                action.payAmmoPlusPowerUp(player, card, AmmoCube.Effect.BASE, model);
+             //   action.payPower(player, card, AmmoCube.Effect.BASE, model);
 
                 if (player.canGrabWeapon()) {
                     // se va bene gliela passo
@@ -267,18 +275,25 @@ Server {
         }
         else {
             //se non spawnpoint
-            action.grabTile(player, chosenCell, model);
+            /*
+            * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
+            * dalla mappa e ne aggiungo subito un altro
+            * già incluso pescaggio power up
+            * */
+           // action.grabTile(player, chosenCell, model);
         }
     }
 
     public void run(Player player){
-        LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+      //  LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
         // PROPONI LE CELLE E PRENDINE UNA
         CoordinatesWithRoom c = null;
         action.run(player,c);
     }
 
     public void shoot(Player player){
+        /*
+        * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
         Action.PayOption payOption=null;
 
         //just in case he can't shoot
@@ -286,7 +301,7 @@ Server {
         CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
         //ask if the player wants to move before shooting
         // if yes
-        LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
+      //  LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
         //choose cell
         CoordinatesWithRoom playerPosition=null;
         //set new position
@@ -308,7 +323,7 @@ Server {
             //ask payment methods
             if(action.canPayCard(weaponCard,player,payOption,effect))
                 {
-                    paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,effect,model));
+                   // paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,effect,model));
                     if(effect.equals(AmmoCube.Effect.BASE))
                         weaponCard.setReload();
                     if(effect.equals(AmmoCube.Effect.ALT))
@@ -325,7 +340,7 @@ Server {
 
                 if(!effect.equals( AmmoCube.Effect.ALT)&&!effect.equals(AmmoCube.Effect.BASE)&&
                         action.canPayCard(weaponCard,player,payOption,e)){
-                    paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,e,model));
+               //     paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,e));
                 }
             }
             //send possible target
@@ -335,7 +350,7 @@ Server {
                 //chose effective target
                 //check if a player || spawnpoint (<--- if we choose this alternative)
                 Object victim=null;
-                action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
+              //  action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
                 //todo add vixtim to shoot
             }
         }

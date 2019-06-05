@@ -17,7 +17,7 @@ public class FreneticAction extends Action {
     public FreneticAction(GameModel m){
         super(m);
     }
-
+/*
     public static enum PlayerOrder {
         FIRST,AFTER      //reload is an  optional action //ADRENALINESHOOT
     }
@@ -30,24 +30,22 @@ public class FreneticAction extends Action {
         /*AFTER
          * move up to 3 squares and grab
          * move up to 2 squares reload and shoot*/
+        /*
 switch (actionSelected){
     case RUN:CoordinatesWithRoom coordinatesR;
                 if(order==PlayerOrder.FIRST)
-                    coordinatesR=chooseCell(proposeCellsRunFrenzy(c,g));
-                else
+
+
                     return false;
-                run(player, coordinatesR);
+               // run(player, coordinatesR);
                 return true;
     case GRAB: CoordinatesWithRoom coordinatesG;
-                    if(order==PlayerOrder.FIRST)
-                        coordinatesG=chooseCell(proposeCellsGrabFrenzy(c, g));
-                    else
-                        coordinatesG=chooseCell(proposeCellsGrabFrenzy(c,g,player,order));
-               if((grab(player, coordinatesG,paymentOption,m,effectToPay.getFirst()))){
-                   player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
+
+               //if((grab(player, coordinatesG,paymentOption,m,effectToPay.getFirst()))){
+                  // player.setPlayerPosition(coordinatesG.getX(),coordinatesG.getY(),coordinatesG.getRoom());
                    return true;
-               }
-               else return false;
+               //}
+
 
     case SHOOT: LinkedList<WeaponCard> hand = player.getHand();
                 WeaponCard weapon = chooseWeaponCard(hand);
@@ -63,13 +61,10 @@ switch (actionSelected){
             {return false;}
 
             CoordinatesWithRoom cChoosen;
-            if(order==PlayerOrder.FIRST)
-                cChoosen=chooseCell(proposeCellsRunBeforeShootFrenzy(c,g));
-            else
-                cChoosen=chooseCell(proposeCellsRunBeforeShootFrenzy(c,g,order));
-            player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
 
-            shoot(weapon, cChoosen, player, payEff, m,g);
+       //     player.setPlayerPosition(cChoosen.getX(),cChoosen.getY(),cChoosen.getRoom());
+
+           // shoot(weapon, cChoosen, player, payEff, m,g);
 
             weapon.setNotReload();// i've lost base effect payment
 
@@ -117,4 +112,5 @@ default: //
         list.addAll(c.xTilesDistant(g,2));
         return list;
     }
+    */
 }
