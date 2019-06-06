@@ -29,14 +29,7 @@ public class LockRifle extends WeaponCard {
         return true;
     }
 
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
-        //ASK WHICH TARGET TO DAMAGE, REMOVE OTHERS
-        return targets;
-    }
 
-    // TODO ADD MARKS
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
@@ -49,7 +42,7 @@ public class LockRifle extends WeaponCard {
 
                         ((Player) targetList.get(0)).addMarks(p,1);
 
-                        ((LinkedList)targetList).removeFirst();
+                        //((LinkedList)targetList).removeFirst();
 
                     }
                     else{
@@ -61,7 +54,7 @@ public class LockRifle extends WeaponCard {
                 if(targetList.get(0) instanceof Player){
                     ((Player) targetList.get(0)).addMarks(p,1);
 
-                    ((LinkedList<Object>)targetList).removeFirst();
+                    //((LinkedList<Object>)targetList).removeFirst();
 
                 }
                 break;

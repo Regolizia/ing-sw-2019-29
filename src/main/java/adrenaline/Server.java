@@ -456,7 +456,43 @@ Server {
                 // TODO ASK 1 TARGET
                 w.applyDamage(targets,p,e);
                 break;
-/*
+            case "Hellion":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                // TODO ASK 1 TARGET - SAVE IT FOR LATER
+                Object target = new Object();
+
+                CoordinatesWithRoom c = ((Player)target).getCoordinatesWithRooms(); // COORD DEL TARGET
+                List<CoordinatesWithRoom> newList = new LinkedList<>();
+                newList.add(c); // IT HAS JUST COORD TARGET
+                targets = w.fromCellsToTargets(newList,playerPosition,g,p,model,e);
+
+                for(Object o : targets){
+                    if(o instanceof Player && ((Player) o).getColor()==((Player) target).getColor()){
+                        targets.remove(o);
+                        break;
+                    }
+                }
+                targets.add(0,target);  // TARGET HAS TO BE IN FRONT
+
+                w.applyDamage(targets,p,e);
+                break;
+
+            case "LockRifle":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                // TODO ASK 1 TARGET TO DAMAGE
+
+                // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
+
+                w.applyDamage(targets,p,e);
+                break;
+
+            case "MachineGun":
+                break;/*
+            case "":
+                break;
             case "":
                 break;
             case "":
