@@ -21,6 +21,16 @@ public class RocketLaucher extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.OP2, false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootOp1(){
+        return true;
+    }
+    public boolean canShootOp2(){
+        return true;
+    }
+
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         List list = super.getPossibleTargetCells(c, en, g);

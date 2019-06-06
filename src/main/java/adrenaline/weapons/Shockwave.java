@@ -18,6 +18,13 @@ public class Shockwave extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.ALT, false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootAlt(){
+        return true;
+    }
+
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         List<CoordinatesWithRoom> list = c.oneTileDistant(g, false);

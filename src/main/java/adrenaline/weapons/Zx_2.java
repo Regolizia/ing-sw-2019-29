@@ -18,6 +18,10 @@ public class Zx_2 extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);

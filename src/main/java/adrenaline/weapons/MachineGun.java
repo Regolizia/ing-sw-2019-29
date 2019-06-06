@@ -20,6 +20,16 @@ public class MachineGun extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.OP2, false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootOp1(){
+        return true;
+    }
+    public boolean canShootOp2(){
+        return true;
+    }
+
 
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {

@@ -546,9 +546,9 @@ public void grabPowerUp(Player p, GameModel m){
         List<Object>effectiveTarget;
         for (EffectAndNumber effect:effectsList) {
 
-             target= w.getPossibleTargetCells(c,effect,g);
+            target= w.getPossibleTargetCells(c,effect,g);
             effectiveTarget=chooseTargets(w.fromCellsToTargets(target,c,g,p,m,effect),effect.getNumber());
-            w.weaponShoot(effectiveTarget,c,p,effectsList,m);
+            //w.weaponShoot(effectiveTarget,c,p,effectsList,m); REPLACED WITH APPLYDAMAGE
             }
 
         }

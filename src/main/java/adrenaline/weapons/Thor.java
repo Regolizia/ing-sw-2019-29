@@ -20,6 +20,16 @@ public class Thor extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.OP2,false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootOp1(){
+        return true;
+    }
+    public boolean canShootOp2(){
+        return true;
+    }
+
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 

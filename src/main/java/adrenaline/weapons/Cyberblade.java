@@ -17,9 +17,18 @@ public class Cyberblade extends WeaponCard {
     public Cyberblade() {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,true));
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,false));
-        price.add(new AmmoCube(AmmoCube.CubeColor.FREE, AmmoCube.Effect.OP1,true)); // IF AN EFFECT IS FREE THIS IS ALWAYS TRUE
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.OP2,false));
 
+    }
+
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootOp1(){
+        return true;
+    }
+    public boolean canShootOp2(){
+        return true;
     }
 
     @Override

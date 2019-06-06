@@ -19,6 +19,13 @@ public class VortexCannon extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.OP1, false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootOp1(){
+        return true;
+    }
+
     // THE COORDINATE PASSED C IS THE VORTEX
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {

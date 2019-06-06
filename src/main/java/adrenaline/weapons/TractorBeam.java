@@ -21,6 +21,13 @@ public class TractorBeam extends WeaponCard {
 
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootAlt(){
+        return true;
+    }
+
     // USED FOR ALT EFFECT
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {

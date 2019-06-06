@@ -20,6 +20,13 @@ public class Hellion extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.ALT,false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootAlt(){
+        return true;
+    }
+
     // NOT YOUR SQUARE
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {

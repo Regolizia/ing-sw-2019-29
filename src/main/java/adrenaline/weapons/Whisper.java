@@ -19,6 +19,10 @@ public class Whisper extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         List<CoordinatesWithRoom> list = super.getPossibleTargetCells(c, en, g);

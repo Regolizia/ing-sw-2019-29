@@ -20,7 +20,9 @@ public class Heatseeker extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));
     }
 
-
+    public boolean canShootBase(){
+        return true;
+    }
 
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {

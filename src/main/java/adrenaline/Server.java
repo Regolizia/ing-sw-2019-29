@@ -24,7 +24,6 @@ public class Server {
             .map(Figure.PlayerColor::name)
             .collect(Collectors.toList());
     private static ArrayList<String> colorsChosen = new ArrayList<>();
-    //String csv = String.join(",", possibleColors); WILL BE USED TO SEND THE LIST AS A STRING TO THE CLIENT
 
     // All client names, so we can check for duplicates upon registration.
     private static ArrayList<String> names = new ArrayList<>();
@@ -197,6 +196,7 @@ public class Server {
     }
 
     public void Turn(){
+        int count;
         Player player = model.getPlayers().get(currentPlayer);
 
             if (isFirstTurn){
@@ -210,7 +210,7 @@ public class Server {
 
             }
             // TODO START TURN IN CURRENTPLAYER/CLIENT
-        // yourTurn()
+        // choice (what action)
 
 /*
 
@@ -226,7 +226,7 @@ public class Server {
                break;
        }
 */
-
+        nextPlayer();
     }
 
 

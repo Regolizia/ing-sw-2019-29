@@ -20,6 +20,13 @@ public class PowerGlove extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.ALT, false));
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootAlt(){
+        return true;
+    }
+
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.BASE)

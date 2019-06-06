@@ -18,11 +18,14 @@ public class Railgun extends WeaponCard {
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE, true));
         price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE, false));
         price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.BASE, false));
-        price.add(new AmmoCube(AmmoCube.CubeColor.FREE, AmmoCube.Effect.ALT, true));
-        // DON'T CARE IF ALT IS PAID OR NOT BECAUSE IT'S FREE (IF YOU PAY BASE YOU ALREADY HAVE IT
-        // BUT IT'S DIFFERENT FROM OP BECAUSE YOU CAN HAVE BASE OR ALT NOT BOTH)
     }
 
+    public boolean canShootBase(){
+        return true;
+    }
+    public boolean canShootAlt(){
+        return true;
+    }
 
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {

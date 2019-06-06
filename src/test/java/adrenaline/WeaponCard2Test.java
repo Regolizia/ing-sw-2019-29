@@ -28,7 +28,7 @@ public class WeaponCard2Test {
         LinkedList<Object> targets = new LinkedList<>();
         EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.ALT,1);
         List<CoordinatesWithRoom> l = w.getPossibleTargetCells(c1, en, map.getGameBoard());
-        w.weaponShoot(targets,c1,p,list,m);
+        //w.weaponShoot(targets,c1,p,list,m);
         EffectAndNumber en1 = new EffectAndNumber(AmmoCube.Effect.ALT,1);
         w.fromCellsToTargets(l,c1,m.getMapUsed().getGameBoard(),p,m, en1);
         p.getTrack()[2]= Figure.PlayerColor.BLUE;

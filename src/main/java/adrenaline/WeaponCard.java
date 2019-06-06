@@ -99,20 +99,18 @@ public class WeaponCard extends Card{
     }
 
 
-
-    //THIS METHOD WILL HAVE ALL THE THINGS SINGLE CARDS NEED TO DO THEIR STUFF
-    // TO BE OVERRIDDEN
-    public void weaponShoot(List<Object> targets, CoordinatesWithRoom c, Player p, List<EffectAndNumber> effectsList, GameModel m){
-        for(int i=0;i<effectsList.size();i++){
-            //FOR EVERY EFFECT IT DAMAGES THE CORRESPONDING TARGETS
-            applyDamage(targets,p,effectsList.get(i));
-            for(int j = 1; j<=effectsList.get(i).getNumber(); j++) {
-                ((LinkedList)effectsList).removeFirst();
-            }
-
-        }
+    public boolean canShootBase(){
+        return false;
     }
-
+    public boolean canShootAlt(){
+        return false;
+    }
+    public boolean canShootOp1(){
+        return false;
+    }
+    public boolean canShootOp2(){
+        return false;
+    }
 
 
     // TO BE OVERRIDDEN
