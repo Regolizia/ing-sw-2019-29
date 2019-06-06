@@ -27,30 +27,6 @@ public class GrenadeLaucher extends WeaponCard {
     }
 
     @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = new LinkedList<>();
-
-        // I HAD TO COMMENT OUT THE IF BECAUSE, WITHOUT THE INPUT, IT WAS THE SAME
-
-//        if(en.getEffect()== AmmoCube.Effect.BASE){
-             targets = super.fromCellsToTargets(list, c, g, p, m, en);
-
-            // ASK WHICH TARGET TO DAMAGE, PUT IT IN TARGETS (REMOVE THE OTHERS)
-            return targets;
-
-
-//        }        else {    //  OP1 EFFECT
-
-            // ASK WHICH CELL IN LIST TO DAMAGE, REMOVE THE OTHERS
-//            targets = super.fromCellsToTargets(list, c, g, p, m, en);
-
-//            return targets;
-
-//        }
-
-    }
-
-    @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
         switch (e.getEffect()) {
@@ -69,7 +45,7 @@ public class GrenadeLaucher extends WeaponCard {
 
             case OP1:   // 1 DAMAGE, EVERY PLAYER, 1 SQUARE
                 for (Object o : targetList) {
-                    if (o instanceof Player) {
+                    if (o instanceof Player && o!=p) { // TARGET DIFFERENT FROM PLAYER
                         int i = ((Player) o).marksByShooter(p);
                         i++;
                         ((Player) o).addDamageToTrack(p, i);

@@ -393,13 +393,70 @@ Server {
                 }
                 w.applyDamage(targets,p,e);
                 break;
-                /*
-            case "":
+
+            case "Furnace":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    LinkedList<Room> possibleRooms = new LinkedList<>();
+
+                    for (int k = 0; k < g.getDoors().size(); k++) {
+                        if (playerPosition.getX() == g.getDoors().get(k).getCoordinates1().getX() &&
+                                playerPosition.getY() == g.getDoors().get(k).getCoordinates1().getY() &&
+                                playerPosition.getRoom().getToken() == g.getDoors().get(k).getCoordinates1().getRoom().getToken()) {
+
+                            possibleRooms.add(g.getDoors().get(k).getCoordinates2().getRoom());
+                        }
+
+                        if (playerPosition.getX() == g.getDoors().get(k).getCoordinates2().getX() &&
+                                playerPosition.getY() == g.getDoors().get(k).getCoordinates2().getY() &&
+                                playerPosition.getRoom().getToken() == g.getDoors().get(k).getCoordinates2().getRoom().getToken()) {
+
+                            possibleRooms.add(g.getDoors().get(k).getCoordinates1().getRoom());
+
+                        }
+                    }
+
+                    // TODO ASK PLAYER FOR A ROOM (DIFFERENT) - METTILA NELLA COORDINATA ROOM
+                    // SEND PLAYER LIST OF ROOMS possibleRooms APPENA CREATA
+                    CoordinatesWithRoom room = new CoordinatesWithRoom();
+
+                    cells = w.getPossibleTargetCells(room, e, g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    w.applyDamage(targets,p,e);
+                }
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+
+                    // TODO ASK PLAYER WHICH TILE, GET ONE BACK IN THAT LIST
+
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    w.applyDamage(targets,p,e);
+                }
                 break;
-            case "":
+
+            case "GrenadeLauncher":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    // TODO ASK QUALE TARGET COLPIRE (1)
+                    w.applyDamage(targets, p, e);
+                    // TODO ASK SE VUOLE MUOVERE IL TARGET DI 1
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP1) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    // TODO ASK UNA CELLA ANCHE LA TUA
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    w.applyDamage(targets,p,e);
+                }
                 break;
-            case "":
+
+            case "Heatseeker":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                // TODO ASK 1 TARGET
+                w.applyDamage(targets,p,e);
                 break;
+/*
             case "":
                 break;
             case "":
