@@ -39,36 +39,11 @@ public class Flamethrower extends WeaponCard {
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
 
-        //ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
-
-        List<Object> targets;
-        List<Object> targets1;
-        List<Object> targets2;
+        List<Object> targets= super.fromCellsToTargets(list, c, g, p, m, en);
         List<CoordinatesWithRoom> listOne = c.oneTileDistant(g, false);
         en.setNumber(listOne.size());
 
-        if (en.getEffect() == AmmoCube.Effect.BASE) {
-  /*
-        // MAKE PLAYER CHOOSE WHO IN FIRST SQUARE TO DAMAGE ( ...list.get(0)...)
-
-                if(list.get(1)!=null){
-                    // MAKE PLAYER CHOOSE WHO IN SECOND SQUARE TO DAMAGE ( ...list.get(1)...)
-                }
-*/
-            targets = super.fromCellsToTargets(list, c, g, p, m, en);
-            // TODO ADD POSSIBLE SPAWNPOINTS TO TARGETLIST
-
-            return targets;
-        } else {  // ALT EFFECT, ADD EVERYONE
-            targets1 = super.fromCellsToTargets(listOne, c, g, p, m, en);
-            targets = super.fromCellsToTargets(list, c, g, p, m, en);
-     targets.removeAll(targets1);
-     targets1.addAll(targets);
-
-
-            System.out.println(en.getNumber());
-            return targets1;
-        }
+        return targets;
     }
 
     @Override

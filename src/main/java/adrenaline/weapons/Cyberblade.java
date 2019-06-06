@@ -38,15 +38,6 @@ public class Cyberblade extends WeaponCard {
         return list;
     }
 
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets =  super.fromCellsToTargets(list, c, g, p, m, en);
-
-        // ASK WHICH TARGET TO DAMAGE, REMOVE THE OTHERS
-
-        return targets;
-
-    }
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
@@ -65,7 +56,7 @@ public class Cyberblade extends WeaponCard {
                 }
                 break;
 
-            case OP1:   // MOVE 1-2 SQUARES, TODO REMOVE FROM HERE
+            case OP1:   // MOVE 1 SQUARE, TODO REMOVE FROM HERE
                 break;
 
 

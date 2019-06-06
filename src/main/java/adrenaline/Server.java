@@ -1,6 +1,9 @@
 package adrenaline;
 
 // SOCKET
+import adrenaline.gameboard.GameBoard;
+import adrenaline.weapons.Cyberblade;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -344,20 +347,72 @@ Server {
                 }
             }
             //send possible target
-            for (EffectAndNumber e:paidEffect
-                 ) {
-                weaponCard.getPossibleTargetCells(playerPosition,e,model.getMapUsed().getGameBoard());
-                //chose effective target
-                //check if a player || spawnpoint (<--- if we choose this alternative)
-                Object victim=null;
-              //  action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
-                //todo add vixtim to shoot
+            for (EffectAndNumber e:paidEffect) {
+                requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model);
             }
         }
         weaponCard.setNotReload();
         weaponCard.setReloadAlt(false);
     }
 
+    public void requestsForEveryWeapon(EffectAndNumber e, WeaponCard w, Player p, GameBoard g, GameModel model){
+        CoordinatesWithRoom playerPosition = p.getCoordinatesWithRooms();
+        List<CoordinatesWithRoom> cells;
+        List<Object> targets;
+        switch (w.toString()){
+
+            case "Cyberblade":
+                if(e.getEffect()== AmmoCube.Effect.BASE || e.getEffect()== AmmoCube.Effect.OP2){
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+
+                    // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
+
+                    w.applyDamage(targets,p,e);
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP1){
+                    // TODO MOVE 1 SQUARE
+                }
+                break;
+
+            case "Electroscythe":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                w.applyDamage(targets,p,e);
+                break;
+
+            case "Flamethrower":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                // TODO ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
+
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                if(e.getEffect()== AmmoCube.Effect.BASE){
+                    // TODO ASK 1 TARGET PER OGNI SQUARE (2 FORSE)
+                }
+                w.applyDamage(targets,p,e);
+                break;
+                /*
+            case "":
+                break;
+            case "":
+                break;
+            case "":
+                break;
+            case "":
+                break;
+            case "":
+                break;*/
+        }
+        w.getPossibleTargetCells(playerPosition,e,model.getMapUsed().getGameBoard());
+        //chose effective target
+        //check if a player || spawnpoint (<--- if we choose this alternative)
+        Object victim=null;
+        //  action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
+        //todo add vixtim to shoot
+
+    }
 
 
     /**

@@ -34,8 +34,6 @@ public class Electroscythe extends WeaponCard {
         return list;
     }
 
-    // TODO WE DON'T HAVE TO ASK IF THIS KIND OF WEAPON
-
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
