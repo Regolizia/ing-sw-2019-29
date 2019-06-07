@@ -1,10 +1,14 @@
 package adrenaline;
 import adrenaline.weapons.Cyberblade;
+import adrenaline.weapons.PowerGlove;
 import adrenaline.weapons.Thor;
 import adrenaline.weapons.Zx_2;
 import org.junit.jupiter.api.Test;
 
+import javax.management.BadAttributeValueExpException;
+import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
+import java.util.prefs.BackingStoreException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
@@ -15,6 +19,7 @@ public class ActionTest {
         GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);// to do coordinatesWithRoom
         action = new Action(m); //constructor
         WeaponCard w=new Thor();//
+        WeaponCard wyellow=new Cyberblade();
         Action.ActionType actionType= Action.ActionType.RUN; //enum
         Action.PayOption payOption= Action.PayOption.AMMO;  //enum
 
@@ -63,11 +68,87 @@ public class ActionTest {
         //action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,m);//
         //action.reload(player,w, Action.PayOption.NONE, AmmoCube.Effect.BASE,m);//
        // action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
+        action.proposeCellsRun(player.getCoordinatesWithRooms());
+        action.proposeCellsRunBeforeShoot(player);
+        player.damageByShooter(player);
+        player.damageByShooter(player);
+        if (player.checkDamage()>=2);
+            action.proposeCellsRunBeforeShootAdrenaline(player);
+        action.proposeCellsRunBeforeShootAdrenaline(player);
+        action.proposeCellsGrab(player);
+        action.proposeCellsGrabAdrenaline(player);
+        action.run(player,player.getCoordinatesWithRooms());
+        action.grabCard(player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,w);
+        action.grabCard(player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,w);
+        action.grabCard(player, Action.PayOption.NONE, AmmoCube.Effect.BASE,w);
+        AmmoTile a=new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE);
+        a.setCoordinates(1,2);
+        Room room=new RoomDeath(1,2);
+        CoordinatesWithRoom cTile=new CoordinatesWithRoom(1,2,room);
+        cTile.getRoom().addAmmoTile(a);
+        CoordinatesWithRoom Tile=new CoordinatesWithRoom(a.getCoordinates().getX(),a.getCoordinates().getY(),cTile.getRoom());
+        action.grabTile(player,Tile);
+        action.grabPowerUp(player);
+        AmmoTile a1=new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW);
+        AmmoTile a2=new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED);
+        action.grabCube(player,a);
+        action.grabCube(player,a1);
+        action.grabCube(player,a2);
 
-LinkedList<AmmoCube.Effect> list=new LinkedList<>();
-list.add(AmmoCube.Effect.BASE);
+        EffectAndNumber en=new EffectAndNumber(AmmoCube.Effect.BASE,0);
+        LinkedList<EffectAndNumber>enL=new LinkedList();
+        enL.add(en);
+
+        victims.add(player);
+        action.shoot(w,player,enL.getFirst(),victims);
+        LinkedList<AmmoCube.Effect> list=new LinkedList<>();
+        list.add(AmmoCube.Effect.BASE);
+        action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,new LinkedList<>());
+        action.reload(player,w, Action.PayOption.AMMO, AmmoCube.Effect.BASE,new LinkedList<>());
+        action.reload(player,w, Action.PayOption.NONE, AmmoCube.Effect.BASE,new LinkedList<>());
+        LinkedList<PowerUpCard> power=new LinkedList<>();
+        PowerUpCard powerUpCard=new PowerUpCard();
+        powerUpCard.setPowerUpColor(AmmoCube.CubeColor.BLUE);
+        PowerUpCard powerUpCard2=new PowerUpCard();
+        powerUpCard2.setPowerUpColor(AmmoCube.CubeColor.RED);
+        PowerUpCard powerUpCard3=new PowerUpCard();
+        powerUpCard3.setPowerUpColor(AmmoCube.CubeColor.YELLOW);
+        power.add(powerUpCard);
+        power.add(powerUpCard2);
+        power.add(powerUpCard3);
+        action.reloadAmmoPower(player,w, AmmoCube.Effect.BASE,power);
+        action.reloadAmmo(player,w,2,2,2, AmmoCube.Effect.BASE);
+        action.reloadAmmo(player,wyellow,2,2,2, AmmoCube.Effect.BASE);
+        action.canPayAmmo(w,2,2,2, AmmoCube.Effect.BASE);
+        action.canPayAmmo(wyellow,2,2,2, AmmoCube.Effect.BASE);
+        action.canPayAmmoPower(wyellow,player,power, AmmoCube.Effect.BASE);
+        action.canPayAmmoPower(w,player,power, AmmoCube.Effect.BASE);
+        action.paidEffect(w,player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE, power,0);
+        action.paidEffect(w,player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,power,0);
+        action.paidEffect(w,player, Action.PayOption.NONE, AmmoCube.Effect.BASE,power,0);
+        action.payPower(player,wyellow.getPrice(),2,2,2, AmmoCube.Effect.BASE);
+        action.payPower(player,wyellow.getPrice(),2,2,0, AmmoCube.Effect.BASE);
+        action.getEndturn();
+        action.setEndTurn(true);
+        Spawnpoint sp=new Spawnpoint(1,2);
+        Player luke=new Player(c1, Figure.PlayerColor.BLUE);
+        LinkedList<Player> vic=new LinkedList<>();
+        vic.add(player);
+        vic.add(luke);
+        players.add(luke);
+        luke.damageByShooter(player);
+        luke.damageByShooter(player);
+        luke.damageByShooter(player);
+        action.canGetPoints(vic,players);
+        action.endOfTheGame(action.getModel().getMapUsed().getGameBoard());
+        action.bestShooterOrder(players,vic.getFirst());
+        action.getRemaingPlayer();
+        action.setRemainigPlayerMinus(action.getRemaingPlayer()-1);
+
 
     }
+
+
 }
 /*
  * pay() covered
