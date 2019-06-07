@@ -3,7 +3,6 @@ package adrenaline;
 
 import adrenaline.gameboard.GameBoard;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,12 +14,7 @@ import static adrenaline.AmmoCube.CubeColor.*;
  * @version 2.0
  **/
 public class Action {
-    final private int numMaxAlternativeOptions = 2;
-    //(0=base 1=alternative)
-    final private int numMaxAmmoToPay = 3;
-    //(0:first price 1:second price 2:third price)
-    final private int numMaxWeaponYouCanHave=3;
-    //(0:first weapon 1:second weapon 2:third weapon)
+
 
     private int numOfRemainingPlayer;
 
@@ -113,7 +107,7 @@ public class Action {
 
     //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT ADRENALINE___________________________________________//
     public LinkedList<CoordinatesWithRoom>proposeCellsRunBeforeShootAdrenaline(Player player){
-        LinkedList<CoordinatesWithRoom>list=new LinkedList<>(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(),2));
+       LinkedList<CoordinatesWithRoom>list=new LinkedList<>(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(),2));
         return list;
     }
 
@@ -282,7 +276,7 @@ public class Action {
                 default:player.setCube(0,0,0);
                 }
         }
-       player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(),0).remove(a);
+       player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(),0).equals(a.getCoordinates());
         getModel().ammoTileDeck.getDeck().addLast(a);
 
         return true;
@@ -331,7 +325,7 @@ public void grabPowerUp(Player p){
         //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
 
         //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
-        //TODO CHECK THAT IT FOLLOWS THE RULES
+
         //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
         // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
 
@@ -682,7 +676,9 @@ return true;}
      */
             //_____________________________________effective pay with powerUp___________________________________________________//
     public EffectAndNumber payPowerUp(WeaponCard weapon, List<PowerUpCard>choosenPowerUp, Player player, AmmoCube.Effect effect,int number){
-        int yellow=0,red=0,blue=0;
+        int yellow=0;
+        int red=0;
+        int blue=0;
 
         for (PowerUpCard power:choosenPowerUp) {
            switch (power.getPowerUpColor()){
@@ -810,10 +806,8 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
     public boolean endOfTheGame(GameBoard g){  //every time a player dies
         //8||5 skulls
 
-        if(g.getNumSkull()<=0)
-            return true;
-        //else return false
-        return false;
+        return (g.getNumSkull()<=0);
+
     }
 /**
  * bestShooterOrder
