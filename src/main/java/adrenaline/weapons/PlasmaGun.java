@@ -29,13 +29,18 @@ public class PlasmaGun extends WeaponCard {
         return true;
     }
 
-
     @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
+    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
 
-        ///CHOOSE ONE TARGET
-        return targets;
+        if(en.getEffect()== AmmoCube.Effect.OP1) {
+            List<CoordinatesWithRoom> list = c.tilesSameDirection(2, g, false);
+            list.remove(c);
+
+            return list;
+        }
+        else{
+            return super.getPossibleTargetCells(c,en,g);
+        }
     }
 
     @Override

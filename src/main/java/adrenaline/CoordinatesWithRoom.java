@@ -215,6 +215,51 @@ public class CoordinatesWithRoom extends Coordinates {
     }
 
     /**
+     * Checks if two cells x and y are in the same direction.
+     *
+     * @param x first cell
+     * @param y second cell
+     * @param moves the number n
+     * @param g the GameBoard
+     * @param withWalls the indication if it can go through walls(true) or not(false)
+     * @return a list of cells
+     */
+    public boolean checkSameDirection(CoordinatesWithRoom x, CoordinatesWithRoom y, int moves, GameBoard g, boolean withWalls) {
+        CoordinatesWithRoom c0;
+
+        List<CoordinatesWithRoom> listOne = this.oneTileDistant(g, withWalls); // CELL TO CHECK FOR NEXT
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(listOne);
+        list.add(this);
+
+        for (CoordinatesWithRoom c1 : listOne) {
+            c0 = this;
+            for(int j=1;j<moves;j++){
+                CoordinatesWithRoom c2 = getNextCell(c0,c1,g, withWalls);
+
+                if(c2.getX()==0 || c2.getY()==0){
+                    break;
+                }
+                list.add(c2);
+                c0 = c1;
+                c1 = c2;
+            }
+
+            if(list.contains(x) && list.contains(y)){   // USES EQUALS OVERRIDE
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (this.getX()==(((CoordinatesWithRoom) obj).getX())
+                && this.getY()==(((CoordinatesWithRoom) obj).getY()) && this.getRoom().getToken()
+                ==(((CoordinatesWithRoom) obj).getRoom().getToken()));
+    }
+
+    /**
      * Returns the next cell given the previous and the current one.
      *
      * @param c the previous cell
@@ -223,7 +268,7 @@ public class CoordinatesWithRoom extends Coordinates {
      * @param withWalls the indication if it can go through walls
      * @return the next cell
      */
-    private CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g, boolean withWalls){
+    public CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g, boolean withWalls){
 
                         if ((c1.getX() + 1) <= c1.getRoom().getRoomSizeX() && g.getDirection(c, c1) == WE) {
                             return (new CoordinatesWithRoom(c1.getX() + 1, c1.getY(), c1.getRoom()));

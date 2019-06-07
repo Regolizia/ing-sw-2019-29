@@ -30,7 +30,11 @@ public class Coordinates {
         this.x = x;
         this.y = y;
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        return (this.x==(((Coordinates) obj).x)
+                && this.y==(((Coordinates) obj).y));
+    }
     public int getX() {
         return x;
     }

@@ -32,13 +32,6 @@ public class MachineGun extends WeaponCard {
 
 
     @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
-        //IF BASE CHOOSE 2 TARGETS, IF OP1 OP2 CHOOSE ONE (IN ACTION WE CHECK THIS, ELSE IT'S DONE AGAIN)
-        return targets;
-    }
-
-    @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 
 

@@ -30,21 +30,7 @@ public class Railgun extends WeaponCard {
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
 
-        List<CoordinatesWithRoom> list = new LinkedList<>();
-        list = c.tilesSameDirection(10,g,true);     // 10 IS BIG ENOUGH TO ADD ALL CELLS IN STRAIGHT LINES (MAX 10 LONG)
-
-        return list;
-    }
-
-
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
-
-        /// ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
-        // THE 2 TARGETS OF ALT EFFECT HAVE TO BE IN THE SAME DIRECTION!!!!!
-        // TODO CHECK THIS
-        return targets;
+        return c.tilesSameDirection(10,g,true);     // 10 IS BIG ENOUGH TO ADD ALL CELLS IN STRAIGHT LINES (MAX 10 LONG)
 
     }
 

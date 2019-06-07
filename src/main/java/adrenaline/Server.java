@@ -490,21 +490,73 @@ Server {
                 break;
 
             case "MachineGun":
-                break;/*
-            case "":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                // TODO ASK TO CHOOSE 1 OR 2 TARGETS
+                // TODO CHECK TARGETS OP1 AND OP2 DIFFERENTI
+                // TODO ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
+                w.applyDamage(targets,p,e);
                 break;
-            case "":
-                break;
-            case "":
-                break;*/
-        }
-        w.getPossibleTargetCells(playerPosition,e,model.getMapUsed().getGameBoard());
-        //chose effective target
-        //check if a player || spawnpoint (<--- if we choose this alternative)
-        Object victim=null;
-        //  action.shoot(weaponCard,playerPosition,player,paidEffect,model, model.getMapUsed().getGameBoard());
-        //todo add vixtim to shoot
 
+            case "PlasmaGun":
+                if(e.getEffect()== AmmoCube.Effect.BASE || e.getEffect()== AmmoCube.Effect.OP2) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO ASK 1 TARGET (SAVE IT FOR THE OTHER EFFECT)
+                    w.applyDamage(targets,p,e);
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP1){
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    // TODO ASK WHERE TO MOVE
+                    // MOVE
+                }
+                break;
+
+            case "PowerGlove":
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO ASK 1 TARGET
+                    w.applyDamage(targets,p,e);
+
+                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
+                    // TODO MOVE PLAYER TO TARGET'S SQUARE
+
+                // ALSO
+                if(e.getEffect()== AmmoCube.Effect.ALT){
+                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false);
+                    if(c2.getX()!=0){
+                        // TODO ASK IF PLAYER WANTS TO MOVE THERE
+
+                        // TO BE CONTINUED...
+                        // POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
+                    }
+                }
+                break;
+
+            case "Railgun":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                // TODO ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
+
+                if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2) {
+                    
+                    // 2 TARGETS OF ALT EFFECT HAVE TO BE IN THE SAME DIRECTION!!!!!
+                    // TODO ASK AGAIN IF THIS IS FALSE
+                    playerPosition.checkSameDirection(((Player)targets.get(0)).getCoordinatesWithRooms(),((Player)targets.get(1)).getCoordinatesWithRooms(),10,g,false)
+                }
+                w.applyDamage(targets,p,e);
+                break;
+
+            case "":
+                break;
+            case "":
+                break;
+            case "":
+                break;
+            case "":
+                break;
+        }
     }
 
 
