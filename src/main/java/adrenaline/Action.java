@@ -771,6 +771,8 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
      */
 
     public void givePoints(Player victim,List<Player>shooters){
+        if (shooters.size()==0)
+            return;
         // max point - 2 x death if maxpoint-2<=0 give 1 point
         victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
         if(victim.getMaxPointAssignableCounter()>=victim.getTrackPointSize()){

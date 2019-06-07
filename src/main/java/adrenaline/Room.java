@@ -86,13 +86,18 @@ public class Room {
      */
     public AmmoTile getAmmoTile(Coordinates coordinates){
         int index=0;
-        for(index=0;index<getTiles().size();index++)
+     /*   for(index=0;index<getTiles().size();index++)
         {
             //check the list until you find the AmmoTile
             if(getTiles().get(index).getCoordinates()==coordinates)
                 break;
+        }*/
+        for (AmmoTile tile:getTiles()) {
+            if (tile.getCoordinates().equals(coordinates))
+                return tile;
         }
-        return getTiles().get(index);
+        //return getTiles().get(index);
+        return null;
     }
 
 

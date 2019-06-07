@@ -11,6 +11,13 @@ import java.util.*;
     // look for the one with the first card
     // if a player plays before firstPlayer chooses an action
     // else chooses another action
+
+/**
+ * Is the class that describes players' frenzy actions
+ * @author Giulia Valcamonica
+ * @version 2.0
+ **/
+
 public class FreneticAction extends Action {
 
     public FreneticAction(GameModel m){
