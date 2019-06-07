@@ -629,18 +629,85 @@ Server {
                 break;
 
             case "Thor":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    // TODO ASK 1 TARGET
+                    w.applyDamage(targets, p, e);
+                    // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP1 || e.getEffect()== AmmoCube.Effect.OP2) {
+                    // PUT HERE TARGET'S POSITION, GLIEL'HA PASSATA
+                    CoordinatesWithRoom targetPos = new CoordinatesWithRoom();
+
+                    cells = w.getPossibleTargetCells(targetPos, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    // TODO ASK 1 TARGET
+                    w.applyDamage(targets, p, e);
+                    // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+                }
                 break;
 
             case "TractorBeam":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO ASK 1 TARGET
+                    CoordinatesWithRoom c1 = new CoordinatesWithRoom(); // SALVACI LA POS DEL TARGET
+
+                    // TODO ASK NUOVA POSIZIONE (QUESTA VOLTA NON PROPONGO NULLA)
+
+                    // CHECK CELLS.CONTAINS(NEWPOS) &&
+                    // CHECK possibleMoves.CONTAINS(NEWPOS)
+                    // SE VA BENE MUOVI IL TARGET E APPLYDAMAGE, ALTRIMENTI CHIEDI ANCORA
+
+                    List<CoordinatesWithRoom> possibleMoves;
+                    possibleMoves = c1.oneTileDistant(g, false);
+                    possibleMoves.addAll(c1.xTilesDistant(g, 2));
+                    possibleMoves.add(c1);
+
+
+                    w.applyDamage(targets,p,e);
+
+                }
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO CHOOSE 1 TARGET AND MOVE IT TO YOUR SQUARE
+                    w.applyDamage(targets,p,e);
+                }
                 break;
 
             case "VortexCannon":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                // TODO CHOOSE A VORTEX
+
+                CoordinatesWithRoom vortex = new CoordinatesWithRoom();
+                List<CoordinatesWithRoom> list;
+                list = vortex.oneTileDistant(g,false);
+                list.add(vortex);
+
+                targets = w.fromCellsToTargets(list,playerPosition,g,p,model,e);
+                // TODO ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
+                // CHECK DIFFERENTI DA QUELLI PASSATI
+                // MOVE EVERY TARGET ON THE VORTEX
+
+                w.applyDamage(targets,p,e);
+                // RETURN THE TARGETS
                 break;
 
             case "Whisper":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                // TODO CHOOSE 1 TARGET
+                w.applyDamage(targets,p,e);
                 break;
 
             case "Zx_2":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                // TODO ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
+                w.applyDamage(targets,p,e);
                 break;
         }
     }

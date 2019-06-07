@@ -26,18 +26,6 @@ public class VortexCannon extends WeaponCard {
         return true;
     }
 
-    // THE COORDINATE PASSED C IS THE VORTEX
-    @Override
-    public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        List<CoordinatesWithRoom> list = super.getPossibleTargetCells(c,en,g);
-/*
-        // ASK PLAYER WHERE TO PUT VORTEX (CELL THAT ARE SEEN)
-        CoordinatesWithRoom vortex = new CoordinatesWithRoom(); // TODO GET SELECTED CELL FROM LIST, PUT IT HERE
-        list.clear();
-        list = vortex.oneTileDistant(g);
-        list.add(vortex);*/
-        return list;
-    }
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {

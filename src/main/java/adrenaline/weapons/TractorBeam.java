@@ -65,11 +65,6 @@ public class TractorBeam extends WeaponCard {
                 }
             }
 
-
-            // ASK WHICH TARGET
-            // (REMEMBER TO MOVE THE CHOSEN TARGET)
-            // GET JUST ONE
-
             return listOne;
         }
         else{
