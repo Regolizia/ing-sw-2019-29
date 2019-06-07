@@ -257,8 +257,10 @@ Server {
             WeaponCard card = null;
 
             // CHIEDI COME PAGARE AMMO O AMMOPOWER
+            //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER
+            int number=0;
             if (action.canPayCard(card, player, Action.PayOption.AMMO, AmmoCube.Effect.BASE)) {
-                action.payAmmo(player, card, AmmoCube.Effect.BASE);
+                action.payAmmo(player, card, AmmoCube.Effect.BASE,number);
 
                 if (player.canGrabWeapon()) {
                     // se va bene gliela passo
