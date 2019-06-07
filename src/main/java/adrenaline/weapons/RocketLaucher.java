@@ -38,30 +38,6 @@ public class RocketLaucher extends WeaponCard {
         return list;
     }
 
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = new LinkedList<>();
-
-        // I HAD TO COMMENT OUT THE IF BECAUSE, WITHOUT THE INPUT, IT WAS THE SAME
-
-//        if (en.getEffect() == AmmoCube.Effect.BASE) {
-            targets = super.fromCellsToTargets(list, c, g, p, m, en);
-
-            //ASK TO CHOOSE WHICH PLAYER TO DAMAGE, REMOVE THE OTHERS
-            return targets;
-
-//        } else {   // OP2 (OP1 WON'T CALL THESE METHODS)
-
-//            targets = super.fromCellsToTargets(list, c, g, p, m, en); // TO BE REMOVED
-
-            // ACTION CLASS GIVES ME THE OLD POSITION IN C
-            //SELECT ALL THE PLAYERS IN C, PUT THEM IN TARGETS
-            // ALSO ADD OLD TARGET
-
-//            return targets;
-
-//        }
-    }
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {

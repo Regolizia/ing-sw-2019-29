@@ -540,22 +540,38 @@ Server {
                 // TODO ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
 
                 if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2) {
-                    
+
                     // 2 TARGETS OF ALT EFFECT HAVE TO BE IN THE SAME DIRECTION!!!!!
                     // TODO ASK AGAIN IF THIS IS FALSE
-                    playerPosition.checkSameDirection(((Player)targets.get(0)).getCoordinatesWithRooms(),((Player)targets.get(1)).getCoordinatesWithRooms(),10,g,false)
+                    playerPosition.checkSameDirection(((Player)targets.get(0)).getCoordinatesWithRooms(),((Player)targets.get(1)).getCoordinatesWithRooms(),10,g,false);
                 }
                 w.applyDamage(targets,p,e);
                 break;
 
+            case "RocketLauncher":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
+                    w.applyDamage(targets,p,e);
+                    // TODO ASK IF MOVE TARGET
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP2) {
+                    // SE DOPO BASE PRENDI POSIZIONE VECCHIA DI TARGET
+                    // SE PRIMA DI BASE SCEGLI UNA CELLA COLPISCILI E POI
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP1){
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    // TODO ASK WHERE TO MOVE
+                    // MOVE
+                }
+                break;/*
             case "":
                 break;
             case "":
                 break;
             case "":
-                break;
-            case "":
-                break;
+                break;*/
         }
     }
 
