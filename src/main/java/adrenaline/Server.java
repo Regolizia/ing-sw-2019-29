@@ -555,23 +555,93 @@ Server {
                     // TODO ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
                     w.applyDamage(targets,p,e);
                     // TODO ASK IF MOVE TARGET
+
+                    // PRIMA BASE- SE NON VIENE PASSATO NULLA RITORNA IL GIOCATORE COLPITO
+                    // PRIMA OP2- SE GLI PASSANO UN GIOCATORE ALLORA PRENDI LA SUA POS, METTILA IN CELLS TO TARGETS, FAI SCEGLIERE UN TARGET E COLPISCILO E MUOVI SE VUOI
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP2) {
-                    // SE DOPO BASE PRENDI POSIZIONE VECCHIA DI TARGET
-                    // SE PRIMA DI BASE SCEGLI UNA CELLA COLPISCILI E POI
+                    // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
+                    // PRIMA OP2- (NULLA PASSATO) TODO SCEGLI UNA CELLA, COLPISCILI E POI RITORNA LA CELLA (COME GIOCATORE)
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     // TODO ASK WHERE TO MOVE
                     // MOVE
                 }
-                break;/*
-            case "":
                 break;
-            case "":
+
+            case "Shockwave":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+
+                    // TODO ASK WHICH TARGETS TO DAMAGE - UP TO 3
+                    boolean ok = false;
+                    while (!ok) {
+                        if ((targets.size() == 3 &&
+                                !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
+                                && !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())
+                                && !((Player) targets.get(1)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())) ||
+                                (targets.size() == 2 &&
+                                        !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
+                                )) {
+                            ok = true;
+                        } else {
+                            // TODO ASK AGAIN
+                        }
+                    }
+                    w.applyDamage(targets, p, e);
+                }
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    w.applyDamage(targets,p,e);
+                }
                 break;
-            case "":
-                break;*/
+
+            case "Shotgun":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO CHOOSE 1 TARGET
+                    w.applyDamage(targets,p,e);
+                    // TODO ASK TO MOVE THAT TARGET 1 SQUARE
+                }
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    // TODO CHOOSE 1 TARGET
+                    w.applyDamage(targets,p,e);
+                }
+                break;
+
+            case "Sledgehammer":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                // TODO CHOOSE 1 TARGET
+                w.applyDamage(targets,p,e);
+
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    // TODO ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
+                    // FROM LIST
+                    List<CoordinatesWithRoom> possibleCells = playerPosition.tilesSameDirection(2,g,false);
+                }
+                break;
+
+            case "Thor":
+                break;
+
+            case "TractorBeam":
+                break;
+
+            case "VortexCannon":
+                break;
+
+            case "Whisper":
+                break;
+
+            case "Zx_2":
+                break;
         }
     }
 

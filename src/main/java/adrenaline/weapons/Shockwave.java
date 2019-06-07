@@ -27,20 +27,7 @@ public class Shockwave extends WeaponCard {
 
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
-        List<CoordinatesWithRoom> list = c.oneTileDistant(g, false);
-        return list;
-    }
-
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-        List<Object> targets = super.fromCellsToTargets(list, c, g, p, m, en);
-
-        if(en.getEffect()== AmmoCube.Effect.BASE) {
-            // ASK WHICH TARGETS TO DAMAGE
-            //CHECK IF THEY ARE IN DIFFERENT SQUARES, ELSE ASK AGAIN TO CHOOSE
-            // PUT THEM IN TARGETS
-        }
-        return targets;
+        return c.oneTileDistant(g, false);
     }
 
     @Override
