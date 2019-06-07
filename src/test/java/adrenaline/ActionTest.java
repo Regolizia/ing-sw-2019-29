@@ -58,7 +58,7 @@ public class ActionTest {
         action.canPayCard(w,player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE);//
         action.canPayCard(w,player, Action.PayOption.AMMO, AmmoCube.Effect.BASE);//
         action.canPayCard(w,player, Action.PayOption.NONE, AmmoCube.Effect.BASE);//
-        action.payPowerUp(new Thor(),powers,player, AmmoCube.Effect.BASE);//
+        action.payPowerUp(new Thor(),powers,player, AmmoCube.Effect.BASE,0);//
         //action.reload(player,w, Action.PayOption.AMMO, AmmoCube.Effect.BASE,m);//
         //action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,m);//
         //action.reload(player,w, Action.PayOption.NONE, AmmoCube.Effect.BASE,m);//
