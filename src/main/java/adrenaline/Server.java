@@ -347,15 +347,20 @@ Server {
                 }
             }
             //send possible target
+
+            // SOME EFFECTS REQUIRE A CHECK THAT TARGETS ARE DIFFERENT FROM EFFECT TO EFFECT
+            // I HAVE TO PASS THE OLD TARGETS
+            List<Object> pastTargets = null;
+
             for (EffectAndNumber e:paidEffect) {
-                requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model);
+                pastTargets = requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model, pastTargets);
             }
         }
         weaponCard.setNotReload();
         weaponCard.setReloadAlt(false);
     }
 
-    public void requestsForEveryWeapon(EffectAndNumber e, WeaponCard w, Player p, GameBoard g, GameModel model){
+    public List<Object> requestsForEveryWeapon(EffectAndNumber e, WeaponCard w, Player p, GameBoard g, GameModel model, List<Object> pastTargets){
         CoordinatesWithRoom playerPosition = p.getCoordinatesWithRooms();
         List<CoordinatesWithRoom> cells;
         List<Object> targets;
@@ -367,7 +372,8 @@ Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
 
-                    // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
+                    // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO)
+                    // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
 
                     w.applyDamage(targets,p,e);
                 }
@@ -485,6 +491,7 @@ Server {
                 // TODO ASK 1 TARGET TO DAMAGE
 
                 // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
+                // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
 
                 w.applyDamage(targets,p,e);
                 break;
@@ -494,6 +501,7 @@ Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // TODO ASK TO CHOOSE 1 OR 2 TARGETS
                 // TODO CHECK TARGETS OP1 AND OP2 DIFFERENTI
+                // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
                 // TODO ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
                 w.applyDamage(targets,p,e);
                 break;
@@ -710,6 +718,7 @@ Server {
                 w.applyDamage(targets,p,e);
                 break;
         }
+        return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
     }
 
 
