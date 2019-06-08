@@ -46,12 +46,16 @@ public LinkedList<AmmoTile> getDeck(){
 public AmmoTile pickUpAmmoTile(){
         if(this.deck.size()>0){
             setUsedAmmoTile(this.deck.getFirst());
-            return this.deck.getFirst();
+            deck.remove(deck.getFirst());
+            if(deck.size()>0)
+                return this.deck.getFirst();
+            else
+                return null;
         }
 
         else {
             shuffleUsedCards();
-            deck=usedAmmoTile;
+            deck.addAll(usedAmmoTile);
             usedAmmoTile.clear();
             return deck.getFirst();
         }
