@@ -81,8 +81,12 @@ class AmmoTileDeckTest {
         System.out.println(ammoTileDeck.getDeck());
         ammoTileDeck.pickUpAmmoTile();
         ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.getUsedAmmoTile();
         System.out.println(ammoTileDeck.getDeck().size());
         System.out.println(ammoTileDeck.getDeck());
         ammoTileDeck.pickUpAmmoTile();
+
+        ammoTileDeck.shuffleCards();
+
     }
 }
