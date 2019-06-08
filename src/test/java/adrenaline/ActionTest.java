@@ -60,9 +60,9 @@ public class ActionTest {
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.BLUE));//pay()
         action.pay(player,new AmmoCube(AmmoCube.CubeColor.YELLOW));//pay()
         action.canPayAmmo(w,player.getCubeRed(),player.getCubeYellow(),player.getCubeBlue(), AmmoCube.Effect.BASE);//
-        action.canPayCard(w,player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE);//
-        action.canPayCard(w,player, Action.PayOption.AMMO, AmmoCube.Effect.BASE);//
-        action.canPayCard(w,player, Action.PayOption.NONE, AmmoCube.Effect.BASE);//
+        action.canPayCard(w,player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,new LinkedList<>());//
+        action.canPayCard(w,player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,new LinkedList<>());//
+        action.canPayCard(w,player, Action.PayOption.NONE, AmmoCube.Effect.BASE,new LinkedList<>());//
         action.payPowerUp(new Thor(),powers,player, AmmoCube.Effect.BASE,0);//
         //action.reload(player,w, Action.PayOption.AMMO, AmmoCube.Effect.BASE,m);//
         //action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,m);//
@@ -78,9 +78,6 @@ public class ActionTest {
         action.proposeCellsGrab(player);
         action.proposeCellsGrabAdrenaline(player);
         action.run(player,player.getCoordinatesWithRooms());
-        action.grabCard(player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,w);
-        action.grabCard(player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,w);
-        action.grabCard(player, Action.PayOption.NONE, AmmoCube.Effect.BASE,w);
         AmmoTile a=new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE);
         a.setCoordinates(1,2);
         Room room=new RoomDeath(1,2);
