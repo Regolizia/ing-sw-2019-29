@@ -172,50 +172,6 @@ public class Action {
 
     //-------------------------------------GRABBING METHODS-----------------------------------------------------------//
 
-
-    /**
-     * grabCard
-     * this is the method to grab a weapon card & reload
-     * @return boolean : to know if the action is good ended
-
-     * @param player: player who does the action
-     * @param option: payment option to grab
-     * @param firstOptionToPay effect to pay
-     * @param wChoosen: selected card from selected spawnpoint
-     *
-     * this action can be deleted if the player can't grab the weapon
-     *
-     *              CONV:
-     *              i)if you can grab the card you can't delete the action
-     *              ii) if you buy a weapon card you have already paid its BASE effect
-     *                  so you can't use its ALT effect (if you can pay BASE)
-     *              iii) if you don't want to pay the BASE effect check if you can pay ALT effect
-     *                      in that case tou have ALT effect and you can't use BASE effect
-     *              iv)firstOptionToPay can be BASE or ALT
-     *              v) player has <3 weaponCard
-     *
-     */
-    //____________________________________________GRAB OPTIONS(WEAPON)________________________________________________//
-
-    public boolean grabCard(Player player, PayOption option, AmmoCube.Effect firstOptionToPay, WeaponCard wChoosen){
-
-        if(!canPayCard(wChoosen,player,option,firstOptionToPay))
-            return false;
-        player.getHand().add(wChoosen);
-
-        switch (firstOptionToPay) {
-            case BASE: wChoosen.setReload(); //when i grab a weapon i've already paid its base effect or alt
-                        break;
-
-            case ALT:  wChoosen.setReloadAlt(true);
-                                break;
-            default: return false;
-        }
-
-        return true;
-    }
-
-
     /**
      * grabTile
      * this is the method to grab an ammo tile
@@ -477,17 +433,18 @@ return true;}
      * @return boolean: to know if method has a good end
      * @param weapon: weapon selected
      * @param player : player who does the action
+     * @param powers:selected powerUps used to pay
      * @param option : payment option
      * this action can be deleted if can't pay weapon
      */
 //_____________________________________canPayCard(TRUE if can pay or alt base effect)_________________________________//
 
-    public boolean canPayCard(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay) {
+    public boolean canPayCard(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay,LinkedList<PowerUpCard> powers) {
         if(option!=PayOption.AMMO||option!=PayOption.AMMOPOWER||option==PayOption.NONE){
         switch(option){
 
             case AMMOPOWER:{
-                    return canPayAmmoPower(weapon,player,player.getPowerUp(),firstOptionToPay);
+                    return canPayAmmoPower(weapon,player,powers,firstOptionToPay);
                     }
 
             case AMMO:{

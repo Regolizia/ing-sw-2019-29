@@ -243,55 +243,64 @@ Server {
         if(chosenCell.containsSpawnpoint(model)) {
             /*
             * controllo io se può pagarla + ricarica ma tu devi:
-            * 0-controllare che ti dica o effetto base o effetto alt nient'altro altrimenti non funziona il metodo
-            * 1-controllare che abbia meno di 3 carte in mano
+            * 0-controllare che ti dica o effetto base o effetto alt nient'altro altrimenti non funziona il metodo x
+            * 1-controllare che abbia meno di 3 carte in mano x
             * 2-una volta raccolta devi rimuoverla dalle carte dello spawnpoint
             * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
-            * se scarta una carta rimettila nel deck
+            * se scarta una carta rimettila nel deck x
             * */
             // cerca nel model se c'è uno spawnpoint lì o no
             //  TODO se spawn fai scegliere quale e mettila in card
             Spawnpoint s = chosenCell.getSpawnpoint(model);
             LinkedList<WeaponCard> weaponCards = s.getWeaponCards();
+            LinkedList<PowerUpCard>powerUpCards=new LinkedList<>();
             // TODO SCEGLI CARTA, mettila in card
             WeaponCard card = null;
-
-            // CHIEDI COME PAGARE AMMO O AMMOPOWER
-            //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER
+            //TODO CHIEDI EFFETTO BASE/ALT
+            AmmoCube.Effect effect=null;
+            //TODO CHIEDI METODO PAGAMENTO
+            Action.PayOption payOption=null;  //payOption= Action.PayOption.AMMO OR   payOption= Action.PayOption.AMMOPOWER
+            if(payOption.equals(Action.PayOption.AMMOPOWER)){
+                //TODO CHIEDI CON CHE POWERUPS VUOLE PAGARE
+                //powerUpCards.add ...
+            }
+            //TODO CONTROLLA SE PUO' PAGARE L'EFFETTO BASE O ALT SE NO ESCI E ANNULLA AZIONE
+            if(!action.canPayCard(card,player,payOption,effect,powerUpCards))
+                return;
+            // TODO CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
+            if(!player.canGrabWeapon()){
+                WeaponCard dCard=null;
+                model.weaponDeck.getList().addLast(dCard);
+                player.getHand().remove(dCard);
+            }
+            //TODO DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER
             int number=0;
-            if (action.canPayCard(card, player, Action.PayOption.AMMO, AmmoCube.Effect.BASE)) {
-                action.payAmmo(player, card, AmmoCube.Effect.BASE,number);
+            action.payAmmo(player,card,effect,number);
 
-                if (player.canGrabWeapon()) {
-                    // se va bene gliela passo
-                    //action.grabCard(player, card, Action.PayOption.AMMOPOWER,model, AmmoCube.Effect.BASE,s);
-                    // incrementa turno
-                }
-            }
-            if (action.canPayCard(card, player, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE)) {
-             //   action.payPower(player, card, AmmoCube.Effect.BASE, model);
+            // ADDING TO PLAYER'S HAND + REMOVE FROM SPAWNPOINT + CHANGE POSITION
 
-                if (player.canGrabWeapon()) {
-                    // se va bene gliela passo
-                    //action.grabCard(player, card, Action.PayOption.AMMOPOWER,model, AmmoCube.Effect.BASE,s);
-                    // incrementa turno
-                }
-            }
+            player.getHand().add(card);
+            s.getWeaponCards().remove(card);
+            action.run(player,card.getCoordinatesOnMap());
+
+            //TODO INCREMENTA TURNO
         }
         else {
             //se non spawnpoint
+            //raccolgo un AmmoTile
             /*
             * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
             * dalla mappa e ne aggiungo subito un altro
             * già incluso pescaggio power up
             * */
-           // action.grabTile(player, chosenCell, model);
+            action.grabTile(player, chosenCell);
+            //TODO INCREMENTA TURNO
         }
     }
 
     public void run(Player player){
-      //  LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
-        // PROPONI LE CELLE E PRENDINE UNA
+        LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
+        //TODO PROPONI LE CELLE E PRENDINE UNA
         CoordinatesWithRoom c = null;
         action.run(player,c);
     }
@@ -299,56 +308,90 @@ Server {
     public void shoot(Player player){
         /*
         * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
+        //TODO CHIEDI PAGAMENTO
         Action.PayOption payOption=null;
-
-        //just in case he can't shoot
         LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
+        LinkedList <PowerUpCard> powers=new LinkedList<>();
+        int number;
+        //SAVING PLAYER INITIAL POSITION IN CASE HE CAN'T SHOOT/HE DOESN'T SHOOT
         CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
-        //ask if the player wants to move before shooting
-        // if yes
-      //  LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
-        //choose cell
-        CoordinatesWithRoom playerPosition=null;
-        //set new position
-        action.run(player,playerPosition);
-        //send player's hand , player chooses weapon
+        //TODO GIOCATORE SI VUOLE SPOSTARE PRIMA?
+        boolean moves=true;
+          if(moves==true){
+              LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player);
+              //TODO CHIEDI CELLA E METTILA IN PLAYER POSITION
+              CoordinatesWithRoom playerPosition=null;
+              //set new position
+              action.run(player,playerPosition);
+          }
+
+       //TODO MANDA MANO WEAPON AL GIOCATORE
+       //TODO SCEGLI ARMA DA USARE E METTILA IN weaponCard
+       //TODO RICEVI UN NUMERO DA METODI CARTE
         WeaponCard weaponCard =null;
-        //check if reload
-      // if(weaponCard.getReloadAlt())
-         //   paidEffect.add(0,AmmoCube.Effect.ALT,);
-        // if(weaponCard.getReload())
-        //   paidEffect.add(0,AmmoCube.Effect.BASE,);
+           number=0;
+          //if weapon is already reloaded or reloaded alt, player can request other effect
 
         if(!weaponCard.getReloadAlt()&&!weaponCard.getReload()){
-            //ask if he wants to pay BASE/ALT
+            //TODO CHIEDI SE VUOLE EFFETTO BASE O ALTERNATIVO
             AmmoCube.Effect effect=null;
             //send message and delete the action
             if(!effect.equals(AmmoCube.Effect.BASE)&&!effect.equals(AmmoCube.Effect.ALT))
                 return;
-            //ask payment methods
-            if(action.canPayCard(weaponCard,player,payOption,effect))
+            //TODO CHIEDI COME PAGARE
+            //payOption= ...
+            if(payOption.equals(Action.PayOption.AMMOPOWER))
                 {
-                   // paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,effect,model));
+                    //TODO CHIEDI POWERUP
+
+                }
+
+            if(action.canPayCard(weaponCard,player,payOption,effect,powers))
+                {
+                   paidEffect.add(action.paidEffect(weaponCard,player,payOption,effect,powers,number));
                     if(effect.equals(AmmoCube.Effect.BASE))
                         weaponCard.setReload();
                     if(effect.equals(AmmoCube.Effect.ALT))
                         weaponCard.setReloadAlt(true);
                 }
-            //if he can't delete action and send message
-        }
-        if(weaponCard.getReload()||weaponCard.getReloadAlt()){
-            //ask if he wants to add more effects
-            LinkedList<AmmoCube.Effect> effect=null;
-            //ask payment option can be different for each effect
-            for (AmmoCube.Effect e:effect
-            ) {
-
-                if(!effect.equals( AmmoCube.Effect.ALT)&&!effect.equals(AmmoCube.Effect.BASE)&&
-                        action.canPayCard(weaponCard,player,payOption,e)){
-               //     paidEffect.addAll(action.paidEffect(weaponCard,player,payOption,e));
-                }
+            else {
+                action.run(player,positionBeforeShoot);
+                return; // delete action plus send message
+            }}
+        //TODO VUOI ALTRI EFFETTI?
+        boolean otherEffect=true;
+        if(otherEffect){
+        if(weaponCard.getReload()||weaponCard.getReloadAlt()) {
+            //TODO CONTROLLA CHE L'EFFETTO NON SIA NE BASE NE ALT
+            LinkedList<AmmoCube.Effect> effect = new LinkedList<>();
+            LinkedList<Action.PayOption> payOptions = new LinkedList<>();
+            //TODO PER OGNI EFFETTO CHIEDI METODO PAGAMENTO
+            for (AmmoCube.Effect e : effect) {
+                //chiedi pagamento
+                //payOption.add ...
             }
+
+            for (AmmoCube.Effect e : effect
+            ) {
+                //TODO BETTER
+                if(payOptions.get(effect.indexOf(e)).equals(Action.PayOption.AMMOPOWER))
+                {
+                    //TODO CHIEDI POWER DA USARE
+                    //powers.add
+                    //TODO ad ogni giro togli il powerUps aggiunti dalla mano del player
+                }
+               if( !action.canPayCard(weaponCard,player,payOptions.get(effect.indexOf(e)),e,powers)){
+                   //TODO RIAGGIUNGI POWERUPS NON USATI ALLA MANO DEL PLAYER E TOGLILI DA powers
+               }
+                    else {
+                        player.getPowerUp().removeAll(powers);
+                        paidEffect.add(action.paidEffect(weaponCard,player,payOptions.get(effect.indexOf(e)),e,powers,number));
+               }
+
+            }
+        }
             //send possible target
+            LinkedList<Object>targets=new LinkedList<>();
 
             // SOME EFFECTS REQUIRE A CHECK THAT TARGETS ARE DIFFERENT FROM EFFECT TO EFFECT
             // I HAVE TO PASS THE OLD TARGETS
@@ -357,7 +400,13 @@ Server {
             for (EffectAndNumber e:paidEffect) {
                 pastTargets = requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model, pastTargets);
             }
+            for (EffectAndNumber e: paidEffect
+            ) {
+                action.shoot(weaponCard,player,e,targets);
+            }
         }
+
+
         weaponCard.setNotReload();
         weaponCard.setReloadAlt(false);
     }
