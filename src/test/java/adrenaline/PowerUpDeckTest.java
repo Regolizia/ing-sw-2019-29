@@ -8,18 +8,45 @@ import org.junit.jupiter.api.Test;
 
 public class PowerUpDeckTest {
 
-
+private PowerUpDeck deck;
     @Test
     public void testConstructor() {
 
-        PowerUpDeck deck = new PowerUpDeck();
+        deck= new PowerUpDeck();
 
-        assertTrue(deck.getPowerUpDeck().size() == 24);
-
-        deck.getPowerUpDeck().add(new PowerUpCard(AmmoCube.CubeColor.RED));
-        PowerUpCard c = new PowerUpCard(AmmoCube.CubeColor.RED);
-        AmmoCube.CubeColor a = c.getPowerUpColor();
-
+       // assertTrue(deck.getPowerUpDeck().size() == 24);
+        System.out.println(deck.getPowerUpDeck().size());
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.pickPowerUp();
+        deck.getUsedPowerUp();
+        deck.shuffleCards();
+        System.out.println(deck.getPowerUpDeck().size());
+        deck.pickPowerUp();
+        System.out.print(deck.getPowerUpDeck().size());
 
     }
 }
