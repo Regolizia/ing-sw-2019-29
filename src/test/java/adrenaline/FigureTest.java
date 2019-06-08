@@ -3,13 +3,21 @@ package adrenaline;
 import adrenaline.Figure;
 import org.junit.jupiter.api.Test;
 
-public class FigureTest {
+import javax.swing.text.rtf.RTFEditorKit;
 
-    @Test
+public class FigureTest {
+private Figure fig;
+   /* @Test
     public void testConstructor() {
         Figure f = new Figure(Figure.PlayerColor.BLUE);
         Figure.PlayerColor p = f.getPlayerColor();
         f.setPlayerColor(Figure.PlayerColor.YELLOW);
 
-    }
+    }*/
+   @Test
+    void constructor(){
+       fig=new Figure(Figure.PlayerColor.PURPLE);
+       fig.getPlayerColor();
+       fig.setPlayerColor(Figure.PlayerColor.YELLOW);
+   }
 }
