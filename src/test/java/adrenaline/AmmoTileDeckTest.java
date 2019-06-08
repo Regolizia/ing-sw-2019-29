@@ -34,5 +34,55 @@ class AmmoTileDeckTest {
         ammoTileDeck.shuffleUsedCards();
 
     }
+    @Test
+    void constructor(){
+        AmmoTile ammoTile=new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED );
+        ammoTileDeck.getDeck().add(ammoTile);
 
+        ammoTileDeck.setUsedAmmoTile(ammoTile);
+
+        System.out.println(ammoTileDeck.getDeck().size());
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        System.out.println(ammoTileDeck.getDeck().size());
+        System.out.println(ammoTileDeck.getDeck());
+        ammoTileDeck.pickUpAmmoTile();
+        ammoTileDeck.pickUpAmmoTile();
+        System.out.println(ammoTileDeck.getDeck().size());
+        System.out.println(ammoTileDeck.getDeck());
+        ammoTileDeck.pickUpAmmoTile();
+    }
 }
