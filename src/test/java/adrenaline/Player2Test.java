@@ -28,6 +28,29 @@ public class Player2Test {
 
        // boolean r = weapon.getReload();
         p.getAmmoBox();
+        p.setPoints(2);
+        p.getPointTrack();
+        p.getTrackPointSize();
+        p.getTrackSize();
+        p.getMaxPointAssignableCounter();
+        p.setMaxPointAssignableCounter(1);
+        p.putASkullOnTrack();
+        p.isFirstTurn();
+        p.returnPoints();
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.damageByShooter(p);
+        p.numberOfDeaths();
+        p.setName("PLUTO");
+        p.getName();
+        p.getRespawnCoordinates();
+        p.newLife();
+        p.getMarks();
 
     }
 }
