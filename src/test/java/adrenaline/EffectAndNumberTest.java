@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EffectAndNumberTest {
     private EffectAndNumber effectAndNumber;
 
-    @BeforeEach
+ /*   @BeforeEach
     void setUp() {
         effectAndNumber = new EffectAndNumber(AmmoCube.Effect.BASE, 4);
     }
@@ -17,5 +17,14 @@ class EffectAndNumberTest {
     void setEffect() {
         effectAndNumber.setEffect(AmmoCube.Effect.ALT);
         assertEquals(AmmoCube.Effect.ALT,effectAndNumber.getEffect());
-    }
+    }*/
+ @Test
+ void constructor(){
+     effectAndNumber=new EffectAndNumber(AmmoCube.Effect.BASE,1);
+     effectAndNumber.setEffect(AmmoCube.Effect.BASE);
+     effectAndNumber.setNumber(1);
+     effectAndNumber.getEffect();
+     effectAndNumber.getNumber();
+
+ }
 }
