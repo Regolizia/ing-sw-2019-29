@@ -4,10 +4,10 @@ package adrenaline.network.server;
 import adrenaline.*;
 import adrenaline.gameboard.GameBoard;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -15,8 +15,7 @@ import java.util.concurrent.Executors;
 
 // RMI
 
-public class
-Server {
+public class Server {
 
     private static GameModel model;
     private static Action action;
@@ -41,53 +40,204 @@ Server {
     // The set of all the print writers for all the clients, used for broadcast.
     //private static List<PrintWriter> writers = new ArrayList<>();
 
-    private ServerSocket server;
+    private static ServerSocket serverSocket;
+    private Server server;
     private ExecutorService threadPool;
 
+    private ObjectOutputStream output;
+    private ObjectInputStream input;
 
-    public static void setup(String[] args) throws Exception {
+    public void setup(String[] args) throws Exception {
         time =Integer.parseInt(args[0]);
         possibleColors.remove("NONE");
+
+        server = new Server();
+
+        start();
     }
 
-    ////////////////// SOCKET //////////////////
-    private Server (){
-        threadPool= Executors.newCachedThreadPool();
-    }
-
-    private static class ServerInstance{
-        private static final Server SERVER_WITH_SOCKET= new Server();
-
-    }
-
-    public static Server getInstance(){
-        return Server.ServerInstance.SERVER_WITH_SOCKET;
+    public Server() {
+        threadPool = Executors.newCachedThreadPool();
     }
 
 
-    public void server() {
+    public static void start() {
         try {
-            server = new ServerSocket(4321);
+            serverSocket = new ServerSocket(4321);
         } catch (IOException e) {
             e.printStackTrace();
             // Server non si avvia
         }
         System.out.println("SERVER ONLINE");
-        while(true){
-            Socket socket = null;
-            try {
-                socket = server.accept();
+        while (true) {
 
-                socket.setKeepAlive(true);
-                threadPool.submit(new SocketThread(socket));
+            try {
+                Socket socket = serverSocket.accept();
+
+                new RequestHandler(socket).start();
             } catch (IOException e) {
                 e.printStackTrace();
-                // Client disconnesso
+                break;
+            }
+        }
+    }
+    public static class RequestHandler extends Thread {
+
+        /**
+         * Interfaccia utilizzata per comunicare con il Server (es.
+         * {@link Server}).
+         */
+        //private final transient Server server;
+
+        /**
+         * Socket attraverso il quale il giocatore puo' comunicare con il Server
+         * e viceversa.
+         */
+        private final transient Socket socket;
+
+        /**
+         * Stream di Input per la ricezione degli oggetti serializzati dal
+         * Client.
+         */
+        private final transient ObjectInputStream inputStream;
+
+        /**
+         * Stream di Output per l'invio di oggetti serializzati al Client.
+         */
+        private final transient ObjectOutputStream outputStream;
+
+        /**
+         * MUTEX per evitare la concorrenza tra Thread durante la scrittura sul
+         * flusso di uscita del Socket.
+         */
+        //private static final Object OUTPUT_MUTEX = new Object();
+
+        /**
+         * Giocatore Remoto associato al Thread.
+         */
+        //private SocketPlayer socketPlayer;
+        public RequestHandler(Socket socket) throws IOException {
+            this.socket = socket;
+            this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            this.outputStream.flush();
+            this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                try {
+                    while (true) {
+                        String msg = (String) inputStream.readObject();
+                        System.out.println(msg);
+                        clientLogin();
+                        // handleClientRequest(object);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    System.err.println(e);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        public void sendToClient(String message) throws IOException {
+            outputStream.writeObject(message);
+            outputStream.flush();
+
+        }
+
+        public void clientLogin(){
+            try {
+                String nickname = loginName();
+
+                String color = null;
+                 checkColor(color);
+
+                addPlayerToGame(nickname, color);
+
+                chooseBoard(nickname); // it checks if is firstPlayer
+
+                connectionsCount++;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        public String loginName() throws Exception {
+            sendToClient("LOGIN");
+            String name = (String)inputStream.readObject();
+            // Keep requesting a name until we get a unique one.
+            while (true) {
+                if (name != null || !name.equals("null")) {
+                    synchronized (names) {
+                        if (!isBlank(name) && !names.contains(name)) {
+                            names.add(name);
+                            return name;
+                        } else if (names.contains(name)) {
+                            outputStream.writeObject("LOGIN");
+                            name = (String)inputStream.readObject();
+                        }
+                    }
+                }
             }
         }
 
+        public void checkColor(String color){
+
+            while (true) {
+                String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
+                // TODO color = GET COLOR FROM CLIENT. MUST SEND csv TO CLIENT
+
+                if (color != null) {
+                    synchronized (possibleColors) {
+                        if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color))
+                                && (colorsChosen.isEmpty() || (!colorsChosen.contains(color) && !colorsChosen.contains(color.toUpperCase())))) {
+                            colorsChosen.add(color.toUpperCase());
+                            possibleColors.remove(color.toUpperCase());
+                            break;
+                        } else if ((!possibleColors.contains(color.toUpperCase()) || !possibleColors.contains(color))
+                                && !colorsChosen.contains(color.toUpperCase()) && !colorsChosen.contains(color)) {
+                            // TODO ASK AGAIN FOR COLOR, IT WASN'T ACCEPTED
+
+                        } else if (colorsChosen.contains(color.toUpperCase()) || colorsChosen.contains(color)) {
+                            // TODO ASK AGAIN FOR COLOR, IT WAS A DUPLICATE COLOR
+                        }
+                    }
+                }
+            }
+        }
+        public void addPlayerToGame(String name, String color){
+            //model.addPlayer(new Player()); TODO
+
+            // TODO BROADCAST NAME HAS JOINED
+        }
+
+        public void chooseBoard(String name){
+            if(name.equals(model.getPlayers().get(0))){
+
+                while(true){
+                    int result = 0;
+                    // TODO ASK FOR MAP 1-2-3-4
+
+                    if (result == 1 || result == 2 || result == 3 || result == 4) {
+                        Server.setBoardChosen(result);
+                        System.out.println("BOARD CHOSEN " + result);
+                        break;
+                    } else {
+                        // TODO ASK AGAIN BECAUSE NOT ACCEPTED
+                    }
+
+                }
+            }
+        }
+        ////
+
     }
-    ////////////////////////////////////////////////
+
+
 
     // TIMER
     private static class Countdown{
@@ -121,86 +271,9 @@ Server {
         }
     }
 
-    public void clientLogin(){
-        String name = null;
-        checkName(name);
 
-        String color = null;
-        checkColor(color);
 
-        addPlayerToGame(name, color);
 
-        chooseBoard(name); // it checks if is firstPlayer
-
-    }
-
-    public void checkName(String name){
-        // TODO name = GET NAME FROM CLIENT
-
-        // Keep requesting a name until we get a unique one.
-        while (true) {
-            if (name != null || !name.equals("null")) {
-                synchronized (names) {
-                    if (!isBlank(name) && !names.contains(name)) {
-                        names.add(name);
-                        break;
-                    } else if (names.contains(name)) {
-                        // TODO name = GET NAME BECAUSE DUPLICATE
-                    }
-                }
-            }
-        }
-    }
-
-    public void checkColor(String color){
-
-        while (true) {
-            String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
-            // TODO color = GET COLOR FROM CLIENT. MUST SEND csv TO CLIENT
-
-            if (color != null) {
-                synchronized (possibleColors) {
-                    if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color))
-                            && (colorsChosen.isEmpty() || (!colorsChosen.contains(color) && !colorsChosen.contains(color.toUpperCase())))) {
-                        colorsChosen.add(color.toUpperCase());
-                        possibleColors.remove(color.toUpperCase());
-                        break;
-                    } else if ((!possibleColors.contains(color.toUpperCase()) || !possibleColors.contains(color))
-                            && !colorsChosen.contains(color.toUpperCase()) && !colorsChosen.contains(color)) {
-                        // TODO ASK AGAIN FOR COLOR, IT WASN'T ACCEPTED
-
-                    } else if (colorsChosen.contains(color.toUpperCase()) || colorsChosen.contains(color)) {
-                        // TODO ASK AGAIN FOR COLOR, IT WAS A DUPLICATE COLOR
-                    }
-                }
-            }
-        }
-    }
-
-    public void addPlayerToGame(String name, String color){
-        //model.addPlayer(new Player()); TODO
-
-        // TODO BROADCAST NAME HAS JOINED
-    }
-
-    public void chooseBoard(String name){
-        if(name.equals(model.getPlayers().get(0))){
-
-            while(true){
-                int result = 0;
-                // TODO ASK FOR MAP 1-2-3-4
-
-                if (result == 1 || result == 2 || result == 3 || result == 4) {
-                    Server.setBoardChosen(result);
-                    System.out.println("BOARD CHOSEN " + result);
-                    break;
-                } else {
-                    // TODO ASK AGAIN BECAUSE NOT ACCEPTED
-                }
-
-            }
-        }
-    }
 
     public static boolean isBlank(String str) {
                 int strLen;

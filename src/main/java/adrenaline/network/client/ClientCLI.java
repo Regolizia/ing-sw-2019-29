@@ -4,6 +4,7 @@ package adrenaline.network.client;
 import adrenaline.Figure;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
@@ -14,7 +15,7 @@ import java.util.Scanner;
 public class ClientCLI {
 
 
-
+    private static Socket socket;
     public static Scanner scanner = new Scanner(System.in);
 
     private static ArrayList mainMenu;
@@ -22,50 +23,38 @@ public class ClientCLI {
 
 
     public static void main(String[] args) throws Exception {
-        String serverAddress = args[0];
-        int socketPort = 4321, rmiPort = 59002;
 
         if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
+        String serverAddress = args[0];
+        int socketPort = 4321, rmiPort = 59002;
+
         new ClientCLI(serverAddress, socketPort, rmiPort);
     }
 
-    public static void startClient(String inText, String serverAddress, int socketPort, int rmiPort){
-        switch (inText){
-            case "S":
+    public static void startClient(String serverAddress, int socketPort, int rmiPort){
                 ClientCLI.startSocketClient(serverAddress,socketPort);
-                break;
-            case "R":
-                System.out.println("LOL not implemented, using Socket Connection :)");
-                ClientCLI.startSocketClient(serverAddress,socketPort);
-                break;
-        }
+
     }
 
     public static void startSocketClient(String serverAddress, int socketPort){
-
-        ClientWithSocket client1 = new ClientWithSocket();
-        client1.client(serverAddress,socketPort);
         try {
-            ClientWithSocket.sendToServer("CIAO");
+            socket = new Socket(serverAddress,socketPort);
+            System.out.println("Client online");
+        new ClientThread(socket).run();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public ClientCLI(String serverAddress, int socketPort, int rmiPort) {
 
-        System.out.print("[R]MI or [S]ocket? (Default: [S]): \n");
-        String inText = scanner.nextLine().toUpperCase();
-
-        if (!(inText.equals("S") || inText.equals("R"))){
-            inText = "S"; // SOCKET DEFAULT
-        }
-
         boolean connected = false;
-        ClientCLI.startClient(inText,serverAddress,socketPort,rmiPort);
+        ClientCLI.startClient(serverAddress,socketPort,rmiPort);
         // inText is the choice if Socket or Rmi
 
         connected=true;
