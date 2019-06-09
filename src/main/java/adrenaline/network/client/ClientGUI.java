@@ -42,6 +42,10 @@ public class ClientGUI {
     JLabel[] yellowArray = new JLabel[3];
     JLabel[] playerCards = new JLabel[3];
 
+    public static String view() {
+        return "GUI";
+    }
+
     public ClientGUI(String serverAddress) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);

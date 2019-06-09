@@ -34,6 +34,39 @@ public class Player {
     public Player() {
 
     }
+
+    /**
+     * Class constructor with name.
+     *  @version 1.0
+     * @param playerColor color selected by the player
+     * @param rsp spawnpoint selected by the player
+     */
+    // Coordinates rsp is the spawnPosition chosen by the player
+    public Player(String name, Figure.PlayerColor playerColor) {
+
+        this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW
+        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+        this.marks = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+        // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
+        this.color = playerColor;
+        this.respawnCoordinates = new CoordinatesWithRoom();
+        this.coordinates = new CoordinatesWithRoom();
+        // they are lists because we need to add and remove easily
+        this.hand = new LinkedList<WeaponCard>();
+        this.powerups = new LinkedList<PowerUpCard>();
+        this.pointsArray = new boolean[]{true, true, true, true, true, true};
+        this.points = 0;
+        this.pointTrack = new int[]{8,6,4,2,1};
+        this.skullTrack = new boolean[]{false, false, false, false, false, false};
+        this.indexPointCounter=0; //it means tha i can give 8 points
+        points=0;
+        this.name=name;
+    }
+
     /**
      * Class constructor.
      *  @version 1.0

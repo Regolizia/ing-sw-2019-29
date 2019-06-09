@@ -9,18 +9,15 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
 
-// RMI
+public class ClientCLI extends Client{
 
+    static ClientCLI cli;
+    public static Socket socket;
 
-public class ClientCLI {
-
-
-    private static Socket socket;
     public static Scanner scanner = new Scanner(System.in);
 
     private static ArrayList mainMenu;
     private static boolean quit = false;
-
 
     public static void main(String[] args) throws Exception {
 
@@ -31,19 +28,20 @@ public class ClientCLI {
         String serverAddress = args[0];
         int socketPort = 4321, rmiPort = 59002;
 
-        new ClientCLI(serverAddress, socketPort, rmiPort);
+        cli = new ClientCLI(serverAddress, socketPort, rmiPort);
+
+        new ClientThread(socket,cli).run();
     }
 
     public static void startClient(String serverAddress, int socketPort, int rmiPort){
-                ClientCLI.startSocketClient(serverAddress,socketPort);
+        startSocketClient(serverAddress,socketPort);
 
     }
 
     public static void startSocketClient(String serverAddress, int socketPort){
         try {
             socket = new Socket(serverAddress,socketPort);
-            System.out.println("Client online");
-        new ClientThread(socket).run();
+            System.out.println("Socket Connection");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,46 +50,33 @@ public class ClientCLI {
     }
 
     public ClientCLI(String serverAddress, int socketPort, int rmiPort) {
+        startClient(serverAddress,socketPort,rmiPort);
 
-        boolean connected = false;
-        ClientCLI.startClient(serverAddress,socketPort,rmiPort);
-        // inText is the choice if Socket or Rmi
-
-        connected=true;
-
-        if(connected){
-            ClientCLI.login();
-        }
-
-     }
-
-    private static void login(){
+    }
+    public String login(){
          System.out.println("Enter nickname: ");
 
-          String input = scanner.nextLine();
-         // TODO SEND input to check, (message ENTER)
+          return scanner.nextLine();
 
      }
 
-     private static void chooseColor(// TODO SEND List of colors
+    public String chooseColor(String possibleColors
      ){
          System.out.println("Choose a color: ");
-         //System.out.println(list of colors); TODO
-         String input = scanner.nextLine();
-         // TODO SEND input to check, (message CHOOSE COLOR)
+         System.out.println(possibleColors);
+         return scanner.nextLine();
 
          // TODO GET ANSWER IF PLAYER IS FIRST AND DO THIS IF IT IS:
          //chooseBoard();
      }
 
-     private static void chooseBoard(){
+    public int chooseBoard(){
 
          System.out.println("Choose board number: 1, 2, 3, 4");
-         String input = scanner.nextLine();
-         // TODO SEND input to check, (message CHOOSE BOARD)
+         return scanner.nextInt();
      }
 
-     private static void chooseSpawnpoint(// TODO SEND Two cards or names
+    public static void chooseSpawnpoint(// TODO SEND Two cards or names
      ){
 
          System.out.println("Choose a card: ");
@@ -100,12 +85,12 @@ public class ClientCLI {
          // TODO SEND input to check, (message CHOOSE SPAWNPOINT)
      }
 
-     private static void printMessage(String message){
+    public static void printMessage(String message){
          System.out.println(message);
          // TODO change in server (message MESSAGE)
      }
 
-    public static void showMainMenu() {
+    public void showMainMenu() {
         do {
             System.out.println("Main Menu:\n" +
                     "Z: Exit\n" +
@@ -139,7 +124,7 @@ public class ClientCLI {
         }while (!quit);
     }
 
-    private static void showActionMenu() {
+    public static void showActionMenu() {
         System.out.println("Action Menu:\n" +
                         "S: Shoot\n" +
                         "G: Grab\n" +
@@ -157,33 +142,33 @@ public class ClientCLI {
         }
     }
 
-    private static void back() {
+    public static void back() {
         // GO BACK TO MAIN MENU
     }
 
-    private static void run() {
+    public static void run() {
     }
 
-    private static void grab() {
+    public static void grab() {
     }
 
-    private static void shoot() {
+    public static void shoot() {
     }
 
-    private static void showOtherPlayers() {
+    public static void showOtherPlayers() {
         // SHOW INFO ABOUT OTHER PLAYERS
     }
 
-    private static void showPlayerBoard() {
+    public static void showPlayerBoard() {
         // SHOW INFO ABOUT PLAYER, CARDS ETC...
     }
 
-    private static void showBoardInfo() {
+    public static void showBoardInfo() {
         // TODO PRINT BOARD OR SOMETHING
     }
 
 
-    private static boolean isPresentCommand(ArrayList menu, String s) {
+    public static boolean isPresentCommand(ArrayList menu, String s) {
         Optional<String> command = menu.stream().filter(str -> str.equals(s)).findFirst();
         return command.isPresent();
     }
