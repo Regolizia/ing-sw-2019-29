@@ -35,9 +35,9 @@ public class GameModel {
     private Map mapUsed;
     protected Bot bot;
 
-    protected WeaponDeck weaponDeck;
-    protected PowerUpDeck powerUpDeck;
-    protected AmmoTileDeck ammoTileDeck;
+    public WeaponDeck weaponDeck;
+    public PowerUpDeck powerUpDeck;
+    public AmmoTileDeck ammoTileDeck;
 
     /**
      * Constructor with Mode, Bot and choice of map.

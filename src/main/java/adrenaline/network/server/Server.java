@@ -1,12 +1,17 @@
-package adrenaline;
+package adrenaline.network.server;
 
 // SOCKET
+import adrenaline.*;
 import adrenaline.gameboard.GameBoard;
-import adrenaline.weapons.Cyberblade;
 
-import java.io.*;
 import java.util.*;
 import java.util.stream.*;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // RMI
 
@@ -36,23 +41,53 @@ Server {
     // The set of all the print writers for all the clients, used for broadcast.
     //private static List<PrintWriter> writers = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
+    private ServerSocket server;
+    private ExecutorService threadPool;
+
+
+    public static void setup(String[] args) throws Exception {
         time =Integer.parseInt(args[0]);
         possibleColors.remove("NONE");
-
-        // TODO SEARCH FOR NEW CLIENTS
-        // IF FOUND SET CONNECTIONSCOUNT++
-
-      /*  System.out.println("The server is running...");
-        var pool = Executors.newFixedThreadPool(500);
-        try (var listener = new ServerSocket(59001)) {
-           
-            while (connectionsCount>=0) {
-                pool.execute(new Handler(listener.accept()));
-               
-            }
-        }*/
     }
+
+    ////////////////// SOCKET //////////////////
+    private Server (){
+        threadPool= Executors.newCachedThreadPool();
+    }
+
+    private static class ServerInstance{
+        private static final Server SERVER_WITH_SOCKET= new Server();
+
+    }
+
+    public static Server getInstance(){
+        return Server.ServerInstance.SERVER_WITH_SOCKET;
+    }
+
+
+    public void server() {
+        try {
+            server = new ServerSocket(4321);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Server non si avvia
+        }
+        System.out.println("SERVER ONLINE");
+        while(true){
+            Socket socket = null;
+            try {
+                socket = server.accept();
+
+                socket.setKeepAlive(true);
+                threadPool.submit(new SocketThread(socket));
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Client disconnesso
+            }
+        }
+
+    }
+    ////////////////////////////////////////////////
 
     // TIMER
     private static class Countdown{

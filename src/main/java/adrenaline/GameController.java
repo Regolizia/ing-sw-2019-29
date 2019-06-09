@@ -1,6 +1,7 @@
 package adrenaline;
 
-import java.util.LinkedList;
+import adrenaline.network.client.ClientCLI;
+import adrenaline.network.client.ClientGUI;
 
 public class GameController {
     private GameModel model;

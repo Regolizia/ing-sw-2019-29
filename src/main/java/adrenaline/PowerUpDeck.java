@@ -14,8 +14,8 @@ public class PowerUpDeck{
 
 
 
-    LinkedList<PowerUpCard> deck;
-    LinkedList<PowerUpCard> usedPowerUp;
+    public LinkedList<PowerUpCard> deck;
+    public LinkedList<PowerUpCard> usedPowerUp;
 
     public PowerUpDeck() {
         deck = new LinkedList<>();

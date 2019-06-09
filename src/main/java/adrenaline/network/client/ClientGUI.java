@@ -1,8 +1,7 @@
-package adrenaline;
+package adrenaline.network.client;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.swing.ImageIcon;
