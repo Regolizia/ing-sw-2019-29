@@ -21,11 +21,14 @@ public class ClientCLI extends Client{
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length != 1) {
+
+        /*if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        String serverAddress = args[0];
+        String serverAddress = args[0];*/
+
+        String serverAddress = "192.168.1.106";//todo change every time
         int socketPort = 4321, rmiPort = 59002;
 
         cli = new ClientCLI(serverAddress, socketPort, rmiPort);
