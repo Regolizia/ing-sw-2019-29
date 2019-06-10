@@ -14,6 +14,7 @@ public class Client {
 
         public String login(){return "";}
         public String chooseColor(String s){ return "";}
+        public String chooseAction(){return "";}
         public int chooseBoard(){return 42;}
         public void printMessage(){}
         public void showMainMenu(){}

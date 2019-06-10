@@ -83,6 +83,7 @@ public class ClientThread implements Runnable {
             case "START":
                 break;
             case "YOURTURN":
+                //sendToServer(client.chooseAction());
                 break;
             case "END":
                 break;

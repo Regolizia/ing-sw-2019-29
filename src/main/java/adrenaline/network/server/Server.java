@@ -26,6 +26,7 @@ public class Server {
     private static int time = 0;
     private static int connectionsCount = 0;
     private static int boardChosen = 0;
+    private static boolean gameIsOn = false;
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -36,9 +37,9 @@ public class Server {
     // All client names, so we can check for duplicates upon registration.
     private static ArrayList<String> names = new ArrayList<>();
 
-    // IS THIS USEFUL?
     // The set of all the print writers for all the clients, used for broadcast.
-    //private static List<PrintWriter> writers = new ArrayList<>();
+    private static List<PrintWriter> writers = new ArrayList<>();
+
 
     private static ServerSocket serverSocket;
     private Server server;
@@ -85,7 +86,6 @@ public class Server {
 
         Figure.PlayerColor color;
         String nickname;
-        boolean gameIsOn = false;
 
         private final transient Socket socket;
 
@@ -94,6 +94,12 @@ public class Server {
         private final transient ObjectOutputStream outputStream;
 
         public RequestHandler(Socket socket) throws IOException {
+
+            Server.connectionsCount++;
+            if(connectionsCount==3){
+                Countdown c = new Countdown();
+            }
+
             this.socket = socket;
             this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             this.outputStream.flush();
@@ -105,6 +111,7 @@ public class Server {
         public void run() {
             try {
                 try {
+
                     while (true) {
                         String msg = (String) inputStream.readObject();
                         System.out.println(msg);
@@ -135,9 +142,6 @@ public class Server {
                 nickname = loginName();
 
                 color = checkColor();
-
-                connectionsCount++;
-
 
                 chooseBoard(nickname); // it checks if is firstPlayer
 
@@ -196,7 +200,9 @@ public class Server {
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             model.addPlayer(new Player(name, color));
 
-            // TODO BROADCAST NAME HAS JOINED
+            for (PrintWriter writer : writers) {
+                writer.println("MESSAGE" + name + " has joined");
+            }
         }
 
         public void chooseBoard(String name) throws Exception {
@@ -238,6 +244,7 @@ public class Server {
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
 
+                                Server.gameIsOn = true;
                                 Server.startGame();
                             // DO SOMETHING TO START THE GAME
                             }
