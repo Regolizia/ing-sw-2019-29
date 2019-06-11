@@ -287,9 +287,9 @@ public class Server {
 
                 if(x==0){
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
-                    // TODO GESTISCI ALTRA CARTA
+                    setInitialPosition(twoCards.removeFirst().getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
                 }else {
-                    // TODO GESTISCI ALTRA CARTA
+                    setInitialPosition(twoCards.removeFirst().getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
                 }
             } catch (Exception e) {
@@ -309,6 +309,18 @@ public class Server {
                 isFirstTurn= false;
             }
         }
+
+        public void setInitialPosition(AmmoCube.CubeColor c, Player p){
+            for (Room r: model.getMapUsed().getGameBoard().getRooms()){
+                if(!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).getColor().equals(c)){
+                   CoordinatesWithRoom c1 = new CoordinatesWithRoom(r.getSpawnpoints().get(0).getSpawnpointX(),r.getSpawnpoints().get(0).getSpawnpointY(),r);
+                    p.setPlayerPosition(c1);
+                    p.setPlayerPositionSpawnpoint(c1);
+                }
+            }
+        };
+
+
 
 
     } // REQUEST HANDLER
@@ -364,7 +376,7 @@ public class Server {
                     }
                     return true;
     }
-    
+
     public static void setBoardChosen(int i){
         boardChosen = i;
     }

@@ -7,6 +7,7 @@ public class Spawnpoint {
     int x;
     int y;
     private LinkedList<WeaponCard> weaponCards;
+    private AmmoCube.CubeColor color;
 
     public Spawnpoint(){
         weaponCards=new LinkedList<>();
@@ -33,5 +34,9 @@ public class Spawnpoint {
     public LinkedList<WeaponCard> getWeaponCards(){
         return this.weaponCards;
     }
+    public void setColor(AmmoCube.CubeColor c){
+        this.color = c;
+    }
+    public AmmoCube.CubeColor getColor(){ return color;}
 
 }

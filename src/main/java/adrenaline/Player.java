@@ -176,6 +176,10 @@ public class Player {
      *         set player's position at the initial spawnpoint
      */
     public void setPlayerPositionSpawnpoint(CoordinatesWithRoom c) {
+        this.respawnCoordinates = (c);
+
+    }
+    public void setPlayerPosition(CoordinatesWithRoom c) {
         this.coordinates = (c);
 
     }
