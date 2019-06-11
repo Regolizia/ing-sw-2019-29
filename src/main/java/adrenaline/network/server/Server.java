@@ -95,7 +95,7 @@ public class Server {
 
         public RequestHandler(Socket socket) throws IOException {
 
-            Server.connectionsCount++;
+
             if(connectionsCount==3){
                 Countdown c = new Countdown();
             }
@@ -120,8 +120,8 @@ public class Server {
 
                         if(gameIsOn){
                             addPlayerToGame(nickname, color);
-                            // start game
-                            // handleClientRequest(object);
+
+                            handleTurns();
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
@@ -143,9 +143,11 @@ public class Server {
 
                 color = checkColor();
 
-                chooseBoard(nickname); // it checks if is firstPlayer
+                chooseBoard(nickname); // it checks if is firstPlayer and asks board
 
+                sendToClient("ACCEPTED");
 
+                Server.connectionsCount++;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -164,7 +166,7 @@ public class Server {
                             names.add(name);
                             return name;
                         } else if (names.contains(name)) {
-                            outputStream.writeObject("LOGIN");
+                            sendToClient("LOGIN");
                             name = (String)inputStream.readObject();
                         }
                     }
@@ -225,6 +227,27 @@ public class Server {
             }
         }
         ////
+
+        public void handleTurns(){
+            while(!Server.action.endOfTheGame(model.getMapUsed().getGameBoard())){
+                if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)){
+                    try {
+                        if(isFirstTurn){
+                            sendToClient("YOURFIRSTTURN");
+                        }
+                        sendToClient("YOURTURN");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    // END OF TURN
+                 nextPlayer();
+                }
+            }
+        }
+
+
+
 
     }
 
@@ -883,6 +906,11 @@ public class Server {
             currentPlayer = 0;
         isFirstTurn= false;
         }
-    }}
+    }
+
+
+
+
+}
 
 

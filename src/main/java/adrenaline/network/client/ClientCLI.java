@@ -16,19 +16,18 @@ public class ClientCLI extends Client{
 
     public static Scanner scanner = new Scanner(System.in);
 
-    private static ArrayList mainMenu;
     private static boolean quit = false;
 
     public static void main(String[] args) throws Exception {
 
 
-        /*if (args.length != 1) {
+        if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        String serverAddress = args[0];*/
+        String serverAddress = args[0];
 
-        String serverAddress = "192.168.1.106";//todo change every time
+        //String serverAddress = "192.168.43.171";//todo change every time
         int socketPort = 4321, rmiPort = 59002;
 
         cli = new ClientCLI(serverAddress, socketPort, rmiPort);
@@ -91,57 +90,49 @@ public class ClientCLI extends Client{
          // TODO change in server (message MESSAGE)
      }
 
-    public void showMainMenu() {
-        do {
+    public String showMainMenu() {
             System.out.println("Main Menu:\n" +
-                    "Z: Exit\n" +
-                    "S: Show Board Info\n" +
+                    //"Z: Exit\n" +
+                    "M: Show Map Info\n" +
                     "B: Show your player board\n" +
                     "C: Show other players' information\n" +
-                    "A: Perform an action\n"
-                    //"E: Pass the turn\n" +
-                    //"F: Suggest game's interruption\n" +
-                    //"I: Show Card Information\n"
+                    "A: Perform an action [Default]\n"
                     );
             String s = scanner.nextLine();
             s = s.trim().toUpperCase();
-            if (isPresentCommand(mainMenu, s)) {
                 switch (s) {
-                    case "S": showBoardInfo(); break;
-                    case "B": showPlayerBoard(); break;
-                    case "C": showOtherPlayers(); break;
-                    case "A": showActionMenu(); break;
-                    //case "E": passTurn(); break;
-                    //case "F": suggestGameInterruption(); break;
-                    case "Z": quit = true;
-                    System.exit(0);
-                        break;
-                    //case "I": showCardInformation(); break;
-                    default: break;
+                    case "M":
+                    case "B":
+                    case "C":
+                    case "A":return s;
+                    default: return "A";
                 }
-            }
-            else
-                System.out.println("Sorry, your choice \""+ s +"\" is not valid\n");
-        }while (!quit);
+
     }
 
-    public static void showActionMenu() {
+    public String showActionMenu() {
         System.out.println("Action Menu:\n" +
-                        "S: Shoot\n" +
+                        "S: Shoot [Default]\n" +
                         "G: Grab\n" +
-                        "R: Run\n" +
-                        "B: Go back to Main Menu\n"
+                        "R: Run\n"
+                       // +"B: Go back to Main Menu\n"
         );
         String s = scanner.nextLine();
         s = s.trim().toUpperCase();
         switch (s) {
-            case "S": shoot(); break;
-            case "G": grab(); break;
-            case "R": run(); break;
-            case "B": back(); break;
-            default: break;
+            case "S":
+            case "G":
+            case "R": return s;
+            default: return "S";
         }
     }
+
+ /*   switch (s) {
+        case "S": shoot(); break;
+        case "G": grab(); break;
+        case "R": run(); break;
+        //case "B": back(); break;
+        default: break;*/
 
     public static void back() {
         // GO BACK TO MAIN MENU
@@ -164,14 +155,12 @@ public class ClientCLI extends Client{
         // SHOW INFO ABOUT PLAYER, CARDS ETC...
     }
 
-    public static void showBoardInfo() {
+    public static void showMapInfo() {
         // TODO PRINT BOARD OR SOMETHING
     }
 
-
-    public static boolean isPresentCommand(ArrayList menu, String s) {
-        Optional<String> command = menu.stream().filter(str -> str.equals(s)).findFirst();
-        return command.isPresent();
+    public void waitStart(){
+        System.out.println("Waiting for other players...");
     }
 
     public static void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {

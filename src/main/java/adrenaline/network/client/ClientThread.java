@@ -65,6 +65,23 @@ public class ClientThread implements Runnable {
     return action;
     }
 
+    // GETS SHOWMAINMENU() AS PARAMETER
+    public void turnAction(String s){
+        if(s=="S"){
+            //show stuff
+            //ASK SERVER STUFF
+        }
+        if(s=="B"){
+            //show stuff
+        }
+        if(s=="C"){
+            //show stuff
+        }
+        else{
+            sendToServer(client.showActionMenu()); // S OR G OR R
+        }
+    }
+
     public void handleRequest() {
         String action = "";
         try {
@@ -80,12 +97,24 @@ public class ClientThread implements Runnable {
             case "BOARD":
                 sendIntToServer(client.chooseBoard());
                 break;
+            case "ACCEPTED":
+                client.waitStart();
+                break;
             case "START":
                 break;
-            case "YOURTURN":
-                //sendToServer(client.chooseAction());
+            case "YOURFIRSTTURN":
+                // CHOOSE CARDS ETC...
                 break;
-            case "END":
+            case "YOURTURN":
+                turnAction(client.showMainMenu());
+                break;
+            case "ENDGAME":
+                break;
+            case "SHOOT":
+                break;
+            case "GRAB":
+                break;
+            case "RUN":
                 break;
         }
         } catch (IOException e) {
