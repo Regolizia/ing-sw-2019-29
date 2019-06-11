@@ -248,7 +248,7 @@ public class Server {
                                 //grab(player);
                                 break;
                             case "R":
-                                //run(player);
+                                playerRun();
                                 break;
                             case "S":
                                 //shoot(player);
@@ -283,9 +283,9 @@ public class Server {
             try {
                 sendListToClient(cards);
                 int x =(int)inputStream.readObject();
-                // CHIEDI QUALE CARTA DA TENERE (0) E QUALE DA USARE COME RESPAWN
+                // CHIEDI QUALE CARTA DA TENERE (1 o 2) E QUALE DA USARE COME RESPAWN
 
-                if(x==0){
+                if(x==1){
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
                     setInitialPosition(twoCards.removeFirst().getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
                 }else {
@@ -320,6 +320,23 @@ public class Server {
             }
         };
 
+
+        public void playerRun(){
+            Player player = model.getPlayers().get(currentPlayer);
+            LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
+            List<String> possibilities = new LinkedList<>();
+            for(CoordinatesWithRoom c : cells){
+                possibilities.add(c.toString());
+            }
+            try {
+                sendListToClient(possibilities); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int x = (int)inputStream.readObject();
+                x--;
+                action.run(player,cells.get(x));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
 
 
@@ -454,12 +471,7 @@ public class Server {
         }
     }
 
-    public void run(Player player){
-        LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
-        //TODO PROPONI LE CELLE E PRENDINE UNA
-        CoordinatesWithRoom c = null;
-        action.run(player,c);
-    }
+
 
     public void shoot(Player player){
         /*
