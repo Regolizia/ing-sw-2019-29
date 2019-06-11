@@ -136,6 +136,11 @@ public class Server {
             outputStream.flush();
 
         }
+        public void sendListToClient(List<String> messages) throws IOException {
+            outputStream.writeObject(messages);
+            outputStream.flush();
+
+        }
 
         public void clientLogin(){
             try {
@@ -234,22 +239,79 @@ public class Server {
                     try {
                         if(isFirstTurn){
                             sendToClient("YOURFIRSTTURN");
+                            firstTurn();
                         }
                         sendToClient("YOURTURN");
+                        String choice = (String) inputStream.readObject();
+                        switch (choice) {
+                            case "G":
+                                //grab(player);
+                                break;
+                            case "R":
+                                //run(player);
+                                break;
+                            case "S":
+                                //shoot(player);
+                                break;
+                            case "M":
+                                // MAP
+                                break;
+                            case "B":
+                                // PLAYER
+                                break;
+                            case "C":
+                                // OTHER PLAYERS
+                                break;
+                        }
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     // END OF TURN
-                 nextPlayer();
+                    nextPlayer();
                 }
             }
         }
 
+        public void firstTurn(){
+                LinkedList<PowerUpCard> twoCards= new LinkedList<>();
+                twoCards.add(model.powerUpDeck.deck.removeFirst());
+                twoCards.add(model.powerUpDeck.deck.removeFirst());
+                List<String> cards = new LinkedList<>();
+                cards.add(0,twoCards.get(0).toString());
+                cards.add(1,twoCards.get(1).toString());
+            try {
+                sendListToClient(cards);
+                int x =(int)inputStream.readObject();
+                // CHIEDI QUALE CARTA DA TENERE (0) E QUALE DA USARE COME RESPAWN
+
+                if(x==0){
+                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
+                    // TODO GESTISCI ALTRA CARTA
+                }else {
+                    // TODO GESTISCI ALTRA CARTA
+                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        /**
+         * Updates index of next Player.
+         * If everybody has played, it resets.
+         */
+        public static void nextPlayer(){
+            currentPlayer++;
+            if(currentPlayer==model.getPlayers().size()) {
+                currentPlayer = 0;
+                isFirstTurn= false;
+            }
+        }
 
 
-
-    }
+    } // REQUEST HANDLER
 
 
 
@@ -302,15 +364,7 @@ public class Server {
                     }
                     return true;
     }
-
-    public static int isInteger(String input){
-        try{
-            int i = Integer.valueOf(input);
-            return i;
-        }catch(NumberFormatException e){
-            return 0;
-        }
-    }
+    
     public static void setBoardChosen(int i){
         boardChosen = i;
     }
@@ -322,39 +376,6 @@ public class Server {
         // TODO SAY number boardChosen TO EVERYBODY
     }
 
-    public void Turn(){
-        int count;
-        Player player = model.getPlayers().get(currentPlayer);
-
-            if (isFirstTurn){
-                LinkedList<PowerUpCard> twoCards= new LinkedList<>();
-                twoCards.add(model.powerUpDeck.deck.removeFirst());
-                twoCards.add(model.powerUpDeck.deck.removeFirst());
-
-                // TODO CHIEDI QUALE CARTA DA TENERE (0) E QUALE DA USARE COME RESPAWN (Invertile se necessario))
-
-                //action.firstTurn(model.getPlayers().get(currentPlayer, twoCards));
-
-            }
-            // TODO START TURN IN CURRENTPLAYER/CLIENT
-        // choice (what action)
-
-/*
-
-       switch (choice) {
-           case GRAB:
-               grab(player);
-               break;
-           case RUN:
-               run(player);
-               break;
-           case SHOOT:
-               shoot(player);
-               break;
-       }
-*/
-        nextPlayer();
-    }
 
 
     public void grab(Player player){
@@ -896,17 +917,7 @@ public class Server {
     }
 
 
-    /**
-     * Updates index of next Player.
-     * If everybody has played, it resets.
-     */
-    public static void nextPlayer(){
-        currentPlayer++;
-        if(currentPlayer==model.getPlayers().size()) {
-            currentPlayer = 0;
-        isFirstTurn= false;
-        }
-    }
+
 
 
 
