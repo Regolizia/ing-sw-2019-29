@@ -129,6 +129,9 @@ public class ClientThread implements Runnable {
                 break;
             case "RUN":
                 break;
+            case "MESSAGE":
+                client.printMessage(action.substring(7));
+                break;
         }
         } catch (IOException e) {
             e.printStackTrace();

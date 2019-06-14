@@ -86,9 +86,8 @@ public class ClientCLI extends Client{
          // TODO SEND input to check, (message CHOOSE SPAWNPOINT)
      }
 
-    public static void printMessage(String message){
+    public void printMessage(String message){
          System.out.println(message);
-         // TODO change in server (message MESSAGE)
      }
 
      public int firstTurn(List<String> list){

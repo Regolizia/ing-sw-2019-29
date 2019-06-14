@@ -38,7 +38,7 @@ public class Server {
     private static ArrayList<String> names = new ArrayList<>();
 
     // The set of all the print writers for all the clients, used for broadcast.
-    private static List<PrintWriter> writers = new ArrayList<>();
+    private static List<ObjectOutputStream> writers = new ArrayList<>();
 
 
     private static ServerSocket serverSocket;
@@ -113,8 +113,9 @@ public class Server {
                         System.out.println(msg);
                         clientLogin();
 System.out.println("LOGIN DONE");
-                            if (gameIsOn) {
+                            while(gameIsOn) {
                                 addPlayerToGame(nickname, color);
+                                writers.add(outputStream);
 
                                 handleTurns();
                             }
@@ -216,8 +217,12 @@ System.out.println("LOGIN DONE");
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             model.addPlayer(new Player(name, color));
 
-            for (PrintWriter writer : writers) {
-                writer.println("MESSAGE" + name + " has joined");
+            for (ObjectOutputStream writer : writers) {
+                try {
+                    writer.writeObject("MESSAGE" + name + " has joined");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
