@@ -39,7 +39,7 @@ public class Player {
      * Class constructor with name.
      *  @version 1.0
      * @param playerColor color selected by the player
-     * @param rsp spawnpoint selected by the player
+     *
      */
     // Coordinates rsp is the spawnPosition chosen by the player
     public Player(String name, Figure.PlayerColor playerColor) {

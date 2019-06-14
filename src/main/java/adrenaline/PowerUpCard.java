@@ -3,7 +3,7 @@ package adrenaline;
 public class PowerUpCard extends Card {
 
     private AmmoCube.CubeColor color;
-
+    private boolean canBeUsedOnBot;
     public PowerUpCard(){
 
     }
@@ -19,6 +19,14 @@ public class PowerUpCard extends Card {
     }
     public void setPowerUpColor(AmmoCube.CubeColor c){
         this.color = c;
+    }
+
+    public boolean getCanBeUsedOnBot() {
+        return canBeUsedOnBot;
+    }
+
+    public void setCanBeUsedOnBot(boolean canBeUsedOnBot) {
+        this.canBeUsedOnBot = canBeUsedOnBot;
     }
 
     //useless
