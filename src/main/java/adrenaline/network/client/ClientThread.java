@@ -2,6 +2,8 @@ package adrenaline.network.client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClientThread implements Runnable {
     private Client client;
@@ -65,9 +67,19 @@ public class ClientThread implements Runnable {
     return action;
     }
 
+    public List<String> getListFromServer() throws IOException {
+        List<String> action = new LinkedList<>();
+        try {
+            action = (List<String >)input.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    return action;
+    }
+
     // GETS SHOWMAINMENU() AS PARAMETER
     public void turnAction(String s){
-        if(s=="S"){
+        if(s=="M"){
             //show stuff
             //ASK SERVER STUFF
         }
@@ -78,9 +90,10 @@ public class ClientThread implements Runnable {
             //show stuff
         }
         else{
-            sendToServer(client.showActionMenu()); // S OR G OR R
+            sendToServer("S"); // S OR G OR R
         }
     }
+
 
     public void handleRequest() {
         String action = "";
@@ -103,7 +116,7 @@ public class ClientThread implements Runnable {
             case "START":
                 break;
             case "YOURFIRSTTURN":
-                // CHOOSE CARDS ETC...
+                sendIntToServer(client.firstTurn(getListFromServer()));
                 break;
             case "YOURTURN":
                 turnAction(client.showMainMenu());

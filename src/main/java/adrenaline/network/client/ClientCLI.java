@@ -6,6 +6,7 @@ import adrenaline.Figure;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -90,42 +91,42 @@ public class ClientCLI extends Client{
          // TODO change in server (message MESSAGE)
      }
 
+     public int firstTurn(List<String> list){
+         System.out.println("\nChoose one card to keep, the color of the other one will decide your respawn coordinates:");
+         System.out.println(list.get(0).toString() + " [1] [Default] or " + list.get(1).toString() + " [2]\n");
+         if(scanner.hasNextInt()){
+             int x = scanner.nextInt();
+             if(x==0||x==1){
+                 return x;
+             }else return 0;
+         }else return 0;
+     }
+
     public String showMainMenu() {
             System.out.println("Main Menu:\n" +
                     //"Z: Exit\n" +
                     "M: Show Map Info\n" +
                     "B: Show your player board\n" +
                     "C: Show other players' information\n" +
-                    "A: Perform an action [Default]\n"
+                            "S: Shoot [Default]\n" +
+                            "G: Grab\n" +
+                            "R: Run\n"
                     );
             String s = scanner.nextLine();
             s = s.trim().toUpperCase();
                 switch (s) {
-                    case "M":
-                    case "B":
-                    case "C":
-                    case "A":return s;
-                    default: return "A";
+                    case "M":   // TODO
+                    case "B":   // TODO
+                    case "C":   // TODO
+                        return "DO SOMETHING";
+                    case "S":
+                    case "G":
+                    case "R": return s;
+                    default: return "S";
                 }
 
     }
 
-    public String showActionMenu() {
-        System.out.println("Action Menu:\n" +
-                        "S: Shoot [Default]\n" +
-                        "G: Grab\n" +
-                        "R: Run\n"
-                       // +"B: Go back to Main Menu\n"
-        );
-        String s = scanner.nextLine();
-        s = s.trim().toUpperCase();
-        switch (s) {
-            case "S":
-            case "G":
-            case "R": return s;
-            default: return "S";
-        }
-    }
 
  /*   switch (s) {
         case "S": shoot(); break;

@@ -32,7 +32,7 @@ public class GameBoard {
     ) {
         doors = new LinkedList<>();
         walls = new LinkedList<>();
-        //this.numSkull=numSkull;
+        this.numSkull=8;
     }
 
     public List<RoomDeath> getRooms(){

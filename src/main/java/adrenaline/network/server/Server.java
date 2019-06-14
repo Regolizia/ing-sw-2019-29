@@ -96,10 +96,6 @@ public class Server {
         public RequestHandler(Socket socket) throws IOException {
 
 
-            if(connectionsCount==3){
-                Countdown c = new Countdown();
-            }
-
             this.socket = socket;
             this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
             this.outputStream.flush();
@@ -117,12 +113,11 @@ public class Server {
                         System.out.println(msg);
                         clientLogin();
 
+                            //if (gameIsOn) {
+                                addPlayerToGame(nickname, color);
 
-                        if(gameIsOn){
-                            addPlayerToGame(nickname, color);
-
-                            handleTurns();
-                        }
+                                handleTurns();
+                            //}
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.err.println(e);
@@ -131,9 +126,13 @@ public class Server {
                 e.printStackTrace();
             }
         }
-        public void sendToClient(String message) throws IOException {
-            outputStream.writeObject(message);
-            outputStream.flush();
+        public void sendToClient(String message){
+            try {
+                outputStream.writeObject(message);
+                outputStream.flush();
+            } catch (IOException e) {
+                System.out.println("Client Disconnected");
+            }
 
         }
         public void sendListToClient(List<String> messages) throws IOException {
@@ -141,6 +140,12 @@ public class Server {
             outputStream.flush();
 
         }
+
+        public static void countConnections(){
+
+            Server.connectionsCount++;
+        }
+
 
         public void clientLogin(){
             try {
@@ -152,7 +157,11 @@ public class Server {
 
                 sendToClient("ACCEPTED");
 
-                Server.connectionsCount++;
+                countConnections();
+
+                if(connectionsCount==3){
+                    Countdown c = new Countdown();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -205,6 +214,7 @@ public class Server {
             }
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
+            System.out.print("ADDED TO GAME");
             model.addPlayer(new Player(name, color));
 
             for (PrintWriter writer : writers) {
@@ -223,6 +233,7 @@ public class Server {
                         Server.setBoardChosen(result);
                         System.out.println("BOARD CHOSEN " + result);
                         boardChosen = result;
+                        Server.createBoard();
                         break;
                     } else {
                         //  ASK AGAIN BECAUSE NOT ACCEPTED
@@ -234,14 +245,21 @@ public class Server {
         ////
 
         public void handleTurns(){
+            System.out.println("HANDLING TURN");
+            System.out.println(Server.model.getPlayers().get(currentPlayer).getName());
+            System.out.println(Server.action.endOfTheGame(model.getMapUsed().getGameBoard()));
             while(!Server.action.endOfTheGame(model.getMapUsed().getGameBoard())){
                 if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)){
                     try {
                         if(isFirstTurn){
                             sendToClient("YOURFIRSTTURN");
+                            System.out.println("FIRST TURN");
                             firstTurn();
                         }
                         sendToClient("YOURTURN");
+
+                        System.out.println("NORMAL TURN");
+
                         String choice = (String) inputStream.readObject();
                         switch (choice) {
                             case "G":
@@ -269,6 +287,7 @@ public class Server {
                     }
                     // END OF TURN
                     nextPlayer();
+                    System.out.println("CURRENT PLAYER" + currentPlayer);
                 }
             }
         }
@@ -358,8 +377,8 @@ public class Server {
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
 
-                                Server.gameIsOn = true;
-                                Server.startGame();
+
+                                //Server.startGame();
                             // DO SOMETHING TO START THE GAME
                             }
                             else if(connectionsCount<3){
@@ -398,7 +417,9 @@ public class Server {
         boardChosen = i;
     }
 
-    public static void startGame(){
+    public static void createBoard(){
+        gameIsOn = true;
+        System.out.print(gameIsOn);
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         action = new Action(model);
 
