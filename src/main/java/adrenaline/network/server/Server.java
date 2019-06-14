@@ -112,12 +112,12 @@ public class Server {
                         String msg = (String) inputStream.readObject();
                         System.out.println(msg);
                         clientLogin();
-
-                            //if (gameIsOn) {
+System.out.println("LOGIN DONE");
+                            if (gameIsOn) {
                                 addPlayerToGame(nickname, color);
 
                                 handleTurns();
-                            //}
+                            }
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.err.println(e);
@@ -214,7 +214,6 @@ public class Server {
             }
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
-            System.out.print("ADDED TO GAME");
             model.addPlayer(new Player(name, color));
 
             for (PrintWriter writer : writers) {
@@ -246,8 +245,8 @@ public class Server {
 
         public void handleTurns(){
             System.out.println("HANDLING TURN");
-            System.out.println(Server.model.getPlayers().get(currentPlayer).getName());
-            System.out.println(Server.action.endOfTheGame(model.getMapUsed().getGameBoard()));
+            System.out.println("current "+Server.model.getPlayers().get(currentPlayer).getName());
+            System.out.println("end of game "+Server.action.endOfTheGame(model.getMapUsed().getGameBoard()));
             while(!Server.action.endOfTheGame(model.getMapUsed().getGameBoard())){
                 if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)){
                     try {
@@ -287,7 +286,7 @@ public class Server {
                     }
                     // END OF TURN
                     nextPlayer();
-                    System.out.println("CURRENT PLAYER" + currentPlayer);
+                    System.out.println("CURRENT PLAYER " + currentPlayer);
                 }
             }
         }
