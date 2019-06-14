@@ -8,6 +8,9 @@ public class TargetingScope  extends PowerUpCard {
     /**
      * Default constructor
      */
+    public TargetingScope(){
+        setCanBeUsedOnBot(false);
+    }
     public TargetingScope(AmmoCube.CubeColor color) {
         setPowerUpColor(color);
     }
@@ -16,4 +19,6 @@ public class TargetingScope  extends PowerUpCard {
     public String toString() {
         return "TargetingScope, "+getPowerUpColor();
     }
+
+
 }

@@ -10,6 +10,7 @@ public class Newton extends PowerUpCard {
      */
     public Newton(AmmoCube.CubeColor color) {
         setPowerUpColor(color);
+        setCanBeUsedOnBot(true);
     }
 
     @Override

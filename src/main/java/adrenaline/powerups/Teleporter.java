@@ -5,11 +5,10 @@ import adrenaline.PowerUpCard;
 
 public class Teleporter  extends PowerUpCard {
 
-    /**
-     * Default constructor
-     */
+
     public Teleporter(AmmoCube.CubeColor color) {
         setPowerUpColor(color);
+        setCanBeUsedOnBot(false);
     }
 
     @Override

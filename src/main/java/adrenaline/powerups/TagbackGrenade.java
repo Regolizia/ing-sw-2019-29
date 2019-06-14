@@ -10,6 +10,7 @@ public class TagbackGrenade extends PowerUpCard {
      */
     public TagbackGrenade(AmmoCube.CubeColor color) {
         setPowerUpColor(color);
+        setCanBeUsedOnBot(true);
     }
 
     @Override
