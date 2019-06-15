@@ -112,13 +112,8 @@ public class Server {
                         String msg = (String) inputStream.readObject();
                         System.out.println(msg);
                         clientLogin();
-System.out.println("LOGIN DONE");
-                            while(gameIsOn) {
-                                addPlayerToGame(nickname, color);
-                                writers.add(outputStream);
-
+                        System.out.println("LOGIN DONE" + nickname);
                                 handleTurns();
-                            }
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.err.println(e);
@@ -163,6 +158,8 @@ System.out.println("LOGIN DONE");
                 if(connectionsCount==3){
                     Countdown c = new Countdown();
                 }
+                addPlayerToGame(nickname, color);
+                writers.add(outputStream);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -248,12 +245,16 @@ System.out.println("LOGIN DONE");
         }
         ////
 
+        public boolean isCurrentPlayer(){
+            synchronized (Server.model.getPlayers().get(currentPlayer)){
+                 return Server.model.getPlayers().get(currentPlayer).getName().equals(nickname);
+            }
+        }
+
         public void handleTurns(){
-            System.out.println("HANDLING TURN");
-            System.out.println("current "+Server.model.getPlayers().get(currentPlayer).getName());
-            System.out.println("end of game "+Server.action.endOfTheGame(model.getMapUsed().getGameBoard()));
-            while(!Server.action.endOfTheGame(model.getMapUsed().getGameBoard())){
-                if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)){
+            System.out.println("HANDLING TURN OF " + nickname);
+            while(true){
+                if(isCurrentPlayer()){
                     try {
                         if(isFirstTurn){
                             sendToClient("YOURFIRSTTURN");
@@ -272,9 +273,6 @@ System.out.println("LOGIN DONE");
                             case "R":
                                 playerRun();
                                 break;
-                            case "S":
-                                //shoot(player);
-                                break;
                             case "M":
                                 // MAP
                                 break;
@@ -283,6 +281,10 @@ System.out.println("LOGIN DONE");
                                 break;
                             case "C":
                                 // OTHER PLAYERS
+                                break;
+                            case "S":
+                             default:
+                                //shoot(player);
                                 break;
                         }
 
@@ -293,6 +295,7 @@ System.out.println("LOGIN DONE");
                     nextPlayer();
                     System.out.println("CURRENT PLAYER " + currentPlayer);
                 }
+                // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
             }
         }
 
@@ -326,8 +329,8 @@ System.out.println("LOGIN DONE");
          * If everybody has played, it resets.
          */
         public static void nextPlayer(){
-            currentPlayer++;
-            if(currentPlayer==model.getPlayers().size()) {
+            if(currentPlayer!=model.getPlayers().size()-1) {currentPlayer++;}
+            else{
                 currentPlayer = 0;
                 isFirstTurn= false;
             }
@@ -381,7 +384,7 @@ System.out.println("LOGIN DONE");
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
 
-
+                                gameIsOn = true;
                                 //Server.startGame();
                             // DO SOMETHING TO START THE GAME
                             }
@@ -422,12 +425,9 @@ System.out.println("LOGIN DONE");
     }
 
     public static void createBoard(){
-        gameIsOn = true;
-        System.out.print(gameIsOn);
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         action = new Action(model);
 
-        // TODO SAY number boardChosen TO EVERYBODY
     }
 
 
