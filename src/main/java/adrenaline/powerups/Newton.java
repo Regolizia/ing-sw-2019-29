@@ -17,4 +17,6 @@ public class Newton extends PowerUpCard {
     public String toString() {
         return "Newton, "+getPowerUpColor();
     }
+
+
 }
