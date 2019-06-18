@@ -1,5 +1,7 @@
 package adrenaline;
 
+import adrenaline.gameboard.GameBoard;
+
 import java.util.*;
 
 /**
@@ -32,9 +34,8 @@ public class BotAction extends Action {
         //TODO CHECK POSSIBLE TARGET
 
 
-    public void doBotDamage(LinkedList<Object> targets,Bot bot){
-        for (Object target:targets
-             ) {
+    public void botShoot(Object target,Bot bot){
+
             if(target instanceof Player&&((Player) target).getTrack()[11].equals(Figure.PlayerColor.NONE)){
                 ((Player) target).addDamageToTrack(bot,1);
                 if(((Player) target).isDead()&&((Player) target).getTrack()[11].equals(bot.getColor()))
@@ -47,12 +48,7 @@ public class BotAction extends Action {
                 }
             }
 
-        }
+
     }
-
-
-
-
-
 
     }

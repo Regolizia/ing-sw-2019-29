@@ -1,6 +1,7 @@
 package adrenaline;
 
 
+import adrenaline.gameboard.Door;
 import adrenaline.gameboard.GameBoard;
 
 import java.util.LinkedList;
@@ -24,6 +25,9 @@ public class Action {
 
     public static enum ActionType {
         GRAB, RUN, SHOOT, RELOAD
+    }
+    public static enum Direction {
+        UP,DOWN,LEFT,RIGHT
     }
 
     public static enum PayOption {
@@ -815,6 +819,101 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
         return this.model;
     }
 
+    //_________________________________ POWER UP______________________________________________________________________//
 
+
+    public LinkedList<CoordinatesWithRoom> canSee(CoordinatesWithRoom c, GameModel m,Player player){
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
+        GameBoard g=m.getMapUsed().getGameBoard();
+        int x = c.getRoom().getRoomSizeX();
+        int y = c.getRoom().getRoomSizeY();
+
+        for(int i=1;i<=x;i++){
+            for(int j=1;j<=y;j++){
+                list.add(new CoordinatesWithRoom(i,j,c.getRoom()));
+            }
+        }
+        for(int k=0;k<g.getDoors().size();k++){
+            if(c.getX()==g.getDoors().get(k).getCoordinates1().getX()&&
+                    c.getY()==g.getDoors().get(k).getCoordinates1().getY()&&
+                    c.getRoom().getToken()==g.getDoors().get(k).getCoordinates1().getRoom().getToken()){
+
+                for(int i=1;i<=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeX();i++){
+                    for(int j=1;j<=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeY();j++){
+                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates2().getRoom()));
+                    }
+                }
+            }
+
+            if(c.getX()==g.getDoors().get(k).getCoordinates2().getX()&&
+                    c.getY()==g.getDoors().get(k).getCoordinates2().getY()&&
+                    c.getRoom().getToken()==g.getDoors().get(k).getCoordinates2().getRoom().getToken()){
+
+                for(int i=1;i<=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeX();i++){
+                    for(int j=1;j<=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeY();j++){
+                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates1().getRoom()));
+                    }
+                }
+
+            }
+
+        }
+        for (CoordinatesWithRoom cWr:list
+        ) {
+            if(cWr.equals(player.getCoordinatesWithRooms()))
+            {
+                list.remove(cWr);
+                for (Player p:m.getPlayers()
+                ) {
+                    if(p.getCoordinatesWithRooms().equals(player.getCoordinatesWithRooms())&&!p.equals(player))
+                    {
+                        list.add(cWr);
+                        break;
+                    }
+
+                }
+            }
+
+
+
+        }
+        return list;
+    }
+ //____________________________________NEWTON_________________________________________________________________________//
+
+    public LinkedList<CoordinatesWithRoom> newtonChoosePossibleMoveFirstCell(Player victim){
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));
+        return list;
+    }
+    public LinkedList<CoordinatesWithRoom> newtonChoosePossibleMoveFirstAllCells(Player victim){
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));
+        list.addAll(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 2));
+        return list;
+    }
+
+    public LinkedList<CoordinatesWithRoom> removeDifferentDirection(LinkedList<CoordinatesWithRoom> c,CoordinatesWithRoom cWr) {
+        c.remove(cWr);
+        Coordinates coordinates=new Coordinates(cWr.getX(),cWr.getY());
+        for (CoordinatesWithRoom c1 : c) {
+
+
+            if (!c1.checkSameDirection(cWr,c1,1,getModel().getMapUsed().getGameBoard(),true)&&!c1.getRoom().equals(cWr.getRoom()))
+                c.remove(c1);
+            else if(c1.getRoom().equals(cWr.getRoom())&&!c1.checkSameDirection(cWr,c1,1,getModel().getMapUsed().getGameBoard(),false))
+                c.remove(c1);
+        }
+
+        return c;
+    }
+
+    public boolean canPayTargetingScope(AmmoCube.CubeColor color,Player player) {
+        switch (color){
+            case BLUE: if(player.getCubeBlue()-1>=0)return true;break;
+            case YELLOW:if(player.getCubeYellow()-1>=0)return true;break;
+            case RED: if(player.getCubeRed()-1>=0)return true;break;
+                default: return false;
+        }
+        return false;
+    }
 }
 

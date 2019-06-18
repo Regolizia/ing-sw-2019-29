@@ -29,6 +29,7 @@ public class PowerUpCard extends Card {
         this.canBeUsedOnBot = canBeUsedOnBot;
     }
 
+
     //useless
     //public void setColor(PowerUpCard card, Color c){
       //  this.color = c ;}
