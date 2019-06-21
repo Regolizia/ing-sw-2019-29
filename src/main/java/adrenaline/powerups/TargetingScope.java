@@ -1,7 +1,11 @@
 package adrenaline.powerups;
 
 import adrenaline.AmmoCube;
+import adrenaline.Player;
 import adrenaline.PowerUpCard;
+import adrenaline.Spawnpoint;
+
+import java.util.LinkedList;
 
 public class TargetingScope  extends PowerUpCard {
 
@@ -20,5 +24,9 @@ public class TargetingScope  extends PowerUpCard {
         return "TargetingScope, "+getPowerUpColor();
     }
 
+    public void plusOneDamage(Player player,Object target){
+        if(target instanceof Player)
+            ((Player) target).damageByShooter(player);
 
+    }
 }

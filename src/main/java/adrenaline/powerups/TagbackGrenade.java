@@ -1,6 +1,7 @@
 package adrenaline.powerups;
 
 import adrenaline.AmmoCube;
+import adrenaline.Player;
 import adrenaline.PowerUpCard;
 
 public class TagbackGrenade extends PowerUpCard {
@@ -16,5 +17,9 @@ public class TagbackGrenade extends PowerUpCard {
     @Override
     public String toString() {
         return "TagbackGrenade, "+getPowerUpColor();
+    }
+
+    public void giveMark(Player player, Player victim){
+        victim.addMarks(player,1);
     }
 }

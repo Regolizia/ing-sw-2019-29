@@ -1,5 +1,8 @@
 package adrenaline;
 
+
+import java.util.LinkedList;
+
 public class Bot extends Player {
 
 /**
@@ -47,6 +50,8 @@ public class Bot extends Player {
    public Player getOwner(){
         return owner;
    }
+
+
 
 
 }
