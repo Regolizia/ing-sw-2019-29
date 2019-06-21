@@ -112,7 +112,7 @@ public class Server {
                         String msg = (String) inputStream.readObject();
                         System.out.println(msg);
                         clientLogin();
-                        System.out.println("LOGIN DONE" + nickname);
+                        System.out.println("LOGIN DONE " + nickname);
                                 handleTurns();
                     }
                 } catch (IOException | ClassNotFoundException e) {
@@ -212,7 +212,7 @@ public class Server {
             }
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
-            model.addPlayer(new Player(name, color));
+            Server.model.addPlayer(new Player(name, color));
 
             for (ObjectOutputStream writer : writers) {
                 try {
@@ -252,7 +252,7 @@ public class Server {
         }
 
         public void handleTurns(){
-            System.out.println("HANDLING TURN OF " + nickname);
+            System.out.println("TURN OF " + nickname);
             while(true){
                 if(isCurrentPlayer()){
                     try {
@@ -271,6 +271,7 @@ public class Server {
                                 //grab(player);
                                 break;
                             case "R":
+                                sendToClient("RUN");
                                 playerRun();
                                 break;
                             case "M":
@@ -311,12 +312,23 @@ public class Server {
                 int x =(int)inputStream.readObject();
                 // CHIEDI QUALE CARTA DA TENERE (1 o 2) E QUALE DA USARE COME RESPAWN
 
+
+                PowerUpCard p = twoCards.removeFirst();
+                System.out.println("TO KEEP "+p.toString());
                 if(x==1){
-                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
-                    setInitialPosition(twoCards.removeFirst().getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+
+                    p = twoCards.removeFirst();
+                    System.out.println("TO USE AS POSITION "+p.toString());
+
+                    setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
                 }else {
-                    setInitialPosition(twoCards.removeFirst().getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
-                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(twoCards.removeFirst());
+                    setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+
+                    p = twoCards.removeFirst();
+                    System.out.println("TO USE AS POSITION "+p.toString());
+
+                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -338,16 +350,23 @@ public class Server {
 
         public void setInitialPosition(AmmoCube.CubeColor c, Player p){
             for (Room r: model.getMapUsed().getGameBoard().getRooms()){
+
                 if(!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).getColor().equals(c)){
                    CoordinatesWithRoom c1 = new CoordinatesWithRoom(r.getSpawnpoints().get(0).getSpawnpointX(),r.getSpawnpoints().get(0).getSpawnpointY(),r);
-                    p.setPlayerPosition(c1);
+                   p.setPlayerPosition(c1);
                     p.setPlayerPositionSpawnpoint(c1);
+                    System.out.println("INITIAL POSITION OF "+p.getName()+" IS  "+p.getCoordinatesWithRooms().toString());
+                    // TODO SEND POSITION TO PLAYER MAYBE
+                    break;
                 }
             }
-        };
+        }
 
 
         public void playerRun(){
+            System.out.println("RUN");
+            System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
+
             Player player = model.getPlayers().get(currentPlayer);
             LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
             List<String> possibilities = new LinkedList<>();
@@ -359,6 +378,7 @@ public class Server {
                 int x = (int)inputStream.readObject();
                 x--;
                 action.run(player,cells.get(x));
+                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -90,7 +90,7 @@ public class ClientThread implements Runnable {
             //show stuff
         }
         else{
-            sendToServer("S"); // S OR G OR R
+            sendToServer(s); // S OR G OR R
         }
     }
 
@@ -128,6 +128,7 @@ public class ClientThread implements Runnable {
             case "GRAB":
                 break;
             case "RUN":
+                sendIntToServer(client.run(getListFromServer()));
                 break;
             case "MESSAGE":
                 client.printMessage(action.substring(7));

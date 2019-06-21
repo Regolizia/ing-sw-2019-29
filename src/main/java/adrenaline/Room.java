@@ -21,6 +21,8 @@ public class Room {
     private Coordinates size;
     private LinkedList<AmmoTile> tiles;
     private int token;
+    public LinkedList<Spawnpoint> spawnpoints;
+    public LinkedList<SpawnpointDom> spawnpointsDom;
 
     /**
      * Default constructor
@@ -37,20 +39,20 @@ public class Room {
      */
     public Room(int x, int y) {
 
+        spawnpoints = new LinkedList<Spawnpoint>();
+        spawnpointsDom = new LinkedList<SpawnpointDom>();
         this.tiles = new LinkedList<AmmoTile>();
         this.size = new Coordinates(x,y);
         setToken(99);
     }
 
-    /**
-     * Adds a Spawnpoint to the Room's list.
-     * It's overridden.
-     *
-     * @param s the Spawnpoint to add
-     * @see Spawnpoint
-     */
+
     //TODO AGGIUNGERE SPAWNPOINT
     public void addSpawnpoint(Spawnpoint s){
+
+    }
+    //TODO AGGIUNGERE SPAWNPOINT
+    public void addSpawnpointDom(Spawnpoint s){
 
     }
 
@@ -63,9 +65,12 @@ public class Room {
      * @return the list of Spawnpoints
      * @see Spawnpoint
      */
-    public LinkedList<Spawnpoint> getSpawnpoints(){
-        LinkedList<Spawnpoint> n = new LinkedList<>();
-        return n;
+    public List<Spawnpoint> getSpawnpoints(){
+        return this.spawnpoints;
+    }
+
+    public List<SpawnpointDom> getSpawnpointDom(){
+        return this.spawnpointsDom;
     }
 
     /**

@@ -53,8 +53,8 @@ public class Player {
                 , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
         // PUTTING "NONE" VALUE SO WE CAN USE SWITCH CASE
         this.color = playerColor;
-        this.respawnCoordinates = new CoordinatesWithRoom();
-        this.coordinates = new CoordinatesWithRoom();
+        this.respawnCoordinates = new CoordinatesWithRoom(0,0,new Room());
+        this.coordinates = new CoordinatesWithRoom(0,0,new Room());
         // they are lists because we need to add and remove easily
         this.hand = new LinkedList<WeaponCard>();
         this.powerups = new LinkedList<PowerUpCard>();

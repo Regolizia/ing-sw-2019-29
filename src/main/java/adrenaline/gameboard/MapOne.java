@@ -63,7 +63,8 @@ public class MapOne extends Map {
                 //BLUE
                 //RED
                 //YELLOW
-                getGameBoard().getRoom(arraySpawnR[j]).addSpawnpoint(new Spawnpoint(arraySpawnX[j], arraySpawnY[j]));
+                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().add(new Spawnpoint(arraySpawnX[j], arraySpawnY[j]));
+                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().get(0).setColor(fromIndexToColor(j));
             }
         }
         else{

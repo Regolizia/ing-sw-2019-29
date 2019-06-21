@@ -65,7 +65,8 @@ public class MapTwo extends Map{
                 //BLUE
                 //RED
                 //YELLOW
-                getGameBoard().getRoom(arraySpawnR[j]).addSpawnpoint(new Spawnpoint(arraySpawnX[j], arraySpawnY[j]));
+                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().add(new Spawnpoint(arraySpawnX[j], arraySpawnY[j]));
+                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().get(0).setColor(fromIndexToColor(j));
             }
         }
         else{
@@ -86,6 +87,7 @@ public class MapTwo extends Map{
                 //RED
                 //YELLOW
                 getGameBoard().getRoom(arraySpawnR[j]).addSpawnpoint(new SpawnpointDom(arraySpawnX[j], arraySpawnY[j]));
+                // DA INSERIRE getGameBoard().getRoom(arraySpawnR[j]).getSpawnpointsDom().get(0).setColor(fromIndexToColor(j));
             }
 
         }

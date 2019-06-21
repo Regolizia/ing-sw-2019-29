@@ -1,5 +1,6 @@
 package adrenaline.gameboard;
 
+import adrenaline.AmmoCube;
 import adrenaline.GameModel;
 
 /**
@@ -70,6 +71,14 @@ public class Map {
         this.gameboard = g;
     }
 
-
+    //0 -> BLUE
+    //1 -> RED
+    //2 -> YELLOW
+    public AmmoCube.CubeColor fromIndexToColor(int i){
+        if(i==0) return AmmoCube.CubeColor.BLUE;
+        if(i==1) return AmmoCube.CubeColor.RED;
+        if(i==2) return AmmoCube.CubeColor.YELLOW;
+        return AmmoCube.CubeColor.BLUE;
+    }
 
 }

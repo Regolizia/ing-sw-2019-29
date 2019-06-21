@@ -95,10 +95,10 @@ public class ClientCLI extends Client{
          System.out.println(list.get(0).toString() + " [1] [Default] or " + list.get(1).toString() + " [2]\n");
          if(scanner.hasNextInt()){
              int x = scanner.nextInt();
-             if(x==0||x==1){
+             if(x==2||x==1){
                  return x;
-             }else return 0;
-         }else return 0;
+             }else return 1;
+         }else return 1;
      }
 
     public String showMainMenu() {
@@ -117,11 +117,10 @@ public class ClientCLI extends Client{
                     case "M":   // TODO
                     case "B":   // TODO
                     case "C":   // TODO
-                        return "DO SOMETHING";
-                    case "S":
+                    case "S":return "DO SOMETHING";
                     case "G":
-                    case "R": return s;
-                    default: return "S";
+                    case "R":
+                    default: return "R";
                 }
 
     }
@@ -138,7 +137,17 @@ public class ClientCLI extends Client{
         // GO BACK TO MAIN MENU
     }
 
-    public static void run() {
+    public int run(List<String> list) {
+        System.out.println("\nChoose a cell (first is Default):");
+        for(int i=0; i<list.size();i++) {
+            System.out.println("[" + (i + 1) + "]  " +list.get(i).toString());
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            if(x>0 && x<list.size()+1){
+                return x;
+            }else return 1;
+        }else return 1;
     }
 
     public static void grab() {

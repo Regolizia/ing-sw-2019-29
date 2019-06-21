@@ -16,7 +16,7 @@ public class Spawnpoint {
     public Spawnpoint(int x, int y){
         this.x = x;
         this.y = y;
-        weaponCards=new LinkedList<>();
+        this.weaponCards=new LinkedList<>();
     }
 
     public int getSpawnpointX( ) {

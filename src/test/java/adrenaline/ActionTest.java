@@ -50,7 +50,7 @@ public class ActionTest {
         player.getHand().get(0);//
 
         new Thor().getPrice().get(0).getCubeColor().equals(AmmoCube.CubeColor.BLUE);//
-        Spawnpoint s=new Spawnpoint(0,1);
+        Spawnpoint s=new Spawnpoint();
         c1.getRoom().addSpawnpoint(s);
       //  action.chooseWeaponCard(player.getHand());//
         //  action.chooseTargets(victims,1);//

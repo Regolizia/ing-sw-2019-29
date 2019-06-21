@@ -11,7 +11,6 @@ import java.util.*;
 public class RoomDeath extends Room {
 
 
-    private LinkedList<Spawnpoint> spawnpoints;
 
     /**
      * Constructor of a Room that has also a list Of Spawnpoints.
@@ -22,7 +21,6 @@ public class RoomDeath extends Room {
      */
     public RoomDeath(int x, int y) {
         super(x, y);
-        spawnpoints = new LinkedList<Spawnpoint>();
 
     }
 

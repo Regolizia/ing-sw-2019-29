@@ -39,7 +39,7 @@ public class CoordinatesWithRoom extends Coordinates {
 
     @Override
     public String toString() {
-        return this.getX() + ", " + this.getY() + " Room: " + this.getRoom().getToken() +"\n";
+        return this.getX() + ", " + this.getY() + " Room: " + this.getRoom().getToken();
     }
 
     /**

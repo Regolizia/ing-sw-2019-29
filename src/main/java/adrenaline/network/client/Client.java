@@ -17,6 +17,7 @@ public class Client {
         public String chooseColor(String s){ return "";}
         public String chooseAction(){return "";}
         public int chooseBoard(){return 42;}
+        public int run(List<String> s){return 42;}
         public int firstTurn(List<String> list){return 42;}
         public void printMessage(String s){}
         public String showMainMenu(){return "";}
