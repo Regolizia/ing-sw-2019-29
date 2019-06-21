@@ -261,47 +261,48 @@ public class Server {
                             sendToClient("YOURFIRSTTURN");
                             System.out.println("FIRST TURN");
                             firstTurn();
+                            numberOfActions=2;
                         }
-                        sendToClient("YOURTURN");
+                        if(numberOfActions!=2) {
+                            sendToClient("YOURTURN");
 
-                        System.out.println("NORMAL TURN");
-
-                        String choice = (String) inputStream.readObject();
-                        System.out.println(choice);
-                        switch (choice) {
-                            case "G":
-                                sendToClient("GRAB");
-                                grab();
-                                numberOfActions++;
-                                break;
-                            case "R":
-                                sendToClient("RUN");
-                                playerRun();
-                                numberOfActions++;
-                                break;
-                            case "M":
-                                // MAP
-                                break;
-                            case "B":
-                                // PLAYER
-                                break;
-                            case "C":
-                                // OTHER PLAYERS
-                                break;
-                            case "S":
-                             default:
-                                //shoot(player);
-                                 numberOfActions++;
-                                break;
+                            String choice = (String) inputStream.readObject();
+                            System.out.println(choice);
+                            switch (choice) {
+                                case "G":
+                                    sendToClient("GRAB");
+                                    grab();
+                                    numberOfActions++;
+                                    break;
+                                case "R":
+                                    sendToClient("RUN");
+                                    playerRun();
+                                    numberOfActions++;
+                                    break;
+                                case "M":
+                                    // MAP
+                                    break;
+                                case "B":
+                                    // PLAYER
+                                    break;
+                                case "C":
+                                    // OTHER PLAYERS
+                                    break;
+                                case "S":
+                                default:
+                                    //shoot(player);
+                                    numberOfActions++;
+                                    break;
+                            }
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     // END OF TURN
+                    if(numberOfActions==2){
                     nextPlayer();
                     numberOfActions=0;
-                    System.out.println("CURRENT PLAYER " + currentPlayer);
+                    System.out.println("CURRENT PLAYER " + currentPlayer);}
                 }
                 // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
             }
