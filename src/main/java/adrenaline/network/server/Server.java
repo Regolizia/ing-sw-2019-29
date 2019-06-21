@@ -270,7 +270,8 @@ public class Server {
                         System.out.println(choice);
                         switch (choice) {
                             case "G":
-                                //grab(player);
+                                sendToClient("GRAB");
+                                grab();
                                 numberOfActions++;
                                 break;
                             case "R":
@@ -392,80 +393,40 @@ public class Server {
 
 
 
-    } // REQUEST HANDLER
-
-
-
-    // TIMER
-    private static class Countdown{
-        public Countdown(){
-            final Timer timer = new Timer();
-            try {
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time;
-
-                    public void run() {
-                        System.out.println(i--);
-                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
-                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
-                                System.out.println("Game is starting...");
-
-                                gameIsOn = true;
-                                //Server.startGame();
-                            // DO SOMETHING TO START THE GAME
-                            }
-                            else if(connectionsCount<3){
-                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
-                            }
-                            timer.cancel();
-                        }
-                    }
-                }, 0, 1000);
-
-            } catch (Exception e) {
-                //
+    public void grab(){
+        Player player = Server.model.getPlayers().get(currentPlayer);
+        LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
+        List<String> listOfCells = new LinkedList<>();
+        List<String> listOfItems = new LinkedList<>();
+        for (CoordinatesWithRoom c : possibleCells){
+            listOfCells.add(c.toString());
+            if (c.containsSpawnpoint(model)) {
+                Spawnpoint s = c.getSpawnpoint(model);
+                String weapons = "";
+                for(WeaponCard w : s.getWeaponCards()){
+                    weapons.concat(w.toString()+ " ");
+                }
+                listOfItems.add(weapons);
+            }else{ // IT HAS AMMOTILES
+                listOfItems.add(c.getRoom().getAmmoTile(c).toString());
             }
-
         }
-    }
 
 
-
-
-
-    public static boolean isBlank(String str) {
-                int strLen;
-                    if (str == null || (strLen = str.length()) == 0) {
-                        return true;
-                    }
-                    for (int i = 0; i < strLen; i++) {
-                        if ((Character.isWhitespace(str.charAt(i)) == false)) {
-                            return false;
-                       }
-                    }
-                    return true;
-    }
-
-    public static void setBoardChosen(int i){
-        boardChosen = i;
-    }
-
-    public static void createBoard(){
-        model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
-        action = new Action(model);
-
-    }
-
-
-
-    public void grab(Player player){
-        // IF MI DICE GRAB
-      //  LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player.getCoordinatesWithRooms(),model.getMapUsed().getGameBoard());
-        // CHIEDI QUALE, RETURN chosenCell
-        CoordinatesWithRoom chosenCell = null;
+        CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
+        try {
+            sendListToClient(listOfItems);
+            sendListToClient(listOfCells); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+            int x = (int)inputStream.readObject();
+            x--;
+            chosenCell = possibleCells.get(x);
+            System.out.println("CELL FOR GRAB " + chosenCell.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if(chosenCell.containsSpawnpoint(model)) {
-           grabFromSPawnpoint(chosenCell,player);
+           grabFromSpawnpoint(chosenCell,player);
         }
         else {
             //se non spawnpoint
@@ -476,7 +437,6 @@ public class Server {
             * già incluso pescaggio power up
             * */
             action.grabTile(player, chosenCell);
-            //TODO INCREMENTA TURNO
         }
     }
 
@@ -645,7 +605,7 @@ public class Server {
         return true;
     }
 
-    public boolean grabFromSPawnpoint(CoordinatesWithRoom chosenCell,Player player){
+    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player){
 
         /*
          * controllo io se può pagarla + ricarica ma tu devi:
@@ -1097,6 +1057,72 @@ public class Server {
         return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
     }
 
+
+
+
+    } // REQUEST HANDLER
+
+
+
+    // TIMER
+    private static class Countdown{
+        public Countdown(){
+            final Timer timer = new Timer();
+            try {
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    int i = time;
+
+                    public void run() {
+                        System.out.println(i--);
+                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
+                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
+                                System.out.println("Game is starting...");
+
+                                gameIsOn = true;
+                                //Server.startGame();
+                                // DO SOMETHING TO START THE GAME
+                            }
+                            else if(connectionsCount<3){
+                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
+                            }
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+            } catch (Exception e) {
+                //
+            }
+
+        }
+    }
+
+
+
+
+
+    public static boolean isBlank(String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if ((Character.isWhitespace(str.charAt(i)) == false)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void setBoardChosen(int i){
+        boardChosen = i;
+    }
+
+    public static void createBoard(){
+        model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
+        action = new Action(model);
+        model.populateMap(model.getMapUsed());
+    }
 
 
 

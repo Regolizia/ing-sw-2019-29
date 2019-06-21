@@ -167,7 +167,18 @@ public class ClientCLI extends Client{
         }else return 1;
     }
 
-    public static void grab() {
+    public int grab(List<String> items,List<String> cells) {
+        System.out.println("\nChoose an item cell (first is default):");
+        for(int i=0; i<items.size();i++) {
+            System.out.println("[" + (i + 1) + "]  " +items.get(i).toString()+" in "+cells.get(i).toString());
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<items.size()+1){
+                return x;
+            }else return 1;
+        }else return 1;
     }
 
     public static void shoot() {

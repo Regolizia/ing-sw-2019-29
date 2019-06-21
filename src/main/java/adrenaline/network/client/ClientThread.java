@@ -126,6 +126,11 @@ public class ClientThread implements Runnable {
             case "SHOOT":
                 break;
             case "GRAB":
+                List<String> items = new LinkedList<>();
+                items = getListFromServer();
+                List<String> cells = new LinkedList<>();
+                cells = getListFromServer();
+                sendIntToServer(client.grab(items,cells));
                 break;
             case "RUN":
                 sendIntToServer(client.run(getListFromServer()));

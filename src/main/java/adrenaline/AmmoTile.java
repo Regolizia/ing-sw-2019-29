@@ -48,4 +48,8 @@ public AmmoTile(AmmoCube.CubeColor ac, AmmoCube.CubeColor bc, AmmoCube.CubeColor
         return ammoCubes;
     }
 
+    @Override
+    public String toString() {
+        return this.ammoCubes.get(0).getCubeColor().toString()+ ", " + this.ammoCubes.get(1).getCubeColor().toString() + ", " + this.ammoCubes.get(2).getCubeColor().toString();
+    }
 }
