@@ -99,12 +99,12 @@ public class GameModel {
         int indexOfRoom;
         int xCoordinate;
         int yCoordinate;
-        Coordinates coordinates;
         for(indexOfRoom=0;indexOfRoom<mapUsed.getGameBoard().getNumberOfRooms();indexOfRoom++){
             //here check all the rooms one by one
             for(xCoordinate=0;xCoordinate<mapUsed.getArrayX()[indexOfRoom];xCoordinate++)
             {
                 for(yCoordinate=0;yCoordinate<mapUsed.getArrayY()[indexOfRoom];yCoordinate++){
+                    CoordinatesWithRoom coordinates = new CoordinatesWithRoom(xCoordinate,yCoordinate,mapUsed.getGameBoard().getRoom(indexOfRoom));
                    if(xCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeX()&&yCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeY()){
                        //now i check inside the room
                        for (Spawnpoint spawnpoint:mapUsed.getGameBoard().getRoom(indexOfRoom).getSpawnpoints()) {
@@ -112,9 +112,10 @@ public class GameModel {
                                spawnpoint.addWeaponCard(weaponDeck.pickUpWeapon());
 
                        }
-                       for (AmmoTile ammoTile:mapUsed.getGameBoard().getRoom(indexOfRoom).getTiles()) {
-                           if(ammoTile.getCoordinates()==null)
-                               mapUsed.getGameBoard().getRoom(indexOfRoom).addAmmoTile(ammoTileDeck.pickUpAmmoTile());
+                       if(!coordinates.containsSpawnpoint(this)){
+                           AmmoTile a = ammoTileDeck.pickUpAmmoTile();
+                           a.setCoordinates(xCoordinate,yCoordinate);
+                               mapUsed.getGameBoard().getRoom(indexOfRoom).addAmmoTile(a);
                        }
                    }
 

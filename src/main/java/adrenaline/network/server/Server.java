@@ -404,7 +404,7 @@ public class Server {
                 Spawnpoint s = c.getSpawnpoint(model);
                 String weapons = "";
                 for(WeaponCard w : s.getWeaponCards()){
-                    weapons.concat(w.toString()+ " ");
+                    weapons = weapons.concat(w.toString()+ " ");
                 }
                 listOfItems.add(weapons);
             }else{ // IT HAS AMMOTILES
