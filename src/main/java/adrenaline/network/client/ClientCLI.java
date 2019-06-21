@@ -74,7 +74,9 @@ public class ClientCLI extends Client{
     public int chooseBoard(){
 
          System.out.println("Choose board number: 1, 2, 3, 4");
-         return scanner.nextInt();
+         int i =scanner.nextInt();
+         scanner.nextLine();
+         return i;
      }
 
     public static void chooseSpawnpoint(// TODO SEND Two cards or names
@@ -95,6 +97,7 @@ public class ClientCLI extends Client{
          System.out.println(list.get(0).toString() + " [1] [Default] or " + list.get(1).toString() + " [2]\n");
          if(scanner.hasNextInt()){
              int x = scanner.nextInt();
+             scanner.nextLine();
              if(x==2||x==1){
                  return x;
              }else return 1;
@@ -114,14 +117,16 @@ public class ClientCLI extends Client{
             String s = scanner.nextLine();
             s = s.trim().toUpperCase();
                 switch (s) {
-                    case "M":   // TODO
-                    case "B":   // TODO
-                    case "C":   // TODO
-                    case "S":return "DO SOMETHING";
+                    case "M":
+                    case "B":
+                    case "C":
+                    case "S":
                     case "G":
-                    case "R":
-                    default: return "R";
+                    case "R":break;
+                    default: s="R";
+                        break;
                 }
+                return s;
 
     }
 
@@ -138,12 +143,13 @@ public class ClientCLI extends Client{
     }
 
     public int run(List<String> list) {
-        System.out.println("\nChoose a cell (first is Default):");
+        System.out.println("\nChoose a cell (first is default):");
         for(int i=0; i<list.size();i++) {
             System.out.println("[" + (i + 1) + "]  " +list.get(i).toString());
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
+            scanner.nextLine();
             if(x>0 && x<list.size()+1){
                 return x;
             }else return 1;

@@ -253,6 +253,7 @@ public class Server {
 
         public void handleTurns(){
             System.out.println("TURN OF " + nickname);
+            int numberOfActions =0;
             while(true){
                 if(isCurrentPlayer()){
                     try {
@@ -266,13 +267,16 @@ public class Server {
                         System.out.println("NORMAL TURN");
 
                         String choice = (String) inputStream.readObject();
+                        System.out.println(choice);
                         switch (choice) {
                             case "G":
                                 //grab(player);
+                                numberOfActions++;
                                 break;
                             case "R":
                                 sendToClient("RUN");
                                 playerRun();
+                                numberOfActions++;
                                 break;
                             case "M":
                                 // MAP
@@ -286,6 +290,7 @@ public class Server {
                             case "S":
                              default:
                                 //shoot(player);
+                                 numberOfActions++;
                                 break;
                         }
 
@@ -294,6 +299,7 @@ public class Server {
                     }
                     // END OF TURN
                     nextPlayer();
+                    numberOfActions=0;
                     System.out.println("CURRENT PLAYER " + currentPlayer);
                 }
                 // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
