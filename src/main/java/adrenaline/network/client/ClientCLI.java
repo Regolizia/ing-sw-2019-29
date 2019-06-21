@@ -19,6 +19,9 @@ public class ClientCLI extends Client{
 
     private static boolean quit = false;
 
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
     public static void main(String[] args) throws Exception {
 
 
@@ -44,6 +47,14 @@ public class ClientCLI extends Client{
     public static void startSocketClient(String serverAddress, int socketPort){
         try {
             socket = new Socket(serverAddress,socketPort);
+            System.out.println(ANSI_YELLOW +
+                    "          _____  _____  ______ _   _          _      _____ _   _ ______ \n" +
+                    "    /\\   |  __ \\|  __ \\|  ____| \\ | |   /\\   | |    |_   _| \\ | |  ____|\n" +
+                    "   /  \\  | |  | | |__) | |__  |  \\| |  /  \\  | |      | | |  \\| | |__   \n" +
+                    "  / /\\ \\ | |  | |  _  /|  __| | . ` | / /\\ \\ | |      | | | . ` |  __|  \n" +
+                    " / ____ \\| |__| | | \\ \\| |____| |\\  |/ ____ \\| |____ _| |_| |\\  | |____ \n" +
+                    "/_/    \\_\\_____/|_|  \\_\\______|_| \\_/_/    \\_\\______|_____|_| \\_|______|"+ ANSI_RESET);
+
             System.out.println("Socket Connection");
 
         } catch (IOException e) {
