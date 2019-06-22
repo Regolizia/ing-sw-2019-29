@@ -109,6 +109,11 @@ public class ClientThread implements Runnable {
             case "START":
                 break;
             case "YOURFIRSTTURN":
+                int n = Integer.parseInt(getFromServer());
+                List<String> colors = getListFromServer();
+                List<String> names = getListFromServer();
+                client.boardSetup(n,colors,names);    // MAINLY FOR GUI
+
                 client.firstTurn(getListFromServer());
                 break;
             case "YOURTURN":

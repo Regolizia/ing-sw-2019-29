@@ -261,6 +261,7 @@ public class Server {
                         if(isFirstTurn){
                             sendToClient("YOURFIRSTTURN");
                             System.out.println("FIRST TURN");
+                            sendForBoardSetup();
                             firstTurn();
                             numberOfActions=2;
                         }
@@ -306,6 +307,16 @@ public class Server {
                     System.out.println("CURRENT PLAYER " + currentPlayer);}
                 }
                 // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
+            }
+        }
+
+        public void sendForBoardSetup(){
+            sendToClient(Integer.toString(boardChosen));
+            try {
+                sendListToClient(colorsChosen);
+                sendListToClient(names);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 

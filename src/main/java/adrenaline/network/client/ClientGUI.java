@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 import java.awt.BorderLayout;
@@ -330,10 +331,12 @@ public class ClientGUI extends Client{
     }
 
     private void closeMapChoice(){
-        buttonA.setSize(0,0);
-        buttonB.setSize(0,0);
-        buttonC.setSize(0,0);
-        buttonD.setSize(0,0);
+        if(isFirst) {
+            buttonA.setSize(0, 0);
+            buttonB.setSize(0, 0);
+            buttonC.setSize(0, 0);
+            buttonD.setSize(0, 0);
+        }
     }
     //////////////////////
     public void waitStart(){
@@ -351,7 +354,6 @@ public class ClientGUI extends Client{
         this.frame.setTitle("Player: " + name); // FRAME TITLE
         setMessageTextField("Choose a color: "+ possibleColors);
     }
-
 
     private void run(){
         try {
@@ -393,10 +395,10 @@ public class ClientGUI extends Client{
                     //setMapChoice();
                 } else if (line.startsWith("PLAYER BOARDS ")) {
                     var original = in.nextLine();
-                    addPlayerBoards(original);
+                   // addPlayerBoards(original);
                 } else if (line.startsWith("PLAYER NAMES ")) {
                     var original = in.nextLine();
-                    addPlayerNames(original);
+                    //addPlayerNames(original);
                 }
                 if (line.startsWith("MESSAGE" + "The board chosen is number ")) {
                     // SET IMAGES AS BACKGROUND
@@ -432,19 +434,22 @@ public class ClientGUI extends Client{
     }
 
 
-    private void addPlayerBoards(String o){
-       System.out.println(o);
-       int numberOfCommas = o.replaceAll("[^,] ","").length();
-        System.out.println("commas "+ numberOfCommas);
+    public void boardSetup(int n, java.util.List<String> colors, List<String> names){
+        addPlayerBoards(colors);
+        addPlayerNames(names);
+        closeStartImage();
+        setGameBoardImages(n);
+    }
 
-        String[] singleColors = o.split(", ");
-        JLabel[] playerBoards = new JLabel[numberOfCommas +1];
+    private void addPlayerBoards(List<String> list){
+
+        JLabel[] playerBoards = new JLabel[list.size()];
         Insets insets = frame.getContentPane().getInsets();
         Dimension size;
-        for(int index=0;index<singleColors.length;index++) {
+        for(int index=0;index<list.size();index++) {
             ImageIcon image = new ImageIcon();
-            System.out.println("color->"+singleColors[index]);
-            switch (singleColors[index]) {
+            System.out.println("color->"+list.get(index));
+            switch (list.get(index)) {
                 case ("GREEN"):
                     image = new ImageIcon("src\\main\\resources\\images\\GREEN.jpg");
                     break;
@@ -481,7 +486,7 @@ public class ClientGUI extends Client{
         underMessageArea.repaint();
         System.out.println("LabelC--> "+ underMessageArea.getLocation());
 
-        if(numberOfCommas!=4){
+        if(list.size()!=5){
             JLabel emptyRightCorner = new JLabel(new ImageIcon("src\\main\\resources\\images\\area.jpg"), SwingConstants.CENTER);
             emptyRightCorner.setSize(390,219);
             size = underMessageArea.getPreferredSize();
@@ -497,20 +502,16 @@ public class ClientGUI extends Client{
         frame.setVisible(true);
     }
 
-    private void addPlayerNames(String o){
-       System.out.println(o);
-       int numberOfCommas = o.replaceAll("[^,] ","").length();
-        System.out.println("commas "+ numberOfCommas);
+    private void addPlayerNames(List<String> list){
 
-        String[] singleNames = o.split(",");
-        JTextField[] playerNames = new JTextField[numberOfCommas +1];
+        JTextField[] playerNames = new JTextField[list.size()];
         Insets insets = frame.getContentPane().getInsets();
         Dimension size;
-        for(int index=0;index<singleNames.length;index++) {
-            System.out.println("names->"+singleNames[index]);
+        for(int index=0;index<list.size();index++) {
+            System.out.println("names->"+list.get(index));
 
             playerNames[index] = new JTextField("", SwingConstants.CENTER);
-            playerNames[index].setText(singleNames[index]);
+            playerNames[index].setText(list.get(index));
             playerNames[index].setOpaque(true);
             playerNames[index].setEditable(false);
             playerNames[index].setForeground(Color.WHITE);
