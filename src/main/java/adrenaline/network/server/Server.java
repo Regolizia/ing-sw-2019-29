@@ -433,12 +433,14 @@ public class Server {
                         }
                     listOfItems.add(weapons);
                      }
-                    else if(!c.containsSpawnpoint(model)&&!c.getRoom().getAmmoTile(c).equals(null)){ // IT HAS AMMOTILES
+                    else if(!c.containsSpawnpoint(model)&&c.getRoom().getTiles().contains(c.getRoom().getAmmoTile(c))){ // IT HAS AMMOTILES
                      listOfItems.add(c.getRoom().getAmmoTile(c).toString());
                         }
+                    else
+                        listOfItems.add("no grab");
                 }
 
-                return;//annulla azione
+
         }
 
 
