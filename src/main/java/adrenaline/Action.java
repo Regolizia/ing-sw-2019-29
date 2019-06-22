@@ -745,9 +745,9 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
         ((Player) ((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
         for(int indexPlayer=1;indexPlayer<shooters.size();indexPlayer++)
         {
-            if(victim.getTrack()[0]==shooters.get(indexPlayer).getColor())
+            if(victim.getTrack()[0].equals(shooters.get(indexPlayer).getColor()))
                 shooters.get(indexPlayer).setPoints(1);//firstBloodPoints
-            if(victim.getTrack()[victim.getTrackSize()-1]==shooters.get(indexPlayer).getColor())
+            if(victim.getTrack()[victim.getTrackSize()-1].equals(shooters.get(indexPlayer).getColor())&&shooters.get(indexPlayer).canAddMark(victim))
                 shooters.get(indexPlayer).addMarks(victim,1);//12°hit
             if(victim.damageByShooter(shooters.get(indexPlayer))==victim.damageByShooter(shooters.get(indexPlayer-1)))
                 ((Player)((LinkedList)shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
