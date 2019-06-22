@@ -70,23 +70,6 @@ public class ClientThread implements Runnable {
     return action;
     }
 
-    // GETS SHOWMAINMENU() AS PARAMETER
-    public void turnAction(String s){
-        if(s=="M"){
-            //show stuff
-            //ASK SERVER STUFF
-        }
-        if(s=="B"){
-            //show stuff
-        }
-        if(s=="C"){
-            //show stuff
-        }
-        else{
-            sendToServer(s); // S OR G OR R
-        }
-    }
-
 
     public void handleRequest() {
         String action = "";
@@ -117,7 +100,7 @@ public class ClientThread implements Runnable {
                 client.firstTurn(getListFromServer());
                 break;
             case "YOURTURN":
-                turnAction(client.showMainMenu());
+                client.showMainMenu();
                 break;
             case "ENDGAME":
                 break;
@@ -128,10 +111,10 @@ public class ClientThread implements Runnable {
                 items = getListFromServer();
                 List<String> cells = new LinkedList<>();
                 cells = getListFromServer();
-                //sendIntToServer(client.grab(items,cells));
+                client.grab(items,cells);
                 break;
             case "RUN":
-                //sendIntToServer(client.run(getListFromServer()));
+                client.run(getListFromServer());
                 break;
             case "MESSAGE":
                 client.printMessage(action.substring(7));

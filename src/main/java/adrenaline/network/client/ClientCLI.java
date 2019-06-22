@@ -135,7 +135,7 @@ public class ClientCLI extends Client{
          }else sendIntToServer(1);
      }
 
-    public String showMainMenu() {
+    public void showMainMenu() {
             System.out.println("Main Menu:\n" +
                     //"Z: Exit\n" +
                     "M: Show Map Info\n" +
@@ -153,27 +153,21 @@ public class ClientCLI extends Client{
                     case "C":
                     case "S":
                     case "G":
-                    case "R":break;
-                    default: s="R";
+                    case "R":
+                        sendToServer(s);
+                        break;
+                    default:
+                        sendToServer("R");
                         break;
                 }
-                return s;
 
     }
-
-
- /*   switch (s) {
-        case "S": shoot(); break;
-        case "G": grab(); break;
-        case "R": run(); break;
-        //case "B": back(); break;
-        default: break;*/
 
     public static void back() {
         // GO BACK TO MAIN MENU
     }
 
-    public int run(List<String> list) {
+    public void run(List<String> list) {
         System.out.println("\nChoose a cell (first is default):");
         for(int i=0; i<list.size();i++) {
             System.out.println("[" + (i + 1) + "]  " +list.get(i).toString());
@@ -182,12 +176,12 @@ public class ClientCLI extends Client{
             int x = scanner.nextInt();
             scanner.nextLine();
             if(x>0 && x<list.size()+1){
-                return x;
-            }else return 1;
-        }else return 1;
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
     }
 
-    public int grab(List<String> items,List<String> cells) {
+    public void grab(List<String> items,List<String> cells) {
         System.out.println("\nChoose an item cell (first is default):");
         for(int i=0; i<items.size();i++) {
             System.out.println("[" + (i + 1) + "]  " +items.get(i).toString()+" in "+cells.get(i).toString());
@@ -196,9 +190,9 @@ public class ClientCLI extends Client{
             int x = scanner.nextInt();
             scanner.nextLine();
             if(x>0 && x<items.size()+1){
-                return x;
-            }else return 1;
-        }else return 1;
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
     }
 
     public static void shoot() {
