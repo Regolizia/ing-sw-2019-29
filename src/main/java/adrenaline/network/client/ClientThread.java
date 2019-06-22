@@ -20,9 +20,7 @@ public class ClientThread implements Runnable {
         this.output = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         this.output.flush();
         this.input = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-        if(client.view().equals("GUI")){
-            client.getOutput(output);
-        }
+        client.getOutput(output);
         run();
     }
 
@@ -47,16 +45,6 @@ public class ClientThread implements Runnable {
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-    }
-
-    public void sendIntToServer(int number){
-        try {
-            output.writeObject(number);
-            output.flush();
-        } catch (IOException e){
             e.printStackTrace();
 
         }
@@ -107,25 +95,13 @@ public class ClientThread implements Runnable {
 
         switch (action) {
             case "LOGIN":
-                if(client.view().equals("GUI")){
-                    client.setLogin();
-                }else {
-                    sendToServer(client.login());
-                }
+                client.login();
                 break;
             case "COLOR":
-                if(client.view().equals("GUI")){
-                    client.setChooseColor(getFromServer());
-                }else {
-                    sendToServer(client.chooseColor(getFromServer()));
-                }
+                    client.chooseColor(getFromServer());
                 break;
             case "BOARD":
-                if(client.view().equals("GUI")){
-                    client.setMapChoice();
-                }else {
-                    sendIntToServer(client.chooseBoard());
-                }
+                client.chooseBoard();
                 break;
             case "ACCEPTED":
                 client.waitStart();
@@ -133,7 +109,7 @@ public class ClientThread implements Runnable {
             case "START":
                 break;
             case "YOURFIRSTTURN":
-                sendIntToServer(client.firstTurn(getListFromServer()));
+                client.firstTurn(getListFromServer());
                 break;
             case "YOURTURN":
                 turnAction(client.showMainMenu());
@@ -147,10 +123,10 @@ public class ClientThread implements Runnable {
                 items = getListFromServer();
                 List<String> cells = new LinkedList<>();
                 cells = getListFromServer();
-                sendIntToServer(client.grab(items,cells));
+                //sendIntToServer(client.grab(items,cells));
                 break;
             case "RUN":
-                sendIntToServer(client.run(getListFromServer()));
+                //sendIntToServer(client.run(getListFromServer()));
                 break;
             case "MESSAGE":
                 client.printMessage(action.substring(7));

@@ -4,6 +4,7 @@ package adrenaline.network.client;
 import adrenaline.Figure;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ public class ClientCLI extends Client{
     public static Scanner scanner = new Scanner(System.in);
 
     private static boolean quit = false;
+
+    private ObjectOutputStream output;
 
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -67,55 +70,69 @@ public class ClientCLI extends Client{
         startClient(serverAddress,socketPort,rmiPort);
 
     }
-    public String login(){
+    public void getOutput(ObjectOutputStream o){
+        this.output=o;
+    }
+
+    public void sendToServer(String message) {
+        try {
+            output.writeObject(message);
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public void sendIntToServer(int number){
+        try {
+            output.writeObject(number);
+            output.flush();
+        } catch (IOException e){
+            e.printStackTrace();
+
+        }
+    }
+    public void login(){
          System.out.println("Enter nickname: ");
 
-          return scanner.nextLine();
+          sendToServer(scanner.nextLine());
 
      }
     public String view() {
         return "CLI";
     }
 
-    public String chooseColor(String possibleColors
+    public void chooseColor(String possibleColors
      ){
          System.out.println("Choose a color: ");
          System.out.println(possibleColors);
-         return scanner.nextLine();
+        sendToServer(scanner.nextLine());
 
      }
 
-    public int chooseBoard(){
+    public void chooseBoard(){
 
          System.out.println("Choose board number: 1, 2, 3, 4");
-         int i =scanner.nextInt();
+         sendIntToServer(scanner.nextInt());
          scanner.nextLine();
-         return i;
      }
 
-    public static void chooseSpawnpoint(// TODO SEND Two cards or names
-     ){
-
-         System.out.println("Choose a card: ");
-         //System.out.println(Cards to print
-         String input = scanner.nextLine();
-         // TODO SEND input to check, (message CHOOSE SPAWNPOINT)
-     }
 
     public void printMessage(String message){
          System.out.println(message);
      }
 
-     public int firstTurn(List<String> list){
+     public void firstTurn(List<String> list){
          System.out.println("\nChoose one card to keep, the color of the other one will decide your respawn coordinates:");
-         System.out.println(list.get(0).toString() + " [1] [Default] or " + list.get(1).toString() + " [2]\n");
+         System.out.println(list.get(0) + " [1] [Default] or " + list.get(1) + " [2]\n");
          if(scanner.hasNextInt()){
              int x = scanner.nextInt();
              scanner.nextLine();
              if(x==2||x==1){
-                 return x;
-             }else return 1;
-         }else return 1;
+                 sendIntToServer(x);
+             }else sendIntToServer(1);
+         }else sendIntToServer(1);
      }
 
     public String showMainMenu() {

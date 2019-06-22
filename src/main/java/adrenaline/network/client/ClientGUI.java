@@ -263,7 +263,7 @@ public class ClientGUI extends Client{
         adrenalin.setSize(0,0);
     }
 
-    public void setMapChoice(){
+    public void chooseBoard(){
         closeTextField();
         closeMessageTextField();
 
@@ -340,13 +340,13 @@ public class ClientGUI extends Client{
         closeMapChoice();
     }
 
-    public void setLogin(){
+    public void login(){
         setMessageTextField("Insert nickname: ");
         setTextField();
         setStartImage();
     }
 
-    public void setChooseColor(String possibleColors
+    public void chooseColor(String possibleColors
     ){
         this.frame.setTitle("Player: " + name); // FRAME TITLE
         setMessageTextField("Choose a color: "+ possibleColors);
@@ -390,7 +390,7 @@ public class ClientGUI extends Client{
                     messageArea.append(line.substring(7) + "\n");
                     messageArea.setCaretPosition(messageArea.getText().length() - 1);
                 } else if (line.startsWith("CHOOSE BOARD ")) {
-                    setMapChoice();
+                    //setMapChoice();
                 } else if (line.startsWith("PLAYER BOARDS ")) {
                     var original = in.nextLine();
                     addPlayerBoards(original);
