@@ -322,6 +322,7 @@ public class Server {
             try {
                 sendListToClient(colorsChosen);
                 sendListToClient(names);
+                sendSpawnpointWeapons();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -392,6 +393,36 @@ public class Server {
             }
         }
 
+        public Spawnpoint getSpawnpoint(AmmoCube.CubeColor c) {
+            for (Room r : model.getMapUsed().getGameBoard().getRooms()) {
+                if (!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).getColor().equals(c)) {
+                    return r.getSpawnpoints().get(0);
+                }
+            }
+            return new Spawnpoint();
+        }
+
+        public void sendSpawnpointWeapons(){
+            try {
+                List<String> weapons = new LinkedList<>();
+                for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards()){
+                    weapons.add(w.toString());
+                }
+                sendListToClient(weapons);
+                weapons.clear();
+                for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards()){
+                    weapons.add(w.toString());
+                }
+                sendListToClient(weapons);
+                weapons.clear();
+                for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards()){
+                    weapons.add(w.toString());
+                }
+                sendListToClient(weapons);
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         public void playerRun(){
             System.out.println("RUN");

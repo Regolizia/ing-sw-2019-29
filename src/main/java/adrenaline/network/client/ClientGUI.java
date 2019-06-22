@@ -405,7 +405,7 @@ public class ClientGUI extends Client{
 
                     // TODO REMOVE
                     selectOne("Choose a target", "Leo, Beba, Fiocco, jbsaeh, jaesbdh, asebhjh, jab");
-                    spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
+                    //spawnpointsSetup("GrenadeLauncher, Zx_2, PowerGlove","Railgun, Thor, Furnace","Hellion, Whisper, LockRifle");
                     setupPlayerCards();
                     addPlayerCard("Shotgun");
                     addPlayerCard("Shockwave");
@@ -434,10 +434,11 @@ public class ClientGUI extends Client{
     }
 
 
-    public void boardSetup(int n, java.util.List<String> colors, List<String> names){
+    public void boardSetup(int n, java.util.List<String> colors, List<String> names,List<String> blue,List<String> red, List<String> yellow){
         addPlayerNames(names);
         addPlayerBoards(colors);
         closeStartImage();
+        spawnpointsSetup(blue, red, yellow);
         setGameBoardImages(n);
     }
 
@@ -657,105 +658,15 @@ public class ClientGUI extends Client{
         return(new ImageIcon(rotate));
     }
 
-    public void spawnpointsSetup(String red, String blue, String yellow){
-        // TODO REMOVE
+    public void spawnpointsSetup(List<String> blue, List<String> red, List<String> yellow){
         redArray = new JLabel[3];
         blueArray = new JLabel[3];
         yellowArray = new JLabel[3];
         ImageIcon img = new ImageIcon();
 
-        int numberOfCommas = blue.replaceAll("[^,] ", "").length();
-        System.out.println("commas blue " + numberOfCommas);
-
-        String[] singleWeapons = blue.split(", ");
         for(int i=0; i<3;i++){
-            switch (singleWeapons[i]){
+            img = weaponImage(blue.get(i));
 
-                case "Cyberblade":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
-                    break;
-
-                case "Electroscythe":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
-                    break;
-
-                case "Flamethrower":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
-                    break;
-
-                case "Furnace":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
-                    break;
-
-                case "GrenadeLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
-                    break;
-
-                case "Heatseeker":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
-                    break;
-
-                case "Hellion":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
-                    break;
-
-                case "LockRifle":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
-                    break;
-
-                case "MachineGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
-                    break;
-
-                case "PlasmaGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
-                    break;
-
-                case "PowerGlove":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
-                    break;
-
-                case "Railgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
-                    break;
-
-                case "RocketLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
-                    break;
-
-                case "Shockwave":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
-                    break;
-
-                case "Shotgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
-                    break;
-
-                case "Sledgehammer":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
-                    break;
-
-                case "Thor":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
-                    break;
-
-                case "TractorBeam":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
-                    break;
-
-                case "VortexCannon":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
-                    break;
-
-                case "Whisper":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
-                    break;
-
-                case "Zx_2":
-                    default:
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
-                    break;
-            }
             blueArray[i] = new JLabel(img, SwingConstants.CENTER);
 
             Insets insets = frame.getContentPane().getInsets();
@@ -770,98 +681,8 @@ public class ClientGUI extends Client{
 
         }
 
-        numberOfCommas = red.replaceAll("[^,] ", "").length();
-        System.out.println("commas red " + numberOfCommas);
-
-        singleWeapons = red.split(", ");
         for(int i=0; i<3;i++) {
-            switch (singleWeapons[i]) {
-
-                case "Cyberblade":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
-                    break;
-
-                case "Electroscythe":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
-                    break;
-
-                case "Flamethrower":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
-                    break;
-
-                case "Furnace":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
-                    break;
-
-                case "GrenadeLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
-                    break;
-
-                case "Heatseeker":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
-                    break;
-
-                case "Hellion":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
-                    break;
-
-                case "LockRifle":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
-                    break;
-
-                case "MachineGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
-                    break;
-
-                case "PlasmaGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
-                    break;
-
-                case "PowerGlove":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
-                    break;
-
-                case "Railgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
-                    break;
-
-                case "RocketLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
-                    break;
-
-                case "Shockwave":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
-                    break;
-
-                case "Shotgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
-                    break;
-
-                case "Sledgehammer":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
-                    break;
-
-                case "Thor":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
-                    break;
-
-                case "TractorBeam":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
-                    break;
-
-                case "VortexCannon":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
-                    break;
-
-                case "Whisper":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
-                    break;
-
-                case "Zx_2":
-                default:
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
-                    break;
-            }
+            img = weaponImage(red.get(i));
 
             redArray[i] = new JLabel(rotateImag(img, 270), SwingConstants.CENTER);
 
@@ -876,98 +697,8 @@ public class ClientGUI extends Client{
             System.out.println(redArray[i].getLocation());
         }
 
-        numberOfCommas = yellow.replaceAll("[^,] ", "").length();
-        System.out.println("commas red " + numberOfCommas);
-
-        singleWeapons = yellow.split(", ");
         for(int i=0; i<3;i++) {
-            switch (singleWeapons[i]) {
-
-                case "Cyberblade":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
-                    break;
-
-                case "Electroscythe":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
-                    break;
-
-                case "Flamethrower":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
-                    break;
-
-                case "Furnace":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
-                    break;
-
-                case "GrenadeLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
-                    break;
-
-                case "Heatseeker":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
-                    break;
-
-                case "Hellion":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
-                    break;
-
-                case "LockRifle":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
-                    break;
-
-                case "MachineGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
-                    break;
-
-                case "PlasmaGun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
-                    break;
-
-                case "PowerGlove":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
-                    break;
-
-                case "Railgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
-                    break;
-
-                case "RocketLauncher":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
-                    break;
-
-                case "Shockwave":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
-                    break;
-
-                case "Shotgun":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
-                    break;
-
-                case "Sledgehammer":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
-                    break;
-
-                case "Thor":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
-                    break;
-
-                case "TractorBeam":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
-                    break;
-
-                case "VortexCannon":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
-                    break;
-
-                case "Whisper":
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
-                    break;
-
-                case "Zx_2":
-                default:
-                    img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
-                    break;
-            }
+            img = weaponImage(yellow.get(i));
 
             yellowArray[i] = new JLabel(rotateImag(img, 90), SwingConstants.CENTER);
 
@@ -983,6 +714,77 @@ public class ClientGUI extends Client{
         }
     }
 
+    public ImageIcon weaponImage(String s){
+        switch (s){
+
+            case "Cyberblade":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
+
+            case "Electroscythe":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
+
+            case "Flamethrower":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
+
+            case "Furnace":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
+
+            case "GrenadeLauncher":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
+
+            case "Heatseeker":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
+
+            case "Hellion":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
+
+            case "LockRifle":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
+
+            case "MachineGun":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
+
+            case "PlasmaGun":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
+
+            case "PowerGlove":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
+
+            case "Railgun":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
+
+            case "RocketLauncher":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
+
+            case "Shockwave":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
+
+            case "Shotgun":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
+
+            case "Sledgehammer":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
+
+            case "Thor":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
+
+            case "TractorBeam":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
+
+            case "VortexCannon":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
+
+            case "Whisper":
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
+
+            case "Zx_2":
+            default:
+                return new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
+        }
+    }
+
+
+
     public void addPlayerCard(String cardName){
         int i;
         for(i=0;i<3;i++) {
@@ -990,94 +792,7 @@ public class ClientGUI extends Client{
                 break;
             }
         }
-        ImageIcon img;
-        switch (cardName) {
-
-            case "Cyberblade":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_cyb.png");
-                break;
-
-            case "Electroscythe":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_ele.png");
-                break;
-
-            case "Flamethrower":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fla.png");
-                break;
-
-            case "Furnace":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_fur.png");
-                break;
-
-            case "GrenadeLauncher":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_gre.png");
-                break;
-
-            case "Heatseeker":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hea.png");
-                break;
-
-            case "Hellion":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_hel.png");
-                break;
-
-            case "LockRifle":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_loc.png");
-                break;
-
-            case "MachineGun":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_mac.png");
-                break;
-
-            case "PlasmaGun":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pla.png");
-                break;
-
-            case "PowerGlove":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_pow.png");
-                break;
-
-            case "Railgun":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_rai.png");
-                break;
-
-            case "RocketLauncher":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_roc.png");
-                break;
-
-            case "Shockwave":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sho.png");
-                break;
-
-            case "Shotgun":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_shot.png");
-                break;
-
-            case "Sledgehammer":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_sle.png");
-                break;
-
-            case "Thor":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tho.png");
-                break;
-
-            case "TractorBeam":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_tra.png");
-                break;
-
-            case "VortexCannon":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_vor.png");
-                break;
-
-            case "Whisper":
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_whi.png");
-                break;
-
-            case "Zx_2":
-            default:
-                img = new ImageIcon("src\\main\\resources\\images\\weapons\\w_IT_zx2.png");
-                break;
-        }
+        ImageIcon img =img = weaponImage(cardName);
 
         playerCards[i] = new JLabel(img, SwingConstants.CENTER);
 
