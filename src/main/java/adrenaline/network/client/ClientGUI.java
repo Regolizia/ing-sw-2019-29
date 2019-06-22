@@ -435,8 +435,8 @@ public class ClientGUI extends Client{
 
 
     public void boardSetup(int n, java.util.List<String> colors, List<String> names){
-        addPlayerBoards(colors);
         addPlayerNames(names);
+        addPlayerBoards(colors);
         closeStartImage();
         setGameBoardImages(n);
     }
