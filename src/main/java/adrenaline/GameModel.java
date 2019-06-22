@@ -113,12 +113,12 @@ public class GameModel {
                        }
 
                        for (AmmoTile a:mapUsed.getGameBoard().getRoom(indexOfRoom).getTiles()) {
+                           //devo vedere se la posizione a ha qualcosa
+                           if(mapUsed.getGameBoard().getRoom(indexOfRoom).getAmmoTile(a.getCoordinates()).equals(null)){
+                               this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).addAmmoTile(this.ammoTileDeck.pickUpAmmoTile());
+                           }
 
-                            if(a.getAmmoCubes().isEmpty()){
-                                Coordinates coo=new Coordinates(xCoordinate,yCoordinate);
-                                if(this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).getAmmoTile(coo).getAmmoCubes().isEmpty()) {
-                                    this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).addAmmoTile(this.ammoTileDeck.pickUpAmmoTile());
-                                }}
+
 
                        }
                    }
