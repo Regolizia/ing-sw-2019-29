@@ -95,16 +95,15 @@ public class GameModel {
         return players;
     }
 
-    public void populateMap(Map mapUsed){
+    public void populateMap(){
         int indexOfRoom;
         int xCoordinate;
         int yCoordinate;
-        for(indexOfRoom=0;indexOfRoom<mapUsed.getGameBoard().getNumberOfRooms();indexOfRoom++){
+        for(indexOfRoom=0;indexOfRoom<this.getMapUsed().getGameBoard().getRooms().size();indexOfRoom++){
             //here check all the rooms one by one
-            for(xCoordinate=0;xCoordinate<mapUsed.getArrayX()[indexOfRoom];xCoordinate++)
+            for(xCoordinate=0;xCoordinate<this.getMapUsed().getArrayX()[indexOfRoom];xCoordinate++)
             {
                 for(yCoordinate=0;yCoordinate<mapUsed.getArrayY()[indexOfRoom];yCoordinate++){
-                    CoordinatesWithRoom coordinates = new CoordinatesWithRoom(xCoordinate,yCoordinate,mapUsed.getGameBoard().getRoom(indexOfRoom));
                    if(xCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeX()&&yCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeY()){
                        //now i check inside the room
                        for (Spawnpoint spawnpoint:mapUsed.getGameBoard().getRoom(indexOfRoom).getSpawnpoints()) {
@@ -112,10 +111,15 @@ public class GameModel {
                                spawnpoint.addWeaponCard(weaponDeck.pickUpWeapon());
 
                        }
-                       if(!coordinates.containsSpawnpoint(this)){
-                           AmmoTile a = ammoTileDeck.pickUpAmmoTile();
-                           a.setCoordinates(xCoordinate,yCoordinate);
-                               mapUsed.getGameBoard().getRoom(indexOfRoom).addAmmoTile(a);
+
+                       for (AmmoTile a:mapUsed.getGameBoard().getRoom(indexOfRoom).getTiles()) {
+
+                            if(a.getAmmoCubes().isEmpty()){
+                                Coordinates coo=new Coordinates(xCoordinate,yCoordinate);
+                                if(this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).getAmmoTile(coo).getAmmoCubes().isEmpty()) {
+                                    this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).addAmmoTile(this.ammoTileDeck.pickUpAmmoTile());
+                                }}
+
                        }
                    }
 
