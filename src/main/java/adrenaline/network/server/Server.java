@@ -217,6 +217,7 @@ public class Server {
             for (ObjectOutputStream writer : writers) {
                 try {
                     writer.writeObject("MESSAGE" + name + " has joined");
+                    writer.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

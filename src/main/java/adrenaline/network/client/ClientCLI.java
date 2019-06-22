@@ -73,6 +73,9 @@ public class ClientCLI extends Client{
           return scanner.nextLine();
 
      }
+    public String view() {
+        return "CLI";
+    }
 
     public String chooseColor(String possibleColors
      ){

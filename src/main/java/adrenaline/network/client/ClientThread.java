@@ -1,5 +1,7 @@
 package adrenaline.network.client;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -18,6 +20,9 @@ public class ClientThread implements Runnable {
         this.output = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
         this.output.flush();
         this.input = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+        if(client.view().equals("GUI")){
+            client.getOutput(output);
+        }
         run();
     }
 
@@ -102,13 +107,25 @@ public class ClientThread implements Runnable {
 
         switch (action) {
             case "LOGIN":
-                sendToServer(client.login());
+                if(client.view().equals("GUI")){
+                    client.setLogin();
+                }else {
+                    sendToServer(client.login());
+                }
                 break;
             case "COLOR":
-                sendToServer(client.chooseColor(getFromServer()));
+                if(client.view().equals("GUI")){
+                    client.setChooseColor(getFromServer());
+                }else {
+                    sendToServer(client.chooseColor(getFromServer()));
+                }
                 break;
             case "BOARD":
-                sendIntToServer(client.chooseBoard());
+                if(client.view().equals("GUI")){
+                    client.setMapChoice();
+                }else {
+                    sendIntToServer(client.chooseBoard());
+                }
                 break;
             case "ACCEPTED":
                 client.waitStart();

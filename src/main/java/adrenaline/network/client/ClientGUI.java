@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 import java.awt.BorderLayout;
 
-public class ClientGUI {
+public class ClientGUI extends Client{
 
     String serverAddress;
     Scanner in;
@@ -42,22 +42,88 @@ public class ClientGUI {
     JLabel[] yellowArray = new JLabel[3];
     JLabel[] playerCards = new JLabel[3];
 
-    public static String view() {
-        return "GUI";
+    /////////////////////////////////////////////////////////////////////////////////
+    String name;
+    ObjectOutputStream output;
+    static ClientGUI gui;
+    public static Socket socket;
+
+    public static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 1) {
+            System.err.println("Pass the server IP as the sole command line argument");
+            return;
+        }
+        String serverAddress = args[0];
+
+        //String serverAddress = "192.168.43.171";//todo change every time
+        int socketPort = 4321, rmiPort = 59002;
+
+        gui = new ClientGUI(serverAddress, socketPort, rmiPort);
+
+        gui.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gui.frame.setVisible(true);
+        new ClientThread(socket,gui).run();
     }
 
-    public ClientGUI(String serverAddress) {
+    public static void startClient(String serverAddress, int socketPort, int rmiPort){
+        startSocketClient(serverAddress,socketPort);
+
+    }
+
+    public static void startSocketClient(String serverAddress, int socketPort){
+        try {
+            socket = new Socket(serverAddress,socketPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public ClientGUI(String serverAddress, int socketPort, int rmiPort) {
         this.serverAddress = serverAddress;
         setGameBoardImages(0);
         textField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                out.println(textField.getText());
+                sendToServer(textField.getText());
+                name=textField.getText();
                 textField.setText("");
             }
         });
         textField.setEditable(false);
+        startClient(serverAddress,socketPort,rmiPort);
+
+    }
+    ///////////////////////////////////////////////////////////////////////////////7
+
+    public String view() {
+        return "GUI";
     }
 
+    public void getOutput(ObjectOutputStream o){
+        this.output=o;
+    }
+
+    public void sendToServer(String message) {
+        try {
+            output.writeObject(message);
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    public void sendIntToServer(int number){
+        try {
+            output.writeObject(number);
+            output.flush();
+        } catch (IOException e){
+            e.printStackTrace();
+
+        }
+    }
     ///////////////////////
 
     private void selectOne(String question, String options){
@@ -197,7 +263,10 @@ public class ClientGUI {
         adrenalin.setSize(0,0);
     }
 
-    private void setMapChoice(){
+    public void setMapChoice(){
+        closeTextField();
+        closeMessageTextField();
+
         isFirst = true;
         buttonA = new JButton(new ImageIcon("src\\main\\resources\\images\\Map1.jpg"));
         buttonA.setActionCommand("1");
@@ -232,40 +301,64 @@ public class ClientGUI {
         frame.getContentPane().add(buttonB);
         frame.getContentPane().add(buttonC);
         frame.getContentPane().add(buttonD);
+        buttonA.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                sendIntToServer(1);
+            }
+        });
+        buttonB.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                sendIntToServer(2);
+            }
+        });
+        buttonC.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                sendIntToServer(3);
+            }
+        });
+        buttonD.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                sendIntToServer(4);
+            }
+        });
+
         buttonA.repaint();
         buttonB.repaint();
         buttonC.repaint();
         buttonD.repaint();
         frame.setVisible(true);
-        buttonA.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                out.println("1");
-            }
-        });
-        buttonB.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                out.println("2");
-            }
-        });
-        buttonC.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                out.println("3");
-            }
-        });
-        buttonD.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                out.println("4");
-            }
-        });
-
     }
+
     private void closeMapChoice(){
         buttonA.setSize(0,0);
         buttonB.setSize(0,0);
         buttonC.setSize(0,0);
         buttonD.setSize(0,0);
     }
-    //////////////////////7
+    //////////////////////
+/*
+
+    public boolean isTextNull(){
+        return (text==null);
+    }
+
+    public String send(String text){
+        return text;
+    }
+*/
+
+    public void setLogin(){
+        setMessageTextField("Insert nickname: ");
+        setTextField();
+        setStartImage();
+    }
+
+    public void setChooseColor(String possibleColors
+    ){
+        this.frame.setTitle("Player: " + name); // FRAME TITLE
+        setMessageTextField("Choose a color: "+ possibleColors);
+    }
+
 
     private void run(){
         try {
@@ -345,17 +438,6 @@ public class ClientGUI {
         }
     }
 
-    public static void main(String[] args){
-        if (args.length != 1) {
-            System.err.println("Pass the server IP as the sole command line argument");
-            return;
-        }
-        var client = new ClientGUI(args[0]);
-        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        client.frame.setVisible(true);
-        client.run();
-
-    }
 
     private void addPlayerBoards(String o){
        System.out.println(o);
