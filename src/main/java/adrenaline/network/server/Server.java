@@ -213,10 +213,17 @@ public class Server {
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             Server.model.addPlayer(new Player(name, color));
+            broadcast(name + " has joined");
+        }
+
+        public void broadcast(String s){
 
             for (ObjectOutputStream writer : writers) {
                 try {
-                    writer.writeObject("MESSAGE" + name + " has joined");
+                    writer.writeObject("MESSAGE");
+                    writer.flush();
+
+                    writer.writeObject(s);
                     writer.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -350,6 +357,9 @@ public class Server {
 
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                 }
+
+                broadcast("LALALA");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

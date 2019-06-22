@@ -117,7 +117,7 @@ public class ClientThread implements Runnable {
                 client.run(getListFromServer());
                 break;
             case "MESSAGE":
-                client.printMessage(action.substring(7));
+                client.printMessage(getFromServer());
                 break;
         }
         } catch (IOException e) {
