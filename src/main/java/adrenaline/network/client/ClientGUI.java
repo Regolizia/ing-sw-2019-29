@@ -336,16 +336,9 @@ public class ClientGUI extends Client{
         buttonD.setSize(0,0);
     }
     //////////////////////
-/*
-
-    public boolean isTextNull(){
-        return (text==null);
+    public void waitStart(){
+        closeMapChoice();
     }
-
-    public String send(String text){
-        return text;
-    }
-*/
 
     public void setLogin(){
         setMessageTextField("Insert nickname: ");
