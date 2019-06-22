@@ -421,18 +421,24 @@ public class Server {
         LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
         List<String> listOfCells = new LinkedList<>();
         List<String> listOfItems = new LinkedList<>();
-        for (CoordinatesWithRoom c : possibleCells){
-            listOfCells.add(c.toString());
-            if (c.containsSpawnpoint(model)) {
-                Spawnpoint s = c.getSpawnpoint(model);
-                String weapons = "";
-                for(WeaponCard w : s.getWeaponCards()){
-                    weapons = weapons.concat(w.toString()+ " ");
+        if(possibleCells.size()!=0)
+            {
+                for (CoordinatesWithRoom c : possibleCells){
+                     listOfCells.add(c.toString());
+                    if (c.containsSpawnpoint(model)&&!c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
+                        Spawnpoint s = c.getSpawnpoint(model);
+                        String weapons = "";
+                        for(WeaponCard w : s.getWeaponCards()){
+                         weapons = weapons.concat(w.toString()+ " ");
+                        }
+                    listOfItems.add(weapons);
+                     }
+                    else if(!c.containsSpawnpoint(model)&&!c.getRoom().getAmmoTile(c).equals(null)){ // IT HAS AMMOTILES
+                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+                        }
                 }
-                listOfItems.add(weapons);
-            }else{ // IT HAS AMMOTILES
-                listOfItems.add(c.getRoom().getAmmoTile(c).toString());
-            }
+
+                return;//annulla azione
         }
 
 
@@ -1144,7 +1150,7 @@ public class Server {
     public static void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         action = new Action(model);
-        model.populateMap(model.getMapUsed());
+        model.populateMap();
     }
 
 

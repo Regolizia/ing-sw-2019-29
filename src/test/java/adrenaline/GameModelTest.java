@@ -22,6 +22,6 @@ GameModel model;
         System.out.println(model.getMapUsed().getGameBoard().getRoom(2).getSpawnpoints().indexOf(s));
 
         model.getMapUsed().getGameBoard().getRoom(1).addAmmoTile(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED));
-        model.populateMap(model.getMapUsed());
+        model.populateMap();
     }
 }
