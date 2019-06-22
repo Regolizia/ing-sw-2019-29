@@ -260,7 +260,7 @@ public class Server {
         }
 
         public void handleTurns(){
-            System.out.println("TURN OF " + nickname);
+            System.out.println("\nTURN OF " + nickname);
             int numberOfActions =0;
             while(true){
                 if(isCurrentPlayer()){
@@ -358,7 +358,7 @@ public class Server {
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                 }
 
-                broadcast("LALALA");
+                broadcast("LALALA first turn of " + nickname);
 
             } catch (Exception e) {
                 e.printStackTrace();
