@@ -81,10 +81,10 @@ public class ActionTest {
         AmmoTile a = new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE);
         a.setCoordinates(1, 2);
         Room room = new RoomDeath(1, 2);
-        CoordinatesWithRoom cTile = new CoordinatesWithRoom(1, 2, room);
-        cTile.getRoom().addAmmoTile(a);
-        CoordinatesWithRoom Tile = new CoordinatesWithRoom(a.getCoordinates().getX(), a.getCoordinates().getY(), cTile.getRoom());
-        action.grabTile(player, Tile);
+        //CoordinatesWithRoom cTile = new CoordinatesWithRoom(1, 2, room);
+       // cTile.getRoom().addAmmoTile(a);
+      //  CoordinatesWithRoom Tile = new CoordinatesWithRoom(a.getCoordinates().getX(), a.getCoordinates().getY(), cTile.getRoom());
+     //   action.grabTile(player, Tile);
         action.grabPowerUp(player);
         AmmoTile a1 = new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW);
         AmmoTile a2 = new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED);
