@@ -1183,6 +1183,7 @@ public class Server {
     public static void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         action = new Action(model);
+        model.startingMap();
         model.populateMap();
     }
 
