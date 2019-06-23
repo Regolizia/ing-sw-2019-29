@@ -9,9 +9,10 @@ import javax.management.modelmbean.ModelMBean;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameModelTest {
-GameModel model;
     @Test
     void constructor() {
+
+        GameModel model;
         model=new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,1);
         Spawnpoint s=new Spawnpoint(1,2);
         System.out.println(model.getMapUsed().getGameBoard().getRoom(2).getSpawnpoints().size());

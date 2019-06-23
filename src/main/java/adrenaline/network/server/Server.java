@@ -27,6 +27,7 @@ public class Server {
     private static int connectionsCount = 0;
     private static int boardChosen = 0;
     private static boolean gameIsOn = false;
+    private static boolean endgame = false;
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -45,8 +46,6 @@ public class Server {
     private Server server;
     private ExecutorService threadPool;
 
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
 
     public void setup(String[] args) throws Exception {
         time =Integer.parseInt(args[0]);
@@ -259,61 +258,78 @@ public class Server {
             }
         }
 
+        public boolean isGameOn(){
+            synchronized (this){
+                 return gameIsOn;
+            }
+        }
+
+        public boolean isEndgame(){
+            synchronized (this){
+                 return endgame;
+            }
+        }
+
         public void handleTurns(){
             System.out.println("\nTURN OF " + nickname);
             int numberOfActions =0;
-            while(true){
-                if(isCurrentPlayer()){
-                    try {
-                        if(isFirstTurn){
-                            sendToClient("YOURFIRSTTURN");
-                            System.out.println("FIRST TURN");
-                            sendForBoardSetup();
-                            firstTurn();
-                            numberOfActions=2;
-                        }
-                        if(numberOfActions!=2) {
-                            sendToClient("YOURTURN");
+            while(!isEndgame()) {
+                if (isGameOn()) {
 
-                            String choice = (String) inputStream.readObject();
-                            System.out.println(choice);
-                            switch (choice) {
-                                case "G":
-                                    sendToClient("GRAB");
-                                    grab();
-                                    numberOfActions++;
-                                    break;
-                                case "R":
-                                    sendToClient("RUN");
-                                    playerRun();
-                                    numberOfActions++;
-                                    break;
-                                case "M":
-                                    // MAP
-                                    break;
-                                case "B":
-                                    // PLAYER
-                                    break;
-                                case "C":
-                                    // OTHER PLAYERS
-                                    break;
-                                case "S":
-                                default:
-                                    //shoot(player);
-                                    numberOfActions++;
-                                    break;
+                    if (isCurrentPlayer()) {
+                        try {
+                            if (isFirstTurn) {
+                                sendToClient("YOURFIRSTTURN");
+                                System.out.println("FIRST TURN");
+                                sendForBoardSetup();
+                                firstTurn();
+                                numberOfActions = 2;
                             }
+                            if (numberOfActions != 2) {
+                                sendToClient("YOURTURN");
+
+                                String choice = (String) inputStream.readObject();
+                                System.out.println(choice);
+                                switch (choice) {
+                                    case "G":
+                                        sendToClient("GRAB");
+                                        grab();
+                                        numberOfActions++;
+                                        break;
+                                    case "R":
+                                        sendToClient("RUN");
+                                        playerRun();
+                                        numberOfActions++;
+                                        break;
+                                    case "M":
+                                        // MAP
+                                        break;
+                                    case "B":
+                                        // PLAYER
+                                        break;
+                                    case "C":
+                                        // OTHER PLAYERS
+                                        break;
+                                    case "S":
+                                    default:
+                                        //shoot(player);
+                                        numberOfActions++;
+                                        break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        // END OF TURN
+                        if (numberOfActions == 2) {
+                            nextPlayer();
+                            numberOfActions = 0;
+                            System.out.println("CURRENT PLAYER " + currentPlayer);
+                        }
                     }
-                    // END OF TURN
-                    if(numberOfActions==2){
-                    nextPlayer();
-                    numberOfActions=0;
-                    System.out.println("CURRENT PLAYER " + currentPlayer);}
+                    // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
+                    // SET endgame parameter in this class
                 }
-                // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
             }
         }
 
@@ -1159,6 +1175,38 @@ public class Server {
         }
     }
 
+/*    private static class PlayerCountdown{
+        public PlayerCountdown(){
+            final Timer timer = new Timer();
+            try {
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    int i = time;
+
+                    public void run() {
+                        System.out.println(i--);
+                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
+                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
+                                System.out.println("Game is starting...");
+
+                                gameIsOn = true;
+                                //Server.startGame();
+                                // DO SOMETHING TO START THE GAME
+                            }
+                            else if(connectionsCount<3){
+                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
+                            }
+                            timer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+
+            } catch (Exception e) {
+                //
+            }
+
+        }
+    }*/
+
 
 
 
@@ -1183,7 +1231,7 @@ public class Server {
     public static void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         action = new Action(model);
-        model.startingMap();
+        //model.startingMap();
         model.populateMap();
     }
 
