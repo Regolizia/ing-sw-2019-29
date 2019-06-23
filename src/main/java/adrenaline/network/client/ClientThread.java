@@ -114,6 +114,12 @@ public class ClientThread implements Runnable {
                 cells = getListFromServer();
                 client.grab(items,cells);
                 break;
+            case "GRABWEAPON":
+                client.grabWeapon(getFromServer());
+                break;
+            case "DROPWEAPON":
+                client.dropWeapon(getListFromServer());
+                break;
             case "RUN":
                 client.run(getListFromServer());
                 break;

@@ -442,7 +442,6 @@ public class Server {
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards()){
                     weapons.add(w.toString());
                 }
-                System.out.println("size of weapons after clear "+weapons.size());
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards()){
                     weapons.add(w.toString());
                 }
@@ -500,13 +499,8 @@ public class Server {
                 { // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
                 }
-
             }
-
-
-
         }
-
 
         CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
         try {
@@ -516,12 +510,10 @@ public class Server {
             x--;
             chosenCell = possibleCells.get(x);
             System.out.println("CELL FOR GRAB " + chosenCell.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
         if(chosenCell.containsSpawnpoint(model)) {
-           grabFromSpawnpoint(chosenCell,player);
+           grabFromSpawnpoint(chosenCell,player,listOfItems.get(x));
         }
         else {
             //se non spawnpoint
@@ -532,6 +524,9 @@ public class Server {
             * già incluso pescaggio power up
             * */
             action.grabTile(player, chosenCell);
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -700,75 +695,63 @@ public class Server {
         return true;
     }
 
-    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player){
+    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
 
         /*
          * controllo io se può pagarla + ricarica ma tu devi:
-         * 0-controllare che ti dica o effetto base o effetto alt nient'altro altrimenti non funziona il metodo x
          * 1-controllare che abbia meno di 3 carte in mano x
          * 2-una volta raccolta devi rimuoverla dalle carte dello spawnpoint
          * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
          * se scarta una carta rimettila nel deck x
          * */
+        sendToClient("GRABWEAPON");
+        sendToClient(cellItems); // RITORNA 1 O 2 O 3
+        try {
+            int x = (int)inputStream.readObject();
 
         Spawnpoint s = chosenCell.getSpawnpoint(model);
-        //  TODO se spawn fai scegliere quale e mettila in card
-        //send card
-        for (WeaponCard w: s.getWeaponCards()) {
-            //TODO MANDA AL CLIENT TO STRING
-                w.toString();
-        }
-        //TODO SALVA LA SCELTA
-        WeaponCard weaponCard=null;
+        WeaponCard weaponCard=s.getWeaponCards().get(x);
 
         LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
 
-        //TODO CHIEDI EFFETTO BASE/ALT
-
-        AmmoCube.Effect effect=null;
-
-        //TODO CHIEDI METODO PAGAMENTO
-        Action.PayOption payOption=null;  //payOption= Action.PayOption.AMMO OR   payOption= Action.PayOption.AMMOPOWER
+        //TODO CHIEDI METODO PAGAMENTO (non messo al momento)
+        Action.PayOption payOption= Action.PayOption.AMMO;  // TODO payOption= Action.PayOption.AMMO OR   payOption= Action.PayOption.AMMOPOWER
         if(payOption.equals(Action.PayOption.AMMOPOWER)){
             playerPowerUpCards=payWithThesePowerUps(player);
         }
-        //TODO CONTROLLA SE PUO' PAGARE L'EFFETTO BASE O ALT SE NO ESCI E ANNULLA AZIONE
-        if(!action.canPayCard(weaponCard,player,payOption,effect,playerPowerUpCards)){
-            //TODO MANDA MESSAGGIO
+        // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
+        if(!action.canPayCard(weaponCard,player,payOption,AmmoCube.Effect.BASE,playerPowerUpCards)){
+            //MANDA MESSAGGIO
             return false;}
 
-        // TODO CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
-        if(!player.canGrabWeapon()){
-            for (WeaponCard w:player.getHand()
-                 ) {
-                w.toString();
-                String response="";
-                //TODO CHIEDI SE VUOLE SCARTARE QUESTA
-                if(response=="YES")
-                    {
-                        player.getHand().remove(w);
-                        model.weaponDeck.getUsedWeaponCard().add(w);
-                        break;
-                    }
-            }
 
+        // CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
+        if(!player.canGrabWeapon()){
+            List<String> yourWeapons = new LinkedList<>();
+            for (WeaponCard w : player.getHand()) {
+                yourWeapons.add(w.toString());
+            }
+            sendToClient("DROPWEAPON");
+            sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
+            int y = (int)inputStream.readObject();
+            model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y));
         }
 
-        //TODO DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER
+        //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
         int number=0;
-        action.payAmmo(player,weaponCard,effect,number);
+        action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,number);
 
         player.getHand().add(weaponCard);
         s.getWeaponCards().remove(weaponCard);
-        player.getPowerUp().removeAll(playerPowerUpCards);
-        model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-        action.run(player,weaponCard.getCoordinatesOnMap());
+        player.getPowerUp().removeAll(playerPowerUpCards);  // TODO???????
+        model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards); // TODO???????
+        action.run(player,weaponCard.getCoordinatesOnMap()); // TODO???????
 
-        //TODO INCREMENTA TURNO
-
-
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
+
     }
 
 

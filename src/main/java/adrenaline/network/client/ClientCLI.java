@@ -194,6 +194,32 @@ public class ClientCLI extends Client{
             }else sendIntToServer(1);
         }else sendIntToServer(1);
     }
+    public void grabWeapon(String weapons){
+        String[] list = weapons.split(" ");
+        System.out.println("\nChoose a weapon to grab (first is default):");
+        System.out.println(list[0]+" [1] " +list[1]+" [2] "+list[2]+" [3]: ");
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<4){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+
+    public void dropWeapon(List<String> weapons){
+        System.out.println("\nChoose one of your weapons to drop (first is default):");
+        for(int i =0;i<weapons.size();i++) {
+            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<4){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
 
     public static void shoot() {
     }
