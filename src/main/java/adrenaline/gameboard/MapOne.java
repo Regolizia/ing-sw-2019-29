@@ -99,6 +99,15 @@ public class MapOne extends Map {
             getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n], wallDir[n]));
 
         }
+         for (Room room:getGameBoard().getRooms()
+         ) {
+             for (int x = 0; x < room.getRoomSizeX() - 1; x++) {
+                 for (int y = 0; y < room.getRoomSizeY() - 1; y++) {
+                     if(room.getSpawnpoint(x,y)==null)
+                         room.addAmmoTile(new AmmoTile(AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE),x,y);
+                 }
+             }
+         }
 
     }
 
