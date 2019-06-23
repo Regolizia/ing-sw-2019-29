@@ -132,7 +132,7 @@ public class Action {
 
     //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
     public LinkedList<CoordinatesWithRoom> proposeCellsGrab(Player player) {
-        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));
+        LinkedList<CoordinatesWithRoom> list = new LinkedList<>(player.getCoordinatesWithRooms().xTilesDistant(this.getModel().getMapUsed().getGameBoard(), 1));
         list.add(player.getCoordinatesWithRooms());
         if(player.checkDamage()>=1)
             list.addAll(proposeCellsGrabAdrenaline(player));

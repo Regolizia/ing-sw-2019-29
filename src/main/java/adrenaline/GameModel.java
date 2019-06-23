@@ -21,7 +21,6 @@ public class GameModel {
 
     final private int numMaxWeaponSpawnpoin=3;
     private LinkedList<Player> players;
-
     public enum Mode {
         DEATHMATCH, DOMINATION
     }
@@ -34,7 +33,7 @@ public class GameModel {
     protected Mode mode;
     private Map mapUsed;
     protected Bot bot;
-
+    private boolean doesntExists;
     public WeaponDeck weaponDeck;
     public PowerUpDeck powerUpDeck;
     public AmmoTileDeck ammoTileDeck;
@@ -95,41 +94,82 @@ public class GameModel {
         return players;
     }
 
-    public void populateMap(){
-        int indexOfRoom;
-        int xCoordinate;
-        int yCoordinate;
-        for(indexOfRoom=0;indexOfRoom<this.getMapUsed().getGameBoard().getRooms().size();indexOfRoom++){
-            //here check all the rooms one by one
-            for(xCoordinate=0;xCoordinate<this.getMapUsed().getArrayX()[indexOfRoom];xCoordinate++)
-            {
-                for(yCoordinate=0;yCoordinate<mapUsed.getArrayY()[indexOfRoom];yCoordinate++){
-                   if(xCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeX()&&yCoordinate<mapUsed.getGameBoard().getRoom(indexOfRoom).getRoomSizeY()){
-                       //now i check inside the room
-                       for (Spawnpoint spawnpoint:mapUsed.getGameBoard().getRoom(indexOfRoom).getSpawnpoints()) {
-                           if(spawnpoint.getSpawnpointY()==yCoordinate&&spawnpoint.getSpawnpointX()==xCoordinate&&spawnpoint.getWeaponCards().size()<numMaxWeaponSpawnpoin)
-                               spawnpoint.addWeaponCard(weaponDeck.pickUpWeapon());
 
-                       }
+    public void startingMap(){
+        for(Room room:getMapUsed().getGameBoard().getRooms()){
 
-                       for (AmmoTile a:mapUsed.getGameBoard().getRoom(indexOfRoom).getTiles()) {
-                           //devo vedere se la posizione a ha qualcosa
-                           if(mapUsed.getGameBoard().getRoom(indexOfRoom).getAmmoTile(a.getCoordinates()).equals(null)){
-                               this.getMapUsed().getGameBoard().getRooms().get(indexOfRoom).addAmmoTile(this.ammoTileDeck.pickUpAmmoTile());
-                           }
+            for (AmmoTile a:room.getTiles()
+                 ) {
 
-
-
-                       }
-                   }
-
+                for (AmmoCube ac: a.getAmmoCubes()
+                     ) {
+                    ac.setCubeColor(AmmoCube.CubeColor.FREE);
                 }
+            }
+
+            for (Spawnpoint spw:room.getSpawnpoints()
+                 ) {
+                spw.getWeaponCards().clear();
             }
 
         }
     }
 
+
+//conv if an AmmoTile doesnt't exists all its colors are none
+    public void populateMap() {
+        populateAmmoTile();
+        for (Room room : getMapUsed().getGameBoard().getRooms()) {
+            //here check all the rooms one by one
+
+            for (Spawnpoint s : room.getSpawnpoints()
+            ) {
+                while (s.getWeaponCards().size() < numMaxWeaponSpawnpoin) {
+                    s.getWeaponCards().add(this.weaponDeck.pickUpWeapon());
+                }
+            }
+        }
+
+    }
+
+public void populateAmmoTile(){
+
+ for (Room room : getMapUsed().getGameBoard().getRooms()) {
+        //here check all the rooms one by one
+        for (AmmoTile a : room.getTiles()
+        ) {
+                    for (AmmoCube ac : a.getAmmoCubes()
+                    ) {
+                        if (ac.getCubeColor().equals(AmmoCube.CubeColor.FREE))
+                            doesntExists = true;
+                        else {
+                            doesntExists = false;
+                            break;
+                        }
+                    }
+                    if (doesntExists) {
+                        AmmoTile toPopulate = this.ammoTileDeck.pickUpAmmoTile();
+                        for (int i = 0; i < toPopulate.getAmmoCubes().size(); i++)
+                            a.getAmmoCubes().set(i, toPopulate.getAmmoCubes().get(i));
+                    }
+
+                }
+            }
+
+
+
+
+
+
 }
+
+}
+
+
+
+
+
+
 
 
 
