@@ -53,14 +53,14 @@ public class WeaponDeck{
     public WeaponCard pickUpWeapon(){
         if(this.deck.size()>0){
             setUsedWeaponCard(this.deck.getFirst());
-            return this.deck.getFirst();
+            return this.deck.removeFirst();
         }
 
         else {
             shuffleUsedWeaponCards();
             deck=usedWeaponCard;
             usedWeaponCard.clear();
-            return deck.getFirst();}
+            return deck.removeFirst();}
     }
 
     public void setUsedWeaponCard(WeaponCard weaponCard){

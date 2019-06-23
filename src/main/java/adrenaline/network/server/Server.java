@@ -242,6 +242,7 @@ public class Server {
                         System.out.println("BOARD CHOSEN " + result);
                         boardChosen = result;
                         Server.createBoard();
+                        printWeaponSpawnpoints();
                         break;
                     } else {
                         //  ASK AGAIN BECAUSE NOT ACCEPTED
@@ -251,6 +252,23 @@ public class Server {
             }
         }
         ////
+
+
+        public void printWeaponSpawnpoints(){
+            Spawnpoint s = getSpawnpoint(AmmoCube.CubeColor.BLUE);
+            for (WeaponCard w : s.getWeaponCards()){
+                System.out.println(w.toString());
+            }
+            s = getSpawnpoint(AmmoCube.CubeColor.RED);
+            for (WeaponCard w : s.getWeaponCards()){
+                System.out.println(w.toString());
+            }
+            s = getSpawnpoint(AmmoCube.CubeColor.YELLOW);
+            for (WeaponCard w : s.getWeaponCards()){
+                System.out.println(w.toString());
+            }
+        }
+
 
         public boolean isCurrentPlayer(){
             synchronized (Server.model.getPlayers().get(currentPlayer)){
@@ -424,13 +442,10 @@ public class Server {
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards()){
                     weapons.add(w.toString());
                 }
-                sendListToClient(weapons);
-                weapons.clear();
+                System.out.println("size of weapons after clear "+weapons.size());
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards()){
                     weapons.add(w.toString());
                 }
-                sendListToClient(weapons);
-                weapons.clear();
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards()){
                     weapons.add(w.toString());
                 }
@@ -1236,7 +1251,6 @@ public class Server {
         model.populateMap();
         action = new Action(model);
     }
-
 
 
 

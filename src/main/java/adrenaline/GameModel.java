@@ -125,7 +125,7 @@ public class GameModel {
             for (Spawnpoint s : room.getSpawnpoints()
             ) {
                 while (s.getWeaponCards().size() < numMaxWeaponSpawnpoin) {
-                    s.getWeaponCards().add(this.weaponDeck.pickUpWeapon());
+                    s.getWeaponCards().add(weaponDeck.pickUpWeapon());
                 }
             }
         }

@@ -441,10 +441,10 @@ public class ClientGUI extends Client{
     }
 
 
-    public void boardSetup(int n, java.util.List<String> colors, List<String> names,List<String> blue,List<String> red, List<String> yellow){
+    public void boardSetup(int n, java.util.List<String> colors, List<String> names,List<String> blueredyellow){
         addPlayerNames(names);
         closeStartImage();
-        spawnpointsSetup(blue, red, yellow);
+        spawnpointsSetup(blueredyellow);
         setGameBoardImages(n);
         addPlayerBoards(colors);
     }
@@ -665,14 +665,14 @@ public class ClientGUI extends Client{
         return(new ImageIcon(rotate));
     }
 
-    public void spawnpointsSetup(List<String> blue, List<String> red, List<String> yellow){
+    public void spawnpointsSetup(List<String> blueredyellow){
         redArray = new JLabel[3];
         blueArray = new JLabel[3];
         yellowArray = new JLabel[3];
         ImageIcon img = new ImageIcon();
 
         for(int i=0; i<3;i++){
-            img = weaponImage(blue.get(i));
+            img = weaponImage(blueredyellow.get(i));
 
             blueArray[i] = new JLabel(img, SwingConstants.CENTER);
 
@@ -689,7 +689,7 @@ public class ClientGUI extends Client{
         }
 
         for(int i=0; i<3;i++) {
-            img = weaponImage(red.get(i));
+            img = weaponImage(blueredyellow.get(i+3));
 
             redArray[i] = new JLabel(rotateImag(img, 270), SwingConstants.CENTER);
 
@@ -705,7 +705,7 @@ public class ClientGUI extends Client{
         }
 
         for(int i=0; i<3;i++) {
-            img = weaponImage(yellow.get(i));
+            img = weaponImage(blueredyellow.get(i+6));
 
             yellowArray[i] = new JLabel(rotateImag(img, 90), SwingConstants.CENTER);
 

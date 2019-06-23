@@ -29,6 +29,6 @@ class WeaponDeckTest {
         WeaponCard weaponCard;
         weaponCard = weaponDeck.pickUpWeapon();
 
-        assertEquals(weaponCard, weaponDeck.getList().getFirst());
+        assertEquals(weaponCard, weaponDeck.getUsedWeaponCard().getFirst());
     }
 }

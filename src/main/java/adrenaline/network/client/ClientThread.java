@@ -95,10 +95,8 @@ public class ClientThread implements Runnable {
                 int n = Integer.parseInt(getFromServer());
                 List<String> colors = getListFromServer();
                 List<String> names = getListFromServer();
-                List<String> blueWeapons = getListFromServer();
-                List<String> redWeapons = getListFromServer();
-                List<String> yellowWeapons = getListFromServer();
-                client.boardSetup(n,colors,names,blueWeapons,redWeapons,yellowWeapons);    // MAINLY FOR GUI
+                List<String> blueredyellowWeapons = getListFromServer();
+                client.boardSetup(n,colors,names,blueredyellowWeapons);    // MAINLY FOR GUI
 
                 client.firstTurn(getListFromServer());
                 break;

@@ -24,7 +24,7 @@ public class Client {
         public void printMessage(String s){}
         public void showMainMenu(){}
         public void waitStart(){}
-        public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow){}
+        public void boardSetup(int n, List<String> colors, List<String> names, List<String> blueredyellow){}
 
         public String view(){return "Client";}
         public void getOutput(ObjectOutputStream o){}
