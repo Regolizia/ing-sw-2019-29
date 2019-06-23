@@ -1247,11 +1247,17 @@ public class Server {
 
     public static void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
-        model.startingMap();
+        //model.startingMap();
         model.populateMap();
+        printSomeAmmos();
         action = new Action(model);
     }
 
+    public static void printSomeAmmos(){
+        for(AmmoTile t : model.getMapUsed().getGameBoard().getRooms().get(3).getTiles()){
+            System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
+        }
+    }
 
 
 }

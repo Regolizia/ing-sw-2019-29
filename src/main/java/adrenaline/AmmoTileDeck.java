@@ -44,7 +44,7 @@ public LinkedList<AmmoTile> getDeck(){
 }
 //when there is an empty cell on the map i need to put an ammoTile
 public AmmoTile pickUpAmmoTile(){
-        if(deck.isEmpty()){
+        if(!deck.isEmpty()){
             setUsedAmmoTile(this.deck.getFirst());
             return deck.removeFirst();
         }

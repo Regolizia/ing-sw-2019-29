@@ -132,36 +132,18 @@ public class GameModel {
 
     }
 
-public void populateAmmoTile(){
+    public void populateAmmoTile(){
 
- for (Room room : getMapUsed().getGameBoard().getRooms()) {
-        //here check all the rooms one by one
-        for (AmmoTile a : room.getTiles()
-        ) {
-                    for (AmmoCube ac : a.getAmmoCubes()
-                    ) {
-                        if (ac.getCubeColor().equals(AmmoCube.CubeColor.FREE))
-                            doesntExists = true;
-                        else {
-                            doesntExists = false;
-                            break;
-                        }
-                    }
-                    if (doesntExists) {
-                        AmmoTile toPopulate = this.ammoTileDeck.pickUpAmmoTile();
-                        for (int i = 0; i < toPopulate.getAmmoCubes().size(); i++)
-                            a.getAmmoCubes().set(i, toPopulate.getAmmoCubes().get(i));
-                    }
+     for (Room room : getMapUsed().getGameBoard().getRooms()) {
+         for (int x = 1; x <= room.getRoomSizeX(); x++) {
+             for (int y = 1; y <= room.getRoomSizeY(); y++) {
+                 room.getTiles().add(ammoTileDeck.pickUpAmmoTile());
+                 room.getTiles().getLast().setCoordinates(x, y);
+             }
+         }
+     }
 
-                }
-            }
-
-
-
-
-
-
-}
+    }
 
 }
 
