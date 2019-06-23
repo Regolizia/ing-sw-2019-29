@@ -341,6 +341,9 @@ public class ClientGUI extends Client{
     //////////////////////
     public void waitStart(){
         closeMapChoice();
+        printMessage("Waiting for other players...");
+        closeTextField();
+        closeMessageTextField();
     }
 
     public void login(){
@@ -353,6 +356,10 @@ public class ClientGUI extends Client{
     ){
         this.frame.setTitle("Player: " + name); // FRAME TITLE
         setMessageTextField("Choose a color: "+ possibleColors);
+    }
+    public void printMessage(String s){
+        messageArea.append(s + "\n");
+        messageArea.setCaretPosition(messageArea.getText().length() - 1);
     }
 
     private void run(){
@@ -436,10 +443,10 @@ public class ClientGUI extends Client{
 
     public void boardSetup(int n, java.util.List<String> colors, List<String> names,List<String> blue,List<String> red, List<String> yellow){
         addPlayerNames(names);
-        addPlayerBoards(colors);
         closeStartImage();
         spawnpointsSetup(blue, red, yellow);
         setGameBoardImages(n);
+        addPlayerBoards(colors);
     }
 
     private void addPlayerBoards(List<String> list){
