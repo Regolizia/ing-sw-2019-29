@@ -81,7 +81,7 @@ public class ClientThread implements Runnable {
                 client.login();
                 break;
             case "COLOR":
-                    client.chooseColor(getFromServer());
+                client.chooseColor(getFromServer());
                 break;
             case "BOARD":
                 client.chooseBoard();
@@ -113,6 +113,12 @@ public class ClientThread implements Runnable {
                 List<String> cells = new LinkedList<>();
                 cells = getListFromServer();
                 client.grab(items,cells);
+                break;
+            case "PAYMENT":
+                client.payment();
+                break;
+            case "PAYWITHPOWERUP":
+                client.payWithPowerup(getFromServer());
                 break;
             case "GRABWEAPON":
                 client.grabWeapon(getFromServer());

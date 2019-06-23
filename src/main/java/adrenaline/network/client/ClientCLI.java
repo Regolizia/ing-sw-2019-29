@@ -194,6 +194,27 @@ public class ClientCLI extends Client{
             }else sendIntToServer(1);
         }else sendIntToServer(1);
     }
+    public void payment(){
+        System.out.println("\nDo you want to pay with just ammo [1] or also with powerups [2]? ([1] is default): ");
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x==1||x==2){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+
+    public void payWithPowerup(String powerup){
+        System.out.println("\nDo you want to pay with this powerup, [Y] or [N]? ([Y] is default): "+powerup);
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+
     public void grabWeapon(String weapons){
         String[] list = weapons.split(" ");
         System.out.println("\nChoose a weapon to grab (first is default):");

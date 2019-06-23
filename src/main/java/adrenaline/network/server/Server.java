@@ -714,8 +714,16 @@ public class Server {
 
         LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
 
-        //TODO CHIEDI METODO PAGAMENTO (non messo al momento)
-        Action.PayOption payOption= Action.PayOption.AMMO;  // TODO payOption= Action.PayOption.AMMO OR   payOption= Action.PayOption.AMMOPOWER
+        //CHIEDI METODO PAGAMENTO
+        sendToClient("PAYMENT");
+        int z = (int)inputStream.readObject();
+        Action.PayOption payOption;
+        if(z==1){
+            payOption= Action.PayOption.AMMO;
+        }else{
+            payOption= Action.PayOption.AMMOPOWER;
+        }
+
         if(payOption.equals(Action.PayOption.AMMOPOWER)){
             playerPowerUpCards=payWithThesePowerUps(player);
         }
@@ -754,18 +762,21 @@ public class Server {
 
     }
 
-
-
-
     public LinkedList<PowerUpCard> payWithThesePowerUps(Player player){
         LinkedList<PowerUpCard> chosenPower=new LinkedList<>();
-        //TODO MANDA CARTE POWER UP IN MANO
-        for (PowerUpCard powerUp:player.getPowerUp()) {
-            powerUp.toString();
-            //TODO CHIEDI SE VUOI UTILIZZARE QUESTO
-            String response="";
-            if(response=="YES"){
+        //MANDA CARTE POWER UP IN MANO
+        for (PowerUpCard powerUp : player.getPowerUp()) {
+            sendToClient("PAYWITHPOWERUP");
+            sendToClient(powerUp.toString());   // RITORNA Y O N
+            String response = null;
+            try {
+                response = (String) inputStream.readObject();
+
+            if(response.toUpperCase().equals("Y")){
                 chosenPower.add(powerUp);
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return chosenPower;

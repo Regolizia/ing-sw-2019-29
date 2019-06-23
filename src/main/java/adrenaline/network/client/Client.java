@@ -20,6 +20,8 @@ public class Client {
         public void chooseBoard(){}
         public void run(List<String> s){}
         public void grab(List<String> items,List<String> cells){}
+        public void payment(){}
+        public void payWithPowerup(String weapons){}
         public void grabWeapon(String weapons){}
         public void dropWeapon(List<String> weapons){}
         public void firstTurn(List<String> list){}
