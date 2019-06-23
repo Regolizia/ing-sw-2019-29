@@ -19,7 +19,9 @@ import java.util.*;
 public class Room {
 
     private Coordinates size;
+    private Coordinates ccAmmoTile;
     private LinkedList<AmmoTile> tiles;
+    private AmmoTile at;
     private int token;
     public LinkedList<Spawnpoint> spawnpoints;
     public LinkedList<SpawnpointDom> spawnpointsDom;
@@ -43,7 +45,9 @@ public class Room {
         spawnpointsDom = new LinkedList<SpawnpointDom>();
         this.tiles = new LinkedList<AmmoTile>();
         this.size = new Coordinates(x,y);
+        at=new AmmoTile(AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE);
         setToken(99);
+        ccAmmoTile=new Coordinates(0,0);
     }
 
 
@@ -79,8 +83,10 @@ public class Room {
      * @param t the tile to add
      * @see AmmoTile
      */
-    public void addAmmoTile(AmmoTile t){
-        tiles.add(t);
+    public void addAmmoTile(AmmoTile t,int x,int y){
+            t.setCoordinates(x,y);
+            tiles.addFirst(t);
+
     }
 
 
@@ -91,6 +97,7 @@ public class Room {
      * @return the AmmoTile
      * @see Coordinates
      */
+    //conv instead of null sends an empty ammotile
     public AmmoTile getAmmoTile(Coordinates coordinates){
         int index=0;
      /*   for(index=0;index<getTiles().size();index++)
@@ -104,7 +111,7 @@ public class Room {
                 return tile;
         }
         //return getTiles().get(index);
-        return null;
+        return at;
     }
 
 
@@ -151,7 +158,7 @@ public class Room {
      * @see AmmoTile
      */
     public LinkedList<AmmoTile> getTiles(){
-        return tiles;
+        return this.tiles;
     }
 
     public Spawnpoint getSpawnpoint(int x, int y){
