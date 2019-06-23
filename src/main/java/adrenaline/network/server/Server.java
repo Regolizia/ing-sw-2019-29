@@ -469,23 +469,25 @@ public class Server {
         List<String> listOfCells = new LinkedList<>();
         List<String> listOfItems = new LinkedList<>();
         if(possibleCells.size()!=0)
-            {
-                for (CoordinatesWithRoom c : possibleCells){
-                     listOfCells.add(c.toString());
-                    if (c.containsSpawnpoint(model)&&!c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
-                        Spawnpoint s = c.getSpawnpoint(model);
-                        String weapons = "";
-                        for(WeaponCard w : s.getWeaponCards()){
-                         weapons = weapons.concat(w.toString()+ " ");
-                        }
+        {
+            for (CoordinatesWithRoom c : possibleCells){
+                listOfCells.add(c.toString());
+                if (c.containsSpawnpoint(model)&&!c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
+                    Spawnpoint s = c.getSpawnpoint(model);
+                    String weapons = "";
+                    for(WeaponCard w : s.getWeaponCards()){
+                        weapons = weapons.concat(w.toString()+ " ");
+                    }
                     listOfItems.add(weapons);
-                     }
-                    else if(!c.containsSpawnpoint(model)&&c.getRoom().getTiles().contains(c.getRoom().getAmmoTile(c))){ // IT HAS AMMOTILES
-                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
-                        }
-                    else
-                        listOfItems.add("no grab");
                 }
+
+                else
+                { // IT HAS AMMOTILES
+                    listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+                }
+
+            }
+
 
 
         }
@@ -1230,12 +1232,10 @@ public class Server {
 
     public static void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
-        action = new Action(model);
-        //model.startingMap();
+        model.startingMap();
         model.populateMap();
+        action = new Action(model);
     }
-
-
 
 
 

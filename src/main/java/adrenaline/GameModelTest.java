@@ -1,10 +1,9 @@
 package adrenaline;
 
-import adrenaline.weapons.Cyberblade;
-import adrenaline.weapons.CyberbladeTest;
 import org.junit.jupiter.api.Test;
 
-import javax.management.modelmbean.ModelMBean;
+import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +21,7 @@ class GameModelTest {
 
         System.out.println(model.getMapUsed().getGameBoard().getRoom(2).getSpawnpoints().indexOf(s));
 
-        model.getMapUsed().getGameBoard().getRoom(1).addAmmoTile(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED));
+        model.getMapUsed().getGameBoard().getRoom(1).addAmmoTile(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED),1,1);
         model.populateMap();
     }
 }
