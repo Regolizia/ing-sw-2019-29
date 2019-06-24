@@ -1045,7 +1045,7 @@ public class Server {
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP2){
-                    targets=pastTargets;
+                    targets=pastTargets;    // OP2 DOPO BASE PER FORZA
                     w.applyDamage(targets,p,e);
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -1055,7 +1055,7 @@ public class Server {
                 }
                 break;
 
-            case "PowerGlove":
+            case "PowerGlove": // LO FACCIO DOPO
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // TODO ASK 1 TARGET
@@ -1071,7 +1071,7 @@ public class Server {
                         // TODO ASK IF PLAYER WANTS TO MOVE THERE
 
                         // TO BE CONTINUED...
-                        // POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
+                        // TODO POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
                     }
                 }
                 break;
@@ -1080,7 +1080,16 @@ public class Server {
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
-                // TODO ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
+                // ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
+
+                // ASK WHICH 1 TARGET TO DAMAGE
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int i = (int)inputStream.readObject();
+                i--;
+                Object tg = targets.get(i);
+                targets.clear();
+                targets.add(tg);
+                // TODO ASK IF WANT ANOTHER TARGET IF ALT EFFECT
 
                 if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2) {
 
@@ -1093,18 +1102,45 @@ public class Server {
 
             case "RocketLauncher":
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // TODO ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
-                    w.applyDamage(targets,p,e);
-                    // TODO ASK IF MOVE TARGET
+                    if(pastTargets.isEmpty()){  // PRIMA BASE- SE NON VIENE PASSATO NULLA RITORNA IL GIOCATORE COLPITO
 
-                    // PRIMA BASE- SE NON VIENE PASSATO NULLA RITORNA IL GIOCATORE COLPITO
-                    // PRIMA OP2- SE GLI PASSANO UN GIOCATORE ALLORA PRENDI LA SUA POS, METTILA IN CELLS TO TARGETS, FAI SCEGLIERE UN TARGET E COLPISCILO E MUOVI SE VUOI
-                }
+                        cells = w.getPossibleTargetCells(playerPosition,e,g);
+
+                    }else{// PRIMA OP2- SE GLI PASSANO UN GIOCATORE ALLORA PRENDI LA SUA POS,
+                          // METTILA IN CELLS TO TARGETS, FAI SCEGLIERE UN TARGET E COLPISCILO E MUOVI SE VUOI
+                        cells = new LinkedList<>();
+                        cells.add(((Player)pastTargets.get(0)).getCoordinatesWithRooms());
+                    }
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int n = (int)inputStream.readObject();
+                    n--;
+                    Object oj = targets.get(n);
+                    targets.clear();
+                    targets.add(oj);
+
+                    w.applyDamage(targets,p,e);
+
+                    // TODO ASK IF MOVE TARGET 1 SQUARE IF PRIMA BASE
+                    // TODO IF PRIMA BASE RETURN OLD TARGET POSITION (AS PLAYER) BEFORE MOVING IT
+
+                    }
                 if(e.getEffect()== AmmoCube.Effect.OP2) {
-                    // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
-                    // PRIMA OP2- (NULLA PASSATO) TODO SCEGLI UNA CELLA, COLPISCILI E POI RITORNA LA CELLA (COME GIOCATORE)
+                    if(pastTargets.isEmpty()) { // PRIMA OP2- (NULLA PASSATO) SCEGLI UNA CELLA, COLPISCILI E POI RITORNA LA CELLA (COME GIOCATORE)
+                        cells = w.getPossibleTargetCells(playerPosition,e,g);
+                        // TODO CHIEDI 1 CELLA, COLPISCILI, RITORNA CELLA COME GIOCATORE
+                        //w.applyDamage(targets,p,e);
+                        //
+                        
+                    }else{  // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
+                        cells = w.getPossibleTargetCells(((Player)pastTargets.get(0)).getCoordinatesWithRooms(),e,g);
+                        targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                        w.applyDamage(targets,p,e);
+                    }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
