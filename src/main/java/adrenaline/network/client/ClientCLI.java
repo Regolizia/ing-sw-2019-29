@@ -278,6 +278,17 @@ public class ClientCLI extends Client{
             }else sendToServer("Y");
         }else sendToServer("Y");
     }
+
+    public void moveTarget(){
+        System.out.println("\nDo you want to move the target, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+
     public void chooseCell(List<String> cells){
         System.out.println("\nChoose a cell (first is default):");
         for(int i =0;i<cells.size();i++) {

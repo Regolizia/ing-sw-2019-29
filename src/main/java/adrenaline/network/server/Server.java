@@ -1172,22 +1172,36 @@ public class Server {
                 int i = (int)inputStream.readObject();
                 i--;
                 Object tg = targets.get(i);
+                List<Object> targets2 = targets;
                 targets.clear();
                 targets.add(tg);
-                // TODO ASK IF WANT ANOTHER TARGET IF ALT EFFECT
 
-                if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2) {
+                // ASK IF WANT ANOTHER TARGET IF ALT EFFECT
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    targets2.remove(tg);
+                    sendToClient("CHOOSEANOTHER");
+                    String rsp = (String) inputStream.readObject();
+                    if (rsp.toUpperCase().equals("Y")) {
+                        sendToClient("CHOOSETARGET");
+                        sendListToClient(fromTargetsToNames(targets2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xeo = (int) inputStream.readObject();
+                        xeo--;
+                        targets.add(targets2.get(xeo));
+                    }
+                }
+                if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2 &&
 
-                    // 2 TARGETS OF ALT EFFECT HAVE TO BE IN THE SAME DIRECTION!!!!!
-                    // TODO ASK AGAIN IF THIS IS FALSE
-                    playerPosition.checkSameDirection(((Player)targets.get(0)).getCoordinatesWithRooms(),((Player)targets.get(1)).getCoordinatesWithRooms(),10,g,false);
+                    !playerPosition.checkSameDirection(((Player)targets.get(0)).getCoordinatesWithRooms(),((Player)targets.get(1)).getCoordinatesWithRooms(),10,g,false)){
+                        // 2 TARGETS OF ALT EFFECT HAVE TO BE IN THE SAME DIRECTION!!!!!
+                        // IF checkSameDirection FALSE REMOVE SECOND TARGET
+                        targets.remove(1);
                 }
                 w.applyDamage(targets,p,e);
                 break;
 
-            case "RocketLauncher":
+            case "RocketLauncher": // LO FACCIO DOPO
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    // TODO ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
+                    // ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
                     if(pastTargets.isEmpty()){  // PRIMA BASE- SE NON VIENE PASSATO NULLA RITORNA IL GIOCATORE COLPITO
 
                         cells = w.getPossibleTargetCells(playerPosition,e,g);
@@ -1244,18 +1258,31 @@ public class Server {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
 
-                    // TODO ASK WHICH TARGETS TO DAMAGE - UP TO 3
-                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    // ASK WHICH TARGETS TO DAMAGE - UP TO 3
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int nm = (int)inputStream.readObject();
                     nm--;
                     Object ot = targets.get(nm);
+                    List<Object> list2 = targets;
                     targets.clear();
                     targets.add(ot);
-                    // ASK IF ANOTHER
-                        // ASK IF ANOTHER
+                    list2.remove(ot);
 
+                    for(int v=0;v<2;v++) {
+                        sendToClient("CHOOSEANOTHER");
+                        String rs = (String) inputStream.readObject();
+                        if (rs.toUpperCase().equals("Y")) {
+                            sendToClient("CHOOSETARGET");
+                            sendListToClient(fromTargetsToNames(list2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                            int ye = (int) inputStream.readObject();
+                            ye--;
+                            targets.add(list2.get(ye));
+                            list2.remove(ye);
+                        } else {
+                            break;
+                        }
+                    }
                     boolean ok = false;
                     while (!ok) {
                         if ((targets.size() == 3 &&
@@ -1300,15 +1327,18 @@ public class Server {
                 w.applyDamage(targets,p,e);
 
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    // TODO ASK -IF- THEY WANT TO MOVE THAT TARGET 1 SQUARE
-                    // if yes{
+                    // ASK -IF- THEY WANT TO MOVE THAT TARGET 1 SQUARE
+                    sendToClient("MOVETARGET");
+                    String rs = (String) inputStream.readObject();
+                    if (rs.toUpperCase().equals("Y")) {
+                    
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xf = (int)inputStream.readObject();
                     xf--;
                     ((Player)targets.get(0)).setPlayerPosition(one.get(xf));
-                    //}
+                    }
                 }
                 break;
 
