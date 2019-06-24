@@ -1215,7 +1215,13 @@ public class Server {
             case "Sledgehammer":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                // TODO CHOOSE 1 TARGET
+                // ASK WHICH 1 TARGET TO DAMAGE
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int num = (int)inputStream.readObject();
+                num--;
+                Object ojt = targets.get(num);
+                targets.clear();
+                targets.add(ojt);
                 w.applyDamage(targets,p,e);
 
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -1226,24 +1232,29 @@ public class Server {
                 break;
 
             case "Thor":
+                cells = new LinkedList<>();
+
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
-                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-                    // TODO ASK 1 TARGET
-                    w.applyDamage(targets, p, e);
-                    // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
                 }
+
                 if(e.getEffect()== AmmoCube.Effect.OP1 || e.getEffect()== AmmoCube.Effect.OP2) {
                     // PUT HERE TARGET'S POSITION, GLIEL'HA PASSATA
-                    CoordinatesWithRoom targetPos = new CoordinatesWithRoom();
-
+                    CoordinatesWithRoom targetPos=((Player)pastTargets.get(0)).getCoordinatesWithRooms();
                     cells = w.getPossibleTargetCells(targetPos, e, g);
-                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-                    // TODO ASK 1 TARGET
-                    w.applyDamage(targets, p, e);
-                    // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+
                 }
-                break;
+                targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int nr = (int)inputStream.readObject();
+                nr--;
+                Object oc = targets.get(nr);
+                targets.clear();
+                targets.add(oc);
+                w.applyDamage(targets, p, e);
+                // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+                return targets;
 
             case "TractorBeam":
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
