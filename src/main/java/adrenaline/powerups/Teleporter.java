@@ -18,6 +18,12 @@ public class Teleporter  extends PowerUpCard {
     }
 
 
+    /**
+     *getPossibleCells
+     * @param m game model used
+     * @param p target of teleporter
+     * return a LInkedList<CoordinatesWithRoom> where the target can be moved
+     */
     public LinkedList<CoordinatesWithRoom>getPossibleCells(GameModel m, Player p){
 
         LinkedList<CoordinatesWithRoom>cWr=new LinkedList<>();

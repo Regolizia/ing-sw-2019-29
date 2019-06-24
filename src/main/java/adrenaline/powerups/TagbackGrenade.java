@@ -19,6 +19,12 @@ public class TagbackGrenade extends PowerUpCard {
         return "TagbackGrenade, "+getPowerUpColor();
     }
 
+    /**
+     *giveMark
+     * @param player
+     * @param victim
+     * method to give a mark
+     */
     public void giveMark(Player player, Player victim){
         victim.addMarks(player,1);
     }

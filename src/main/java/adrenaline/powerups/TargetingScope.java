@@ -17,6 +17,7 @@ public class TargetingScope  extends PowerUpCard {
     }
     public TargetingScope(AmmoCube.CubeColor color) {
         setPowerUpColor(color);
+        setCanBeUsedOnBot(false);
     }
 
     @Override
@@ -24,6 +25,12 @@ public class TargetingScope  extends PowerUpCard {
         return "TargetingScope, "+getPowerUpColor();
     }
 
+    /**
+     *plusOneDamage
+     * @param player
+     * @param target
+     * a method to give one additional damage when used Targeting scope
+     */
     public void plusOneDamage(Player player,Object target){
         if(target instanceof Player)
             ((Player) target).damageByShooter(player);
