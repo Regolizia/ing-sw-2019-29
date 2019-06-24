@@ -813,29 +813,52 @@ public class Server {
         return chosenPower;
     }
 
-
+    public List<String> fromTargetsToNames(List<Object> list){
+        List<String> targets = new LinkedList<>();
+        for (Object o : list) {
+            targets.add(o.toString());
+        }
+        return targets;
+    }
+    public List<String> fromCellsToNames(List<CoordinatesWithRoom> list){
+        List<String> cells = new LinkedList<>();
+        for (CoordinatesWithRoom c : list) {
+            cells.add(c.toString());
+        }
+        return cells;
+    }
 
 
     public List<Object> requestsForEveryWeapon(EffectAndNumber e, WeaponCard w, Player p, GameBoard g, GameModel model, List<Object> pastTargets){
         CoordinatesWithRoom playerPosition = p.getCoordinatesWithRooms();
         List<CoordinatesWithRoom> cells;
         List<Object> targets;
+        try {
         switch (w.toString()){
 
             case "Cyberblade":
                 if(e.getEffect()== AmmoCube.Effect.BASE || e.getEffect()== AmmoCube.Effect.OP2){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int)inputStream.readObject();
+                    x--;
+                    Object t = targets.get(x);
+                    targets.clear();
+                    targets.add(t);
 
                     // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO)
                     // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
 
                     w.applyDamage(targets,p,e);
+                    return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     // TODO MOVE 1 SQUARE
                 }
+
                 break;
 
             case "Electroscythe":
@@ -899,7 +922,15 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-                    // TODO ASK QUALE TARGET COLPIRE (1)
+
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int)inputStream.readObject();
+                    x--;
+                    Object t = targets.get(x);
+                    targets.clear();
+                    targets.add(t);
+
                     w.applyDamage(targets, p, e);
                     // TODO ASK SE VUOLE MUOVERE IL TARGET DI 1
                 }
@@ -915,15 +946,29 @@ public class Server {
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
-                // TODO ASK 1 TARGET
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int x = (int)inputStream.readObject();
+                x--;
+                Object t = targets.get(x);
+                targets.clear();
+                targets.add(t);
+
                 w.applyDamage(targets,p,e);
                 break;
+
             case "Hellion":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
-                // TODO ASK 1 TARGET - SAVE IT FOR LATER
-                Object target = new Object();
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int y = (int)inputStream.readObject();
+                y--;
+                // SAVE IT FOR LATER
+                Object target = targets.get(y);
+                targets.clear();
+                targets.add(target);
 
                 CoordinatesWithRoom c = ((Player)target).getCoordinatesWithRooms(); // COORD DEL TARGET
                 List<CoordinatesWithRoom> newList = new LinkedList<>();
@@ -944,29 +989,63 @@ public class Server {
             case "LockRifle":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                // TODO ASK 1 TARGET TO DAMAGE
+
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int r = (int)inputStream.readObject();
+                r--;
+                Object tar = targets.get(r);
+                targets.clear();
+                targets.add(tar);
 
                 // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
                 // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
 
                 w.applyDamage(targets,p,e);
-                break;
+                return targets;
 
-            case "MachineGun":
+            case "MachineGun":  // LA FACCIO POI
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                // TODO ASK TO CHOOSE 1 OR 2 TARGETS
+
+                // ASK TO CHOOSE 1 OR 2 TARGETS -BASE
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int nu = (int)inputStream.readObject();
+                nu--;
+                Object tr = targets.get(nu);
+                targets.clear();
+                targets.add(tr);
+                // do you want another
+                // choose another add it if different
+
+                // SHOOT AGAIN ONE OF THEM -OP1 (MAYBE BASE ALWAYS BEFORE OP1?????)
+                if(!pastTargets.isEmpty())
+                    //ask which of the two to shoot again
                 // TODO CHECK TARGETS OP1 AND OP2 DIFFERENTI
                 // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
+
                 // TODO ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
                 w.applyDamage(targets,p,e);
                 break;
 
             case "PlasmaGun":
-                if(e.getEffect()== AmmoCube.Effect.BASE || e.getEffect()== AmmoCube.Effect.OP2) {
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO ASK 1 TARGET (SAVE IT FOR THE OTHER EFFECT)
+
+                    // ASK WHICH 1 TARGET TO DAMAGE, (SAVE IT FOR THE OTHER EFFECT)
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int i = (int)inputStream.readObject();
+                    i--;
+                    Object tg = targets.get(i);
+                    targets.clear();
+                    targets.add(tg);
+
+                    w.applyDamage(targets,p,e);
+                    return targets;
+                }
+                if(e.getEffect()== AmmoCube.Effect.OP2){
+                    targets=pastTargets;
                     w.applyDamage(targets,p,e);
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -1173,6 +1252,9 @@ public class Server {
                 // TODO ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
                 w.applyDamage(targets,p,e);
                 break;
+        }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
     }
