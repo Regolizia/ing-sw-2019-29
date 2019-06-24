@@ -19,7 +19,8 @@ public class Server {
 
     private static GameModel model;
     private static Action action;
-
+    private static BotAction botAction;
+    private static FreneticAction freneticAction;
     private static int currentPlayer = 0;
     private static boolean isFirstTurn = true;
 
@@ -481,7 +482,21 @@ public class Server {
             }
         }
 
-
+    public void botShoot(Bot bot){
+            LinkedList<CoordinatesWithRoom> possibleShoots= botAction.canSee(bot.getCoordinatesWithRooms(),bot);
+          //TODO SEND POSSIBLESHOOT TO PLAYER
+            //TODO RECIVED SHOOT TARGET
+            CoordinatesWithRoom choosenCoordinate=new CoordinatesWithRoom();
+        //TODO GET TARGET
+             Player victim=new Player();
+            botAction.botShoot(victim,bot);
+    }
+    public void botRun(Bot bot){
+            LinkedList<CoordinatesWithRoom> possibleRun=botAction.proposeCellsRun(bot.getCoordinatesWithRooms());
+            //TODO SEND POSSIBLE COORDINATES + CHOOSE ONE
+            CoordinatesWithRoom choosenRun=new CoordinatesWithRoom();
+            botAction.run(bot,choosenRun);
+    }
 
     public void grab(){
         Player player = Server.model.getPlayers().get(currentPlayer);
