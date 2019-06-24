@@ -30,6 +30,11 @@ public class RoomsTest {
         board.getRoom(2);
         Room a = new Room();
         List<Spawnpoint> list = a.getSpawnpoints();
+        Spawnpoint s=new Spawnpoint(1,2);
+        a.addSpawnpoint(s);
+        a.addSpawnpointDom(s);
+        a.getSpawnpointDom();
+
 
     }
 }
