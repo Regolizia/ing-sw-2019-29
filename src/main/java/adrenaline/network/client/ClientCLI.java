@@ -241,6 +241,19 @@ public class ClientCLI extends Client{
             }else sendIntToServer(1);
         }else sendIntToServer(1);
     }
+    public void chooseWeapon(List<String> weapons){
+        System.out.println("\nChoose one of your weapons (first is default):");
+        for(int i =0;i<weapons.size();i++) {
+            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<4){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
 
     public static void shoot() {
     }

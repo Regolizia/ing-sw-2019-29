@@ -24,6 +24,7 @@ public class Client {
         public void payWithPowerup(String weapons){}
         public void grabWeapon(String weapons){}
         public void dropWeapon(List<String> weapons){}
+        public void chooseWeapon(List<String> weapons){}
         public void firstTurn(List<String> list){}
         public void printMessage(String s){}
         public void showMainMenu(){}

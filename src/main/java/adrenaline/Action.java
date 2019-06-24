@@ -199,7 +199,10 @@ public class Action {
             if(cube.getCubeColor()== POWERUP)
                 grabPowerUp(player);
         }
-                    return grabCube(player, toBeGrabbedTile);
+
+        getModel().ammoTileDeck.getDeck().addLast(toBeGrabbedTile);
+
+        return grabCube(player, toBeGrabbedTile);
 
 
     }
@@ -233,12 +236,10 @@ public class Action {
 
                     case RED:
                         player.setCube(1,0,0);break;
+                    case POWERUP: break;
                 default:player.setCube(0,0,0);
                 }
         }
-       player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(),0).equals(a.getCoordinates());
-        getModel().ammoTileDeck.getDeck().addLast(a);
-
         return true;
 
     }
@@ -257,8 +258,7 @@ public class Action {
 public void grabPowerUp(Player p){
         if(p.canGrabPowerUp()){
             PowerUpCard power=getModel().powerUpDeck.pickPowerUp();
-            p.getPowerUp().add(power);
-            getModel().powerUpDeck.getPowerUpDeck().remove(power);}
+            p.getPowerUp().add(power);}
 }
 
 //-----------------------------------------SHOOTING & WEAPONS METHODS-------------------------------------------------//

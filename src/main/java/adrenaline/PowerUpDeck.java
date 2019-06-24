@@ -52,20 +52,16 @@ public class PowerUpDeck{
 
 
     public PowerUpCard pickPowerUp(){
-        if(this.deck.size()>0){
+        if(!deck.isEmpty()){
             setUsedPowerUp(this.deck.getFirst());
-            this.deck.removeFirst();
-                if(this.deck.size()>0)
-                    return this.deck.getFirst();
-                else
-                    return null;
+            return this.deck.removeFirst();
         }
 
         else {
             shuffleUsedPowerUp();
             deck.addAll(usedPowerUp);
             usedPowerUp.clear();
-            return deck.getFirst();}
+            return deck.removeFirst();}
     }
 
     public void setUsedPowerUp(PowerUpCard powerUp){

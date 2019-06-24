@@ -106,9 +106,13 @@ public class Room {
             if(getTiles().get(index).getCoordinates()==coordinates)
                 break;
         }*/
-        for (AmmoTile tile:getTiles()) {
-            if (tile.getCoordinates().equals(coordinates))
-                return tile;
+        for (int i = 0; i<getTiles().size();i++) {
+            if (getTiles().get(i).getCoordinates().equals(coordinates)){
+                AmmoTile a = getTiles().get(i);
+                getTiles().remove(i);
+                return a;
+
+            }
         }
         //return getTiles().get(index);
         return at;

@@ -18,7 +18,7 @@ class PowerUpDeck2Test {
         assertTrue(powerUpDeck.getPowerUpDeck().size()>0);
         PowerUpCard powerUpCard;
         powerUpCard = powerUpDeck.pickPowerUp();
-        assertEquals(powerUpCard, powerUpDeck.getPowerUpDeck().getFirst());
+        assertEquals(powerUpCard, powerUpDeck.getUsedPowerUp().getFirst());
 
     }
 

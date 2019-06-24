@@ -528,7 +528,9 @@ public class Server {
             * dalla mappa e ne aggiungo subito un altro
             * già incluso pescaggio power up
             * */
+            printPlayerAmmo(player);
             action.grabTile(player, chosenCell);
+            printPlayerAmmo(player);
         }
         } catch (Exception e) {
             e.printStackTrace();
@@ -540,14 +542,35 @@ public class Server {
     public void shoot(Player player){
         /*
         * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
-        //TODO CHIEDI PAGAMENTO
-        Action.PayOption payOption=null;
+
+        LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
+
+        //CHIEDI METODO PAGAMENTO AMMO O AMMOPOWER
+        sendToClient("PAYMENT");
+        int z = 0;
+        try {
+            z = (int)inputStream.readObject();
+
+        Action.PayOption payOption;
+        if(z==1){
+            payOption= Action.PayOption.AMMO;
+        }else{
+            payOption= Action.PayOption.AMMOPOWER;
+        }
+
+        if(payOption.equals(Action.PayOption.AMMOPOWER)){
+            playerPowerUpCards=payWithThesePowerUps(player);    // DOVE USI QUESTE POWERUP PER PAGARE QUI?
+        }
+
+        // TODO PAYMENT? COSA DEVO CHIEDERE? COSA DEVO RICEVERE?
         LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
-        int number;
+        int number = 42;
         //SAVING PLAYER INITIAL POSITION IN CASE HE CAN'T SHOOT/HE DOESN'T SHOOT
         CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
 
-        //TODO GIOCATORE SI VUOLE SPOSTARE PRIMA?
+        ///////////////
+        /*
+        // TODO GIOCATORE SI VUOLE SPOSTARE PRIMA? -adrenaline action   (LO FACCIAMO DOPO NON SONO REGOLE BASE)
         boolean moves=true;
           if(moves==true){
               LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player);
@@ -556,23 +579,21 @@ public class Server {
               //set new position
               action.run(player,playerPosition);
           }
-        WeaponCard weaponCard =null;
-       //TODO MANDA MANO WEAPON AL GIOCATORE
-        //TODO SCEGLI ARMA DA USARE E METTILA IN weaponCard
-        for (WeaponCard w:player.getHand()
-             ) {
-            w.toString();
-            //ask if wants this card
-            //if yes
-            weaponCard=w;
-            break;
+          */
+          ///////////////////
 
+        // SELEZIONE ARMA DALLA MANO
+        List<String> yourWeapons = new LinkedList<>();
+        for (WeaponCard w : player.getHand()) {
+            yourWeapons.add(w.toString());
         }
+        sendToClient("CHOOSEWEAPON");
+        sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
+        int y = (int)inputStream.readObject();
+        y--;
+        WeaponCard weaponCard =player.getHand().get(y);
 
-       //TODO RICEVI UN NUMERO DA METODI CARTE
-           number=0;
-
-          //if weapon is already reloaded or reloaded alt, player can request other effect
+        //if weapon is already reloaded, player can request other effect
 
         if(!weaponCard.getReloadAlt()&&!weaponCard.getReload()){
                 if(!shootBase(weaponCard,player,number,positionBeforeShoot))
@@ -581,9 +602,9 @@ public class Server {
                        // return false;
                     }
         }
-        //TODO VUOI ALTRI EFFETTI?
+        //TODO VUOI ALTRI EFFETTI? e se non li vuole non spara?
         boolean otherEffect=true;
-            if(otherEffect&&(weaponCard.getReload()||weaponCard.getReloadAlt())){
+            if(otherEffect&&(weaponCard.getReload())){
              paidEffect.addAll(shootOtherEffect(weaponCard,player,number));
 
             //send possible target
@@ -602,9 +623,11 @@ public class Server {
             }
         }
 
-
         weaponCard.setNotReload();
         weaponCard.setReloadAlt(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player, int number) {
@@ -748,7 +771,7 @@ public class Server {
             sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
             int y = (int)inputStream.readObject();
             // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
-            //model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y));
+            //model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y--));
         }
 
         //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
@@ -1260,7 +1283,9 @@ public class Server {
             System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
         }
     }
-
+    public static void printPlayerAmmo(Player p){
+        System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
+    }
 
 }
 
