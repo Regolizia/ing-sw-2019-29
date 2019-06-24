@@ -1134,7 +1134,7 @@ public class Server {
                         // TODO CHIEDI 1 CELLA, COLPISCILI, RITORNA CELLA COME GIOCATORE
                         //w.applyDamage(targets,p,e);
                         //
-                        
+
                     }else{  // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
                         cells = w.getPossibleTargetCells(((Player)pastTargets.get(0)).getCoordinatesWithRooms(),e,g);
                         targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -1155,6 +1155,16 @@ public class Server {
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
 
                     // TODO ASK WHICH TARGETS TO DAMAGE - UP TO 3
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nm = (int)inputStream.readObject();
+                    nm--;
+                    Object ot = targets.get(nm);
+                    targets.clear();
+                    targets.add(ot);
+                    // ASK IF ANOTHER
+                        // ASK IF ANOTHER
+
                     boolean ok = false;
                     while (!ok) {
                         if ((targets.size() == 3 &&
@@ -1165,8 +1175,13 @@ public class Server {
                                         !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
                                 )) {
                             ok = true;
-                        } else {
-                            // TODO ASK AGAIN
+                        } else {    // SE SBAGLIA TOLGO I TARGET E BASTA
+                            if(targets.size()==2){
+                                targets.remove(1);
+                            }
+                            if(targets.size()==3){
+                                targets.remove(2);
+                            }
                         }
                     }
                     w.applyDamage(targets, p, e);
@@ -1179,18 +1194,21 @@ public class Server {
                 break;
 
             case "Shotgun":
+                cells = w.getPossibleTargetCells(playerPosition,e,g);
+                targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+
+                // ASK WHICH 1 TARGET TO DAMAGE
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int nm = (int)inputStream.readObject();
+                nm--;
+                Object ot = targets.get(nm);
+                targets.clear();
+                targets.add(ot);
+
+                w.applyDamage(targets,p,e);
+
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO CHOOSE 1 TARGET
-                    w.applyDamage(targets,p,e);
                     // TODO ASK TO MOVE THAT TARGET 1 SQUARE
-                }
-                if(e.getEffect()== AmmoCube.Effect.ALT) {
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO CHOOSE 1 TARGET
-                    w.applyDamage(targets,p,e);
                 }
                 break;
 
