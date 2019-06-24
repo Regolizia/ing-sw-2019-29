@@ -6,6 +6,7 @@ import adrenaline.weapons.Zx_2;
 import org.junit.jupiter.api.Test;
 
 import javax.management.BadAttributeValueExpException;
+import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
 import java.util.prefs.BackingStoreException;
@@ -157,8 +158,16 @@ public class ActionTest {
 
         shooters.add(player2);
         action.givePoints(victim,  action.bestShooterOrder(shooters,victim));
-
-
+        action.newtonChoosePossibleMoveFirstAllCells(player);
+        action.newtonChoosePossibleMoveFirstCell(player);
+        LinkedList<CoordinatesWithRoom>coo=new LinkedList<>();
+        coo.add(c1);
+        coo.add(player.getCoordinatesWithRooms());
+        action.removeDifferentDirection(coo,c1);
+        action.canPayTargetingScope(AmmoCube.CubeColor.BLUE,player);
+        action.canPayTargetingScope(AmmoCube.CubeColor.RED,player);
+        action.canPayTargetingScope(AmmoCube.CubeColor.YELLOW,player);
+        action.canPayTargetingScope(AmmoCube.CubeColor.FREE,player);
     }
 }
 /*
