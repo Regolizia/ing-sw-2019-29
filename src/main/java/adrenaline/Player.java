@@ -104,7 +104,7 @@ public class Player {
      */
     @Override
     public String toString() {
-        return "My name is x and my color is " + this.color;
+        return name+"(" + this.color+")";
     }
     /**
      * getColor

@@ -111,7 +111,6 @@ public class Server {
                         String msg = (String) inputStream.readObject();
                         System.out.println(msg);
                         clientLogin();
-                        System.out.println("LOGIN DONE " + nickname);
                                 handleTurns();
                     }
                 } catch (IOException | ClassNotFoundException e) {
@@ -289,7 +288,6 @@ public class Server {
         }
 
         public void handleTurns(){
-            System.out.println("\nTURN OF " + nickname);
             int numberOfActions =0;
             while(!isEndgame()) {
                 if (isGameOn()) {
@@ -435,6 +433,14 @@ public class Server {
             }
             return new Spawnpoint();
         }
+        public CoordinatesWithRoom getSpawnpointCoordinates(Spawnpoint s) {
+            for (Room r : model.getMapUsed().getGameBoard().getRooms()) {
+                if (!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).equals(s)) {
+                    return new CoordinatesWithRoom(s.getSpawnpointX(),s.getSpawnpointY(),r);
+                }
+            }
+            return new CoordinatesWithRoom();
+        }
 
         public void sendSpawnpointWeapons(){
             try {
@@ -501,7 +507,6 @@ public class Server {
                 }
             }
         }
-
         CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
         try {
             sendListToClient(listOfItems);
@@ -708,7 +713,7 @@ public class Server {
         sendToClient(cellItems); // RITORNA 1 O 2 O 3
         try {
             int x = (int)inputStream.readObject();
-
+            x--;
         Spawnpoint s = chosenCell.getSpawnpoint(model);
         WeaponCard weaponCard=s.getWeaponCards().get(x);
 
@@ -742,7 +747,8 @@ public class Server {
             sendToClient("DROPWEAPON");
             sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
             int y = (int)inputStream.readObject();
-            model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y));
+            // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
+            //model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y));
         }
 
         //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
@@ -751,9 +757,11 @@ public class Server {
 
         player.getHand().add(weaponCard);
         s.getWeaponCards().remove(weaponCard);
-        player.getPowerUp().removeAll(playerPowerUpCards);  // TODO???????
-        model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards); // TODO???????
-        action.run(player,weaponCard.getCoordinatesOnMap()); // TODO???????
+        player.getPowerUp().removeAll(playerPowerUpCards);
+        model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+
+        action.run(player,getSpawnpointCoordinates(s));
+        broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
 
         } catch (Exception e) {
             e.printStackTrace();
