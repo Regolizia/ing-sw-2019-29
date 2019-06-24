@@ -822,7 +822,8 @@ public void canGetPoints(List<Player> victims,List<Player>allPlayers){
     //_________________________________ POWER UP______________________________________________________________________//
 
 
-    public LinkedList<CoordinatesWithRoom> canSee(CoordinatesWithRoom c, GameModel m,Player player){
+    public LinkedList<CoordinatesWithRoom> canSee(CoordinatesWithRoom c,Player player){
+        GameModel m=getModel();
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
         GameBoard g=m.getMapUsed().getGameBoard();
         int x = c.getRoom().getRoomSizeX();
