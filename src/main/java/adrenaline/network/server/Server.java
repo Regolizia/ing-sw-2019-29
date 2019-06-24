@@ -842,12 +842,13 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int x = (int)inputStream.readObject();
-                    x--;
-                    Object t = targets.get(x);
+                    int xh = (int)inputStream.readObject();
+                    xh--;
+                    Object tt = targets.get(xh);
                     targets.clear();
-                    targets.add(t);
+                    targets.add(tt);
 
                     // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO)
                     // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
@@ -858,6 +859,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     // MOVE 1 SQUARE
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                    sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int x = (int)inputStream.readObject();
                     x--;
@@ -875,6 +877,11 @@ public class Server {
             case "Flamethrower":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 // TODO ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
+                sendToClient("CHOOSECELL");
+                sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int xe = (int)inputStream.readObject();
+                xe--;
+                //ask if another
 
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -929,6 +936,7 @@ public class Server {
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
 
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int x = (int)inputStream.readObject();
                     x--;
@@ -952,6 +960,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int x = (int)inputStream.readObject();
                 x--;
@@ -967,6 +976,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int y = (int)inputStream.readObject();
                 y--;
@@ -996,6 +1006,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int r = (int)inputStream.readObject();
                 r--;
@@ -1014,6 +1025,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK TO CHOOSE 1 OR 2 TARGETS -BASE
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int nu = (int)inputStream.readObject();
                 nu--;
@@ -1039,6 +1051,7 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                     // ASK WHICH 1 TARGET TO DAMAGE, (SAVE IT FOR THE OTHER EFFECT)
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int i = (int)inputStream.readObject();
                     i--;
@@ -1056,6 +1069,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     // ASK WHERE TO MOVE
+                    sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xg = (int)inputStream.readObject();
                     xg--;
@@ -1091,6 +1105,7 @@ public class Server {
                 // ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
 
                 // ASK WHICH 1 TARGET TO DAMAGE
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int i = (int)inputStream.readObject();
                 i--;
@@ -1123,6 +1138,7 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int n = (int)inputStream.readObject();
                     n--;
@@ -1153,6 +1169,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     // ASK WHERE TO MOVE
+                    sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xg = (int)inputStream.readObject();
                     xg--;
@@ -1167,6 +1184,7 @@ public class Server {
 
                     // TODO ASK WHICH TARGETS TO DAMAGE - UP TO 3
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int nm = (int)inputStream.readObject();
                     nm--;
@@ -1209,6 +1227,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK WHICH 1 TARGET TO DAMAGE
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int nm = (int)inputStream.readObject();
                 nm--;
@@ -1222,6 +1241,7 @@ public class Server {
                     // TODO ASK -IF- THEY WANT TO MOVE THAT TARGET 1 SQUARE
                     // if yes{
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                    sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xf = (int)inputStream.readObject();
                     xf--;
@@ -1234,6 +1254,7 @@ public class Server {
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // ASK WHICH 1 TARGET TO DAMAGE
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int num = (int)inputStream.readObject();
                 num--;
@@ -1245,6 +1266,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     // ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
                     List<CoordinatesWithRoom> possibleCells = playerPosition.tilesSameDirection(2,g,false);
+                    sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(possibleCells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xj = (int)inputStream.readObject();
                     xj--;
@@ -1267,6 +1289,7 @@ public class Server {
                 }
                 targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int nr = (int)inputStream.readObject();
                 nr--;
@@ -1283,6 +1306,7 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);   // TARGETS DISTANTI MAX 2 DA CIò CHE VEDO(cioè che posso muovere)
 
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xy = (int)inputStream.readObject();
                     xy--;
@@ -1310,13 +1334,15 @@ public class Server {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xz = (int)inputStream.readObject();
                     xz--;
                     Object tu = targets.get(xz);
                     targets.clear();
                     targets.add(tu);
-                    // TODO MOVE IT TO YOUR SQUARE
+                    //MOVE IT TO YOUR SQUARE
+                    ((Player)targets.get(0)).setPlayerPosition(playerPosition);
                     w.applyDamage(targets,p,e);
                 }
                 break;
@@ -1333,6 +1359,7 @@ public class Server {
                 targets = w.fromCellsToTargets(list,playerPosition,g,p,model,e);
                 // TODO ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int xn = (int)inputStream.readObject();
                 xn--;
@@ -1353,6 +1380,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK WHICH 1 TARGET TO DAMAGE
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int l = (int)inputStream.readObject();
                 l--;
@@ -1367,6 +1395,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // TODO ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int qw = (int)inputStream.readObject();
                 qw--;
