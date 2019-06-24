@@ -967,7 +967,7 @@ public class Server {
                     int x = (int)inputStream.readObject();
                     x--;
                     p.setPlayerPosition(cells.get(x));
-                    
+
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                 }
@@ -988,11 +988,30 @@ public class Server {
                     targets.add(t);
 
                     w.applyDamage(targets, p, e);
-                    // TODO ASK SE VUOLE MUOVERE IL TARGET DI 1
+
+                    // ASK SE VUOLE MUOVERE IL TARGET DI 1
+                    sendToClient("MOVETARGET");
+                    String res = (String) inputStream.readObject();
+                    if(res.toUpperCase().equals("Y")){
+                        CoordinatesWithRoom c =((Player)targets.get(0)).getCoordinatesWithRooms();
+                        List<CoordinatesWithRoom> list = c.oneTileDistant(g,false);
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(fromCellsToNames(list)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xyp = (int)inputStream.readObject();
+                        xyp--;
+                        ((Player) targets.get(0)).setPlayerPosition(list.get(xyp));
+                    }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    // TODO ASK UNA CELLA ANCHE LA TUA
+                    // ASK UNA CELLA ANCHE LA TUA
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xr = (int)inputStream.readObject();
+                    xr--;
+                    CoordinatesWithRoom c2 =cells.get(xr);
+                    cells.clear();
+                    cells.add(c2);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                 }
