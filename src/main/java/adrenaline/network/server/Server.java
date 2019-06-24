@@ -1331,7 +1331,7 @@ public class Server {
                     sendToClient("MOVETARGET");
                     String rs = (String) inputStream.readObject();
                     if (rs.toUpperCase().equals("Y")) {
-                    
+
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1394,7 +1394,7 @@ public class Server {
 
             case "TractorBeam":
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);   // che vedo
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);   // CELLS I SEE
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);   // TARGETS DISTANTI MAX 2 DA CIò CHE VEDO(cioè che posso muovere)
 
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
@@ -1407,17 +1407,25 @@ public class Server {
                     targets.add(trg);
 
                     CoordinatesWithRoom c1 = ((Player)trg).getCoordinatesWithRooms(); // SALVACI LA POS DEL TARGET
+                    LinkedList<CoordinatesWithRoom> listOne = new LinkedList<>();
+                    List<CoordinatesWithRoom> listMoves;    // TARGET'S POSSIBLE MOVES
 
-                    // TODO ASK NUOVA POSIZIONE TARGET(QUESTA VOLTA NON PROPONGO NULLA)
+                            listMoves = c1.oneTileDistant(g, false);
+                            listMoves.addAll(c1.xTilesDistant(g, 2));
+                            listMoves.add(c1);
+                    for(CoordinatesWithRoom c3: listMoves) {
+                        if (cells.contains(c3)) {
+                            listOne.add(c3);    // IF I SEE, THEM I ADD THEM
+                            // CHECK CELLS.CONTAINS(A POSSIBLE MOVE)
+                        }
+                    }
 
-                    // CHECK CELLS.CONTAINS(NEWPOS) &&
-                    // CHECK possibleMoves.CONTAINS(NEWPOS)
-                    List<CoordinatesWithRoom> possibleMoves;
-                    possibleMoves = c1.oneTileDistant(g, false);
-                    possibleMoves.addAll(c1.xTilesDistant(g, 2));
-                    possibleMoves.add(c1);
-
-                    // SE VA BENE MUOVI IL TARGET E APPLYDAMAGE, TODO ALTRIMENTI CHIEDI ANCORA POSIZIONE
+                    // ASK WHERE TO MOVE
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(listOne)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xgy = (int)inputStream.readObject();
+                    xgy--;
+                    ((Player)trg).setPlayerPosition(listOne.get(xgy));
 
                     w.applyDamage(targets,p,e);
 
@@ -1441,28 +1449,53 @@ public class Server {
 
             case "VortexCannon":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
-                // TODO CHOOSE A VORTEX
-
-                CoordinatesWithRoom vortex = new CoordinatesWithRoom();
+                // CHOOSE A VORTEX
+                sendToClient("CHOOSECELL");
+                sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int xgt = (int)inputStream.readObject();
+                xgt--;
+                CoordinatesWithRoom vortex = cells.get(xgt);
                 List<CoordinatesWithRoom> list;
                 list = vortex.oneTileDistant(g,false);
                 list.add(vortex);
 
                 targets = w.fromCellsToTargets(list,playerPosition,g,p,model,e);
-                // TODO ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
-                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                // ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int xn = (int)inputStream.readObject();
                 xn--;
                 Object ty = targets.get(xn);
+                List<Object> targets1 = targets;
                 targets.clear();
                 targets.add(ty);
-                // IF OP1 ASK ANOTHER
-
-                // TODO CHECK DIFFERENTI DA QUELLI PASSATI
-                //if(!pastTargets.isEmpty)     pastTargets != quello scelto
-                // TODO MOVE EVERY TARGET ON THE VORTEX
+                targets1.remove(ty);
+                if(e.getEffect()== AmmoCube.Effect.OP1){
+                    sendToClient("CHOOSEANOTHER");
+                    String rs = (String) inputStream.readObject();
+                    if (rs.toUpperCase().equals("Y")) {
+                        sendToClient("CHOOSETARGET");
+                        sendListToClient(fromTargetsToNames(targets1)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int ye = (int) inputStream.readObject();
+                        ye--;
+                        targets.add(targets1.get(ye));
+                    }
+                }
+                if(!pastTargets.isEmpty()){
+                    // CHECK DIFFERENTI DA QUELLI PASSATI
+                    for(Object o : targets){
+                        for(Object u :pastTargets){
+                            if(o==u){
+                                targets.remove(o);
+                                break;
+                            }
+                        }
+                    }
+                }
+                // MOVE EVERY TARGET ON THE VORTEX
+                for(Object o : targets){
+                    ((Player)o).setPlayerPosition(vortex);
+                }
 
                 w.applyDamage(targets,p,e);
                 return targets;
