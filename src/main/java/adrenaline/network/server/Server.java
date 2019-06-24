@@ -813,6 +813,13 @@ public class Server {
         return chosenPower;
     }
 
+    public List<String> fromRoomsToNames(List<Room> list){
+        List<String> targets = new LinkedList<>();
+        for (Room o : list) {
+            targets.add(Integer.toString(o.getToken()));
+        }
+        return targets;
+    }
     public List<String> fromTargetsToNames(List<Object> list){
         List<String> targets = new LinkedList<>();
         for (Object o : list) {
@@ -876,17 +883,44 @@ public class Server {
 
             case "Flamethrower":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
-                // TODO ASK PLAYER TO CHOSE ONE OR TWO SQUARES (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
+                List<CoordinatesWithRoom> cells2 = cells;
+
+                // ASK PLAYER TO CHOSE ONE OR TWO SQUARES
+                // TODO (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
                 sendToClient("CHOOSECELL");
                 sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int xe = (int)inputStream.readObject();
                 xe--;
-                //ask if another
+                CoordinatesWithRoom chosen = cells.get(xe);
+                cells.clear();
+                cells.add(chosen);
+                cells2.remove(chosen);
+
+                sendToClient("CHOOSEANOTHER");
+                String response = (String) inputStream.readObject();
+                if(response.toUpperCase().equals("Y")){
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xye = (int)inputStream.readObject();
+                    xye--;
+                    cells.add(cells2.get(xye));
+                }
 
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 if(e.getEffect()== AmmoCube.Effect.BASE){
-                    // TODO ASK 1 TARGET PER OGNI SQUARE (2 FORSE)
+                    List<Object> targets2=targets;
+                    targets.clear();
+                    for(int i=0;i<cells.size();i++) {
+                        // ASK 1 TARGET PER OGNI SQUARE (2 FORSE)
+                        sendToClient("CHOOSETARGET");
+                        sendListToClient(fromTargetsToNames(targets2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xh = (int) inputStream.readObject();
+                        xh--;
+                        Object tt = targets2.get(xh);
+                        targets.add(tt);
+                        targets2.remove(tt);
+                    }
                 }
                 w.applyDamage(targets,p,e);
                 break;
@@ -912,9 +946,13 @@ public class Server {
                         }
                     }
 
-                    // TODO ASK PLAYER FOR A ROOM (DIFFERENT) - METTILA NELLA COORDINATA ROOM
+                    // ASK PLAYER FOR A ROOM (DIFFERENT) - METTILA NELLA COORDINATA ROOM
                     // SEND PLAYER LIST OF ROOMS possibleRooms APPENA CREATA
-                    CoordinatesWithRoom room = new CoordinatesWithRoom();
+                    sendToClient("CHOOSEROOM");
+                    sendListToClient(fromRoomsToNames(possibleRooms)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xoh = (int) inputStream.readObject();
+                    xoh--;
+                    CoordinatesWithRoom room = new CoordinatesWithRoom(1,1,possibleRooms.get(xoh));
 
                     cells = w.getPossibleTargetCells(room, e, g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -923,8 +961,13 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
 
-                    // TODO ASK PLAYER WHICH TILE, GET ONE BACK IN THAT LIST
-
+                    // ASK PLAYER WHICH TILE, GET ONE BACK IN THAT LIST
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int)inputStream.readObject();
+                    x--;
+                    p.setPlayerPosition(cells.get(x));
+                    
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                 }

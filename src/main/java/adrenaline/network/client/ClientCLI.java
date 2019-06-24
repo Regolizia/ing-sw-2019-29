@@ -255,15 +255,15 @@ public class ClientCLI extends Client{
         }else sendIntToServer(1);
     }
 
-    public void chooseTarget(List<String> weapons){
+    public void chooseTarget(List<String> targets){
         System.out.println("\nChoose one target (first is default):");
-        for(int i =0;i<weapons.size();i++) {
-            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        for(int i =0;i<targets.size();i++) {
+            System.out.println(targets.get(i) + " ["+i+1+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
             scanner.nextLine();
-            if(x>0 && x<4){
+            if(x>0 && x<=targets.size()){
                 sendIntToServer(x);
             }else sendIntToServer(1);
         }else sendIntToServer(1);
@@ -278,15 +278,28 @@ public class ClientCLI extends Client{
             }else sendToServer("Y");
         }else sendToServer("Y");
     }
-    public void chooseCell(List<String> weapons){
+    public void chooseCell(List<String> cells){
         System.out.println("\nChoose a cell (first is default):");
-        for(int i =0;i<weapons.size();i++) {
-            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        for(int i =0;i<cells.size();i++) {
+            System.out.println(cells.get(i) + " ["+i+1+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
             scanner.nextLine();
-            if(x>0 && x<4){
+            if(x>0 && x<=cells.size()){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+    public void chooseRoom(List<String> rooms){
+        System.out.println("\nChoose a room (first is default):");
+        for(int i =0;i<rooms.size();i++) {
+            System.out.println(rooms.get(i) + " ["+i+1+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<=rooms.size()){
                 sendIntToServer(x);
             }else sendIntToServer(1);
         }else sendIntToServer(1);

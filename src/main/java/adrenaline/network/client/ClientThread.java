@@ -116,6 +116,9 @@ public class ClientThread implements Runnable {
             case "CHOOSECELL":
                 client.chooseCell(getListFromServer());
                 break;
+            case "CHOOSEROOM":
+                client.chooseRoom(getListFromServer());
+                break;
             case "GRAB":
                 List<String> items = new LinkedList<>();
                 items = getListFromServer();
