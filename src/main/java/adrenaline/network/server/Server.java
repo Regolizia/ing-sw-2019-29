@@ -1258,22 +1258,29 @@ public class Server {
 
             case "TractorBeam":
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO ASK 1 TARGET
-                    CoordinatesWithRoom c1 = new CoordinatesWithRoom(); // SALVACI LA POS DEL TARGET
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);   // che vedo
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);   // TARGETS DISTANTI MAX 2 DA CIò CHE VEDO(cioè che posso muovere)
 
-                    // TODO ASK NUOVA POSIZIONE (QUESTA VOLTA NON PROPONGO NULLA)
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xy = (int)inputStream.readObject();
+                    xy--;
+                    Object trg = targets.get(xy);
+                    targets.clear();
+                    targets.add(trg);
+
+                    CoordinatesWithRoom c1 = ((Player)trg).getCoordinatesWithRooms(); // SALVACI LA POS DEL TARGET
+
+                    // TODO ASK NUOVA POSIZIONE TARGET(QUESTA VOLTA NON PROPONGO NULLA)
 
                     // CHECK CELLS.CONTAINS(NEWPOS) &&
                     // CHECK possibleMoves.CONTAINS(NEWPOS)
-                    // SE VA BENE MUOVI IL TARGET E APPLYDAMAGE, ALTRIMENTI CHIEDI ANCORA
-
                     List<CoordinatesWithRoom> possibleMoves;
                     possibleMoves = c1.oneTileDistant(g, false);
                     possibleMoves.addAll(c1.xTilesDistant(g, 2));
                     possibleMoves.add(c1);
 
+                    // SE VA BENE MUOVI IL TARGET E APPLYDAMAGE, TODO ALTRIMENTI CHIEDI ANCORA POSIZIONE
 
                     w.applyDamage(targets,p,e);
 
@@ -1281,7 +1288,14 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO CHOOSE 1 TARGET AND MOVE IT TO YOUR SQUARE
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xz = (int)inputStream.readObject();
+                    xz--;
+                    Object tu = targets.get(xz);
+                    targets.clear();
+                    targets.add(tu);
+                    // TODO MOVE IT TO YOUR SQUARE
                     w.applyDamage(targets,p,e);
                 }
                 break;
@@ -1297,17 +1311,33 @@ public class Server {
 
                 targets = w.fromCellsToTargets(list,playerPosition,g,p,model,e);
                 // TODO ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
-                // CHECK DIFFERENTI DA QUELLI PASSATI
-                // MOVE EVERY TARGET ON THE VORTEX
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int xn = (int)inputStream.readObject();
+                xn--;
+                Object ty = targets.get(xn);
+                targets.clear();
+                targets.add(ty);
+                // IF OP1 ASK ANOTHER
+
+                // TODO CHECK DIFFERENTI DA QUELLI PASSATI
+                //if(!pastTargets.isEmpty)     pastTargets != quello scelto
+                // TODO MOVE EVERY TARGET ON THE VORTEX
 
                 w.applyDamage(targets,p,e);
-                // RETURN THE TARGETS
-                break;
+                return targets;
 
             case "Whisper":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                // TODO CHOOSE 1 TARGET
+
+                // ASK WHICH 1 TARGET TO DAMAGE
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int l = (int)inputStream.readObject();
+                l--;
+                Object b = targets.get(l);
+                targets.clear();
+                targets.add(b);
                 w.applyDamage(targets,p,e);
                 break;
 
@@ -1315,6 +1345,14 @@ public class Server {
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // TODO ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
+                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int qw = (int)inputStream.readObject();
+                qw--;
+                Object tw = targets.get(qw);
+                targets.clear();
+                targets.add(tw);
+                //ASK AGAIN IF ALT
                 w.applyDamage(targets,p,e);
                 break;
         }
