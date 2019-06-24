@@ -15,9 +15,6 @@ public class BotAction extends Action {
             super (m);
             }
 
-     public void runBot(){}
-
-
 
 
      //---------------------------------TO RUN BOT-------------------------------------------------------------------//
@@ -40,7 +37,7 @@ public class BotAction extends Action {
                 ((Player) target).addDamageToTrack(bot,1);
                 if(((Player) target).isDead()&&((Player) target).getTrack()[11].equals(bot.getColor()))
                 {
-                    ((Player) target).addMarks(bot,1);
+                    bot.addMarks((Player) target,1);
                 }
                 if(target instanceof Player&&bot.checkDamage()==2&&((Player) target).canAddMark(bot))
                 {
