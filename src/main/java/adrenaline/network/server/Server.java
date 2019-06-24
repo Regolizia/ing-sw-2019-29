@@ -882,28 +882,33 @@ public class Server {
                 break;
 
             case "Flamethrower":
-                cells = w.getPossibleTargetCells(playerPosition,e,g);
-                List<CoordinatesWithRoom> cells2 = cells;
+                cells = playerPosition.oneTileDistant(g,false);
 
-                // ASK PLAYER TO CHOSE ONE OR TWO SQUARES
-                // TODO (CHECK FIRST DISTANT 1, SECOND DISTANT 2, SAME DIR)
+                // ASK PLAYER TO CHOSE ONE OR TWO SQUARES  - SHOULD ASK SAYING 1 AND 2 MUST HAVE SAME DIR?
                 sendToClient("CHOOSECELL");
                 sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int xe = (int)inputStream.readObject();
                 xe--;
                 CoordinatesWithRoom chosen = cells.get(xe);
+                List<CoordinatesWithRoom> cells1 = cells;
                 cells.clear();
                 cells.add(chosen);
-                cells2.remove(chosen);
 
                 sendToClient("CHOOSEANOTHER");
                 String response = (String) inputStream.readObject();
                 if(response.toUpperCase().equals("Y")){
+                    List<CoordinatesWithRoom> cellslist2 = w.getPossibleTargetCells(playerPosition,e,g);
+                    cellslist2.removeAll(cells1);
                     sendToClient("CHOOSECELL");
-                    sendListToClient(fromCellsToNames(cells2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    sendListToClient(fromCellsToNames(cellslist2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xye = (int)inputStream.readObject();
                     xye--;
-                    cells.add(cells2.get(xye));
+
+                    // CHECK FIRST (DISTANT 1) AND (SECOND DISTANT 2) SAME DIRECTION
+                    // IF NOT, SECOND NOT ADDED
+                    if(cells.get(0).checkSameDirection(cells.get(0),cellslist2.get(xye),10,g,false)) {
+                        cells.add(cellslist2.get(xye));
+                    }
                 }
 
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -1518,16 +1523,34 @@ public class Server {
             case "Zx_2":
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                // TODO ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
-                // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                // ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int qw = (int)inputStream.readObject();
                 qw--;
                 Object tw = targets.get(qw);
+                List<Object> tar2 = targets;
                 targets.clear();
                 targets.add(tw);
+                tar2.remove(tw);
+
                 //ASK AGAIN IF ALT
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    for (int v = 0; v < 2; v++) {
+                        sendToClient("CHOOSEANOTHER");
+                        String rs = (String) inputStream.readObject();
+                        if (rs.toUpperCase().equals("Y")) {
+                            sendToClient("CHOOSETARGET");
+                            sendListToClient(fromTargetsToNames(tar2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                            int ye = (int) inputStream.readObject();
+                            ye--;
+                            targets.add(tar2.get(ye));
+                            tar2.remove(ye);
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 w.applyDamage(targets,p,e);
                 break;
         }
