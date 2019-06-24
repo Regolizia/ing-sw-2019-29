@@ -255,6 +255,44 @@ public class ClientCLI extends Client{
         }else sendIntToServer(1);
     }
 
+    public void chooseTarget(List<String> weapons){
+        System.out.println("\nChoose one target (first is default):");
+        for(int i =0;i<weapons.size();i++) {
+            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<4){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+
+    public void chooseAnother(){
+        System.out.println("\nDo you want to choose another one, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+    public void chooseCell(List<String> weapons){
+        System.out.println("\nChoose a cell (first is default):");
+        for(int i =0;i<weapons.size();i++) {
+            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<4){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+
+
     public static void shoot() {
     }
 

@@ -25,6 +25,9 @@ public class Client {
         public void grabWeapon(String weapons){}
         public void dropWeapon(List<String> weapons){}
         public void chooseWeapon(List<String> weapons){}
+        public void chooseTarget(List<String> weapons){}
+        public void chooseAnother(){}
+        public void chooseCell(List<String> weapons){}
         public void firstTurn(List<String> list){}
         public void printMessage(String s){}
         public void showMainMenu(){}
