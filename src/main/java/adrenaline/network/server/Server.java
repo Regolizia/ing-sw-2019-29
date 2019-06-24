@@ -856,7 +856,12 @@ public class Server {
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
-                    // TODO MOVE 1 SQUARE
+                    // MOVE 1 SQUARE
+                    List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                    sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int)inputStream.readObject();
+                    x--;
+                    p.setPlayerPosition(one.get(x));
                 }
 
                 break;
@@ -1050,8 +1055,11 @@ public class Server {
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    // TODO ASK WHERE TO MOVE
-                    // MOVE
+                    // ASK WHERE TO MOVE
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xg = (int)inputStream.readObject();
+                    xg--;
+                    p.setPlayerPosition(cells.get(xg));
                 }
                 break;
 
@@ -1144,8 +1152,11 @@ public class Server {
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    // TODO ASK WHERE TO MOVE
-                    // MOVE
+                    // ASK WHERE TO MOVE
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xg = (int)inputStream.readObject();
+                    xg--;
+                    p.setPlayerPosition(cells.get(xg));
                 }
                 break;
 
@@ -1208,7 +1219,14 @@ public class Server {
                 w.applyDamage(targets,p,e);
 
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    // TODO ASK TO MOVE THAT TARGET 1 SQUARE
+                    // TODO ASK -IF- THEY WANT TO MOVE THAT TARGET 1 SQUARE
+                    // if yes{
+                    List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                    sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xf = (int)inputStream.readObject();
+                    xf--;
+                    ((Player)targets.get(0)).setPlayerPosition(one.get(xf));
+                    //}
                 }
                 break;
 
@@ -1225,9 +1243,12 @@ public class Server {
                 w.applyDamage(targets,p,e);
 
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
-                    // TODO ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
-                    // FROM LIST
+                    // ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
                     List<CoordinatesWithRoom> possibleCells = playerPosition.tilesSameDirection(2,g,false);
+                    sendListToClient(fromCellsToNames(possibleCells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xj = (int)inputStream.readObject();
+                    xj--;
+                    ((Player)targets.get(0)).setPlayerPosition(possibleCells.get(xj));
                 }
                 break;
 

@@ -33,7 +33,8 @@ public class PlasmaGun extends WeaponCard {
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
 
         if(en.getEffect()== AmmoCube.Effect.OP1) {
-            List<CoordinatesWithRoom> list = c.tilesSameDirection(2, g, false);
+            List<CoordinatesWithRoom> list = c.oneTileDistant(g,false);
+            list.addAll(c.xTilesDistant(g, 2));
             list.remove(c);
 
             return list;

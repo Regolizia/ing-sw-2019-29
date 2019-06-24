@@ -56,10 +56,6 @@ public class Cyberblade extends WeaponCard {
                 }
                 break;
 
-            case OP1:   // MOVE 1 SQUARE, TODO REMOVE FROM HERE
-                break;
-
-
         }
     }
 
