@@ -94,7 +94,11 @@ public class GameModel {
         return players;
     }
 
-
+    /**
+     *startingMap
+     * all AmmoTile of all Rooms get initialized with free color
+     * CONV: free color==there isn't an AmoTile to be draw
+     **/
     public void startingMap(){
         for(Room room:getMapUsed().getGameBoard().getRooms()){
 
@@ -116,7 +120,11 @@ public class GameModel {
     }
 
 
-//conv if an AmmoTile doesnt't exists all its colors are none
+    /**
+     *populateMap
+     * calls populateAmmoTile
+     * assign to every spawnpoint 3 WeaponCards
+     **/
     public void populateMap() {
         populateAmmoTile();
         for (Room room : getMapUsed().getGameBoard().getRooms()) {
@@ -131,7 +139,10 @@ public class GameModel {
         }
 
     }
-
+    /**
+     *populateAmmoTile
+     * foreach Room add AmmoTile and set its color
+     **/
     public void populateAmmoTile(){
 
      for (Room room : getMapUsed().getGameBoard().getRooms()) {

@@ -20,11 +20,17 @@ public class PowerUpCard extends Card {
     public void setPowerUpColor(AmmoCube.CubeColor c){
         this.color = c;
     }
-
+    /**
+     *getCanBeUsedOnBot
+     * @return if a PowerUp can be used on bot
+     **/
     public boolean getCanBeUsedOnBot() {
         return canBeUsedOnBot;
     }
-
+    /**
+     *setCanBeUsedOnBot
+     * @param canBeUsedOnBot
+     **/
     public void setCanBeUsedOnBot(boolean canBeUsedOnBot) {
         this.canBeUsedOnBot = canBeUsedOnBot;
     }

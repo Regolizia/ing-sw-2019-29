@@ -37,7 +37,10 @@ public class WeaponDeck{
         deck.add(new Whisper());
         deck.add(new Zx_2());
     }
-
+    /**
+     * getList
+     * @return weapon's deck
+     **/
     public LinkedList<WeaponCard> getList(){
         return deck;
     }
@@ -48,7 +51,10 @@ public class WeaponDeck{
         Collections.shuffle(deck);
     }
 
-
+    /**
+     * pickUpWeapon
+     * @return first WeaponCard
+     **/
 
     public WeaponCard pickUpWeapon(){
         if(this.deck.size()>0){
@@ -62,12 +68,19 @@ public class WeaponDeck{
             usedWeaponCard.clear();
             return deck.removeFirst();}
     }
-
+    /**
+     *setUsedWeaponCard
+     * @param weaponCard trowed WeaponCard
+     *                   add WeaponCard to usedWeaponCard deck
+     **/
     public void setUsedWeaponCard(WeaponCard weaponCard){
         usedWeaponCard.add(weaponCard);
     }
 
-
+    /**
+     *getUsedWeaponCard
+     * @return usedWeaponCard's deck
+     **/
     public LinkedList<WeaponCard> getUsedWeaponCard() {
         return usedWeaponCard;
     }

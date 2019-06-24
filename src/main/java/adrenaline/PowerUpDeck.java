@@ -35,7 +35,10 @@ public class PowerUpDeck{
             deck.add(new Teleporter(AmmoCube.CubeColor.BLUE));
         }
     }
-
+    /**
+     *getPowerUpDeck
+     * @return powerUpDeck
+     **/
     public LinkedList<PowerUpCard> getPowerUpDeck(){
         return deck;
     }
@@ -50,7 +53,10 @@ public class PowerUpDeck{
 
 
 
-
+    /**
+     *pickPowerUp
+     * @return first PowerUpCard of the deck
+     **/
     public PowerUpCard pickPowerUp(){
         if(!deck.isEmpty()){
             setUsedPowerUp(this.deck.getFirst());
@@ -63,7 +69,10 @@ public class PowerUpDeck{
             usedPowerUp.clear();
             return deck.removeFirst();}
     }
-
+    /**
+     *setUsedPowerUp
+     * @param powerUp  added to usedPowerUp's deck
+     **/
     public void setUsedPowerUp(PowerUpCard powerUp){
         usedPowerUp.add(powerUp);
     }
@@ -76,7 +85,10 @@ public class PowerUpDeck{
         Collections.shuffle(usedPowerUp);
     }
 
-
+    /**
+     *getUsedPowerUp
+     * @return usedPowerUp's deck
+     **/
     public LinkedList<PowerUpCard> getUsedPowerUp() {
         return usedPowerUp;
     }
