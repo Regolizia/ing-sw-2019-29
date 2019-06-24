@@ -18,7 +18,13 @@ public class BotAction extends Action {
 
 
      //---------------------------------TO RUN BOT-------------------------------------------------------------------//
-@Override
+
+    /**
+     *proposeCellsRun
+     * @param c bot's CoordinatesWithRoom
+     * @return LinkedList<CoordinatesWithRoom> a list of possible cells where bot can be moved
+     */
+    @Override
     public LinkedList<CoordinatesWithRoom> proposeCellsRun(CoordinatesWithRoom c) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>(c.xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));
         return list;
@@ -30,7 +36,11 @@ public class BotAction extends Action {
      /*valid opponents: every player minus bot owner and bot (if dom can shoot to powerpoint)*/
         //TODO CHECK POSSIBLE TARGET
 
-
+    /**
+     *botShoot
+     * @param target
+     * @param bot 
+     */
     public void botShoot(Object target,Bot bot){
 
             if(target instanceof Player&&((Player) target).getTrack()[11].equals(Figure.PlayerColor.NONE)){
