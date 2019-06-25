@@ -351,7 +351,8 @@ public class Server {
 
                             //reload();
                             scoring();
-                            //replacestuff();
+                            //replaceAmmo();
+                            replaceWeapons();
 
                             nextPlayer();
                             numberOfActions = 0;
@@ -372,6 +373,24 @@ public class Server {
                 sendSpawnpointWeapons();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        public void replaceWeapons(){
+            int weaponNum =getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards().size();
+            while (weaponNum<3){
+                getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards().add(model.weaponDeck.pickUpWeapon());
+                weaponNum++;
+            }
+            weaponNum =getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards().size();
+            while (weaponNum<3){
+                getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards().add(model.weaponDeck.pickUpWeapon());
+                weaponNum++;
+            }
+            weaponNum =getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards().size();
+            while (weaponNum<3){
+                getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards().add(model.weaponDeck.pickUpWeapon());
+                weaponNum++;
             }
         }
 
