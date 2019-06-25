@@ -345,6 +345,14 @@ public class Server {
                         }
                         // END OF TURN
                         if (numberOfActions == 2) {
+
+                            sendToClient("POWERUP");    // CAN USE SOME POWERUPS BEFORE END OF TURN
+                            powerup();
+
+                            //reload();
+                            scoring();
+                            //replacestuff();
+
                             nextPlayer();
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
@@ -430,6 +438,19 @@ public class Server {
                     break;
                 }
             }
+        }
+
+        public void scoring(){
+            List<Player> victims = new LinkedList<>();
+            for(Player p : model.getPlayers()){
+                if(p.isDead()){
+                    p.hasDied();
+                    victims.add(p);
+                    // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
+                }
+            }
+            action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
+                                                                 // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI?
         }
 
         public void powerup(){
