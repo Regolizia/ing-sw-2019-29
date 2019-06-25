@@ -275,25 +275,30 @@ public class Server {
         public void tagbackGrenade() {
             // CAN SEE SHOOTER
             Player me = fromNameToPlayer(nickname);
-            Player shooter = fromNameToPlayer(me.getShooter());
-            WeaponCard w = new WeaponCard();
-            EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
-            List<CoordinatesWithRoom> list = w.getPossibleTargetCells(me.getCoordinatesWithRooms(), en, model.getMapUsed().getGameBoard());
-            List<Object> t = w.fromCellsToTargets(list, me.getCoordinatesWithRooms(), model.getMapUsed().getGameBoard(), me, model, en);
-            for (Object o : t) {
-                if ((Player) o == shooter) {
-                    try {// ASK IF WANT TO USE
-                        sendToClient("TAGBACKGRENADE");
-                        String response = (String) inputStream.readObject();
-                        if (response.toUpperCase().equals("Y")) {
-                            // ADD MARK
-                            shooter.addMarks(me,1);
-                            // DISCARD CARD
-                            model.powerUpDeck.setUsedPowerUp(me.getTagbackGrenade());
-                            me.getPowerUp().remove(me.getTagbackGrenade());
+            if(me.hasTagbackGrenade()) {
+                Player shooter = fromNameToPlayer(me.getShooter());
+                WeaponCard w = new WeaponCard();
+                EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
+                List<CoordinatesWithRoom> list = w.getPossibleTargetCells(me.getCoordinatesWithRooms(), en, model.getMapUsed().getGameBoard());
+                List<Object> t = w.fromCellsToTargets(list, me.getCoordinatesWithRooms(), model.getMapUsed().getGameBoard(), me, model, en);
+                for (Object o : t) {
+                    if ((Player) o == shooter) {
+                        try {// ASK IF WANT TO USE
+                            sendToClient("TAGBACKGRENADE");
+                            String response = (String) inputStream.readObject();
+                            if (response.toUpperCase().equals("Y")) {
+                                // ADD MARK
+                                shooter.addMarks(me, 1);
+                                // DISCARD CARD
+                                model.powerUpDeck.setUsedPowerUp(me.getTagbackGrenade());
+                                me.getPowerUp().remove(me.getTagbackGrenade());
+
+                                me.setDamagedStatus(false);
+                                me.setShooter(null);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
@@ -400,7 +405,7 @@ public class Server {
                             System.out.println("CURRENT PLAYER " + currentPlayer);
                         }
                     }
-                    else if(hasBeenDamaged()){
+                    else if(hasBeenDamaged()){  //TODO SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
                     }
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
@@ -598,6 +603,10 @@ public class Server {
                 int x = (int)inputStream.readObject();
                 x--;
                 ((Player)targets.get(0)).setPlayerPosition(cells.get(x));
+
+                PowerUpCard power = player.getNewton();
+                player.getPowerUp().remove(power);
+                model.powerUpDeck.usedPowerUp.add(power);
 
             } catch (Exception e) {
                 e.printStackTrace();

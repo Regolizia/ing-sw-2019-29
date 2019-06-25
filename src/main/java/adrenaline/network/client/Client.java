@@ -28,6 +28,7 @@ public class Client {
         public void chooseTarget(List<String> targets){}
         public void chooseAnother(){}
         public void moveTarget(){}
+        public void tagbackGrenade(){}
         public void targetingScope(){}
         public void powerups(List<String> cells){}
         public void chooseCell(List<String> cells){}

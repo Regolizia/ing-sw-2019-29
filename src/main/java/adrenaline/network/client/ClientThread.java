@@ -116,6 +116,9 @@ public class ClientThread implements Runnable {
             case "MOVETARGET":
                 client.moveTarget();
                 break;
+            case "TAGBACKGRENADE":
+                client.tagbackGrenade();
+                break;
             case "TARGETINGSCOPE":
                 client.targetingScope();
                 break;

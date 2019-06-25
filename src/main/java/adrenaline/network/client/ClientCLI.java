@@ -303,15 +303,24 @@ public class ClientCLI extends Client{
             }else sendToServer("Y");
         }else sendToServer("Y");
     }
-
-    public void targetingScope(){
-        System.out.println("\nDo you want to use you TargetingScope, [Y] or [N]? ([Y] is default): ");
+    public void tagbackGrenade(){
+        System.out.println("\nYou've been shot, do you want to use your TagbackGrenade, [Y] or [N]? ([N] is default): ");
         if(scanner.hasNextLine()){
             String x = (String)scanner.nextLine();
             if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
                 sendToServer(x);
-            }else sendToServer("Y");
-        }else sendToServer("Y");
+            }else sendToServer("N");
+        }else sendToServer("N");
+    }
+
+    public void targetingScope(){
+        System.out.println("\nDo you want to use you TargetingScope, [Y] or [N]? ([N] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("N");
+        }else sendToServer("N");
     }
 
     public void chooseCell(List<String> cells){
