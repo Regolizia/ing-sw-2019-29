@@ -26,7 +26,21 @@ public class Player {
     private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
     private boolean[] skullTrack;
     private String name;
+    private static boolean damaged = false;
+    private static String shooter = null;
 
+    public static void setDamagedStatus(boolean b){
+        damaged = b;
+    }
+    public boolean damagedStatus(){
+        return damaged;
+    }
+    public void setShooter(String s){
+        shooter = s;
+    }
+    public String getShooter(){
+        return shooter;
+    }
     /**
      * Class constructor.
      *  * @version 1.0
@@ -580,6 +594,15 @@ public class Player {
         for(PowerUpCard p : powerups){
             if(p.toString().equals("Newton, BLUE") || p.toString().equals("Newton, YELLOW") ||
                p.toString().equals("Newton, RED")){
+                return p;
+            }
+        }
+        return new PowerUpCard();
+    }
+    public PowerUpCard getTagbackGrenade(){
+        for(PowerUpCard p : powerups){
+            if(p.toString().equals("TagbackGrenade, BLUE") || p.toString().equals("TagbackGrenade, YELLOW") ||
+               p.toString().equals("TagbackGrenade, RED")){
                 return p;
             }
         }

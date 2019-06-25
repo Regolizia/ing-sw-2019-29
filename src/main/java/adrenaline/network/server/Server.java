@@ -43,7 +43,7 @@ public class Server {
     private static ArrayList<String> names = new ArrayList<>();
 
     // The set of all the print writers for all the clients, used for broadcast.
-    private static List<ObjectOutputStream> writers = new ArrayList<>();
+    private static HashMap<String,ObjectOutputStream> writers = new HashMap<String,ObjectOutputStream>();
 
 
     private static ServerSocket serverSocket;
@@ -161,7 +161,7 @@ public class Server {
                     Countdown c = new Countdown();
                 }
                 addPlayerToGame(nickname, color);
-                writers.add(outputStream);
+                writers.put(nickname,outputStream);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -220,13 +220,13 @@ public class Server {
 
         public void broadcast(String s){
 
-            for (ObjectOutputStream writer : writers) {
+            for (Map.Entry me : writers.entrySet()) {
                 try {
-                    writer.writeObject("MESSAGE");
-                    writer.flush();
+                    ((ObjectOutputStream)me.getValue()).writeObject("MESSAGE");
+                    ((ObjectOutputStream)me.getValue()).flush();
 
-                    writer.writeObject(s);
-                    writer.flush();
+                    ((ObjectOutputStream)me.getValue()).writeObject(s);
+                    ((ObjectOutputStream)me.getValue()).flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -272,11 +272,51 @@ public class Server {
             }
         }
 
+        public void tagbackGrenade() {
+            // CAN SEE SHOOTER
+            Player me = fromNameToPlayer(nickname);
+            Player shooter = fromNameToPlayer(me.getShooter());
+            WeaponCard w = new WeaponCard();
+            EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
+            List<CoordinatesWithRoom> list = w.getPossibleTargetCells(me.getCoordinatesWithRooms(), en, model.getMapUsed().getGameBoard());
+            List<Object> t = w.fromCellsToTargets(list, me.getCoordinatesWithRooms(), model.getMapUsed().getGameBoard(), me, model, en);
+            for (Object o : t) {
+                if ((Player) o == shooter) {
+                    try {// ASK IF WANT TO USE
+                        sendToClient("TAGBACKGRENADE");
+                        String response = (String) inputStream.readObject();
+                        if (response.toUpperCase().equals("Y")) {
+                            // ADD MARK
+                            shooter.addMarks(me,1);
+                            // DISCARD CARD
+                            model.powerUpDeck.setUsedPowerUp(me.getTagbackGrenade());
+                            me.getPowerUp().remove(me.getTagbackGrenade());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
 
         public boolean isCurrentPlayer(){
             synchronized (Server.model.getPlayers().get(currentPlayer)){
                  return Server.model.getPlayers().get(currentPlayer).getName().equals(nickname);
             }
+        }
+        public boolean hasBeenDamaged(){
+            synchronized (Server.model.getPlayers()){
+                 return fromNameToPlayer(nickname).damagedStatus();
+            }
+        }
+
+        public Player fromNameToPlayer(String s){
+            for (Player p : model.getPlayers()){
+                if(p.getName().equals(s)){
+                    return p;
+                }
+            }
+            return new Player();
         }
 
         public boolean isGameOn(){
@@ -359,6 +399,9 @@ public class Server {
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
                         }
+                    }
+                    else if(hasBeenDamaged()){
+                        tagbackGrenade();
                     }
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class

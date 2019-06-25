@@ -199,7 +199,7 @@ public class Action {
             if(cube.getCubeColor()== POWERUP)
                 grabPowerUp(player);
         }
-
+        model.ammoTileDeck.setUsedAmmoTile(toBeGrabbedTile);
 
         return grabCube(player, toBeGrabbedTile);
 
