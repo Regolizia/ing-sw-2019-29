@@ -1,5 +1,8 @@
 package adrenaline;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class PowerUpCard extends Card {
 
     private AmmoCube.CubeColor color;
@@ -40,6 +43,26 @@ public class PowerUpCard extends Card {
             ((Player) target).damageByShooter(player);
 
     }
+
+    public List<CoordinatesWithRoom> getPossibleCells(GameModel m, Player p){
+
+        List<CoordinatesWithRoom>cWr=new LinkedList<CoordinatesWithRoom>();
+        for (Room r:m.getMapUsed().getGameBoard().getRooms()
+        ) {
+            for (int x=1;x<=r.getRoomSizeX();x++) {
+
+                for (int y=1;y<=r.getRoomSizeY();y++)
+                {
+                    cWr.add(new CoordinatesWithRoom(x,y,r));
+                }
+
+            }
+
+        }
+
+        return cWr;
+    }
+
     //useless
     //public void setColor(PowerUpCard card, Color c){
       //  this.color = c ;}

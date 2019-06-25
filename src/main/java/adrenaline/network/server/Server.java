@@ -3,6 +3,7 @@ package adrenaline.network.server;
 // SOCKET
 import adrenaline.*;
 import adrenaline.gameboard.GameBoard;
+import adrenaline.powerups.Teleporter;
 
 import java.io.*;
 import java.util.*;
@@ -327,6 +328,10 @@ public class Server {
                                     case "C":
                                         // OTHER PLAYERS
                                         break;
+                                    case "P":
+                                        sendToClient("POWERUP");
+                                        powerup();
+                                        break;
                                     case "S":
                                     default:
                                         //shoot(player);
@@ -424,6 +429,62 @@ public class Server {
                     break;
                 }
             }
+        }
+
+        public void powerup(){
+            Player player = model.getPlayers().get(currentPlayer);
+            if(!player.getPowerUp().isEmpty()){
+                List<PowerUpCard> pows = new LinkedList<>();
+                for(PowerUpCard p : player.getPowerUp()){
+                    if(p.toString().equals("Teleporter, BLUE") || p.toString().equals("Teleporter, RED") ||
+                       p.toString().equals("Teleporter, YELLOW") ||p.toString().equals("Newton, BLUE") ||
+                       p.toString().equals("Newton, RED") ||p.toString().equals("Newton, YELLOW")){
+                        pows.add(p);
+                    }
+                }
+                if(pows.isEmpty()){
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry you can't use any of your powerups now");
+                }else{
+                    sendToClient("POWERUP");
+                    try {
+                        sendListToClient(fromPowerupsToNames(pows));
+                        int x = (int)inputStream.readObject();
+                        x--;
+                        if(pows.get(x) instanceof Teleporter){
+                            teleporter();
+                        }else{  // NEWTON
+                            newton();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        public void teleporter(){
+            try {
+            Player player = model.getPlayers().get(currentPlayer);
+            List<CoordinatesWithRoom> possible = player.getTeleporter().getPossibleCells(model,player);
+            sendToClient("CHOOSECELL");
+            sendListToClient(fromCellsToNames(possible)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+            int x = (int)inputStream.readObject();
+            x--;
+            player.setPlayerPosition(possible.get(x));
+
+            PowerUpCard power = player.getTeleporter();
+            player.getPowerUp().remove(power);
+            model.powerUpDeck.usedPowerUp.add(power);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void newton(){
+            
         }
 
         public Spawnpoint getSpawnpoint(AmmoCube.CubeColor c) {
@@ -828,12 +889,19 @@ public class Server {
         return chosenPower;
     }
 
-    public List<String> fromRoomsToNames(List<Room> list){
-        List<String> targets = new LinkedList<>();
-        for (Room o : list) {
-            targets.add(Integer.toString(o.getToken()));
+    public List<String> fromPowerupsToNames(List<PowerUpCard> list){
+        List<String> pows = new LinkedList<>();
+        for (PowerUpCard o : list) {
+            pows.add(o.toString());
         }
-        return targets;
+        return pows;
+    }
+    public List<String> fromRoomsToNames(List<Room> list){
+        List<String> rooms = new LinkedList<>();
+        for (Room o : list) {
+            rooms.add(Integer.toString(o.getToken()));
+        }
+        return rooms;
     }
     public List<String> fromTargetsToNames(List<Object> list){
         List<String> targets = new LinkedList<>();

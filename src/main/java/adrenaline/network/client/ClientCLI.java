@@ -141,6 +141,7 @@ public class ClientCLI extends Client{
                     "M: Show Map Info\n" +
                     "B: Show your player board\n" +
                     "C: Show other players' information\n" +
+                    "P: Use one of your powerups\n"+
                             "S: Shoot [Default]\n" +
                             "G: Grab\n" +
                             "R: Run\n"
@@ -151,6 +152,7 @@ public class ClientCLI extends Client{
                     case "M":
                     case "B":
                     case "C":
+                    case "P":
                     case "S":
                     case "G":
                     case "R":
@@ -169,6 +171,19 @@ public class ClientCLI extends Client{
 
     public void run(List<String> list) {
         System.out.println("\nChoose a cell (first is default):");
+        for(int i=0; i<list.size();i++) {
+            System.out.println("[" + (i + 1) + "]  " +list.get(i).toString());
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<list.size()+1){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
+  public void powerups(List<String> list) {
+        System.out.println("\nChoose a powerup (first is default):");
         for(int i=0; i<list.size();i++) {
             System.out.println("[" + (i + 1) + "]  " +list.get(i).toString());
         }

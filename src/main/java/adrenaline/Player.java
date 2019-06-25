@@ -567,4 +567,13 @@ public class Player {
         }
         return new PowerUpCard();
     }
+    public PowerUpCard getTeleporter(){
+        for(PowerUpCard p : powerups){
+            if(p.toString().equals("Teleporter, BLUE") || p.toString().equals("Teleporter, YELLOW") ||
+               p.toString().equals("Teleporter, RED")){
+                return p;
+            }
+        }
+        return new PowerUpCard();
+    }
 }

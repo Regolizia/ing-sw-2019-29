@@ -144,6 +144,9 @@ public class ClientThread implements Runnable {
             case "DROPWEAPON":
                 client.dropWeapon(getListFromServer());
                 break;
+            case "POWERUP":
+                client.powerups(getListFromServer());
+                break;
             case "CHOOSEWEAPON":
                 client.chooseWeapon(getListFromServer());
                 break;

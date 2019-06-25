@@ -3,6 +3,7 @@ package adrenaline.powerups;
 import adrenaline.*;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class Teleporter  extends PowerUpCard {
 
@@ -24,18 +25,16 @@ public class Teleporter  extends PowerUpCard {
      * @param p target of teleporter
      * return a LInkedList<CoordinatesWithRoom> where the target can be moved
      */
-    public LinkedList<CoordinatesWithRoom>getPossibleCells(GameModel m, Player p){
+    public List<CoordinatesWithRoom> getPossibleCells(GameModel m, Player p){
 
-        LinkedList<CoordinatesWithRoom>cWr=new LinkedList<>();
+        List<CoordinatesWithRoom>cWr=new LinkedList<CoordinatesWithRoom>();
         for (Room r:m.getMapUsed().getGameBoard().getRooms()
              ) {
-            for (int x=0;x<r.getRoomSizeX();x++) {
+            for (int x=1;x<=r.getRoomSizeX();x++) {
 
-                for (int y=0;y<r.getRoomSizeY();y++)
+                for (int y=1;y<=r.getRoomSizeY();y++)
                 {
                     cWr.add(new CoordinatesWithRoom(x,y,r));
-                    if(cWr.equals(p.getCoordinatesWithRooms().getX()))
-                        cWr.remove(p.getCoordinatesWithRooms());
                 }
 
             }
