@@ -872,8 +872,11 @@ public class Server {
                     targets.clear();
                     targets.add(tt);
 
-                    // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO)
+                    // CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
                     // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
+                    if(!pastTargets.isEmpty() && pastTargets.get(0)==targets.get(0)){
+                        break;
+                    }
 
                     w.applyDamage(targets,p,e);
                     return targets;
@@ -1096,35 +1099,110 @@ public class Server {
                 targets.clear();
                 targets.add(tar);
 
-                // TODO CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
+                // CHECK TARGETS OP1 AND BASE DIFFERENTI (RITORNA IL GIOCATORE COLPITO COSì LO SALVI IN SHOOT)
                 // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
+                if(!pastTargets.isEmpty() && pastTargets.get(0)==targets.get(0)){
+                    break;
+                }
 
                 w.applyDamage(targets,p,e);
                 return targets;
 
-            case "MachineGun":  // LA FACCIO POI
+            case "MachineGun":  // CONSIDERO BASE PRIMA DEGLI ALTRI EFFETTI
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
-                // ASK TO CHOOSE 1 OR 2 TARGETS -BASE
-                sendToClient("CHOOSETARGET");
-                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                int nu = (int)inputStream.readObject();
-                nu--;
-                Object tr = targets.get(nu);
-                targets.clear();
-                targets.add(tr);
-                // do you want another
-                // choose another add it if different
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    // ASK TO CHOOSE 1 OR 2 TARGETS -BASE
+                    sendToClient("CHOOSETARGET");
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nu = (int) inputStream.readObject();
+                    nu--;
+                    Object tr = targets.get(nu);
+                    List<Object> targ2 = targets;
+                    targets.clear();
+                    targets.add(tr);
+                    targ2.remove(tr);
 
-                // SHOOT AGAIN ONE OF THEM -OP1 (MAYBE BASE ALWAYS BEFORE OP1?????)
-                if(!pastTargets.isEmpty())
-                    //ask which of the two to shoot again
-                // TODO CHECK TARGETS OP1 AND OP2 DIFFERENTI
-                // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
+                    sendToClient("CHOOSEANOTHER");
+                    String rsp = (String) inputStream.readObject();
+                    if (rsp.toUpperCase().equals("Y")) {
+                        sendToClient("CHOOSETARGET");
+                        sendListToClient(fromTargetsToNames(targ2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xpo = (int) inputStream.readObject();
+                        xpo--;
+                        targets.add(targ2.get(xpo));
+                    }
+                    w.applyDamage(targets,p,e);
+                    return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
+                }
+                // SHOOT AGAIN ONE OF THEM -OP1 FROM PASTTARGETS
+                if(!pastTargets.isEmpty() && e.getEffect()== AmmoCube.Effect.OP1){
+                    if(e.getNumber()==2 && pastTargets.size()==2){  // NOTHING TO SHOOT (OP2 BEFORE OP1)
+                        break;
+                    }
+                    if(e.getNumber()==2 && pastTargets.size()==3){ // OP2 BEFORE OP1
+                        pastTargets.removeAll(Collections.singleton(pastTargets.size() - 1));   // CAN'T DAMAGE AGAIN TARGET FROM OP2
+                        w.applyDamage(pastTargets,p,e); //JUST ONE
+                        break;
+                    }
+                    sendListToClient(fromTargetsToNames(pastTargets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int u = (int)inputStream.readObject();
+                    u--;
+                    Object tor = targets.get(u);
+                    targets.clear();
+                    targets.add(tor);
+                    w.applyDamage(targets,p,e);
+                    e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
+                    return targets;         // SAVE IT AFTER BASE TARGETS
+                }
+                // ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
+                if(!pastTargets.isEmpty() && e.getEffect()== AmmoCube.Effect.OP2) {
+                    List<Object> pastTargets2 = new LinkedList<>(); // NEED IT LATER IF E.NUMBER!=1
 
-                // TODO ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
-                w.applyDamage(targets,p,e);
+                    if (e.getNumber() == 1) {
+                        // CHECK TARGETS OP1 AND OP2 DIFFERENTI
+                        // SE PASTTARGETS VUOTO OK, SE PIENO TARGET SCELTO DEVE ESSERE DIVERSO DA QUELLO
+                        pastTargets.removeAll(Collections.singleton(pastTargets.size() - 1));   // CAN'T DAMAGE AGAIN TARGET FROM OP1 (IT'S THE LAST)
+                    }
+                    if(!pastTargets.isEmpty()){
+                    // SHOOT MAYBE AGAIN TARGET FROM BASE
+                    sendToClient("CHOOSETARGET");
+                    List<String> toSend = fromTargetsToNames(pastTargets);
+                    toSend.add(0, "No, I dont't want these targets");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nu = (int) inputStream.readObject();
+                    nu--;
+                    if (nu != 0) {
+                        Object tr = pastTargets.get(nu);
+                        pastTargets2 = pastTargets;    // ORIGINAL PASTTARGETS (I NEED THEM IF E.NUMBER!=1)
+                        pastTargets2.add(tr);
+
+                        pastTargets.clear();
+                        pastTargets.add(tr);
+                        w.applyDamage(pastTargets, p, e);
+                    }
+                }
+                    // SHOOT MAYBE DIFFERENT TARGET FROM BASE
+                    targets.removeAll(pastTargets);
+                    sendToClient("CHOOSETARGET");
+                    List<String> toSend2 = fromTargetsToNames(targets);
+                    toSend2.add(0,"No, I dont't want these targets");
+                    sendListToClient(toSend2); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nku = (int) inputStream.readObject();
+                    nku--;
+                    if(nku!=0) {
+                        Object tr = targets.get(nku);
+                        targets.clear();
+                        targets.add(tr);
+                        w.applyDamage(targets, p, e);
+                    }
+
+                    if(e.getNumber()!=1){   // MAYBE OP1 AFTER OP2
+                        e.setNumber(2);
+                        return pastTargets2;    // IF SIZE 3 (2 BASE + 1) IF SIZE 2 (1 BASE + 1, SAME TARGET)
+                    }
+                }
                 break;
 
             case "PlasmaGun":
