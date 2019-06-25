@@ -1694,6 +1694,28 @@ public class Server {
         return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
     }
 
+    public void useTargetingScope(Player p, List<Object> targets){
+            if(p.hasTargetingScope()){
+                try {
+                // ASK USE TARGETING SCOPE
+                sendToClient("TARGETINGSCOPE");
+                String res = (String) inputStream.readObject();
+                if(res.toUpperCase().equals("Y")){
+                    sendToClient("CHOOSETARGET");
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xyp = (int)inputStream.readObject();
+                    xyp--;
+                    p.getTargetingScope().plusOneDamage(p,targets.get(xyp));
+                    PowerUpCard pow = p.getTargetingScope();
+
+                    p.getPowerUp().remove(pow);
+                    model.powerUpDeck.getUsedPowerUp().add(pow);
+                }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+    }
 
 
 

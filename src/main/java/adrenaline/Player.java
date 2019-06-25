@@ -548,4 +548,23 @@ public class Player {
     public void setName(String newName){this.name=newName;}
     public String getName(){return this.name;}
     public CoordinatesWithRoom getRespawnCoordinates(){return this.respawnCoordinates;}
+
+    public boolean hasTargetingScope(){
+        for(PowerUpCard p : powerups){
+            if(p.toString().equals("TargetingScope, BLUE") || p.toString().equals("TargetingScope, YELLOW") ||
+               p.toString().equals("TargetingScope, RED")){
+                return true;
+            }
+        }
+        return false;
+    }
+    public PowerUpCard getTargetingScope(){
+        for(PowerUpCard p : powerups){
+            if(p.toString().equals("TargetingScope, BLUE") || p.toString().equals("TargetingScope, YELLOW") ||
+               p.toString().equals("TargetingScope, RED")){
+                return p;
+            }
+        }
+        return new PowerUpCard();
+    }
 }

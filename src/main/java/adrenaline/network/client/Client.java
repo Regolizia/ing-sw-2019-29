@@ -28,6 +28,7 @@ public class Client {
         public void chooseTarget(List<String> targets){}
         public void chooseAnother(){}
         public void moveTarget(){}
+        public void targetingScope(){}
         public void chooseCell(List<String> cells){}
         public void chooseRoom(List<String> rooms){}
         public void firstTurn(List<String> list){}

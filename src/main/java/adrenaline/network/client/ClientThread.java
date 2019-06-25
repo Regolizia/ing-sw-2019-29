@@ -116,6 +116,9 @@ public class ClientThread implements Runnable {
             case "MOVETARGET":
                 client.moveTarget();
                 break;
+            case "TARGETINGSCOPE":
+                client.targetingScope();
+                break;
             case "CHOOSECELL":
                 client.chooseCell(getListFromServer());
                 break;

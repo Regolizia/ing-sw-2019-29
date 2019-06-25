@@ -35,7 +35,11 @@ public class PowerUpCard extends Card {
         this.canBeUsedOnBot = canBeUsedOnBot;
     }
 
+    public void plusOneDamage(Player player,Object target){
+        if(target instanceof Player)
+            ((Player) target).damageByShooter(player);
 
+    }
     //useless
     //public void setColor(PowerUpCard card, Color c){
       //  this.color = c ;}
