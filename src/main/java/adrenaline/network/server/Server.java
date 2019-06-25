@@ -3,6 +3,7 @@ package adrenaline.network.server;
 // SOCKET
 import adrenaline.*;
 import adrenaline.gameboard.GameBoard;
+import adrenaline.powerups.Newton;
 import adrenaline.powerups.Teleporter;
 
 import java.io.*;
@@ -453,7 +454,8 @@ public class Server {
                         x--;
                         if(pows.get(x) instanceof Teleporter){
                             teleporter();
-                        }else{  // NEWTON
+                        }
+                        if(pows.get(x) instanceof Newton){
                             newton();
                         }
 
@@ -484,7 +486,32 @@ public class Server {
         }
 
         public void newton(){
-            
+            try {
+                Player player = model.getPlayers().get(currentPlayer);
+                List<Object> targets = new LinkedList<>();
+                targets.addAll(model.getPlayers());
+                targets.remove(player);
+
+                // ASK WHICH 1 TARGET TO MOVE
+                sendToClient("CHOOSETARGET");
+                sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int xh = (int)inputStream.readObject();
+                xh--;
+                Object tt = targets.get(xh);
+                targets.clear();
+                targets.add(tt);
+                CoordinatesWithRoom c = ((Player)targets.get(0)).getCoordinatesWithRooms();
+                List<CoordinatesWithRoom> cells =c.tilesSameDirection(2,model.getMapUsed().getGameBoard(),false);
+
+                sendToClient("CHOOSECELL");
+                sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int x = (int)inputStream.readObject();
+                x--;
+                ((Player)targets.get(0)).setPlayerPosition(cells.get(x));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         public Spawnpoint getSpawnpoint(AmmoCube.CubeColor c) {

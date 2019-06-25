@@ -576,4 +576,13 @@ public class Player {
         }
         return new PowerUpCard();
     }
+    public PowerUpCard getNewton(){
+        for(PowerUpCard p : powerups){
+            if(p.toString().equals("Newton, BLUE") || p.toString().equals("Newton, YELLOW") ||
+               p.toString().equals("Newton, RED")){
+                return p;
+            }
+        }
+        return new PowerUpCard();
+    }
 }
