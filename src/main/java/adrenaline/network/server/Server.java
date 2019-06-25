@@ -31,6 +31,7 @@ public class Server {
     private static int boardChosen = 0;
     private static boolean gameIsOn = false;
     private static boolean endgame = false;
+    private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -351,7 +352,7 @@ public class Server {
 
                             //reload();
                             scoring();
-                            //replaceAmmo();
+                            replaceAmmo();
                             replaceWeapons();
 
                             nextPlayer();
@@ -392,6 +393,12 @@ public class Server {
                 getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards().add(model.weaponDeck.pickUpWeapon());
                 weaponNum++;
             }
+        }
+        public void replaceAmmo(){
+        for(CoordinatesWithRoom c : cellsWithoutTiles){
+            c.getRoom().addAmmoTile(model.ammoTileDeck.pickUpAmmoTile(),c.getX(),c.getY());
+        }
+        cellsWithoutTiles.clear();
         }
 
         public void firstTurn(){
@@ -644,9 +651,10 @@ public class Server {
                     listOfItems.add(weapons);
                 }
 
-                else
-                { // IT HAS AMMOTILES
+                else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+                }else { // IT DOESN'T HAVE AN AMMOTILE
+                    Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                 }
             }
         }
@@ -2013,6 +2021,9 @@ public class Server {
         System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
     }
 
+    public static void addCellToList(CoordinatesWithRoom c){
+        cellsWithoutTiles.add(c);
+    }
 }
 
 

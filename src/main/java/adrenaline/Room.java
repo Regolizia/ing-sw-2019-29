@@ -117,6 +117,16 @@ public class Room {
         //return getTiles().get(index);
         return at;
     }
+    public boolean hasAmmoTile(Coordinates coordinates){
+        int index=0;
+        for (int i = 0; i<getTiles().size();i++) {
+            if (getTiles().get(i).getCoordinates().equals(coordinates)){
+                return true;
+
+            }
+        }
+        return false;
+    }
 
 
     /**

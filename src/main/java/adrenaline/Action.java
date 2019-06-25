@@ -200,7 +200,6 @@ public class Action {
                 grabPowerUp(player);
         }
 
-        getModel().ammoTileDeck.getDeck().addLast(toBeGrabbedTile);
 
         return grabCube(player, toBeGrabbedTile);
 
