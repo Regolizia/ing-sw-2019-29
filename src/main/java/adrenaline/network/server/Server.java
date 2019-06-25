@@ -879,6 +879,8 @@ public class Server {
                     }
 
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
+
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -897,6 +899,8 @@ public class Server {
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
+
                 break;
 
             case "Flamethrower":
@@ -946,6 +950,8 @@ public class Server {
                     }
                 }
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
+
                 break;
 
             case "Furnace":
@@ -980,6 +986,7 @@ public class Server {
                     cells = w.getPossibleTargetCells(room, e, g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
@@ -993,6 +1000,7 @@ public class Server {
 
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 break;
 
@@ -1011,6 +1019,7 @@ public class Server {
                     targets.add(t);
 
                     w.applyDamage(targets, p, e);
+                    useTargetingScope(p,targets);
 
                     // ASK SE VUOLE MUOVERE IL TARGET DI 1
                     sendToClient("MOVETARGET");
@@ -1037,6 +1046,7 @@ public class Server {
                     cells.add(c2);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 break;
 
@@ -1054,6 +1064,7 @@ public class Server {
                 targets.add(t);
 
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
                 break;
 
             case "Hellion":
@@ -1067,6 +1078,8 @@ public class Server {
                 y--;
                 // SAVE IT FOR LATER
                 Object target = targets.get(y);
+                List<Object> targets2 = new LinkedList<>();
+                targets2.add(target);
                 targets.clear();
                 targets.add(target);
 
@@ -1084,6 +1097,8 @@ public class Server {
                 targets.add(0,target);  // TARGET HAS TO BE IN FRONT
 
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets2); // IT HAS JUST FIRST TARGET (THE DAMAGED ONE)
+
                 break;
 
             case "LockRifle":
@@ -1106,6 +1121,10 @@ public class Server {
                 }
 
                 w.applyDamage(targets,p,e);
+                if(e.getEffect()== AmmoCube.Effect.BASE){   // ONLY BASE DAMAGES TARGETS
+                    useTargetingScope(p,targets);
+                }
+
                 return targets;
 
             case "MachineGun":  // CONSIDERO BASE PRIMA DEGLI ALTRI EFFETTI
@@ -1134,6 +1153,8 @@ public class Server {
                         targets.add(targ2.get(xpo));
                     }
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
+
                     return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
                 }
                 // SHOOT AGAIN ONE OF THEM -OP1 FROM PASTTARGETS
@@ -1144,6 +1165,8 @@ public class Server {
                     if(e.getNumber()==2 && pastTargets.size()==3){ // OP2 BEFORE OP1
                         pastTargets.removeAll(Collections.singleton(pastTargets.size() - 1));   // CAN'T DAMAGE AGAIN TARGET FROM OP2
                         w.applyDamage(pastTargets,p,e); //JUST ONE
+                        useTargetingScope(p,pastTargets);
+
                         break;
                     }
                     sendListToClient(fromTargetsToNames(pastTargets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1153,6 +1176,8 @@ public class Server {
                     targets.clear();
                     targets.add(tor);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
+
                     e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
                     return targets;         // SAVE IT AFTER BASE TARGETS
                 }
@@ -1181,6 +1206,7 @@ public class Server {
                         pastTargets.clear();
                         pastTargets.add(tr);
                         w.applyDamage(pastTargets, p, e);
+                        useTargetingScope(p,pastTargets);
                     }
                 }
                     // SHOOT MAYBE DIFFERENT TARGET FROM BASE
@@ -1196,6 +1222,7 @@ public class Server {
                         targets.clear();
                         targets.add(tr);
                         w.applyDamage(targets, p, e);
+                        useTargetingScope(p,targets);
                     }
 
                     if(e.getNumber()!=1){   // MAYBE OP1 AFTER OP2
@@ -1220,11 +1247,13 @@ public class Server {
                     targets.add(tg);
 
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP2){
                     targets=pastTargets;    // OP2 DOPO BASE PER FORZA
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
@@ -1250,6 +1279,7 @@ public class Server {
                     targets.add(tt);
 
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
 
                     CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
                     // MOVE PLAYER TO TARGET'S SQUARE
@@ -1279,21 +1309,21 @@ public class Server {
                 int i = (int)inputStream.readObject();
                 i--;
                 Object tg = targets.get(i);
-                List<Object> targets2 = targets;
+                List<Object> targets3 = targets;
                 targets.clear();
                 targets.add(tg);
 
                 // ASK IF WANT ANOTHER TARGET IF ALT EFFECT
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
-                    targets2.remove(tg);
+                    targets3.remove(tg);
                     sendToClient("CHOOSEANOTHER");
                     String rsp = (String) inputStream.readObject();
                     if (rsp.toUpperCase().equals("Y")) {
                         sendToClient("CHOOSETARGET");
-                        sendListToClient(fromTargetsToNames(targets2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        sendListToClient(fromTargetsToNames(targets3)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xeo = (int) inputStream.readObject();
                         xeo--;
-                        targets.add(targets2.get(xeo));
+                        targets.add(targets3.get(xeo));
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2 &&
@@ -1304,6 +1334,8 @@ public class Server {
                         targets.remove(1);
                 }
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
+
                 break;
 
             case "RocketLauncher": // LO FACCIO DOPO
@@ -1330,6 +1362,7 @@ public class Server {
                     targets.add(oj);
 
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
 
                     // ASK IF MOVE TARGET 1 SQUARE IF PRIMA BASE
                     sendToClient("MOVETARGET");
@@ -1344,6 +1377,7 @@ public class Server {
                         ((Player) targets.get(0)).setPlayerPosition(one.get(xf));
 
                         w.applyDamage(targets,p,e);
+                        useTargetingScope(p,targets);
 
                         // IF PRIMA BASE RETURN OLD TARGET POSITION (AS SECOND PLAYER) BEFORE MOVING IT
                         Player pp = new Player();
@@ -1366,6 +1400,8 @@ public class Server {
                         cells.add(d);
                         targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                         w.applyDamage(targets,p,e);
+                        useTargetingScope(p,targets);
+
                         Player p2 = new Player();
                         p2.setPlayerPosition(d);
                         List<Object> lis7 = new LinkedList<>();
@@ -1379,6 +1415,7 @@ public class Server {
                             targets.add(pastTargets.get(0));    // OLD TARGET ALSO DAMAGED
                         }
                         w.applyDamage(targets,p,e);
+                        useTargetingScope(p,targets);
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -1442,11 +1479,13 @@ public class Server {
                         }
                     }
                     w.applyDamage(targets, p, e);
+                    useTargetingScope(p,targets);
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 break;
 
@@ -1464,6 +1503,7 @@ public class Server {
                 targets.add(ot);
 
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
 
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     // ASK -IF- THEY WANT TO MOVE THAT TARGET 1 SQUARE
@@ -1493,6 +1533,7 @@ public class Server {
                 targets.clear();
                 targets.add(ojt);
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
 
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     // ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
@@ -1528,6 +1569,7 @@ public class Server {
                 targets.clear();
                 targets.add(oc);
                 w.applyDamage(targets, p, e);
+                useTargetingScope(p,targets);
                 // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
                 return targets;
 
@@ -1567,6 +1609,7 @@ public class Server {
                     ((Player)trg).setPlayerPosition(listOne.get(xgy));
 
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
 
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -1583,6 +1626,7 @@ public class Server {
                     //MOVE IT TO YOUR SQUARE
                     ((Player)targets.get(0)).setPlayerPosition(playerPosition);
                     w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
                 }
                 break;
 
@@ -1637,6 +1681,7 @@ public class Server {
                 }
 
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
                 return targets;
 
             case "Whisper":
@@ -1652,6 +1697,8 @@ public class Server {
                 targets.clear();
                 targets.add(b);
                 w.applyDamage(targets,p,e);
+                useTargetingScope(p,targets);
+
                 break;
 
             case "Zx_2":
@@ -1686,6 +1733,9 @@ public class Server {
                     }
                 }
                 w.applyDamage(targets,p,e);
+                if(e.getEffect()== AmmoCube.Effect.BASE){
+                    useTargetingScope(p,targets);
+                }
                 break;
         }
         } catch (Exception ex) {
@@ -1701,6 +1751,9 @@ public class Server {
                 sendToClient("TARGETINGSCOPE");
                 String res = (String) inputStream.readObject();
                 if(res.toUpperCase().equals("Y")){
+
+                    // TODO Pay 1 ammo cube of any color
+
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xyp = (int)inputStream.readObject();
