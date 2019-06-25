@@ -10,11 +10,9 @@ import java.util.*;
 public class WeaponDeck{
 
    private LinkedList<WeaponCard> deck;
-    private LinkedList<WeaponCard> usedWeaponCard;
 
     public WeaponDeck() {
         deck =  new LinkedList<>();
-        usedWeaponCard=new LinkedList<>();
         deck.add(new Cyberblade());
         deck.add(new Electroscythe());
         deck.add(new Flamethrower());
@@ -57,44 +55,7 @@ public class WeaponDeck{
      **/
 
     public WeaponCard pickUpWeapon(){
-        if(this.deck.size()>0){
-            setUsedWeaponCard(this.deck.getFirst());
             return this.deck.removeFirst();
-        }
-
-        else {
-            shuffleUsedWeaponCards();
-            deck=usedWeaponCard;
-            usedWeaponCard.clear();
-            return deck.removeFirst();}
     }
-    /**
-     *setUsedWeaponCard
-     * @param weaponCard trowed WeaponCard
-     *                   add WeaponCard to usedWeaponCard deck
-     **/
-    public void setUsedWeaponCard(WeaponCard weaponCard){
-        usedWeaponCard.add(weaponCard);
-    }
-
-    /**
-     *getUsedWeaponCard
-     * @return usedWeaponCard's deck
-     **/
-    public LinkedList<WeaponCard> getUsedWeaponCard() {
-        return usedWeaponCard;
-    }
-
-    /**
-     * Shuffles used cards.
-     */
-
-
-
-
-    public void shuffleUsedWeaponCards() {
-        Collections.shuffle(usedWeaponCard);
-    }
-
 
 }

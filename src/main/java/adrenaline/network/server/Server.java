@@ -895,7 +895,6 @@ public class Server {
             sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
             int y = (int)inputStream.readObject();
             // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
-            //model.weaponDeck.getUsedWeaponCard().add(player.getHand().remove(y--));
         }
 
         //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
