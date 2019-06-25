@@ -1237,18 +1237,27 @@ public class Server {
                 }
                 break;
 
-            case "PowerGlove": // LO FACCIO DOPO
+            case "PowerGlove":
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-                    // TODO ASK 1 TARGET
+                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    sendToClient("CHOOSETARGET");
+                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xh = (int)inputStream.readObject();
+                    xh--;
+                    Object tt = targets.get(xh);
+                    targets.clear();
+                    targets.add(tt);
+
                     w.applyDamage(targets,p,e);
 
                     CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
-                    // TODO MOVE PLAYER TO TARGET'S SQUARE
+                    // MOVE PLAYER TO TARGET'S SQUARE
+                    action.run(p,((Player)tt).getCoordinatesWithRooms());
 
-                // ALSO
+                // ALSO IF ALT
                 if(e.getEffect()== AmmoCube.Effect.ALT){
-                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false);
+                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false); // GETS CELL AFTER ORIGINAL AND NEW POSITION
                     if(c2.getX()!=0){
                         // TODO ASK IF PLAYER WANTS TO MOVE THERE
 
@@ -1322,21 +1331,53 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
 
-                    // TODO ASK IF MOVE TARGET 1 SQUARE IF PRIMA BASE
-                    // TODO IF PRIMA BASE RETURN OLD TARGET POSITION (AS PLAYER) BEFORE MOVING IT
+                    // ASK IF MOVE TARGET 1 SQUARE IF PRIMA BASE
+                    sendToClient("MOVETARGET");
+                    String rs = (String) inputStream.readObject();
+                    if (rs.toUpperCase().equals("Y")) {
+                        CoordinatesWithRoom ctarget = ((Player)oj).getCoordinatesWithRooms();
+                        List<CoordinatesWithRoom> one = ctarget.oneTileDistant(g, false);
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xf = (int) inputStream.readObject();
+                        xf--;
+                        ((Player) targets.get(0)).setPlayerPosition(one.get(xf));
+
+                        w.applyDamage(targets,p,e);
+
+                        // IF PRIMA BASE RETURN OLD TARGET POSITION (AS SECOND PLAYER) BEFORE MOVING IT
+                        Player pp = new Player();
+                        pp.setPlayerPosition(ctarget);
+                        targets.add(pp);
+                        return targets;
+                    }
 
                     }
                 if(e.getEffect()== AmmoCube.Effect.OP2) {
                     if(pastTargets.isEmpty()) { // PRIMA OP2- (NULLA PASSATO) SCEGLI UNA CELLA, COLPISCILI E POI RITORNA LA CELLA (COME GIOCATORE)
                         cells = w.getPossibleTargetCells(playerPosition,e,g);
-                        // TODO CHIEDI 1 CELLA, COLPISCILI, RITORNA CELLA COME GIOCATORE
-                        //w.applyDamage(targets,p,e);
-                        //
+                        // CHIEDI 1 CELLA, COLPISCILI, RITORNA CELLA COME GIOCATORE
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xg = (int)inputStream.readObject();
+                        xg--;
+                        CoordinatesWithRoom d = cells.get(xg);
+                        cells.clear();
+                        cells.add(d);
+                        targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                        w.applyDamage(targets,p,e);
+                        Player p2 = new Player();
+                        p2.setPlayerPosition(d);
+                        List<Object> lis7 = new LinkedList<>();
+                        lis7.add(p2);
+                        return lis7;
 
                     }else{  // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
-                        cells = w.getPossibleTargetCells(((Player)pastTargets.get(0)).getCoordinatesWithRooms(),e,g);
+                        cells = w.getPossibleTargetCells(((Player)pastTargets.get(1)).getCoordinatesWithRooms(),e,g);
                         targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                        if(!targets.contains(pastTargets.get(0))){
+                            targets.add(pastTargets.get(0));    // OLD TARGET ALSO DAMAGED
+                        }
                         w.applyDamage(targets,p,e);
                     }
                 }
