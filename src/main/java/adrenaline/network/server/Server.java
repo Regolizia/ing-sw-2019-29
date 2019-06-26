@@ -32,6 +32,7 @@ public class Server {
     private static boolean gameIsOn = false;
     private static boolean endgame = false;
     private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
+    private static List<String> disconnected = new LinkedList<>();
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -122,8 +123,23 @@ public class Server {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                    disconnect();
             }
         }
+
+        public void disconnect(){
+            try {
+
+                sendToClient("DISCONNECTED");
+                disconnected.add(nickname);
+                socket.close();
+                System.out.println("Client Disconnected");
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         public void sendToClient(String message){
             try {
                 outputStream.writeObject(message);
@@ -147,24 +163,57 @@ public class Server {
 
         public void clientLogin(){
             try {
-                nickname = loginName();
+                if(disconnected.isEmpty() && !isGameOn()) {
+                    nickname = loginName();
 
-                color = checkColor();
+                    color = checkColor();
 
-                chooseBoard(nickname); // it checks if is firstPlayer and asks board
+                    chooseBoard(nickname); // it checks if is firstPlayer and asks board
 
-                sendToClient("ACCEPTED");
+                    sendToClient("ACCEPTED");
 
-                countConnections();
+                    countConnections();
 
-                if(connectionsCount==3){
-                    Countdown c = new Countdown();
+                    if (connectionsCount == 3) {
+                        Countdown c = new Countdown();
+                    }
+                    addPlayerToGame(nickname, color);
+                    writers.put(nickname, outputStream);
+
+                    disconnect();
+
+                }else if(disconnected.isEmpty() && isGameOn()){
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry, the game has already started without you");
+                    socket.close();
+
+                }else if(!disconnected.isEmpty()){
+                    while (true) {
+                        nickname = loginName();
+
+                        if (disconnected.contains(nickname)) {
+                            // FALLO GIOCARE, WELCOME BACK
+                            sendToClient("MESSAGE");
+                            sendToClient("Welcome back!");
+                            disconnected.remove(nickname);
+                            break;
+                        } else {
+                            sendToClient("MESSAGE");
+                            sendToClient("You inserted the wrong nickname");
+                        }
+                    }
                 }
-                addPlayerToGame(nickname, color);
-                writers.put(nickname,outputStream);
 
             } catch (Exception e) {
                 e.printStackTrace();
+                try {
+                    sendToClient("DISCONNECTED");
+                    disconnected.add(nickname);
+                    socket.close();
+                    System.out.println("disconnected");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
 
         }
@@ -179,9 +228,11 @@ public class Server {
                         if (!isBlank(name) && !names.contains(name)) {
                             names.add(name);
                             return name;
-                        } else if (names.contains(name)) {
+                        } else if (names.contains(name) && !disconnected.contains(name)) {
                             sendToClient("LOGIN");
                             name = (String)inputStream.readObject();
+                        } else if(disconnected.contains(name)){
+                            return name;
                         }
                     }
                 }

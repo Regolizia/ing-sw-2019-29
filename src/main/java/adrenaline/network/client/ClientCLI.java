@@ -25,21 +25,29 @@ public class ClientCLI extends Client{
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_RESET = "\u001B[0m";
 
-    public static void main(String[] args) throws Exception {
+    public static String serverAddress;
+    public static final int socketPort = 4321;
+    public static final int rmiPort = 59002;
+
+    public static void main(String[] args){
 
 
         if (args.length != 1) {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        String serverAddress = args[0];
+        serverAddress = args[0];
 
-        //String serverAddress = "192.168.43.171";//todo change every time
-        int socketPort = 4321, rmiPort = 59002;
+        //serverAddress = "192.168.43.171";//todo change every time
 
         cli = new ClientCLI(serverAddress, socketPort, rmiPort);
 
-        new ClientThread(socket,cli).run();
+        try {
+            new ClientThread(socket,cli).run();
+        } catch (IOException e) {
+            //e.printStackTrace();
+            reconnect();
+        }
     }
 
     public static void startClient(String serverAddress, int socketPort, int rmiPort){
@@ -70,6 +78,17 @@ public class ClientCLI extends Client{
         startClient(serverAddress,socketPort,rmiPort);
 
     }
+    public static void reconnect(){
+        try {
+            socket.close();
+            socket = new Socket(serverAddress,socketPort);
+            new ClientThread(socket,cli).run();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void getOutput(ObjectOutputStream o){
         this.output=o;
     }
@@ -373,5 +392,8 @@ public class ClientCLI extends Client{
     public static void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {
         System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
     }
-
+    public void disconnected(){
+        System.out.println("You've been disconnected!");
+        reconnect();
+    }
 }

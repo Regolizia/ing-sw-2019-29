@@ -54,8 +54,10 @@ public class ClientThread implements Runnable {
         String action = "";
         try {
             action = (String)input.readObject();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            socket.close();
+            //socket = new Socket();
         }
     return action;
     }
@@ -158,6 +160,9 @@ public class ClientThread implements Runnable {
                 break;
             case "MESSAGE":
                 client.printMessage(getFromServer());
+                break;
+            case "DISCONNECTED":
+                client.disconnected();
                 break;
         }
         } catch (IOException e) {

@@ -36,6 +36,7 @@ public class Client {
         public void firstTurn(List<String> list){}
         public void printMessage(String s){}
         public void showMainMenu(){}
+        public void disconnected(){}
         public void waitStart(){}
         public void boardSetup(int n, List<String> colors, List<String> names, List<String> blueredyellow){}
 
