@@ -889,63 +889,76 @@ public class Server {
                 //TODO CANCEL ACTION
                 return;
             }
+            if(weaponCard.canShootOp1()||weaponCard.canShootOp2()){
             sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
             z = (int) inputStream.readObject();
             if(z==2)
             {
                 //TODO SHOOTING
             }
-            paidEffectAndNumber.addAll(shootOtherEffect(weaponCard,player));
+            paidEffectAndNumber.addAll(shootOtherEffect(weaponCard,player));}
             //TODO SHOOTING
-
 
     }catch (Exception e){e.printStackTrace();}}
 
     public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player) {
             int number=0;
-
-            //TODO CONTROLLA CHE L'EFFETTO NON SIA NE BASE NE ALT
             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
-            LinkedList<AmmoCube.Effect> effect = new LinkedList<>();
+            LinkedList<AmmoCube.Effect> effect = new LinkedList<>(); //just to check
+            LinkedList<AmmoCube.Effect> effectRequested = new LinkedList<>(); //just to check
             LinkedList<Action.PayOption> payOptions = new LinkedList<>();
             LinkedList<EffectAndNumber> paidEffect = new LinkedList<>();
-            Action.PayOption payOption=null;
-            //TODO PER OGNI EFFETTO CHIEDI METODO PAGAMENTO
-            for (AmmoCube.Effect e : AmmoCube.Effect.values()) {
+            int response=0;
 
-                 if(weaponCard.getPrice().contains(e)){
-                    //TODO CHIEDI SE VUOI PAGARE QUESTO EFFETTO
-                     //IF YES
-                     effect.add(e);
-                     //TODO CHIEDI PAGAMENTO
-                     //payOption= response
-                     payOptions.add(payOption);
+         try{
+             do {
+
+                 if(weaponCard.canShootOp1()&&!effect.contains(AmmoCube.Effect.OP1))
+                    {sendToClient("OP 1?\n1 YES\n2 NO ");
+                    response=(int)inputStream.readObject();
+                    if(response==1)
+                        effectRequested.add(AmmoCube.Effect.OP1);
+
+                    }
+                 if(weaponCard.canShootOp2()&&!effect.contains(AmmoCube.Effect.OP2))
+                 {sendToClient("OP 2?\n1 YES\n2 NO ");
+                     response=(int)inputStream.readObject();
+                     if(response==1)
+                         effectRequested.add(AmmoCube.Effect.OP2);
 
                  }
 
-            }
+                sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
+                response = (int) inputStream.readObject();
 
-            for (AmmoCube.Effect e : effect
-            ) {
+               } while(response==1);
+            //TODO PER OGNI EFFETTO CHIEDI METODO PAGAMENTO
 
-                if (payOptions.get(effect.indexOf(e)).equals(Action.PayOption.AMMOPOWER)) {
-                    playerPowerUpCards.addAll(payWithThesePowerUps(player));
-                    player.getPowerUp().removeAll(playerPowerUpCards);
-                }
-                if (!action.canPayCard(weaponCard, player, payOptions.get(effect.indexOf(e)), e, playerPowerUpCards)) {
-                    player.getPowerUp().addAll(playerPowerUpCards);
-                    playerPowerUpCards.clear();
+             for (AmmoCube.Effect e:effectRequested) {
+                 sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER [DEFAULT]");
+                 response = (int)inputStream.readObject();
 
-                } else {
-                    model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-                    paidEffect.add(action.paidEffect(weaponCard, player, payOptions.get(effect.indexOf(e)), e, playerPowerUpCards, number));
-                    playerPowerUpCards.clear();
-                }
+                 if(response==1){
+                     if(action.canPayCard(weaponCard,player, Action.PayOption.AMMO,e,playerPowerUpCards)){
+                         //todo ask for number
+                         paidEffect.add(action.payAmmo(player,weaponCard,e,number));
+                     }
+                 }else{
+                     if(action.canPayCard(weaponCard,player, Action.PayOption.AMMOPOWER,e,playerPowerUpCards)){
+                         //todo ask for number
+                         playerPowerUpCards=payWithThesePowerUps(player);
+                         paidEffect.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,number));
+                         player.getPowerUp().removeAll(playerPowerUpCards);
+                         model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+                         playerPowerUpCards.clear();
+                     }
+                 }
 
-            }
+             }
+            }catch (Exception e){e.printStackTrace();}
 
-        return paidEffect;
-    }
+        return paidEffect;}
+
 
 
     public EffectAndNumber shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
