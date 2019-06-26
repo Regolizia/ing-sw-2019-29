@@ -23,7 +23,9 @@ public class ActionTest {
         WeaponCard wyellow = new Cyberblade();
         Action.ActionType actionType = Action.ActionType.RUN; //enum
         Action.PayOption payOption = Action.PayOption.AMMO;  //enum
-
+        m.getMapUsed().getArrayX();
+        m.getMapUsed().getArrayY();
+        m.getMapUsed().fromIndexToColor(5);
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));//to do doAction
         Player player = new Player(c1, Figure.PlayerColor.GREEN);//to do doAction()
         Player victim = new Player(c1, Figure.PlayerColor.BLUE);//
