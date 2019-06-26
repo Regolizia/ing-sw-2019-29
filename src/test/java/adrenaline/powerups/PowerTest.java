@@ -11,7 +11,7 @@ private Newton newton;
 private TagbackGrenade tagbackGrenade;
 private TargetingScope targetingScope;
 private Teleporter teleporter;
-
+private TargetingScope targetingScope2;
 @Test
 void constructor(){
     newton=new Newton(AmmoCube.CubeColor.BLUE);
@@ -27,6 +27,8 @@ void constructor(){
     targetingScope.toString();
     targetingScope.plusOneDamage(player,player);
     teleporter.getPossibleCells(m,player);
+    targetingScope2=new TargetingScope();
+    teleporter.toString();
 
 }
 }
