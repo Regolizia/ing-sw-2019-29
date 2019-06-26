@@ -148,7 +148,7 @@ public class ActionTest {
         shooters.add(player);
         action.givePoints(victim, shooters);
         victim.putASkullOnTrack();
-        victim.newLife();
+        victim.newLife(new CoordinatesWithRoom());
         Player player2=new Player(c1, Figure.PlayerColor.GRAY);
         for (int i = 0; i < 6; i++)
         {

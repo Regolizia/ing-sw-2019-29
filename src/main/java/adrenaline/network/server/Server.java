@@ -640,9 +640,13 @@ public class Server {
                 if(p.isDead()){
                     p.hasDied();
                     victims.add(p);
-                    // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
                 }
             }
+            for(Player p : victims){
+                
+                //p.newLife(); coord from choice
+            }
+
             action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
                                                                  // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI?
         }

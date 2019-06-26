@@ -227,10 +227,13 @@ public class Player {
      *newLife()
      *respawn the player at his initial spawnpoint
      */
-    public void newLife() {
-        setPlayerPositionSpawnpoint(respawnCoordinates);
-        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
-        this.marks = new Figure.PlayerColor[]{Figure.PlayerColor.NONE};
+    public void newLife(CoordinatesWithRoom coordinates) {
+
+        setPlayerPositionSpawnpoint(coordinates);
+        setPlayerPosition(coordinates);
+        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
         setMaxPointAssignableCounter(0);
         putASkullOnTrack();
 
