@@ -24,7 +24,7 @@ public class Server {
     private static BotAction botAction;
     private static FreneticAction freneticAction;
     private static int currentPlayer = 0;
-    private static boolean isFirstTurn = true;
+    private static boolean firstTurn = true;
 
     private static int time = 0;
     private static int connectionsCount = 0;
@@ -87,6 +87,13 @@ public class Server {
             }
         }
     }
+    public static synchronized boolean isFirstTurn(){
+        return firstTurn;
+    }
+    public static void endFirstTurn(){
+        firstTurn= false;
+    }
+
     public static class RequestHandler extends Thread {
 
         Figure.PlayerColor color;
@@ -124,8 +131,6 @@ public class Server {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
-                    disconnect();
             }
         }
 
@@ -135,6 +140,7 @@ public class Server {
                 sendToClient("DISCONNECTED");
                 disconnected.add(nickname);
                 disconnectedColors.put(nickname,color);
+                writers.remove(writers.get(nickname));
                 for(String s : disconnected){
                     System.out.println(s+ " METHOD");
                 }// TODO
@@ -175,22 +181,58 @@ public class Server {
 
         public void clientLogin(){
             try {
-                if(disconnected.isEmpty() && !isGameOn()) {
-                    nickname = loginName();
+                if(!isGameOn()) {
+                    while (true) {
+                        nickname = loginName();
+                        if (!disconnected.contains(nickname)) {
+                            countConnections();
+                            System.out.println(connectionsCount +" connections");
 
-                    color = checkColor();
+                            color = checkColor();
 
-                    chooseBoard(nickname); // it checks if is firstPlayer and asks board
+                            chooseBoard(nickname); // it checks if is firstPlayer and asks board
 
-                    sendToClient("ACCEPTED");
+                            sendToClient("ACCEPTED");
 
-                    countConnections();
+                            if (connectionsCount == 3) {
+                                Countdown c = new Countdown();
+                            }
+                            addPlayerToGame(nickname, color);
+                            writers.put(nickname, outputStream);
 
-                    if (connectionsCount == 3) {
-                        Countdown c = new Countdown();
+                            break;
+                        }
+                        if (disconnected.contains(nickname)) {
+                            // FALLO GIOCARE, WELCOME BACK
+                            sendToClient("MESSAGE");
+                            sendToClient("Welcome back!");
+
+                            countConnections();
+                            System.out.println(connectionsCount +" connections");
+
+                            if (disconnectedColors.get(nickname) == null) { // HASN'T CHOSEN COLOR
+
+                                color = checkColor();
+
+                            }
+
+                            chooseBoard(nickname); // it checks if is firstPlayer and asks board
+
+                            sendToClient("ACCEPTED");
+
+                            if (connectionsCount == 3) {
+                                Countdown c = new Countdown();
+                            }
+                            addPlayerToGame(nickname, color);
+                            writers.put(nickname, outputStream);
+
+                            disconnected.remove(nickname);
+                            disconnectedColors.remove(nickname);
+
+                            break;
+
+                        }
                     }
-                    addPlayerToGame(nickname, color);
-                    writers.put(nickname, outputStream);
 
                     //disconnect(); TO TRY TO DISCONNECT
 
@@ -199,49 +241,6 @@ public class Server {
                     sendToClient("Sorry, the game has already started without you");
                     socket.close();
 
-                }else if(!disconnected.isEmpty()){
-                    while (true) {
-                        nickname = loginName();
-
-                        if (disconnected.contains(nickname)) {
-                            // FALLO GIOCARE, WELCOME BACK
-                            sendToClient("MESSAGE");
-                            sendToClient("Welcome back!");
-                            disconnected.remove(nickname);
-
-                            if(disconnectedColors.get(nickname)==null){
-
-                                color = checkColor();
-
-                                chooseBoard(nickname); // it checks if is firstPlayer and asks board
-
-                                sendToClient("ACCEPTED");
-
-                                countConnections();
-
-                                if (connectionsCount == 3) {
-                                    Countdown c = new Countdown();
-                                }
-                                addPlayerToGame(nickname, color);
-                                writers.put(nickname, outputStream);
-                            }if(disconnectedColors.get(nickname)!=null && boardChosen==42) {
-                                    chooseBoard(nickname);
-                                    sendToClient("ACCEPTED");
-
-                                    countConnections();
-
-                                    if (connectionsCount == 3) {
-                                        Countdown c = new Countdown();
-                                    }
-                                    addPlayerToGame(nickname, color);
-                                    writers.put(nickname, outputStream);
-                            }
-                            break;
-                        } else {
-                            sendToClient("MESSAGE");
-                            sendToClient("You inserted the wrong nickname");
-                        }
-                    }
                 }
 
             } catch (Exception e) {
@@ -250,9 +249,13 @@ public class Server {
                     sendToClient("DISCONNECTED");
                     disconnected.add(nickname);
                     disconnectedColors.put(nickname,color);
+                    writers.remove(writers.get(nickname));
                     System.out.println("Client Disconnected");
                     socket.close();
-                    removeOneConnection();
+                    if(nickname!=null) {
+                        removeOneConnection();
+                        System.out.println(nickname+" REMOVED ");
+                    }
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -321,25 +324,25 @@ public class Server {
                     ((ObjectOutputStream)me.getValue()).writeObject(s);
                     ((ObjectOutputStream)me.getValue()).flush();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    // DISCONNECTED
                 }
             }
         }
 
         public void chooseBoard(String name) throws Exception {
-            if(name.equals(names.get(0))){
+            if(boardChosen==42){
 
-                while(true){
+                while(boardChosen==42){
                     int result = 0;
                     sendToClient("BOARD");
                     result = (int)inputStream.readObject();
                     if (result == 1 || result == 2 || result == 3 || result == 4) {
                         Server.setBoardChosen(result);
                         System.out.println("BOARD CHOSEN " + result);
-                        boardChosen = result;
                         Server.createBoard();
                         printWeaponSpawnpoints();
-                        break;
+                        return;
                     } else {
                         //  ASK AGAIN BECAUSE NOT ACCEPTED
                     }
@@ -436,14 +439,15 @@ public class Server {
 
                     if (isCurrentPlayer()) {
                         try {
-                            if (isFirstTurn) {
+                            if (Server.isFirstTurn()) {
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
                                 firstTurn();
-                                numberOfActions = 2;
+                                numberOfActions = 0;
+                                System.out.println("CURRENT PLAYER " + currentPlayer);
                             }
-                            if (numberOfActions != 2) {
+                            if (numberOfActions != 2 && !firstTurn) {
                                 sendToClient("YOURTURN");
 
                                 String choice = (String) inputStream.readObject();
@@ -469,7 +473,6 @@ public class Server {
                                         // OTHER PLAYERS
                                         break;
                                     case "P":
-                                        sendToClient("POWERUP");
                                         powerup();
                                         break;
                                     case "S":
@@ -480,12 +483,26 @@ public class Server {
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            try {
+                                sendToClient("DISCONNECTED");
+                                disconnected.add(nickname);
+                                disconnectedColors.put(nickname,color);
+                                writers.remove(writers.get(nickname));
+                                System.out.println("Client Disconnected");
+                                socket.close();
+                                if(nickname!=null) {
+                                    removeOneConnection();
+                                    System.out.println(nickname+" REMOVED ");
+                                }
+                                break;
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
                         }
                         // END OF TURN
-                        if (numberOfActions == 2) {
+                        if (numberOfActions == 2 && !firstTurn) {
 
-                            sendToClient("POWERUP");    // CAN USE SOME POWERUPS BEFORE END OF TURN
+                            // CAN USE SOME POWERUPS BEFORE END OF TURN
                             powerup();
 
                             //reload();
@@ -493,6 +510,14 @@ public class Server {
                             replaceAmmo();
                             replaceWeapons();
 
+                            nextPlayer();
+                            numberOfActions = 0;
+                            System.out.println("CURRENT PLAYER " + currentPlayer);
+                        }
+                        if (Server.isFirstTurn()){
+                            if (currentPlayer == model.getPlayers().size() - 1) {
+                                Server.endFirstTurn();
+                            }
                             nextPlayer();
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
@@ -589,7 +614,6 @@ public class Server {
             if(currentPlayer!=model.getPlayers().size()-1) {currentPlayer++;}
             else{
                 currentPlayer = 0;
-                isFirstTurn= false;
             }
         }
 
@@ -758,7 +782,8 @@ public class Server {
                 action.run(player,cells.get(x));
                 System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                disconnect();
             }
         }
 
