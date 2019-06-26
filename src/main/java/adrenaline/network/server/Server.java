@@ -28,11 +28,12 @@ public class Server {
 
     private static int time = 0;
     private static int connectionsCount = 0;
-    private static int boardChosen = 0;
+    private static int boardChosen = 42;
     private static boolean gameIsOn = false;
     private static boolean endgame = false;
     private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
     private static List<String> disconnected = new LinkedList<>();
+    private static HashMap<String,Figure.PlayerColor> disconnectedColors = new HashMap<>();
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -133,7 +134,14 @@ public class Server {
 
                 sendToClient("DISCONNECTED");
                 disconnected.add(nickname);
+                disconnectedColors.put(nickname,color);
+                for(String s : disconnected){
+                    System.out.println(s+ " METHOD");
+                }// TODO
+
+
                 socket.close();
+                removeOneConnection();
                 System.out.println("Client Disconnected");
             }catch (IOException e) {
                 e.printStackTrace();
@@ -146,6 +154,9 @@ public class Server {
                 outputStream.flush();
             } catch (IOException e) {
                 System.out.println("Client Disconnected");
+                for(String s : disconnected){
+                    System.out.println(s+" SEND");
+                }
             }
 
         }
@@ -158,6 +169,10 @@ public class Server {
         public static void countConnections(){
 
             Server.connectionsCount++;
+        }
+        public static void removeOneConnection(){
+
+            Server.connectionsCount--;
         }
 
 
@@ -196,6 +211,34 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Welcome back!");
                             disconnected.remove(nickname);
+
+                            if(disconnectedColors.get(nickname)==null){
+
+                                color = checkColor();
+
+                                chooseBoard(nickname); // it checks if is firstPlayer and asks board
+
+                                sendToClient("ACCEPTED");
+
+                                countConnections();
+
+                                if (connectionsCount == 3) {
+                                    Countdown c = new Countdown();
+                                }
+                                addPlayerToGame(nickname, color);
+                                writers.put(nickname, outputStream);
+                            }if(disconnectedColors.get(nickname)!=null && boardChosen==42) {
+                                    chooseBoard(nickname);
+                                    sendToClient("ACCEPTED");
+
+                                    countConnections();
+
+                                    if (connectionsCount == 3) {
+                                        Countdown c = new Countdown();
+                                    }
+                                    addPlayerToGame(nickname, color);
+                                    writers.put(nickname, outputStream);
+                            }
                             break;
                         } else {
                             sendToClient("MESSAGE");
@@ -209,8 +252,14 @@ public class Server {
                 try {
                     sendToClient("DISCONNECTED");
                     disconnected.add(nickname);
+                    disconnectedColors.put(nickname,color);
+                    System.out.println("Client Disconnected");
+                    for(String s : disconnected){
+                        System.out.println(s + " EXCEPTION");
+                    }
+
                     socket.close();
-                    System.out.println("disconnected");
+                    removeOneConnection();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
