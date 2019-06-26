@@ -440,6 +440,9 @@ public class Server {
                     if (isCurrentPlayer()) {
                         try {
                             if (Server.isFirstTurn()) {
+                                if(currentPlayer==0) {
+                                    broadcast("\nThe board is number " + boardChosen);
+                                }
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
@@ -823,6 +826,9 @@ public class Server {
 
                 else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+
+                    System.out.println(" LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString()+"\n");
+
                 }else { // IT DOESN'T HAVE AN AMMOTILE
                     Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                 }
@@ -852,6 +858,8 @@ public class Server {
             printPlayerAmmo(player);
             action.grabTile(player, chosenCell);
             printPlayerAmmo(player);
+
+            broadcast(stringPlayerAmmo(player));
         }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2189,6 +2197,9 @@ public class Server {
     }
     public static void printPlayerAmmo(Player p){
         System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
+    }
+    public static String stringPlayerAmmo(Player p){
+        return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
 
     public static void addCellToList(CoordinatesWithRoom c){

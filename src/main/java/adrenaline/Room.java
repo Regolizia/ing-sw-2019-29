@@ -98,18 +98,15 @@ public class Room {
      * @see Coordinates
      */
     //conv instead of null sends an empty ammotile
-    public AmmoTile getAmmoTile(Coordinates coordinates){
-        int index=0;
-     /*   for(index=0;index<getTiles().size();index++)
-        {
-            //check the list until you find the AmmoTile
-            if(getTiles().get(index).getCoordinates()==coordinates)
-                break;
-        }*/
+    public AmmoTile getAmmoTile(CoordinatesWithRoom coordinates){
+        System.out.println(coordinates.toString());
         for (int i = 0; i<getTiles().size();i++) {
-            if (getTiles().get(i).getCoordinates().equals(coordinates)){
+            System.out.println(getTiles().get(i).toString());
+            System.out.println(getTiles().get(i).getCoordinates().toString());
+
+            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &&
+                    getTiles().get(i).getCoordinates().getY()==coordinates.getY()){
                 AmmoTile a = getTiles().get(i);
-                getTiles().remove(i);
                 return a;
 
             }
@@ -117,6 +114,18 @@ public class Room {
         //return getTiles().get(index);
         return at;
     }
+
+    public void removeAmmotile(CoordinatesWithRoom coordinates){
+        for (int i = 0; i<getTiles().size();i++) {
+            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &&
+                    getTiles().get(i).getCoordinates().getY()==coordinates.getY()){
+                getTiles().remove(i);
+                return;
+
+            }
+        }
+    }
+
     public boolean hasAmmoTile(Coordinates coordinates){
         int index=0;
         for (int i = 0; i<getTiles().size();i++) {

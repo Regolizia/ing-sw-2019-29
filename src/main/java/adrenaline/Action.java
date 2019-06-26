@@ -192,6 +192,8 @@ public class Action {
     //_____________________________________GRAB OPTION TILE __________________________________________________________//
     public boolean grabTile(Player player, CoordinatesWithRoom c){
         AmmoTile toBeGrabbedTile=c.getRoom().getAmmoTile(c);
+        c.getRoom().removeAmmotile(c);
+
         // grab ammo or powerUp
         run(player,c);
         for (AmmoCube cube: toBeGrabbedTile.getAmmoCubes()
