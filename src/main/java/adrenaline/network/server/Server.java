@@ -142,7 +142,7 @@ public class Server {
 
                 socket.close();
                 removeOneConnection();
-                System.out.println("Client Disconnected");
+                System.out.println("Client Disconnected++++");
             }catch (IOException e) {
                 e.printStackTrace();
             }
@@ -153,10 +153,7 @@ public class Server {
                 outputStream.writeObject(message);
                 outputStream.flush();
             } catch (IOException e) {
-                System.out.println("Client Disconnected");
-                for(String s : disconnected){
-                    System.out.println(s+" SEND");
-                }
+                // DISCONNECTED
             }
 
         }
@@ -195,7 +192,7 @@ public class Server {
                     addPlayerToGame(nickname, color);
                     writers.put(nickname, outputStream);
 
-                    disconnect();
+                    //disconnect(); TO TRY TO DISCONNECT
 
                 }else if(disconnected.isEmpty() && isGameOn()){
                     sendToClient("MESSAGE");
@@ -248,16 +245,12 @@ public class Server {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 try {
                     sendToClient("DISCONNECTED");
                     disconnected.add(nickname);
                     disconnectedColors.put(nickname,color);
                     System.out.println("Client Disconnected");
-                    for(String s : disconnected){
-                        System.out.println(s + " EXCEPTION");
-                    }
-
                     socket.close();
                     removeOneConnection();
                 } catch (IOException ex) {
