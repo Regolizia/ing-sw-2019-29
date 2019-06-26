@@ -14,10 +14,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class ShockwaveTest {
 
         // NO PAYMENT, NO SPAWNPOINTS
-
+private Shockwave shockwave;
         @Test
         public void testConstructor() {
-
+            shockwave=new Shockwave();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -77,6 +77,9 @@ public class ShockwaveTest {
             assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4))==2);
             assertTrue(m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4))==2);
 
+            shockwave.canShootAlt();
+            shockwave.canShootBase();
+            shockwave.toString();
 
         }
 

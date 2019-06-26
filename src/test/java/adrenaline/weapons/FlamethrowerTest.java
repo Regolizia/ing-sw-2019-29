@@ -16,10 +16,10 @@ import java.util.LinkedList;
 
 
         // NO PAYMENT, NO SPAWNPOINTS
-
+        private Flamethrower flamethrower;
         @Test
         public void testConstructor() {
-
+            flamethrower=new Flamethrower();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 3);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(4));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(1, 2, m.getMapUsed().getGameBoard().getRoom(3));
@@ -102,7 +102,9 @@ import java.util.LinkedList;
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4)) == 3);  // FIRST SQUARE
             //assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4)) == 2);  // SECOND SQUARE
-
+            flamethrower.canShootAlt();
+            flamethrower.canShootBase();
+            flamethrower.toString();
         }
 
 

@@ -13,12 +13,12 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class TractorBeamTest {
 
-
+private TractorBeam tractorBeam;
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            tractorBeam=new TractorBeam();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -78,7 +78,9 @@ public class TractorBeamTest {
             System.out.printf("\nMarks by shooter: "+m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==3);
 
-
+            tractorBeam.canShootAlt();
+            tractorBeam.canShootBase();
+            tractorBeam.toString();
         }
 
     }

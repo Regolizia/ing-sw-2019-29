@@ -13,12 +13,12 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class Zx_2Test {
 
-
+private Zx_2 zx_2;
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            zx_2=new Zx_2();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(3,1,m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -79,6 +79,8 @@ public class Zx_2Test {
             assertTrue(m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4))==1);
             assertTrue(m.getPlayers().get(3).marksByShooter(m.getPlayers().get(4))==1);
 
+            zx_2.canShootBase();
+            zx_2.toString();
         }
 
     }

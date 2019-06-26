@@ -15,10 +15,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class CyberbladeTest {
 
     // NO PAYMENT, NO SPAWNPOINTS, NO OP1 (MOVE)
-
+private Cyberblade cyberblade;
     @Test
     public void testConstructor() {
-
+        cyberblade=new Cyberblade();
         GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));
         CoordinatesWithRoom c2 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(1));
@@ -71,7 +71,11 @@ public class CyberbladeTest {
         System.out.printf("\nMarks by shooter: " + m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==2);
             assertTrue(m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4))==0);
-
+        cyberblade.canShootBase();
+        cyberblade.canShootOp1();
+        cyberblade.canShootOp2();
+        cyberblade.canShootAlt();
+        cyberblade.toString();
     }
 
 }

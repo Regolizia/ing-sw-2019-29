@@ -16,10 +16,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class GrenadeLauncherTest {
 
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
-
+private GrenadeLaucher grenadeLaucher;
         @Test
         public void testConstructor() {
-
+            grenadeLaucher=new GrenadeLaucher();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(1));
@@ -80,7 +80,9 @@ public class GrenadeLauncherTest {
             System.out.printf("\nMarks by shooter: " + m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==1);
             assertTrue(m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4))==1);
-
+            grenadeLaucher.canShootBase();
+            grenadeLaucher.canShootOp1();
+            grenadeLaucher.toString();
         }
 
     }

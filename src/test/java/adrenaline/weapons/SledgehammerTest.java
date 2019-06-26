@@ -13,12 +13,12 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class SledgehammerTest {
 
-
+private Sledgehammer sledgehammer;
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            sledgehammer=new Sledgehammer();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -62,7 +62,9 @@ public class SledgehammerTest {
             m.getPlayers().get(4).getHand().get(0).applyDamage(temp,m.getPlayers().get(4),enAlt);
             System.out.printf("\nDamage by shooter: "+m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4))==5);
-
+            sledgehammer.canShootAlt();
+            sledgehammer.canShootBase();
+            sledgehammer.toString();
         }
 
     }

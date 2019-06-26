@@ -14,12 +14,12 @@ import java.util.List;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class FurnaceTest {
-
+private Furnace furnace;
         // NO PAYMENT, NO SPAWNPOINTS, NO CELLS METHOD (REQUIRES CLI)
 
         @Test
         public void testConstructor() {
-
+            furnace=new Furnace();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(1));
@@ -99,7 +99,10 @@ public class FurnaceTest {
             System.out.printf("\nMarks by shooter: " + m.getPlayers().get(3).marksByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==1);
             assertTrue(m.getPlayers().get(0).marksByShooter(m.getPlayers().get(4))==1);
-
+            furnace.canShootAlt();
+            furnace.canShootBase();
+            furnace.toString();
+            furnace.getPossibleTargetCells(c1,new EffectAndNumber(AmmoCube.Effect.BASE,0),m.getMapUsed().getGameBoard());
         }
 
     }

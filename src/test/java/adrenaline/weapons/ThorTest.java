@@ -13,12 +13,13 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class ThorTest {
 
+    private Thor thor;
 
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            thor=new Thor();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(3,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -93,7 +94,10 @@ public class ThorTest {
             m.getPlayers().get(4).getHand().get(0).applyDamage(temp3,m.getPlayers().get(4),enOp2);
             System.out.printf("\nDamage by shooter: "+m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4))==2);
-
+            thor.canShootBase();
+            thor.canShootOp1();
+            thor.canShootOp2();
+            thor.toString();
 
         }
 

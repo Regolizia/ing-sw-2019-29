@@ -13,12 +13,12 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class WhisperTest {
 
-
+private Whisper whisper;
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            whisper=new Whisper();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -59,6 +59,8 @@ public class WhisperTest {
             assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4))==3);
             assertTrue(m.getPlayers().get(1).marksByShooter(m.getPlayers().get(4))==1);
 
+            whisper.canShootBase();
+            whisper.toString();
         }
 
     }

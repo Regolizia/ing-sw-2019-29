@@ -14,10 +14,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class HeatseekerTest {
 
         // NO PAYMENT, NO SPAWNPOINTS
-
+private Heatseeker heatseeker;
         @Test
         public void testConstructor() {
-
+            heatseeker=new Heatseeker();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,3);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(0));
@@ -56,7 +56,8 @@ public class HeatseekerTest {
             System.out.printf("\nMarks by shooter: "+m.getPlayers().get(3).marksByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4))==3);
             assertTrue(m.getPlayers().get(3).marksByShooter(m.getPlayers().get(4))==0);
-
+            heatseeker.canShootBase();
+            heatseeker.toString();
         }
 
     }

@@ -14,10 +14,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class ElectroscytheTest {
 
     // NO PAYMENT, NO SPAWNPOINTS
-
+private Electroscythe electroscythe;
     @Test
     public void testConstructor() {
-
+        electroscythe=new Electroscythe();
         GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));
         CoordinatesWithRoom c2 = new CoordinatesWithRoom(2, 1, m.getMapUsed().getGameBoard().getRoom(1));
@@ -72,6 +72,8 @@ public class ElectroscytheTest {
             System.out.printf("\nDamage by shooter: " + m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4)));
             assertTrue(m.getPlayers().get(0).damageByShooter(m.getPlayers().get(4))==3);
             assertTrue(m.getPlayers().get(3).damageByShooter(m.getPlayers().get(4))==3);
-
+            electroscythe.canShootAlt();
+            electroscythe.canShootBase();
+            electroscythe.toString();
     }
 }

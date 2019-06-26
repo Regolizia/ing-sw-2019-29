@@ -13,12 +13,12 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class VortexCannonTest {
 
-
+private VortexCannon vortexCannon;
         // NO PAYMENT, NO SPAWNPOINTS, NO BASE MOVE
 
         @Test
         public void testConstructor() {
-
+            vortexCannon=new VortexCannon();
             GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
@@ -77,7 +77,9 @@ public class VortexCannonTest {
             assertTrue(m.getPlayers().get(1).damageByShooter(m.getPlayers().get(4))==1);
             assertTrue(m.getPlayers().get(2).damageByShooter(m.getPlayers().get(4))==1);
 
-
+            vortexCannon.canShootBase();
+            vortexCannon.canShootOp1();
+            vortexCannon.toString();
         }
 
     }
