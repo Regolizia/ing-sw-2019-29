@@ -26,6 +26,7 @@ public class ActionTest {
         m.getMapUsed().getArrayX();
         m.getMapUsed().getArrayY();
         m.getMapUsed().fromIndexToColor(5);
+
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));//to do doAction
         Player player = new Player(c1, Figure.PlayerColor.GREEN);//to do doAction()
         Player victim = new Player(c1, Figure.PlayerColor.BLUE);//
@@ -170,6 +171,11 @@ public class ActionTest {
         action.canPayTargetingScope(AmmoCube.CubeColor.RED,player);
         action.canPayTargetingScope(AmmoCube.CubeColor.YELLOW,player);
         action.canPayTargetingScope(AmmoCube.CubeColor.FREE,player);
+        m.getMapUsed().getGameBoard().getDirection(c1,coo.getFirst());
+        m.getMapUsed().getGameBoard().pickASkull();
+        m.getMapUsed().getGameBoard().getNumberOfRooms();
+        CoordinatesWithRoom c3 = new CoordinatesWithRoom(2, 2, m.getMapUsed().getGameBoard().getRoom(2));
+        m.getMapUsed().getGameBoard().getDirection(c1,c3);
     }
 }
 /*
