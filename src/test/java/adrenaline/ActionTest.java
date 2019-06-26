@@ -1,8 +1,5 @@
 package adrenaline;
-import adrenaline.weapons.Cyberblade;
-import adrenaline.weapons.PowerGlove;
-import adrenaline.weapons.Thor;
-import adrenaline.weapons.Zx_2;
+import adrenaline.weapons.*;
 import org.junit.jupiter.api.Test;
 
 import javax.management.BadAttributeValueExpException;
@@ -176,6 +173,10 @@ public class ActionTest {
         m.getMapUsed().getGameBoard().getNumberOfRooms();
         CoordinatesWithRoom c3 = new CoordinatesWithRoom(2, 2, m.getMapUsed().getGameBoard().getRoom(2));
         m.getMapUsed().getGameBoard().getDirection(c1,c3);
+        PowerGlove powerGlove=new PowerGlove();
+        powerGlove.fromCellsToTargets(coo,c1,m.getMapUsed().getGameBoard(),player,m,new EffectAndNumber(AmmoCube.Effect.ALT,0));
+        PlasmaGun plasmaGun=new PlasmaGun();
+        plasmaGun.fromCellsToTargets(coo,c1,m.getMapUsed().getGameBoard(),player,m,new EffectAndNumber(AmmoCube.Effect.OP1,0));
     }
 }
 /*
