@@ -32,6 +32,7 @@ public class Client {
         public void targetingScope(){}
         public void powerups(List<String> cells){}
         public void chooseCell(List<String> cells){}
+        public void respawn(List<String> pows){}
         public void chooseRoom(List<String> rooms){}
         public void firstTurn(List<String> list){}
         public void printMessage(String s){}

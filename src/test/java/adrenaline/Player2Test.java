@@ -49,7 +49,7 @@ public class Player2Test {
         p.setName("PLUTO");
         p.getName();
         p.getRespawnCoordinates();
-        p.newLife(new CoordinatesWithRoom());
+        p.newLife();
         p.getMarks();
 
     }

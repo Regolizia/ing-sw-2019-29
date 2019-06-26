@@ -227,10 +227,8 @@ public class Player {
      *newLife()
      *respawn the player at his initial spawnpoint
      */
-    public void newLife(CoordinatesWithRoom coordinates) {
+    public void newLife() {
 
-        setPlayerPositionSpawnpoint(coordinates);
-        setPlayerPosition(coordinates);
         this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
                 , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
                 , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};

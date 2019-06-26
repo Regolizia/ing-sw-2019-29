@@ -124,6 +124,9 @@ public class ClientThread implements Runnable {
             case "TARGETINGSCOPE":
                 client.targetingScope();
                 break;
+            case "RESPAWN":
+                client.respawn(getListFromServer());
+                break;
             case "CHOOSECELL":
                 client.chooseCell(getListFromServer());
                 break;

@@ -570,6 +570,25 @@ public class Server {
         cellsWithoutTiles.clear();
         }
 
+        public void respawn(Player p){
+            p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
+            List<String> toSend = fromPowerupsToNames(p.getPowerUp());
+            try {
+                sendToClient("RESPAWN");
+                sendListToClient(toSend);
+                int x = (int) inputStream.readObject();
+                x--;
+                PowerUpCard po = p.getPowerUp().remove(x);
+                    System.out.println("TO USE AS POSITION " + po.toString());
+
+                    p.newLife();
+                    setInitialPosition(po.getPowerUpColor(), p);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
         public void firstTurn(){
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
@@ -643,8 +662,8 @@ public class Server {
                 }
             }
             for(Player p : victims){
-                
-                //p.newLife(); coord from choice
+
+                respawn(p);
             }
 
             action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA

@@ -153,6 +153,19 @@ public class ClientCLI extends Client{
              }else sendIntToServer(1);
          }else sendIntToServer(1);
      }
+     public void respawn(List<String> list){
+         System.out.println("\nChoose one card, its color will indicate your respawn but the card will be discarded:");
+         for(int i=0; i<list.size();i++) {
+             System.out.println("[" + (i + 1) + "]  " +list.get(i));
+         }
+         if(scanner.hasNextInt()){
+             int x = scanner.nextInt();
+             scanner.nextLine();
+             if(x>=1 && x<=list.size()){
+                 sendIntToServer(x);
+             }else sendIntToServer(1);
+         }else sendIntToServer(1);
+     }
 
     public void showMainMenu() {
             System.out.println("Main Menu:\n" +
