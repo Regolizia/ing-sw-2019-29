@@ -440,9 +440,6 @@ public class Server {
                     if (isCurrentPlayer()) {
                         try {
                             if (Server.isFirstTurn()) {
-                                if(currentPlayer==0) {
-                                    broadcast("\nThe board is number " + boardChosen);
-                                }
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
@@ -570,25 +567,6 @@ public class Server {
         cellsWithoutTiles.clear();
         }
 
-        public void respawn(Player p){
-            p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
-            List<String> toSend = fromPowerupsToNames(p.getPowerUp());
-            try {
-                sendToClient("RESPAWN");
-                sendListToClient(toSend);
-                int x = (int) inputStream.readObject();
-                x--;
-                PowerUpCard po = p.getPowerUp().remove(x);
-                    System.out.println("TO USE AS POSITION " + po.toString());
-
-                    p.newLife();
-                    setInitialPosition(po.getPowerUpColor(), p);
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
         public void firstTurn(){
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
@@ -657,17 +635,16 @@ public class Server {
             List<Player> victims = new LinkedList<>();
             for(Player p : model.getPlayers()){
                 if(p.isDead()){
-                    p.hasDied();
+                   // p.hasDied(); to be removed it does nothing
                     victims.add(p);
+                    // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
+                    p.newLife(); //to ressurrect player
+
                 }
             }
-            for(Player p : victims){
-
-                respawn(p);
-            }
-
-            action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
-                                                                 // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI?
+            action.canGetPoints(victims,model.getPlayers());     //  GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA va bene o punti glieli assegna già se può
+                                                                 //  private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI? lo uso in give points per vedere
+                                                                // quanti max punti accettabili
         }
 
         public void powerup(){
@@ -849,9 +826,6 @@ public class Server {
 
                 else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
-
-                    System.out.println(" LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString()+"\n");
-
                 }else { // IT DOESN'T HAVE AN AMMOTILE
                     Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                 }
@@ -881,8 +855,6 @@ public class Server {
             printPlayerAmmo(player);
             action.grabTile(player, chosenCell);
             printPlayerAmmo(player);
-
-            broadcast(stringPlayerAmmo(player));
         }
         } catch (Exception e) {
             e.printStackTrace();
@@ -892,97 +864,45 @@ public class Server {
 
 
     public void shoot(Player player){
-        /*
-        * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
-
-        LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
-
-        //CHIEDI METODO PAGAMENTO AMMO O AMMOPOWER
-        sendToClient("PAYMENT");
+        LinkedList<WeaponCard>playerWeaponCards=new LinkedList<>();
+        WeaponCard weaponCard=new WeaponCard();
+        LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
         int z = 0;
         try {
-            z = (int)inputStream.readObject();
-
-        Action.PayOption payOption;
-        if(z==1){
-            payOption= Action.PayOption.AMMO;
-        }else{
-            payOption= Action.PayOption.AMMOPOWER;
-        }
-
-        if(payOption.equals(Action.PayOption.AMMOPOWER)){
-            playerPowerUpCards=payWithThesePowerUps(player);    // DOVE USI QUESTE POWERUP PER PAGARE QUI?
-        }
-
-        // TODO PAYMENT? COSA DEVO CHIEDERE? COSA DEVO RICEVERE?
-        LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
-        int number = 42;
-        //SAVING PLAYER INITIAL POSITION IN CASE HE CAN'T SHOOT/HE DOESN'T SHOOT
-        CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
-
-        ///////////////
-        /*
-        // TODO GIOCATORE SI VUOLE SPOSTARE PRIMA? -adrenaline action   (LO FACCIAMO DOPO NON SONO REGOLE BASE)
-        boolean moves=true;
-          if(moves==true){
-              LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player);
-              //TODO CHIEDI CELLA E METTILA IN PLAYER POSITION
-              CoordinatesWithRoom playerPosition=null;
-              //set new position
-              action.run(player,playerPosition);
-          }
-          */
-          ///////////////////
-
-        // SELEZIONE ARMA DALLA MANO
-        List<String> yourWeapons = new LinkedList<>();
-        for (WeaponCard w : player.getHand()) {
-            yourWeapons.add(w.toString());
-        }
-        sendToClient("CHOOSEWEAPON");
-        sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
-        int y = (int)inputStream.readObject();
-        y--;
-        WeaponCard weaponCard =player.getHand().get(y);
-
-        //if weapon is already reloaded, player can request other effect
-
-        if(!weaponCard.getReloadAlt()&&!weaponCard.getReload()){
-                if(!shootBase(weaponCard,player,number,positionBeforeShoot))
-                    {
-                        //send message
-                       // return false;
-                    }
-        }
-        //TODO VUOI ALTRI EFFETTI? e se non li vuole non spara?
-        boolean otherEffect=true;
-            if(otherEffect&&(weaponCard.getReload())){
-             paidEffect.addAll(shootOtherEffect(weaponCard,player,number));
-
-            //send possible target
-            LinkedList<Object>targets=new LinkedList<>();
-
-            // SOME EFFECTS REQUIRE A CHECK THAT TARGETS ARE DIFFERENT FROM EFFECT TO EFFECT
-            // I HAVE TO PASS THE OLD TARGETS
-            List<Object> pastTargets = null;
-
-            for (EffectAndNumber e:paidEffect) {
-                pastTargets = requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model, pastTargets);
-            }
-            for (EffectAndNumber e: paidEffect
+//TODO CHIEDI CARTA DA PAGARE
+            for (WeaponCard w:playerWeaponCards
             ) {
-                action.shoot(weaponCard,player,e,targets);
+                sendToClient("Pay :"+w.toString()+"?\n1YES\n2NO");
+                z=(int)inputStream.readObject();
+                if(z==1){
+                    weaponCard=w;
+                    break;}
             }
-        }
+            if(z==0) {//todo cancel action
+                return;
+            }
+            //TODO CHOOSE A NUMBER
+            int number=0;
+            if(!weaponCard.getReloadAlt()&&!weaponCard.getReloadAlt())
+                paidEffectAndNumber.add(shootBase(weaponCard,player,number,player.getCoordinatesWithRooms()));
+            if(paidEffectAndNumber.getFirst()==null){
+                //TODO CANCEL ACTION
+                return;
+            }
+            sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
+            z = (int) inputStream.readObject();
+            if(z==2)
+            {
+                //TODO SHOOTING
+            }
+            paidEffectAndNumber.addAll(shootOtherEffect(weaponCard,player));
+            //TODO SHOOTING
 
-        weaponCard.setNotReload();
-        weaponCard.setReloadAlt(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player, int number) {
+    }catch (Exception e){e.printStackTrace();}}
+
+    public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player) {
+            int number=0;
 
             //TODO CONTROLLA CHE L'EFFETTO NON SIA NE BASE NE ALT
             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
@@ -1028,51 +948,72 @@ public class Server {
     }
 
 
-    public boolean shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
+    public EffectAndNumber shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
         //TODO CHIEDI SE VUOLE EFFETTO BASE O ALTERNATIVO
         LinkedList<PowerUpCard>powers=new LinkedList<>();
         AmmoCube.Effect effect=null;
-        LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
+        int z = 0;
+        try {
+            sendToClient("CHOOSE EFFECT:\n1 BASE\n2 ALT");
+            z = (int) inputStream.readObject();
+            //TODO MANDA MESSAGGIO PER AZIONE NON AVVENUTA
+            if (z!=1 && z!=2){
 
-        //TODO MANDA MESSAGGIO PER AZIONE NON AVVENUTA
-        if(!effect.equals(AmmoCube.Effect.BASE)&&!effect.equals(AmmoCube.Effect.ALT))
-            return false;
-        //TODO CHIEDI COME PAGARE
-        //payOption= ...
-        Action.PayOption payOption=null;
-
-        if(payOption.equals(Action.PayOption.AMMOPOWER))
-        {
-            //TODO CHIEDI POWERUP
-            for (PowerUpCard p:player.getPowerUp()
-                 ) {
-                p.toString();
-                //TODO SCEGLI Y/N
-                String response="";
-                if(response=="YES"){
-                    powers.add(p);
-                }
+                sendToClient("before choosing others payment you mst choose between BASE an ALT");
+                return null;
             }
 
-        }
+            //TODO CHIEDI COME PAGARE
 
-        if(action.canPayCard(weaponCard,player,payOption,effect,powers))
-        {
-            paidEffect.add(action.paidEffect(weaponCard,player,payOption,effect,powers,number));
-            if(effect.equals(AmmoCube.Effect.BASE))
-                weaponCard.setReload();
-            if(effect.equals(AmmoCube.Effect.ALT))
-                weaponCard.setReloadAlt(true);
-            player.getPowerUp().removeAll(powers);
-            model.powerUpDeck.getUsedPowerUp().addAll(powers);
-        }
-        else {
-            //TODO MANDA MESS ERRORE
-            action.run(player,positionBeforeShoot);
-            return false; // delete action plus send message
-        }
+            sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER");
+            z = (int)inputStream.readObject();
 
-        return true;
+            Action.PayOption payOption;
+            if(z==1){
+                payOption= Action.PayOption.AMMO;
+            }else{
+                payOption= Action.PayOption.AMMOPOWER;
+            }
+
+
+            if (payOption.equals(Action.PayOption.AMMOPOWER)) {
+                //TODO CHIEDI POWERUP
+                for (PowerUpCard p : player.getPowerUp()
+                ) {
+                    p.toString();
+                    //TODO SCEGLI Y/N
+                    String response = "";
+                    if (response == "YES") {
+                        powers.add(p);
+                    }
+                }
+
+            }
+
+            if (action.canPayCard(weaponCard, player, payOption, effect, powers)) {
+                switch (payOption)
+                {
+                    case AMMOPOWER:action.payPowerUp(weaponCard,powers,player,effect,number);break;
+                    case AMMO:action.payAmmo(player,weaponCard,effect,number);break;
+                    default:return null;
+                }
+                if (effect.equals(AmmoCube.Effect.BASE))
+                    weaponCard.setReload();
+                if (effect.equals(AmmoCube.Effect.ALT))
+                    weaponCard.setReloadAlt(true);
+                player.getPowerUp().removeAll(powers);
+                model.powerUpDeck.getUsedPowerUp().addAll(powers);
+            } else {
+                //TODO MANDA MESS ERRORE
+                action.run(player, positionBeforeShoot);
+                return null; // delete action plus send message
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return  new EffectAndNumber(effect,number);
     }
 
     public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
@@ -1610,86 +1551,32 @@ public class Server {
                 break;
 
             case "PowerGlove":
-                if(e.getEffect()== AmmoCube.Effect.BASE) {
-                    cells = w.getPossibleTargetCells(playerPosition, e, g);
-                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int xh = (int) inputStream.readObject();
+                    int xh = (int)inputStream.readObject();
                     xh--;
                     Object tt = targets.get(xh);
                     targets.clear();
                     targets.add(tt);
 
-                    w.applyDamage(targets, p, e);
-                    useTargetingScope(p, targets);
+                    w.applyDamage(targets,p,e);
+                    useTargetingScope(p,targets);
 
-                    // MOVE PLAYER TO TARGET'S SQUARE
-                    action.run(p, ((Player) tt).getCoordinatesWithRooms());
-                }
-                // ALSO IF ALT
-                if(e.getEffect()== AmmoCube.Effect.ALT) {
                     CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
-                    cells = w.getPossibleTargetCells(playerPosition, e, g);
-                    sendToClient("CHOOSECELL");
-                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int xpf = (int) inputStream.readObject();
-                    xpf--;
-                    action.run(p, cells.get(xpf));
-                    CoordinatesWithRoom cc = cells.get(xpf);
-                    cells.clear();
-                    cells.add(cc);
+                    // MOVE PLAYER TO TARGET'S SQUARE
+                    action.run(p,((Player)tt).getCoordinatesWithRooms());
 
-                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-                    sendToClient("CHOOSETARGET");
-                    List<String> toSend = fromTargetsToNames(targets);
-                    toSend.add(0, "No, I dont't want these targets");
-                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int nu = (int) inputStream.readObject();
-                    nu--;
-                    if (nu != 0) {
-                        Object ttt = targets.get(nu);
-                        targets.clear();
-                        targets.add(ttt);
+                // ALSO IF ALT
+                if(e.getEffect()== AmmoCube.Effect.ALT){
+                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false); // GETS CELL AFTER ORIGINAL AND NEW POSITION
+                    if(c2.getX()!=0){
+                        // TODO ASK IF PLAYER WANTS TO MOVE THERE
 
-                        w.applyDamage(targets, p, e);
-                        useTargetingScope(p, targets);
-
-                        CoordinatesWithRoom c2 = c0.getNextCell(c0,cc,g, false);
-                        if(c2.getX()==0 || c2.getY()==0){
-                            return new LinkedList<>();
-                        }
-                        cells.clear();
-                        cells.add(c2);
-
-                        toSend.clear();
-                        toSend = fromCellsToNames(cells);
-                        toSend.add(0, "No, I dont't want to move there");
-                        sendToClient("CHOOSECELL");
-                        sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                        int xif = (int) inputStream.readObject();
-                        xif--;
-                        if(xif!=0) {
-                            action.run(p, c2);
-
-                            targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-                            sendToClient("CHOOSETARGET");
-                            toSend.clear();
-                            toSend = fromTargetsToNames(targets);
-                            toSend.add(0, "No, I dont't want these targets");
-                            sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                            int nur = (int) inputStream.readObject();
-                            nur--;
-                            if (nur != 0) {
-                                Object trtt = targets.get(nur);
-                                targets.clear();
-                                targets.add(trtt);
-
-                                w.applyDamage(targets, p, e);
-                                useTargetingScope(p, targets);
-                            }
-                        }
+                        // TO BE CONTINUED...
+                        // TODO POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
                     }
                 }
                 break;
@@ -2274,9 +2161,6 @@ public class Server {
     }
     public static void printPlayerAmmo(Player p){
         System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
-    }
-    public static String stringPlayerAmmo(Player p){
-        return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
 
     public static void addCellToList(CoordinatesWithRoom c){
