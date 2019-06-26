@@ -1587,32 +1587,86 @@ public class Server {
                 break;
 
             case "PowerGlove":
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int xh = (int)inputStream.readObject();
+                    int xh = (int) inputStream.readObject();
                     xh--;
                     Object tt = targets.get(xh);
                     targets.clear();
                     targets.add(tt);
 
-                    w.applyDamage(targets,p,e);
-                    useTargetingScope(p,targets);
+                    w.applyDamage(targets, p, e);
+                    useTargetingScope(p, targets);
 
-                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
                     // MOVE PLAYER TO TARGET'S SQUARE
-                    action.run(p,((Player)tt).getCoordinatesWithRooms());
-
+                    action.run(p, ((Player) tt).getCoordinatesWithRooms());
+                }
                 // ALSO IF ALT
-                if(e.getEffect()== AmmoCube.Effect.ALT){
-                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false); // GETS CELL AFTER ORIGINAL AND NEW POSITION
-                    if(c2.getX()!=0){
-                        // TODO ASK IF PLAYER WANTS TO MOVE THERE
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xpf = (int) inputStream.readObject();
+                    xpf--;
+                    action.run(p, cells.get(xpf));
+                    CoordinatesWithRoom cc = cells.get(xpf);
+                    cells.clear();
+                    cells.add(cc);
 
-                        // TO BE CONTINUED...
-                        // TODO POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    sendToClient("CHOOSETARGET");
+                    List<String> toSend = fromTargetsToNames(targets);
+                    toSend.add(0, "No, I dont't want these targets");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nu = (int) inputStream.readObject();
+                    nu--;
+                    if (nu != 0) {
+                        Object ttt = targets.get(nu);
+                        targets.clear();
+                        targets.add(ttt);
+
+                        w.applyDamage(targets, p, e);
+                        useTargetingScope(p, targets);
+
+                        CoordinatesWithRoom c2 = c0.getNextCell(c0,cc,g, false);
+                        if(c2.getX()==0 || c2.getY()==0){
+                            return new LinkedList<>();
+                        }
+                        cells.clear();
+                        cells.add(c2);
+
+                        toSend.clear();
+                        toSend = fromCellsToNames(cells);
+                        toSend.add(0, "No, I dont't want to move there");
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xif = (int) inputStream.readObject();
+                        xif--;
+                        if(xif!=0) {
+                            action.run(p, c2);
+
+                            targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                            sendToClient("CHOOSETARGET");
+                            toSend.clear();
+                            toSend = fromTargetsToNames(targets);
+                            toSend.add(0, "No, I dont't want these targets");
+                            sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                            int nur = (int) inputStream.readObject();
+                            nur--;
+                            if (nur != 0) {
+                                Object trtt = targets.get(nur);
+                                targets.clear();
+                                targets.add(trtt);
+
+                                w.applyDamage(targets, p, e);
+                                useTargetingScope(p, targets);
+                            }
+                        }
                     }
                 }
                 break;

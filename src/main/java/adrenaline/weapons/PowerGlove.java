@@ -33,48 +33,6 @@ public class PowerGlove extends WeaponCard {
 
     }
 
-    @Override
-    public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
-
-        List<Object> targets = new LinkedList<>();
-
-        if(en.getEffect() == AmmoCube.Effect.BASE) {
-            targets = super.fromCellsToTargets(list, c, g, p, m, en);
-            // ASK WHICH TARGET HERE TO DAMAGE, REMOVE THE OTHERS
-            //TODO MOVE PLAYER THERE
-            return targets;
-        }
-       // else {
-       //     en.setNumber(1);
-            // CHOOSE TARGET FIRST SQUARE, REMOVE THE OTHERS
-            // ASK IF WANT TO MOVE ONE MORE SQUARE SAME DIRECTION
-            // IF SO en.setNumber(2);
-            // NEEDED LATER
-            // CHECK IF POSSIBLE
-            // MOVE THERE
-            // original position C0
-            // new position C1
-       /*
-            IF NEXT CELL EXISTS IT'S CALLED C2
-            CoordinatesWithRoom c2;
-             c2.getNextCell(c0,c1,g);
-            PUT IT IN A LIST
-            LinkedList<CoordinatesWithRoom> listOne = new LinkedList<>;
-            listOne.add(c2);
-
-            if(c2.getX()==0 || c2.getY()==0){
-                IT DOESN'T EXIST
-                return empty list
-            }
-                        */
-            //  IF C2 EXISTS
-            //THEN CALL THE SUPERMETHOD FROMCELLSTOTARGETS WITH THIS LIST (TO GET TARGETS)
-            //ASK WHICH TARGET, REMOVE THE OTHERS
-            return targets;
-
-      //  }
-
-    }
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {

@@ -99,10 +99,10 @@ public class Room {
      */
     //conv instead of null sends an empty ammotile
     public AmmoTile getAmmoTile(CoordinatesWithRoom coordinates){
-        System.out.println(coordinates.toString());
+       // System.out.println(coordinates.toString());
         for (int i = 0; i<getTiles().size();i++) {
-            System.out.println(getTiles().get(i).toString());
-            System.out.println(getTiles().get(i).getCoordinates().toString());
+         //   System.out.println(getTiles().get(i).toString());
+           // System.out.println(getTiles().get(i).getCoordinates().toString());
 
             if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &&
                     getTiles().get(i).getCoordinates().getY()==coordinates.getY()){
