@@ -177,6 +177,31 @@ public class ActionTest {
         powerGlove.fromCellsToTargets(coo,c1,m.getMapUsed().getGameBoard(),player,m,new EffectAndNumber(AmmoCube.Effect.ALT,0));
         PlasmaGun plasmaGun=new PlasmaGun();
         plasmaGun.fromCellsToTargets(coo,c1,m.getMapUsed().getGameBoard(),player,m,new EffectAndNumber(AmmoCube.Effect.OP1,0));
+        action.grabTile(player,c1);
+        c1.getSpawnpoint(m);
+        c1.containsSpawnpoint(m);
+        player.setDamagedStatus(true);
+        player.damagedStatus();
+        player.setShooter("Pikachu");
+        player.getShooter();
+        player.setPlayerPosition(c1);
+        player.hasTargetingScope();
+        player.hasTagbackGrenade();
+        player.getTagbackGrenade();
+        player.getTargetingScope();
+        player.getTeleporter();
+        player.getNewton();
+        SpawnpointDom spw=new SpawnpointDom();
+        w.canShootOp1();
+        w.canShootBase();
+        w.canShootOp2();
+        w.placeWeaponOnMap(c1);
+        w.getCoordinatesOnMap();
+        w.setNotReload();
+        w.setReloadAlt(true);
+        w.getReloadAlt();
+        w.toString();
+
     }
 }
 /*
