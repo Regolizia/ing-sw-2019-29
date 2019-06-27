@@ -1102,7 +1102,13 @@ public class Server {
                         changeOrderOfEffects(paidEffectAndNumber, weaponCard);
                     }
 
+                    List<Object> pastTragets = new LinkedList<>();
                     // SHOOT
+                    for(EffectAndNumber paid : paidEffectAndNumber){
+                        List<Object> temp = new LinkedList<>();
+                        temp = requestsForEveryWeapon(paid,weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
+                        pastTragets=temp;
+                    }
                 }
                 }catch(Exception e){
                     e.printStackTrace();
