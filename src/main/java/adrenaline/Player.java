@@ -28,7 +28,15 @@ public class Player {
     private String name;
     private boolean damaged = false;
     private String shooter = null;
+    private int mortalPoints;
 
+
+
+    public static enum PlayerPos {
+        FIRST,SECOND,THIRD,FOURTH,FIFTH,SIXTH
+    }
+    private PlayerPos playerPos;
+    private PlayerPos[] allPlayerPos;
     public void setDamagedStatus(boolean b){
         damaged = b;
     }
@@ -78,6 +86,8 @@ public class Player {
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
+        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH,PlayerPos.SIXTH};
+        mortalPoints=0;
         this.name=name;
     }
 
@@ -620,4 +630,30 @@ public class Player {
         }
         return new PowerUpCard();
     }
+
+    public int getMortalPoints() {
+        return mortalPoints;
+    }
+
+    public void setMortalPoints(int mortalPoints) {
+        this.mortalPoints += mortalPoints;
+    }
+    public boolean incrementMortalPoints(){
+        if(getColor().equals(getTrack()[11]))
+        {
+            return true;
+        }
+        return false;
+    }
+    public PlayerPos getPlayerPos() {
+        return playerPos;
+    }
+
+    public void setPlayerPos(PlayerPos playerPos) {
+        this.playerPos = playerPos;
+    }
+    public PlayerPos[] getAllPlayerPos() {
+        return allPlayerPos;
+    }
+
 }
