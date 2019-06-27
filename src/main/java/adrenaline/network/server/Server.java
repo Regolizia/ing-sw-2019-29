@@ -314,9 +314,9 @@ public class Server {
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             Server.model.addPlayer(new Player(name, color));
-            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
-            System.out.println(lock.isLocked() + " " + nickname);
-            System.out.println(lock.getHoldCount() + " " + nickname);
+            System.out.println(lock.isHeldByCurrentThread()+ " held by " + nickname);
+            System.out.println(lock.isLocked() + " is locked " + nickname);
+            System.out.println(lock.getHoldCount() + " count " + nickname);
 
             if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
                 lock.unlock();
@@ -536,7 +536,7 @@ public class Server {
                             powerup();
 
                             //reload();
-                            scoring();
+                            //scoring();
                             replaceAmmo();
                             replaceWeapons();
 
@@ -544,6 +544,16 @@ public class Server {
                             broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
+
+
+                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
+                            System.out.println(lock.isLocked() + " " + nickname);
+                            System.out.println(lock.getHoldCount() + " " + nickname);
+
+                            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
+                                lock.unlock();
+
+
                         }
                         if (Server.isFirstTurn()){
                             if (currentPlayer == model.getPlayers().size() - 1) {
@@ -553,6 +563,15 @@ public class Server {
                             broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
+
+
+                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
+                            System.out.println(lock.isLocked() + " " + nickname);
+                            System.out.println(lock.getHoldCount() + " " + nickname);
+
+                            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
+                                lock.unlock();
+
                         }
                     }
                     else if(hasBeenDamaged()){  //TODO SET DAMAGED AND SHOOTER WHEN YOU SHOOT
@@ -595,6 +614,7 @@ public class Server {
         }
 
         public void replaceWeapons(){
+            System.out.println("Replacing weapons...");
             int weaponNum =getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards().size();
             while (weaponNum<3){
                 getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards().add(model.weaponDeck.pickUpWeapon());
@@ -612,6 +632,7 @@ public class Server {
             }
         }
         public void replaceAmmo(){
+            System.out.println("Replacing ammo...");
         for(CoordinatesWithRoom c : cellsWithoutTiles){
             c.getRoom().addAmmoTile(model.ammoTileDeck.pickUpAmmoTile(),c.getX(),c.getY());
         }
@@ -767,7 +788,7 @@ public class Server {
             sendListToClient(fromCellsToNames(possible)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
             int x = (int)inputStream.readObject();
             x--;
-            lock.lock();
+            lock.unlock();
             player.setPlayerPosition(possible.get(x));
             broadcast("\n" + player.getName() + " teleported in "+possible.get(x).toString());
 
@@ -914,7 +935,7 @@ public class Server {
                 else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
 
-                    System.out.println(" LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString()+"\n");
+                    System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
 
                 }else { // IT DOESN'T HAVE AN AMMOTILE
                     Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
@@ -2400,7 +2421,7 @@ public class Server {
         return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
     public static void printPlayerAmmo(Player p){
-        System.out.println("\n"+p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
+        System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
     }
 
     public static void addCellToList(CoordinatesWithRoom c){

@@ -305,7 +305,7 @@ public class ClientCLI extends Client{
     public void chooseTarget(List<String> targets){
         System.out.println("\nChoose one target (first is default):");
         for(int i =0;i<targets.size();i++) {
-            System.out.println(targets.get(i) + " ["+i+1+"] ");
+            System.out.println(targets.get(i) + " ["+(i+1)+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
@@ -358,7 +358,7 @@ public class ClientCLI extends Client{
     public void chooseCell(List<String> cells){
         System.out.println("\nChoose a cell (first is default):");
         for(int i =0;i<cells.size();i++) {
-            System.out.println(cells.get(i) + " ["+i+1+"] ");
+            System.out.println("[" + (i + 1) + "]  " +cells.get(i));
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
