@@ -506,7 +506,7 @@ public class Server {
                                         break;
                                     case "S":
                                     default:
-                                        //shoot(player);
+                                        shoot();
                                         numberOfActions++;
                                         break;
                                 }
@@ -976,30 +976,28 @@ public class Server {
 
 
 
-        public void shoot(Player player){
+        public void shoot(){
+            Player player = model.getPlayers().get(currentPlayer);
             LinkedList<WeaponCard>playerWeaponCards=new LinkedList<>();
             WeaponCard weaponCard=new WeaponCard();
             LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
             int z = 0;
             try {
-//TODO CHIEDI CARTA DA PAGARE
+                //CHIEDI CARTA DA PAGARE
                 for (WeaponCard w:playerWeaponCards
                 ) {
                     lock.lock();
-                    sendToClient("Pay :"+w.toString()+"?\n1YES\n2NO");
+                    sendToClient("CHOOSEWEAPON");
+                    sendListToClient(fromWeaponsToNames(player.getHand())); // FORSE LO CAMBIAMO PERCHé NON SEMPRE LE HA CARICHE TUTTE QUELLE CHE HA
                     z=(int)inputStream.readObject();
                     if(z==1){
-                        weaponCard=w;
+                        weaponCard=player.getHand().get(z);
                         break;}
-                    lock.unlock();
-                }
-                if(z==0) {//todo cancel action
-                    return;
-                }
-                //TODO CHOOSE A NUMBER
+                    }
+                lock.unlock();
                 int number=0;
                 if(!weaponCard.getReloadAlt()&&!weaponCard.getReloadAlt())
-                    paidEffectAndNumber.add(shootBase(weaponCard,player,number,player.getCoordinatesWithRooms()));
+                    paidEffectAndNumber.add(shootBase(weaponCard,player,number,player.getCoordinatesWithRooms()));  // TODO SISTEMA LEO
                 if(paidEffectAndNumber.getFirst()==null){
                     //TODO CANCEL ACTION
                     return;
@@ -1278,6 +1276,13 @@ public class Server {
             cells.add(c.toString());
         }
         return cells;
+    }
+    public List<String> fromWeaponsToNames(List<WeaponCard> weapons){
+        List<String> list = new LinkedList<>();
+        for (WeaponCard c : weapons) {
+            list.add(c.toString());
+        }
+        return list;
     }
 
 
