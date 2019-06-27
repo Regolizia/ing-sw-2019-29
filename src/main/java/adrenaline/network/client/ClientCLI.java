@@ -168,7 +168,7 @@ public class ClientCLI extends Client{
      }
 
     public void showMainMenu() {
-            System.out.println("Main Menu:\n" +
+            System.out.println("\nMain Menu:\n" +
                     //"Z: Exit\n" +
                     "M: Show Map Info\n" +
                     "B: Show your player board\n" +

@@ -8,6 +8,7 @@ import adrenaline.powerups.Teleporter;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.*;
 
 import java.net.ServerSocket;
@@ -96,6 +97,8 @@ public class Server {
 
     public static class RequestHandler extends Thread {
 
+        Lock lock;
+
         Figure.PlayerColor color;
         String nickname;
 
@@ -155,18 +158,21 @@ public class Server {
         }
 
         public void sendToClient(String message){
-            try {
-                outputStream.writeObject(message);
-                outputStream.flush();
-            } catch (IOException e) {
-                // DISCONNECTED
+            synchronized (outputStream) {
+                try {
+                    outputStream.writeObject(message);
+                    outputStream.flush();
+                } catch (IOException e) {
+                    // DISCONNECTED
+                }
             }
 
         }
         public void sendListToClient(List<String> messages) throws IOException {
-            outputStream.writeObject(messages);
-            outputStream.flush();
-
+            synchronized (outputStream) {
+                outputStream.writeObject(messages);
+                outputStream.flush();
+            }
         }
 
         public static void countConnections(){
@@ -338,6 +344,8 @@ public class Server {
                     sendToClient("BOARD");
                     result = (int)inputStream.readObject();
                     if (result == 1 || result == 2 || result == 3 || result == 4) {
+                        if(boardChosen!=42) return;
+
                         Server.setBoardChosen(result);
                         System.out.println("BOARD CHOSEN " + result);
                         Server.createBoard();
@@ -440,6 +448,9 @@ public class Server {
                     if (isCurrentPlayer()) {
                         try {
                             if (Server.isFirstTurn()) {
+                                if(currentPlayer==0) {
+                                    broadcast("\nThe board is number " + boardChosen);
+                                }
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
@@ -451,7 +462,7 @@ public class Server {
                                 sendToClient("YOURTURN");
 
                                 String choice = (String) inputStream.readObject();
-                                System.out.println(choice);
+                                System.out.println("\n"+choice);
                                 switch (choice) {
                                     case "G":
                                         sendToClient("GRAB");
@@ -511,6 +522,7 @@ public class Server {
                             replaceWeapons();
 
                             nextPlayer();
+                            broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
                         }
@@ -519,6 +531,7 @@ public class Server {
                                 Server.endFirstTurn();
                             }
                             nextPlayer();
+                            broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
                         }
@@ -529,6 +542,24 @@ public class Server {
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
                 }
+            }
+        }
+
+        public void handleException() {
+
+            sendToClient("DISCONNECTED");
+            disconnected.add(nickname);
+            disconnectedColors.put(nickname, color);
+            writers.remove(writers.get(nickname));
+            System.out.println("Client Disconnected");
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nickname != null) {
+                removeOneConnection();
+                System.out.println(nickname + " REMOVED ");
             }
         }
 
@@ -567,6 +598,25 @@ public class Server {
         cellsWithoutTiles.clear();
         }
 
+        public void respawn(Player p){
+            p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
+            List<String> toSend = fromPowerupsToNames(p.getPowerUp());
+            try {
+                sendToClient("RESPAWN");
+                sendListToClient(toSend);
+                int x = (int) inputStream.readObject();
+                x--;
+                PowerUpCard po = p.getPowerUp().remove(x);
+                    System.out.println("TO USE AS POSITION " + po.toString());
+
+                    p.newLife();
+                    setInitialPosition(po.getPowerUpColor(), p);
+
+            }catch (Exception e){
+               handleException();
+            }
+        }
+
         public void firstTurn(){
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
@@ -598,8 +648,6 @@ public class Server {
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                 }
 
-                broadcast("LALALA first turn of " + nickname);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -624,8 +672,8 @@ public class Server {
                    CoordinatesWithRoom c1 = new CoordinatesWithRoom(r.getSpawnpoints().get(0).getSpawnpointX(),r.getSpawnpoints().get(0).getSpawnpointY(),r);
                    p.setPlayerPosition(c1);
                     p.setPlayerPositionSpawnpoint(c1);
+                    broadcast("\n" + p.getName() + " is in "+c1.toString());
                     System.out.println("INITIAL POSITION OF "+p.getName()+" IS  "+p.getCoordinatesWithRooms().toString());
-                    // TODO SEND POSITION TO PLAYER MAYBE
                     break;
                 }
             }
@@ -635,16 +683,17 @@ public class Server {
             List<Player> victims = new LinkedList<>();
             for(Player p : model.getPlayers()){
                 if(p.isDead()){
-                   // p.hasDied(); to be removed it does nothing
+                    p.hasDied();
                     victims.add(p);
-                    // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
-                    p.newLife(); //to ressurrect player
-
                 }
             }
-            action.canGetPoints(victims,model.getPlayers());     //  GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA va bene o punti glieli assegna già se può
-                                                                 //  private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI? lo uso in give points per vedere
-                                                                // quanti max punti accettabili
+            for(Player p : victims){
+
+                respawn(p);
+            }
+
+            action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
+                                                                 // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI?
         }
 
         public void powerup(){
@@ -664,16 +713,20 @@ public class Server {
                 }else{
                     sendToClient("POWERUP");
                     try {
-                        sendListToClient(fromPowerupsToNames(pows));
+                        List<String> toSend = fromPowerupsToNames(pows);
+                        toSend.add(0, "No, I dont't want to use powerups");
+                        sendListToClient(toSend);
                         int x = (int)inputStream.readObject();
                         x--;
-                        if(pows.get(x) instanceof Teleporter){
-                            teleporter();
+                        if(x!=0) {
+                            x--;
+                            if (pows.get(x) instanceof Teleporter) {
+                                teleporter();
+                            }
+                            if (pows.get(x) instanceof Newton) {
+                                newton();
+                            }
                         }
-                        if(pows.get(x) instanceof Newton){
-                            newton();
-                        }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -690,6 +743,7 @@ public class Server {
             int x = (int)inputStream.readObject();
             x--;
             player.setPlayerPosition(possible.get(x));
+            broadcast("\n" + player.getName() + " teleported in "+possible.get(x).toString());
 
             PowerUpCard power = player.getTeleporter();
             player.getPowerUp().remove(power);
@@ -723,6 +777,7 @@ public class Server {
                 int x = (int)inputStream.readObject();
                 x--;
                 ((Player)targets.get(0)).setPlayerPosition(cells.get(x));
+                broadcast("\n" + ((Player) targets.get(0)).getName() + " moved to "+cells.get(x).toString());
 
                 PowerUpCard power = player.getNewton();
                 player.getPowerUp().remove(power);
@@ -783,6 +838,8 @@ public class Server {
                 int x = (int)inputStream.readObject();
                 x--;
                 action.run(player,cells.get(x));
+
+                broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
                 System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
                 //e.printStackTrace();
@@ -804,6 +861,7 @@ public class Server {
             //TODO SEND POSSIBLE COORDINATES + CHOOSE ONE
             CoordinatesWithRoom choosenRun=new CoordinatesWithRoom();
             botAction.run(bot,choosenRun);
+        broadcast("\nBot moved to "+choosenRun);
     }
 
     public void grab(){
@@ -826,6 +884,9 @@ public class Server {
 
                 else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                     listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+
+                    System.out.println(" LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString()+"\n");
+
                 }else { // IT DOESN'T HAVE AN AMMOTILE
                     Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                 }
@@ -855,6 +916,8 @@ public class Server {
             printPlayerAmmo(player);
             action.grabTile(player, chosenCell);
             printPlayerAmmo(player);
+
+            broadcast(stringPlayerAmmo(player));
         }
         } catch (Exception e) {
             e.printStackTrace();
@@ -864,169 +927,187 @@ public class Server {
 
 
     public void shoot(Player player){
-        LinkedList<WeaponCard>playerWeaponCards=new LinkedList<>();
-        WeaponCard weaponCard=new WeaponCard();
-        LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
+        /*
+        * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
+
+        LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
+
+        //CHIEDI METODO PAGAMENTO AMMO O AMMOPOWER
+        sendToClient("PAYMENT");
         int z = 0;
         try {
-//TODO CHIEDI CARTA DA PAGARE
-            for (WeaponCard w:playerWeaponCards
+            z = (int)inputStream.readObject();
+
+        Action.PayOption payOption;
+        if(z==1){
+            payOption= Action.PayOption.AMMO;
+        }else{
+            payOption= Action.PayOption.AMMOPOWER;
+        }
+
+        if(payOption.equals(Action.PayOption.AMMOPOWER)){
+            playerPowerUpCards=payWithThesePowerUps(player);    // DOVE USI QUESTE POWERUP PER PAGARE QUI?
+        }
+
+        // TODO PAYMENT? COSA DEVO CHIEDERE? COSA DEVO RICEVERE?
+        LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
+        int number = 42;
+        //SAVING PLAYER INITIAL POSITION IN CASE HE CAN'T SHOOT/HE DOESN'T SHOOT
+        CoordinatesWithRoom positionBeforeShoot=player.getCoordinatesWithRooms();
+
+        ///////////////
+        /*
+        // TODO GIOCATORE SI VUOLE SPOSTARE PRIMA? -adrenaline action   (LO FACCIAMO DOPO NON SONO REGOLE BASE)
+        boolean moves=true;
+          if(moves==true){
+              LinkedList<CoordinatesWithRoom> possibleCells= action.proposeCellsRunBeforeShoot(player);
+              //TODO CHIEDI CELLA E METTILA IN PLAYER POSITION
+              CoordinatesWithRoom playerPosition=null;
+              //set new position
+              action.run(player,playerPosition);
+          }
+          */
+          ///////////////////
+
+        // SELEZIONE ARMA DALLA MANO
+        List<String> yourWeapons = new LinkedList<>();
+        for (WeaponCard w : player.getHand()) {
+            yourWeapons.add(w.toString());
+        }
+        sendToClient("CHOOSEWEAPON");
+        sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
+        int y = (int)inputStream.readObject();
+        y--;
+        WeaponCard weaponCard =player.getHand().get(y);
+
+        //if weapon is already reloaded, player can request other effect
+
+        if(!weaponCard.getReloadAlt()&&!weaponCard.getReload()){
+                if(!shootBase(weaponCard,player,number,positionBeforeShoot))
+                    {
+                        //send message
+                       // return false;
+                    }
+        }
+        //TODO VUOI ALTRI EFFETTI? e se non li vuole non spara?
+        boolean otherEffect=true;
+            if(otherEffect&&(weaponCard.getReload())){
+             paidEffect.addAll(shootOtherEffect(weaponCard,player,number));
+
+            //send possible target
+            LinkedList<Object>targets=new LinkedList<>();
+
+            // SOME EFFECTS REQUIRE A CHECK THAT TARGETS ARE DIFFERENT FROM EFFECT TO EFFECT
+            // I HAVE TO PASS THE OLD TARGETS
+            List<Object> pastTargets = null;
+
+            for (EffectAndNumber e:paidEffect) {
+                pastTargets = requestsForEveryWeapon(e, weaponCard, player, model.getMapUsed().getGameBoard(), model, pastTargets);
+            }
+            for (EffectAndNumber e: paidEffect
             ) {
-                sendToClient("Pay :"+w.toString()+"?\n1YES\n2NO");
-                z=(int)inputStream.readObject();
-                if(z==1){
-                    weaponCard=w;
-                    break;}
+                action.shoot(weaponCard,player,e,targets);
             }
-            if(z==0) {//todo cancel action
-                return;
-            }
-            //TODO CHOOSE A NUMBER
-            int number=0;
-            if(!weaponCard.getReloadAlt()&&!weaponCard.getReloadAlt())
-                paidEffectAndNumber.add(shootBase(weaponCard,player,number,player.getCoordinatesWithRooms()));
-            if(paidEffectAndNumber.getFirst()==null){
-                //TODO CANCEL ACTION
-                return;
-            }
-            if(weaponCard.canShootOp1()||weaponCard.canShootOp2()){
-            sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
-            z = (int) inputStream.readObject();
-            if(z==2)
-            {
-                //TODO SHOOTING
-            }
-            paidEffectAndNumber.addAll(shootOtherEffect(weaponCard,player));}
-            //TODO SHOOTING
+        }
 
-    }catch (Exception e){e.printStackTrace();}}
+        weaponCard.setNotReload();
+        weaponCard.setReloadAlt(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player) {
-            int number=0;
+    public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player, int number) {
+
+            //TODO CONTROLLA CHE L'EFFETTO NON SIA NE BASE NE ALT
             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
-            LinkedList<AmmoCube.Effect> effect = new LinkedList<>(); //just to check
-            LinkedList<AmmoCube.Effect> effectRequested = new LinkedList<>(); //just to check
+            LinkedList<AmmoCube.Effect> effect = new LinkedList<>();
             LinkedList<Action.PayOption> payOptions = new LinkedList<>();
             LinkedList<EffectAndNumber> paidEffect = new LinkedList<>();
-            int response=0;
-
-         try{
-             do {
-
-                 if(weaponCard.canShootOp1()&&!effect.contains(AmmoCube.Effect.OP1))
-                    {sendToClient("OP 1?\n1 YES\n2 NO ");
-                    response=(int)inputStream.readObject();
-                    if(response==1)
-                        effectRequested.add(AmmoCube.Effect.OP1);
-
-                    }
-                 if(weaponCard.canShootOp2()&&!effect.contains(AmmoCube.Effect.OP2))
-                 {sendToClient("OP 2?\n1 YES\n2 NO ");
-                     response=(int)inputStream.readObject();
-                     if(response==1)
-                         effectRequested.add(AmmoCube.Effect.OP2);
-
-                 }
-
-                sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
-                response = (int) inputStream.readObject();
-
-               } while(response==1);
+            Action.PayOption payOption=null;
             //TODO PER OGNI EFFETTO CHIEDI METODO PAGAMENTO
+            for (AmmoCube.Effect e : AmmoCube.Effect.values()) {
 
-             for (AmmoCube.Effect e:effectRequested) {
-                 sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER [DEFAULT]");
-                 response = (int)inputStream.readObject();
+                 if(weaponCard.getPrice().contains(e)){
+                    //TODO CHIEDI SE VUOI PAGARE QUESTO EFFETTO
+                     //IF YES
+                     effect.add(e);
+                     //TODO CHIEDI PAGAMENTO
+                     //payOption= response
+                     payOptions.add(payOption);
 
-                 if(response==1){
-                     if(action.canPayCard(weaponCard,player, Action.PayOption.AMMO,e,playerPowerUpCards)){
-                         //todo ask for number
-                         paidEffect.add(action.payAmmo(player,weaponCard,e,number));
-                     }
-                 }else{
-                     if(action.canPayCard(weaponCard,player, Action.PayOption.AMMOPOWER,e,playerPowerUpCards)){
-                         //todo ask for number
-                         playerPowerUpCards=payWithThesePowerUps(player);
-                         paidEffect.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,number));
-                         player.getPowerUp().removeAll(playerPowerUpCards);
-                         model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-                         playerPowerUpCards.clear();
-                     }
                  }
 
-             }
-            }catch (Exception e){e.printStackTrace();}
+            }
 
-        return paidEffect;}
+            for (AmmoCube.Effect e : effect
+            ) {
+
+                if (payOptions.get(effect.indexOf(e)).equals(Action.PayOption.AMMOPOWER)) {
+                    playerPowerUpCards.addAll(payWithThesePowerUps(player));
+                    player.getPowerUp().removeAll(playerPowerUpCards);
+                }
+                if (!action.canPayCard(weaponCard, player, payOptions.get(effect.indexOf(e)), e, playerPowerUpCards)) {
+                    player.getPowerUp().addAll(playerPowerUpCards);
+                    playerPowerUpCards.clear();
+
+                } else {
+                    model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+                    paidEffect.add(action.paidEffect(weaponCard, player, payOptions.get(effect.indexOf(e)), e, playerPowerUpCards, number));
+                    playerPowerUpCards.clear();
+                }
+
+            }
+
+        return paidEffect;
+    }
 
 
-
-    public EffectAndNumber shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
+    public boolean shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
         //TODO CHIEDI SE VUOLE EFFETTO BASE O ALTERNATIVO
         LinkedList<PowerUpCard>powers=new LinkedList<>();
         AmmoCube.Effect effect=null;
-        int z = 0;
-        try {
-            sendToClient("CHOOSE EFFECT:\n1 BASE\n2 ALT");
-            z = (int) inputStream.readObject();
-            //TODO MANDA MESSAGGIO PER AZIONE NON AVVENUTA
-            if (z!=1 && z!=2){
+        LinkedList <EffectAndNumber> paidEffect=new LinkedList<>();
 
-                sendToClient("before choosing others payment you mst choose between BASE an ALT");
-                return null;
-            }
+        //TODO MANDA MESSAGGIO PER AZIONE NON AVVENUTA
+        if(!effect.equals(AmmoCube.Effect.BASE)&&!effect.equals(AmmoCube.Effect.ALT))
+            return false;
+        //TODO CHIEDI COME PAGARE
+        //payOption= ...
+        Action.PayOption payOption=null;
 
-            //TODO CHIEDI COME PAGARE
-
-            sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER");
-            z = (int)inputStream.readObject();
-
-            Action.PayOption payOption;
-            if(z==1){
-                payOption= Action.PayOption.AMMO;
-            }else{
-                payOption= Action.PayOption.AMMOPOWER;
-            }
-
-
-            if (payOption.equals(Action.PayOption.AMMOPOWER)) {
-                //TODO CHIEDI POWERUP
-                for (PowerUpCard p : player.getPowerUp()
-                ) {
-                    p.toString();
-                    //TODO SCEGLI Y/N
-                    String response = "";
-                    if (response == "YES") {
-                        powers.add(p);
-                    }
+        if(payOption.equals(Action.PayOption.AMMOPOWER))
+        {
+            //TODO CHIEDI POWERUP
+            for (PowerUpCard p:player.getPowerUp()
+                 ) {
+                p.toString();
+                //TODO SCEGLI Y/N
+                String response="";
+                if(response=="YES"){
+                    powers.add(p);
                 }
-
             }
 
-            if (action.canPayCard(weaponCard, player, payOption, effect, powers)) {
-                switch (payOption)
-                {
-                    case AMMOPOWER:action.payPowerUp(weaponCard,powers,player,effect,number);break;
-                    case AMMO:action.payAmmo(player,weaponCard,effect,number);break;
-                    default:return null;
-                }
-                if (effect.equals(AmmoCube.Effect.BASE))
-                    weaponCard.setReload();
-                if (effect.equals(AmmoCube.Effect.ALT))
-                    weaponCard.setReloadAlt(true);
-                player.getPowerUp().removeAll(powers);
-                model.powerUpDeck.getUsedPowerUp().addAll(powers);
-            } else {
-                //TODO MANDA MESS ERRORE
-                action.run(player, positionBeforeShoot);
-                return null; // delete action plus send message
-            }
-
-
-        }catch (Exception e){
-            e.printStackTrace();
         }
-        return  new EffectAndNumber(effect,number);
+
+        if(action.canPayCard(weaponCard,player,payOption,effect,powers))
+        {
+            paidEffect.add(action.paidEffect(weaponCard,player,payOption,effect,powers,number));
+            if(effect.equals(AmmoCube.Effect.BASE))
+                weaponCard.setReload();
+            if(effect.equals(AmmoCube.Effect.ALT))
+                weaponCard.setReloadAlt(true);
+            player.getPowerUp().removeAll(powers);
+            model.powerUpDeck.getUsedPowerUp().addAll(powers);
+        }
+        else {
+            //TODO MANDA MESS ERRORE
+            action.run(player,positionBeforeShoot);
+            return false; // delete action plus send message
+        }
+
+        return true;
     }
 
     public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
@@ -1188,6 +1269,7 @@ public class Server {
                     int x = (int)inputStream.readObject();
                     x--;
                     p.setPlayerPosition(one.get(x));
+                    broadcast("\n" + p.getName() + " is in "+one.get(x).toString());
                 }
 
                 break;
@@ -1294,6 +1376,7 @@ public class Server {
                     int x = (int)inputStream.readObject();
                     x--;
                     p.setPlayerPosition(cells.get(x));
+                    broadcast("\n" + p.getName() + " is in "+cells.get(x).toString());
 
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
@@ -1329,6 +1412,7 @@ public class Server {
                         int xyp = (int)inputStream.readObject();
                         xyp--;
                         ((Player) targets.get(0)).setPlayerPosition(list.get(xyp));
+                        broadcast("\n" + ((Player) targets.get(0)).getName() + " is in "+list.get(xyp).toString());
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1) {
@@ -1496,6 +1580,7 @@ public class Server {
                     int nu = (int) inputStream.readObject();
                     nu--;
                     if (nu != 0) {
+                        nu--;
                         Object tr = pastTargets.get(nu);
                         pastTargets2 = pastTargets;    // ORIGINAL PASTTARGETS (I NEED THEM IF E.NUMBER!=1)
                         pastTargets2.add(tr);
@@ -1515,6 +1600,7 @@ public class Server {
                     int nku = (int) inputStream.readObject();
                     nku--;
                     if(nku!=0) {
+                        nku--;
                         Object tr = targets.get(nku);
                         targets.clear();
                         targets.add(tr);
@@ -1560,36 +1646,98 @@ public class Server {
                     int xg = (int)inputStream.readObject();
                     xg--;
                     p.setPlayerPosition(cells.get(xg));
+                    broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
                 }
                 break;
 
             case "PowerGlove":
-                    cells = w.getPossibleTargetCells(playerPosition,e,g);
-                    targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int xh = (int)inputStream.readObject();
+                    int xh = (int) inputStream.readObject();
                     xh--;
                     Object tt = targets.get(xh);
                     targets.clear();
                     targets.add(tt);
 
-                    w.applyDamage(targets,p,e);
-                    useTargetingScope(p,targets);
+                    w.applyDamage(targets, p, e);
+                    useTargetingScope(p, targets);
 
-                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
                     // MOVE PLAYER TO TARGET'S SQUARE
-                    action.run(p,((Player)tt).getCoordinatesWithRooms());
-
+                    action.run(p, ((Player) tt).getCoordinatesWithRooms());
+                    broadcast("\n" + p.getName() + " moved to "+((Player)tt).getCoordinatesWithRooms());
+                }
                 // ALSO IF ALT
-                if(e.getEffect()== AmmoCube.Effect.ALT){
-                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false); // GETS CELL AFTER ORIGINAL AND NEW POSITION
-                    if(c2.getX()!=0){
-                        // TODO ASK IF PLAYER WANTS TO MOVE THERE
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xpf = (int) inputStream.readObject();
+                    xpf--;
+                    action.run(p, cells.get(xpf));
+                    broadcast("\n" + p.getName() + " moved to "+cells.get(xpf).toString());
 
-                        // TO BE CONTINUED...
-                        // TODO POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
+                    CoordinatesWithRoom cc = cells.get(xpf);
+                    cells.clear();
+                    cells.add(cc);
+
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    sendToClient("CHOOSETARGET");
+                    List<String> toSend = fromTargetsToNames(targets);
+                    toSend.add(0, "No, I dont't want these targets");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nu = (int) inputStream.readObject();
+                    nu--;
+                    if (nu != 0) {
+                        nu--;
+                        Object ttt = targets.get(nu);
+                        targets.clear();
+                        targets.add(ttt);
+
+                        w.applyDamage(targets, p, e);
+                        useTargetingScope(p, targets);
+
+                        CoordinatesWithRoom c2 = c0.getNextCell(c0,cc,g, false);
+                        if(c2.getX()==0 || c2.getY()==0){
+                            return new LinkedList<>();
+                        }
+                        cells.clear();
+                        cells.add(c2);
+
+                        toSend.clear();
+                        toSend = fromCellsToNames(cells);
+                        toSend.add(0, "No, I dont't want to move there");
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xif = (int) inputStream.readObject();
+                        xif--;
+                        if(xif!=0) {
+                            xif--;
+                            action.run(p, c2);
+                            broadcast("\n" + p.getName() + " moved to "+c2.toString());
+
+                            targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                            sendToClient("CHOOSETARGET");
+                            toSend.clear();
+                            toSend = fromTargetsToNames(targets);
+                            toSend.add(0, "No, I dont't want these targets");
+                            sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                            int nur = (int) inputStream.readObject();
+                            nur--;
+                            if (nur != 0) {
+                                nur--;
+                                Object trtt = targets.get(nur);
+                                targets.clear();
+                                targets.add(trtt);
+
+                                w.applyDamage(targets, p, e);
+                                useTargetingScope(p, targets);
+                            }
+                        }
                     }
                 }
                 break;
@@ -1672,6 +1820,7 @@ public class Server {
                         int xf = (int) inputStream.readObject();
                         xf--;
                         ((Player) targets.get(0)).setPlayerPosition(one.get(xf));
+                        broadcast("\n" + ((Player) targets.get(0)).getName() + " is in "+one.get(xf).toString());
 
                         w.applyDamage(targets,p,e);
                         useTargetingScope(p,targets);
@@ -1679,6 +1828,7 @@ public class Server {
                         // IF PRIMA BASE RETURN OLD TARGET POSITION (AS SECOND PLAYER) BEFORE MOVING IT
                         Player pp = new Player();
                         pp.setPlayerPosition(ctarget);
+                        broadcast("\n" + pp.getName() + " is in "+ctarget);
                         targets.add(pp);
                         return targets;
                     }
@@ -1701,6 +1851,7 @@ public class Server {
 
                         Player p2 = new Player();
                         p2.setPlayerPosition(d);
+                        broadcast("\n" + p2.getName() + " is in "+d.toString());
                         List<Object> lis7 = new LinkedList<>();
                         lis7.add(p2);
                         return lis7;
@@ -1723,6 +1874,7 @@ public class Server {
                     int xg = (int)inputStream.readObject();
                     xg--;
                     p.setPlayerPosition(cells.get(xg));
+                    broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
                 }
                 break;
 
@@ -1814,6 +1966,8 @@ public class Server {
                     int xf = (int)inputStream.readObject();
                     xf--;
                     ((Player)targets.get(0)).setPlayerPosition(one.get(xf));
+                    broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+one.get(xf).toString());
+
                     }
                 }
                 break;
@@ -1840,6 +1994,7 @@ public class Server {
                     int xj = (int)inputStream.readObject();
                     xj--;
                     ((Player)targets.get(0)).setPlayerPosition(possibleCells.get(xj));
+                    broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+possibleCells.get(xj).toString());
                 }
                 break;
 
@@ -1904,6 +2059,7 @@ public class Server {
                     int xgy = (int)inputStream.readObject();
                     xgy--;
                     ((Player)trg).setPlayerPosition(listOne.get(xgy));
+                    broadcast("\n" + ((Player)trg).getName() + " is in "+listOne.get(xgy).toString());
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
@@ -1922,6 +2078,8 @@ public class Server {
                     targets.add(tu);
                     //MOVE IT TO YOUR SQUARE
                     ((Player)targets.get(0)).setPlayerPosition(playerPosition);
+                    broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+playerPosition.toString());
+
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
                 }
@@ -1975,6 +2133,8 @@ public class Server {
                 // MOVE EVERY TARGET ON THE VORTEX
                 for(Object o : targets){
                     ((Player)o).setPlayerPosition(vortex);
+                    broadcast("\n" + ((Player)o).getName() + " is in "+vortex.toString());
+
                 }
 
                 w.applyDamage(targets,p,e);
@@ -2173,7 +2333,10 @@ public class Server {
         }
     }
     public static void printPlayerAmmo(Player p){
-        System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
+        System.out.println("\n"+p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
+    }
+    public static String stringPlayerAmmo(Player p){
+        return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
 
     public static void addCellToList(CoordinatesWithRoom c){
