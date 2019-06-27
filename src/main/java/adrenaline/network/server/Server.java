@@ -462,6 +462,10 @@ public class Server {
                                     broadcast("\nThe board is number " + boardChosen);
                                 }
                                 lock.lock();
+
+                                sendToClient("MAP");
+                                mapInfo();
+
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
@@ -493,7 +497,10 @@ public class Server {
                                         numberOfActions++;
                                         break;
                                     case "M":
-                                        // MAP
+                                        lock.lock();
+                                        sendToClient("MAP");
+                                        mapInfo();
+                                        lock.unlock();
                                         break;
                                     case "B":
                                         // PLAYER
@@ -913,6 +920,12 @@ public class Server {
             botAction.run(bot,choosenRun);
         broadcast("\nBot moved to "+choosenRun);
     }
+
+    public void mapInfo(){
+            sendToClient(Integer.toString(boardChosen));
+    }
+
+
 
     public void grab(){
         Player player = Server.model.getPlayers().get(currentPlayer);

@@ -161,6 +161,9 @@ public class ClientThread implements Runnable {
             case "RUN":
                 client.run(getListFromServer());
                 break;
+            case "MAP":
+                client.mapInfo(getFromServer());
+                break;
             case "MESSAGE":
                 client.printMessage(getFromServer());
                 break;

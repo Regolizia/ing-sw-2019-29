@@ -409,4 +409,29 @@ public class ClientCLI extends Client{
         System.out.println("You've been disconnected!");
         reconnect();
     }
+    public void mapInfo(String board){
+        int n = Integer.parseInt(board);
+        switch (n){
+            case 1:
+                System.out.println("MapOne is the first little map in the rules.");
+                System.out.println("Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW\n");
+                break;
+            case 2:
+                System.out.println("MapTwo is the big map in the rules near the little maps.");
+                System.out.println("Room 0 is BLUE -- Room 1 is RED -- Room 2 is PURPLE -- Room 3 is WHITE -- Room 4 is YELLOW\n");
+                break;
+            case 3:
+                System.out.println("MapThree is the second little map in the rules.");
+                System.out.println("Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW -- Room 4 is GREEN\n");
+                break;
+            case 4:
+                System.out.println("MapFour is the third little map in the rules.");
+                System.out.println("Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW -- Room 4 is PURPLE -- Room 5 is GREEN\n");
+                break;
+        }
+        System.out.println("To read a cell position:  EXAMPLE 1, 2 Room 0");
+        System.out.println("The first number is the x coordinate (from left to right)");
+        System.out.println("The second number is the y coordinate (from up to down)");
+        System.out.println("The third number is the Room number (see above). It depends on the map chosen.");
+    }
 }

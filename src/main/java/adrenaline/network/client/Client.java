@@ -36,6 +36,7 @@ public class Client {
         public void chooseRoom(List<String> rooms){}
         public void firstTurn(List<String> list){}
         public void printMessage(String s){}
+        public void mapInfo(String s){}
         public void showMainMenu(){}
         public void disconnected(){}
         public void waitStart(){}
