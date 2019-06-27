@@ -984,173 +984,113 @@ public class Server {
             int z = 0;
             try {
                 //CHIEDI CARTA DA PAGARE
-                for (WeaponCard w:playerWeaponCards
-                ) {
+                for (WeaponCard w : player.getHand()) {
+                    if (w.getReload()) {
+                        playerWeaponCards.add(w);
+                    }
+                }
+                if (playerWeaponCards.size() == 0) {
+                    lock.lock();
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry, you don't have reloaded weapons in your hand");
+                    lock.unlock();
+                } else {
                     lock.lock();
                     sendToClient("CHOOSEWEAPON");
-                    sendListToClient(fromWeaponsToNames(player.getHand())); // FORSE LO CAMBIAMO PERCHé NON SEMPRE LE HA CARICHE TUTTE QUELLE CHE HA
-                    z=(int)inputStream.readObject();
-                    if(z==1){
-                        weaponCard=player.getHand().get(z);
-                        break;}
-                    }
-                lock.unlock();
-                int number=0;
-                if(!weaponCard.getReloadAlt()&&!weaponCard.getReloadAlt())
-                    paidEffectAndNumber.add(shootBase(weaponCard,player,number,player.getCoordinatesWithRooms()));  // TODO SISTEMA LEO
-                if(paidEffectAndNumber.getFirst()==null){
-                    //TODO CANCEL ACTION
-                    return;
-                }
-                if(weaponCard.canShootOp1()||weaponCard.canShootOp2()){
-                    lock.lock();
-                    sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
+                    sendListToClient(fromWeaponsToNames(playerWeaponCards));
                     z = (int) inputStream.readObject();
-                    if(z==2)
-                    {
-                        //TODO SHOOTING
-                    }
+                    z--;
+                    weaponCard = playerWeaponCards.get(z);  // TODO REMEMBER TO UNLOAD WEAPONCARD AFTER USING IT
                     lock.unlock();
-                    paidEffectAndNumber.addAll(shootOtherEffect(weaponCard,player));}
-                //TODO SHOOTING
 
-            }catch (Exception e){e.printStackTrace();}}
+                    int number = 0;
+                    paidEffectAndNumber.add(shootBase(number));
 
-        public LinkedList<EffectAndNumber>  shootOtherEffect(WeaponCard weaponCard,Player player) {
-            int number=0;
-            LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
-            LinkedList<AmmoCube.Effect> effect = new LinkedList<>(); //just to check
-            LinkedList<AmmoCube.Effect> effectRequested = new LinkedList<>(); //just to check
-            LinkedList<Action.PayOption> payOptions = new LinkedList<>();
-            LinkedList<EffectAndNumber> paidEffect = new LinkedList<>();
-            int response=0;
+                    AmmoCube.Effect effect;
 
-            try{
-                do {
-
-                    if(weaponCard.canShootOp1()&&!effect.contains(AmmoCube.Effect.OP1))
-                    {
+                    if (weaponCard.canShootOp1()){
+                        effect= AmmoCube.Effect.OP1;
                         lock.lock();
-                        sendToClient("OP 1?\n1 YES\n2 NO ");
-                        response=(int)inputStream.readObject();
-                        if(response==1)
-                            effectRequested.add(AmmoCube.Effect.OP1);
+                        sendToClient("OP1");
+                        String response = (String) inputStream.readObject();
                         lock.unlock();
-                    }
-                    if(weaponCard.canShootOp2()&&!effect.contains(AmmoCube.Effect.OP2))
-                    {lock.lock();
-                        sendToClient("OP 2?\n1 YES\n2 NO ");
-                        response=(int)inputStream.readObject();
-                        if(response==1)
-                            effectRequested.add(AmmoCube.Effect.OP2);
-                        lock.unlock();
-                    }
-                    lock.lock();
-                    sendToClient("ADD OTHER EFFECT? \n1 YES\n2 NO");
-                    response = (int) inputStream.readObject();
-                    lock.unlock();
+                        if(response.toUpperCase().equals("Y")){
+                            shootOtherEffect(effect,weaponCard, player, paidEffectAndNumber);
 
-                } while(response==1);
-                //TODO PER OGNI EFFETTO CHIEDI METODO PAGAMENTO
-
-                for (AmmoCube.Effect e:effectRequested) {
-                    lock.lock();
-                    sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER [DEFAULT]");
-                    response = (int)inputStream.readObject();
-
-                    if(response==1){
-                        if(action.canPayCard(weaponCard,player, Action.PayOption.AMMO,e,playerPowerUpCards)){
-                            //todo ask for number
-                            paidEffect.add(action.payAmmo(player,weaponCard,e,number));
                         }
+                    }
+                    if (weaponCard.canShootOp2()){
+                        effect= AmmoCube.Effect.OP2;
+                        lock.lock();
+                        sendToClient("OP2");
+                        String response = (String) inputStream.readObject();
+                        lock.unlock();
+                        if(response.toUpperCase().equals("Y")){
+                            shootOtherEffect(effect,weaponCard, player, paidEffectAndNumber);
+
+                        }
+                    }
+                    if (weaponCard.canShootAlt()){
+                        effect= AmmoCube.Effect.ALT;
+                        lock.lock();
+                        sendToClient("ALT");
+                        String response = (String) inputStream.readObject();
+                        lock.unlock();
+                        if(response.toUpperCase().equals("Y")){
+                            shootOtherEffect(effect,weaponCard, player, paidEffectAndNumber);
+
+                        }
+                    }
+                }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+        }
+
+        public void shootOtherEffect(AmmoCube.Effect e, WeaponCard weaponCard, Player player, List<EffectAndNumber> effects) {
+
+            LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
+            try {
+                //CHIEDI METODO PAGAMENTO
+                lock.lock();
+                sendToClient("PAYMENT");
+                int z = (int) inputStream.readObject();
+                lock.unlock();
+                Action.PayOption payOption;
+
+                if (z == 1) {
+                    payOption = Action.PayOption.AMMO;
+                } else {
+                    payOption = Action.PayOption.AMMOPOWER;
+                }
+
+                if (payOption.equals(Action.PayOption.AMMOPOWER)) {
+                    playerPowerUpCards = payWithThesePowerUps(player);
+                }
+                // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
+                if (!action.canPayCard(weaponCard, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
+                    //MANDA MESSAGGIO
+                    System.out.println("CAN'T PAY");
+                    return;
+
+                } else {
+                    if(z==1){
+                            effects.add(action.payAmmo(player,weaponCard,e,0));
                     }else{
-                        if(action.canPayCard(weaponCard,player, Action.PayOption.AMMOPOWER,e,playerPowerUpCards)){
-                            //todo ask for number
-                            playerPowerUpCards=payWithThesePowerUps(player);
-                            paidEffect.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,number));
+                            effects.add(
+                                    action.payPowerUp(weaponCard,playerPowerUpCards,player,e,0));
                             player.getPowerUp().removeAll(playerPowerUpCards);
                             model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                             playerPowerUpCards.clear();
-                        }
                     }
-                    lock.unlock();
-
                 }
-            }catch (Exception e){e.printStackTrace();}
-
-            return paidEffect;}
-
-
-
-        public EffectAndNumber shootBase(WeaponCard weaponCard,Player player,int number,CoordinatesWithRoom positionBeforeShoot){
-            //TODO CHIEDI SE VUOLE EFFETTO BASE O ALTERNATIVO
-            LinkedList<PowerUpCard>powers=new LinkedList<>();
-            AmmoCube.Effect effect=null;
-            int z = 0;
-            try {
-                lock.lock();
-                sendToClient("CHOOSE EFFECT:\n1 BASE\n2 ALT");
-                z = (int) inputStream.readObject();
-                lock.unlock();
-                //TODO MANDA MESSAGGIO PER AZIONE NON AVVENUTA
-                if (z!=1 && z!=2){
-                    lock.lock();
-                    sendToClient("before choosing others payment you mst choose between BASE an ALT");
-                    lock.unlock();
-                    return null;
-                }
-
-                //TODO CHIEDI COME PAGARE
-                lock.lock();
-                sendToClient("CHOOSE PAYMENT:\n1 AMMO\n2 AMMOPOWER");
-                z = (int)inputStream.readObject();
-
-                Action.PayOption payOption;
-                if(z==1){
-                    payOption= Action.PayOption.AMMO;
-                }else{
-                    payOption= Action.PayOption.AMMOPOWER;
-                }
-                lock.unlock();
-
-                if (payOption.equals(Action.PayOption.AMMOPOWER)) {
-                    //TODO CHIEDI POWERUP
-                    for (PowerUpCard p : player.getPowerUp()
-                    ) {
-                        p.toString();
-                        //TODO SCEGLI Y/N
-                        String response = "";
-                        if (response == "YES") {
-                            powers.add(p);
-                        }
-                    }
-
-                }
-
-                if (action.canPayCard(weaponCard, player, payOption, effect, powers)) {
-                    switch (payOption)
-                    {
-                        case AMMOPOWER:action.payPowerUp(weaponCard,powers,player,effect,number);break;
-                        case AMMO:action.payAmmo(player,weaponCard,effect,number);break;
-                        default:return null;
-                    }
-                    if (effect.equals(AmmoCube.Effect.BASE))
-                        weaponCard.setReload();
-                    if (effect.equals(AmmoCube.Effect.ALT))
-                        weaponCard.setReloadAlt(true);
-                    player.getPowerUp().removeAll(powers);
-                    model.powerUpDeck.getUsedPowerUp().addAll(powers);
-                } else {
-                    //TODO MANDA MESS ERRORE
-                    action.run(player, positionBeforeShoot);
-                    return null; // delete action plus send message
-                }
-
-
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (Exception ex) {
+            ex.printStackTrace();
             }
-            return  new EffectAndNumber(effect,number);
+        }
+
+        public EffectAndNumber shootBase(int number){
+            return  new EffectAndNumber(AmmoCube.Effect.BASE,number);
         }
 
     public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
@@ -1211,7 +1151,13 @@ public class Server {
 
         //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
         int number=0;
-        action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,number);
+
+            if(z==1){action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
+            weaponCard.setReload();
+
+            }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
+            weaponCard.setReload();
+            }
 
         player.getHand().add(weaponCard);
         s.getWeaponCards().remove(weaponCard);

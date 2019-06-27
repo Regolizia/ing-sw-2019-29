@@ -38,6 +38,9 @@ public class Client {
         public void printMessage(String s){}
         public void mapInfo(String s){}
         public void showMainMenu(){}
+        public void op1(){}
+        public void op2(){}
+        public void alt(){}
         public void disconnected(){}
         public void waitStart(){}
         public void boardSetup(int n, List<String> colors, List<String> names, List<String> blueredyellow){}

@@ -170,6 +170,15 @@ public class ClientThread implements Runnable {
             case "DISCONNECTED":
                 client.disconnected();
                 break;
+            case "OP1":
+                client.op1();
+                break;
+            case "OP2":
+                client.op2();
+                break;
+            case "ALT":
+                client.alt();
+                break;
         }
         } catch (IOException e) {
             e.printStackTrace();
