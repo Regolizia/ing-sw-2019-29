@@ -192,6 +192,9 @@ public class ClientThread implements Runnable {
             case "ALT":
                 client.alt();
                 break;
+            case "RELOAD":
+                client.reload(getFromServer());
+                break;
             case "CHANGE":
                 client.change();
                 break;

@@ -377,6 +377,16 @@ public class ClientCLI extends Client{
         }else sendToServer("Y");
     }
 
+    public void reload(String s){
+        System.out.println("\nDo you want to reload " +s +", [Y] or [N]? ([N] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("N");
+        }else sendToServer("N");
+    }
+
     public void moveTarget(){
         System.out.println("\nDo you want to move the target, [Y] or [N]? ([Y] is default): ");
         if(scanner.hasNextLine()){

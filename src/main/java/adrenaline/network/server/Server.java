@@ -540,7 +540,7 @@ public class Server {
                             // CAN USE SOME POWERUPS BEFORE END OF TURN
                             powerup();
 
-                            //reload();
+                            reload();
                             //scoring();
                             replaceAmmo();
                             replaceWeapons();
@@ -574,8 +574,12 @@ public class Server {
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
 
-                            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
-                                lock.unlock();
+                            int c = lock.getHoldCount();
+                            if(lock.isHeldByCurrentThread()){
+                                while (c>1){
+                                    lock.unlock();
+                                }
+                            }
 
                         }
                     }
@@ -755,6 +759,59 @@ public class Server {
             }
         }
 
+        public void reload(){
+            Player player = model.getPlayers().get(currentPlayer);
+            try{
+            lock.lock();
+                List<WeaponCard> weapons = player.getHand();
+                for (WeaponCard w : weapons){
+                    if(w.getReload()){
+                        weapons.remove(w);
+                    }
+                }
+                for(WeaponCard w : weapons){
+                    sendToClient("RELOAD");
+                    sendListToClient(fromWeaponsToNames(weapons));
+                    String response = (String) inputStream.readObject();
+
+                    if(response.toUpperCase().equals("Y")){
+                        LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
+                        sendToClient("PAYMENT");
+                        int z = (int) inputStream.readObject();
+                        lock.unlock();
+                        Action.PayOption payOption;
+
+                        if (z == 1) {
+                            payOption = Action.PayOption.AMMO;
+                        } else {
+                            payOption = Action.PayOption.AMMOPOWER;
+                        }
+
+                        if (payOption.equals(Action.PayOption.AMMOPOWER)) {
+                            playerPowerUpCards = payWithThesePowerUps(player);
+                        }
+                        if (!action.canPayCard(w, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
+                            //MANDA MESSAGGIO
+                            System.out.println("CAN'T PAY");
+                        } else {
+                            if(z==1){
+                                action.payAmmo(player,w, AmmoCube.Effect.BASE,0);
+                            }else{
+                                action.payPowerUp(w,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
+                                player.getPowerUp().removeAll(playerPowerUpCards);
+                                model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+                                playerPowerUpCards.clear();
+                            }
+                        }
+                    }
+                }
+                lock.unlock();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
         public void powerup(){
             Player player = model.getPlayers().get(currentPlayer);
             if(!player.getPowerUp().isEmpty()){
@@ -768,7 +825,7 @@ public class Server {
                 }lock.lock();
                 if(pows.isEmpty()){
                     sendToClient("MESSAGE");
-                    sendToClient("Sorry you can't use any of your powerups now");
+                    sendToClient("End of turn. Sorry you can't use any of your powerups now");
                 }else{
                     sendToClient("POWERUP");
                     try {
@@ -2019,52 +2076,59 @@ public class Server {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
 
-                    // ASK WHICH TARGETS TO DAMAGE - UP TO 3
-                    sendToClient("CHOOSETARGET");
-                    sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int nm = (int)inputStream.readObject();
-                    nm--;
-                    Object ot = targets.get(nm);
-                    List<Object> list2 = targets;
-                    targets.clear();
-                    targets.add(ot);
-                    list2.remove(ot);
+                    if (!targets.isEmpty()) {
 
-                    for(int v=0;v<2;v++) {
-                        sendToClient("CHOOSEANOTHER");
-                        String rs = (String) inputStream.readObject();
-                        if (rs.toUpperCase().equals("Y")) {
-                            sendToClient("CHOOSETARGET");
-                            sendListToClient(fromTargetsToNames(list2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                            int ye = (int) inputStream.readObject();
-                            ye--;
-                            targets.add(list2.get(ye));
-                            list2.remove(ye);
-                        } else {
-                            break;
-                        }
-                    }
-                    boolean ok = false;
-                    while (!ok) {
-                        if ((targets.size() == 3 &&
-                                !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
-                                && !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())
-                                && !((Player) targets.get(1)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())) ||
-                                (targets.size() == 2 &&
-                                        !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
-                                )) {
-                            ok = true;
-                        } else {    // SE SBAGLIA TOLGO I TARGET E BASTA
-                            if(targets.size()==2){
-                                targets.remove(1);
-                            }
-                            if(targets.size()==3){
-                                targets.remove(2);
+                        // ASK WHICH TARGETS TO DAMAGE - UP TO 3
+                        sendToClient("CHOOSETARGET");
+                        sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int nm = (int) inputStream.readObject();
+                        nm--;
+                        Object ot = targets.get(nm);
+                        List<Object> list2 = targets;
+                        targets.clear();
+                        targets.add(ot);
+                        list2.remove(ot);
+
+                        for (int v = 0; v < 2; v++) {
+                            sendToClient("CHOOSEANOTHER");
+                            String rs = (String) inputStream.readObject();
+                            if (rs.toUpperCase().equals("Y")) {
+                                sendToClient("CHOOSETARGET");
+                                sendListToClient(fromTargetsToNames(list2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                                int ye = (int) inputStream.readObject();
+                                ye--;
+                                targets.add(list2.get(ye));
+                                list2.remove(ye);
+                            } else {
+                                break;
                             }
                         }
+                        boolean ok = false;
+                        while (!ok) {
+                            if ((targets.size() == 3 &&
+                                    !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
+                                    && !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())
+                                    && !((Player) targets.get(1)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())) ||
+                                    (targets.size() == 2 &&
+                                            !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
+                                    )) {
+                                ok = true;
+                            } else {    // SE SBAGLIA TOLGO I TARGET E BASTA
+                                if (targets.size() == 2) {
+                                    targets.remove(1);
+                                }
+                                if (targets.size() == 3) {
+                                    targets.remove(2);
+                                }
+                            }
+                        }
+                        w.applyDamage(targets, p, e);
+                        useTargetingScope(p, targets);
+
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
                     }
-                    w.applyDamage(targets, p, e);
-                    useTargetingScope(p,targets);
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);

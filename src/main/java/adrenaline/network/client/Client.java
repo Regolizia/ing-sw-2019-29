@@ -37,6 +37,7 @@ public class Client {
         public void firstTurn(List<String> list){}
         public void changeOrder(List<String> list){}
         public void printMessage(String s){}
+        public void reload(String s){}
         public void mapInfo(String s){}
         public void showMainMenu(){}
         public void op1(){}
