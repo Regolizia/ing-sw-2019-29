@@ -179,6 +179,12 @@ public class ClientThread implements Runnable {
             case "ALT":
                 client.alt();
                 break;
+            case "CHANGE":
+                client.change();
+                break;
+            case "CHANGEORDER":
+                client.changeOrder(getListFromServer());
+                break;
         }
         } catch (IOException e) {
             e.printStackTrace();

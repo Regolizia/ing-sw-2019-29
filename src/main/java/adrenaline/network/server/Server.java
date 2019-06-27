@@ -5,6 +5,8 @@ import adrenaline.*;
 import adrenaline.gameboard.GameBoard;
 import adrenaline.powerups.Newton;
 import adrenaline.powerups.Teleporter;
+import adrenaline.weapons.MachineGun;
+import adrenaline.weapons.Thor;
 
 import java.io.*;
 import java.util.*;
@@ -1041,6 +1043,20 @@ public class Server {
 
                         }
                     }
+                    // REMOVES BASE IF I PAID FOR ALT
+                    for(EffectAndNumber en : paidEffectAndNumber){
+                        if(en.getEffect()== AmmoCube.Effect.ALT){
+                            EffectAndNumber temp = en;
+                            paidEffectAndNumber.clear();
+                            paidEffectAndNumber.add(temp);
+                        }
+                    }
+                    if(paidEffectAndNumber.size()>1) {
+                        // NOW PAIDEFFECTSANDNUMBER HAS ALL THE EFFECTS PAID FOR
+                        changeOrderOfEffects(paidEffectAndNumber, weaponCard);
+                    }
+
+                    // SHOOT
                 }
                 }catch(Exception e){
                     e.printStackTrace();
@@ -1077,8 +1093,7 @@ public class Server {
                     if(z==1){
                             effects.add(action.payAmmo(player,weaponCard,e,0));
                     }else{
-                            effects.add(
-                                    action.payPowerUp(weaponCard,playerPowerUpCards,player,e,0));
+                            effects.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,0));
                             player.getPowerUp().removeAll(playerPowerUpCards);
                             model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                             playerPowerUpCards.clear();
@@ -1092,6 +1107,41 @@ public class Server {
         public EffectAndNumber shootBase(int number){
             return  new EffectAndNumber(AmmoCube.Effect.BASE,number);
         }
+
+        public void changeOrderOfEffects(List<EffectAndNumber> list, WeaponCard w){
+            // SOME WEAPONS MUST HAVE A CERTAIN ORDER
+            // ASK ONLY IF I CAN CHANGE IT
+            if(w instanceof Thor || w instanceof MachineGun)
+                return;
+
+
+            try{
+                lock.lock();
+                sendToClient("CHANGE");
+                String response = (String) inputStream.readObject();
+                if(response.toUpperCase().equals("Y")){
+                    int x = list.size();
+                    List<EffectAndNumber> list2 = list;
+                    list.clear();
+
+                    for(int i=0;i<x;i++){
+                        //CHIEDI UN EFFETTO
+                        sendToClient("CHOOSEORDER");
+                        sendListToClient(fromEffectsAndNumberToNames(list2));
+                        int z = (int) inputStream.readObject();
+                        z--;
+                        list.add(list2.remove(z));
+                    }
+
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            lock.unlock();
+        }
+
 
     public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
 
@@ -1226,6 +1276,13 @@ public class Server {
     public List<String> fromWeaponsToNames(List<WeaponCard> weapons){
         List<String> list = new LinkedList<>();
         for (WeaponCard c : weapons) {
+            list.add(c.toString());
+        }
+        return list;
+    }
+    public List<String> fromEffectsAndNumberToNames(List<EffectAndNumber> e){
+        List<String> list = new LinkedList<>();
+        for (EffectAndNumber c : e) {
             list.add(c.toString());
         }
         return list;

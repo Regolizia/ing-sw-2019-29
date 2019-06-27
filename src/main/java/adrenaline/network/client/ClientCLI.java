@@ -315,9 +315,60 @@ public class ClientCLI extends Client{
             }else sendIntToServer(1);
         }else sendIntToServer(1);
     }
+    public void changeOrder(List<String> effect){
+        System.out.println("\nChoose one effect (first is default):");
+        for(int i =0;i<effect.size();i++) {
+            System.out.println(effect.get(i) + " ["+(i+1)+"] ");
+        }
+        if(scanner.hasNextInt()){
+            int x = scanner.nextInt();
+            scanner.nextLine();
+            if(x>0 && x<=effect.size()){
+                sendIntToServer(x);
+            }else sendIntToServer(1);
+        }else sendIntToServer(1);
+    }
 
     public void chooseAnother(){
         System.out.println("\nDo you want to choose another one, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+
+    public void op1(){
+        System.out.println("\nDo you want to use Optional Effect 1, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+
+    public void op2(){
+        System.out.println("\nDo you want to use Optional Effect 2, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+    public void alt(){
+        System.out.println("\nDo you want to use Alternate Effect, [Y] or [N]? ([Y] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("Y");
+        }else sendToServer("Y");
+    }
+    public void change(){
+        System.out.println("\nDo you want to change the order of the effects, [Y] or [N]? ([Y] is default): ");
         if(scanner.hasNextLine()){
             String x = (String)scanner.nextLine();
             if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){

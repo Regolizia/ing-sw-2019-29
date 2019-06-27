@@ -24,5 +24,10 @@ public class EffectAndNumber {
     public void setNumber(int x){
         this.number = x;
     }
+
+    @Override
+    public String toString() {
+        return effect.toString();
+    }
 }
 
