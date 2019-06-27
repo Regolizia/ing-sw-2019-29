@@ -171,8 +171,7 @@ public class ClientCLI extends Client{
             System.out.println("\nMain Menu:\n" +
                     //"Z: Exit\n" +
                     "M: Show Map Info\n" +
-                    "B: Show your player board\n" +
-                    "C: Show other players' information\n" +
+                    "B: Show player boards\n" +
                     "P: Use one of your powerups\n"+
                             "S: Shoot\n" +
                             "G: Grab\n" +
@@ -183,7 +182,6 @@ public class ClientCLI extends Client{
                 switch (s) {
                     case "M":
                     case "B":
-                    case "C":
                     case "P":
                     case "S":
                     case "G":
@@ -462,6 +460,15 @@ public class ClientCLI extends Client{
         System.out.println("You've been disconnected!");
         reconnect();
     }
+
+    public void boards(List<String> names, List<String> drops){
+        for(int i=0;i<names.size();i++){
+            System.out.println(names.get(i)+": "+drops.get(i)+" "+drops.get(i+1)+" "+drops.get(i+2)+" "+drops.get(i+3)+" "+
+                    drops.get(i+4)+" "+drops.get(i+5)+" "+drops.get(i+6)+" "+
+                    drops.get(i+7)+" "+drops.get(i+8)+" "+drops.get(i+9)+" "+drops.get(i+10)+" "+drops.get(i+11));
+        }
+    }
+
     public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow){
         mapInfo(n);
         System.out.println("\nPlayers:");

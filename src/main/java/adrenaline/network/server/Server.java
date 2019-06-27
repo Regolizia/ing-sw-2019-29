@@ -501,10 +501,10 @@ public class Server {
                                         lock.unlock();
                                         break;
                                     case "B":
-                                        // PLAYER
-                                        break;
-                                    case "C":
-                                        // OTHER PLAYERS
+                                        lock.lock();
+                                        sendToClient("BOARDS");
+                                        playerBoards();
+                                        lock.unlock();
                                         break;
                                     case "P":
                                         powerup();
@@ -546,7 +546,7 @@ public class Server {
                             replaceWeapons();
 
                             nextPlayer();
-                            broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
+                            //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
 
@@ -565,7 +565,7 @@ public class Server {
                                 Server.endFirstTurn();
                             }
                             nextPlayer();
-                            broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
+                            //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
 
@@ -902,6 +902,21 @@ public class Server {
                 }
                 sendListToClient(weapons);
                 } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void playerBoards(){
+            try {
+                List<String> list = new LinkedList<>();
+                sendListToClient(fromPlayersToNames(model.getPlayers()));
+                for(Player p : model.getPlayers()){
+                    for(Figure.PlayerColor c : p.getTrack()){
+                        list.add(c.toString());
+                    }
+                }
+                sendListToClient(list);
+            }catch (Exception e){
                 e.printStackTrace();
             }
         }
@@ -1293,6 +1308,13 @@ public class Server {
     public List<String> fromTargetsToNames(List<Object> list){
         List<String> targets = new LinkedList<>();
         for (Object o : list) {
+            targets.add(o.toString());
+        }
+        return targets;
+    }
+    public List<String> fromPlayersToNames(List<Player> list){
+        List<String> targets = new LinkedList<>();
+        for (Player o : list) {
             targets.add(o.toString());
         }
         return targets;
@@ -2462,6 +2484,8 @@ public class Server {
     public static void addCellToList(CoordinatesWithRoom c){
         cellsWithoutTiles.add(c);
     }
+
+
 }
 
 
