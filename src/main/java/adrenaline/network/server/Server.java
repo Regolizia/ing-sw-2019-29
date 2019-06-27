@@ -693,7 +693,9 @@ public class Server {
             }
 
             action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
-                                                                 // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI?
+                                                                 // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI? lo uso in give points per vedere
+            //                                                                // quanti max punti accettabili
+
         }
 
         public void powerup(){
@@ -2332,11 +2334,11 @@ public class Server {
             System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
         }
     }
-    public static void printPlayerAmmo(Player p){
-        System.out.println("\n"+p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
-    }
     public static String stringPlayerAmmo(Player p){
         return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
+    }
+    public static void printPlayerAmmo(Player p){
+        System.out.println("\n"+p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
     }
 
     public static void addCellToList(CoordinatesWithRoom c){
