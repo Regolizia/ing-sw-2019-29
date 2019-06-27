@@ -97,8 +97,10 @@ public class ClientThread implements Runnable {
                 int n = Integer.parseInt(getFromServer());
                 List<String> colors = getListFromServer();
                 List<String> names = getListFromServer();
-                List<String> blueredyellowWeapons = getListFromServer();
-                client.boardSetup(n,colors,names,blueredyellowWeapons);    // MAINLY FOR GUI
+                List<String> blueWeapons = getListFromServer();
+                List<String> redWeapons = getListFromServer();
+                List<String> yellowWeapons = getListFromServer();
+                client.boardSetup(n,colors,names,blueWeapons,redWeapons,yellowWeapons);    // MAINLY FOR GUI
 
                 client.firstTurn(getListFromServer());
                 break;
@@ -162,7 +164,13 @@ public class ClientThread implements Runnable {
                 client.run(getListFromServer());
                 break;
             case "MAP":
-                client.mapInfo(getFromServer());
+                int nn = Integer.parseInt(getFromServer());
+                List<String> colorsn = getListFromServer();
+                List<String> namesn = getListFromServer();
+                List<String> blueWeaponsn = getListFromServer();
+                List<String> redWeaponsn = getListFromServer();
+                List<String> yellowWeaponsn = getListFromServer();
+                client.boardSetup(nn,colorsn,namesn,blueWeaponsn,redWeaponsn,yellowWeaponsn);
                 break;
             case "MESSAGE":
                 client.printMessage(getFromServer());

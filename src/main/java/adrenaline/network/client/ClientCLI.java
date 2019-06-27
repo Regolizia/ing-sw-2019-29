@@ -265,7 +265,9 @@ public class ClientCLI extends Client{
     public void grabWeapon(String weapons){
         String[] list = weapons.split(" ");
         System.out.println("\nChoose a weapon to grab (first is default):");
-        System.out.println(list[0]+" [1] " +list[1]+" [2] "+list[2]+" [3]: ");
+        for(int i =0;i<list.length;i++) {
+            System.out.println(list[i] + " ["+(i+1)+"] ");
+        }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
             scanner.nextLine();
@@ -460,8 +462,27 @@ public class ClientCLI extends Client{
         System.out.println("You've been disconnected!");
         reconnect();
     }
-    public void mapInfo(String board){
-        int n = Integer.parseInt(board);
+    public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow){
+        mapInfo(n);
+        System.out.println("\nPlayers:");
+        for(int i =0; i<names.size();i++){
+            System.out.println(names.get(i) + " ("+colors.get(i)+")");
+        }
+        System.out.println("\nWeapons of Spawnpoint BLUE:");
+        for(int i =0; i<blue.size();i++){
+            System.out.println(blue.get(i));
+        }
+        System.out.println("\nWeapons of Spawnpoint RED:");
+        for(int i =0; i<red.size();i++){
+            System.out.println(red.get(i));
+        }
+        System.out.println("\nWeapons of Spawnpoint YELLOW:");
+        for(int i =0; i<yellow.size();i++){
+            System.out.println(yellow.get(i));
+        }
+    }
+
+    public void mapInfo(int n){
         switch (n){
             case 1:
                 System.out.println("MapOne is the first little map in the rules.");

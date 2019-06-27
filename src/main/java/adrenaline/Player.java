@@ -491,7 +491,9 @@ public class Player {
     public int[] getPointTrack() {
         return this.pointTrack;
     }
-
+    public int getPoints(){
+        return  this.points;
+    }
 
     /**getTrackSize
      * @return size of player's track

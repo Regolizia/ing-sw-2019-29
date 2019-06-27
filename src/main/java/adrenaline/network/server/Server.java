@@ -495,7 +495,10 @@ public class Server {
                                         numberOfActions++;
                                         break;
                                     case "M":
-                                        // MAP
+                                        lock.lock();
+                                        sendToClient("MAP");
+                                        sendForBoardSetup();
+                                        lock.unlock();
                                         break;
                                     case "B":
                                         // PLAYER
@@ -585,6 +588,10 @@ public class Server {
             }
         }
 
+        public void mapInfo(){
+            sendToClient(Integer.toString(boardChosen));
+        }
+
         public void handleException() {
             lock.lock();
             sendToClient("DISCONNECTED");
@@ -609,7 +616,9 @@ public class Server {
             try {
                 sendListToClient(colorsChosen);
                 sendListToClient(names);
-                sendSpawnpointWeapons();
+                sendSpawnpointWeaponsBlue();
+                sendSpawnpointWeaponsRed();
+                sendSpawnpointWeaponsYellow();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -740,7 +749,10 @@ public class Server {
             action.canGetPoints(victims,model.getPlayers());     // TODO|| GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA
                                                                  // TODO|| private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI? lo uso in give points per vedere
             //                                                                // quanti max punti accettabili
-
+            System.out.println("Scoring");
+            for(Player p : model.getPlayers()){
+                System.out.println(p.getPoints() + " points of "+ nickname);
+            }
         }
 
         public void powerup(){
@@ -857,15 +869,34 @@ public class Server {
             return new CoordinatesWithRoom();
         }
 
-        public void sendSpawnpointWeapons(){
+        public void sendSpawnpointWeaponsBlue(){
             try {
                 List<String> weapons = new LinkedList<>();
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards()){
                     weapons.add(w.toString());
                 }
+
+                sendListToClient(weapons);
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void sendSpawnpointWeaponsRed(){
+            try {
+                List<String> weapons = new LinkedList<>();
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.RED).getWeaponCards()){
                     weapons.add(w.toString());
                 }
+
+                sendListToClient(weapons);
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        public void sendSpawnpointWeaponsYellow(){
+            try {
+
+                List<String> weapons = new LinkedList<>();
                 for(WeaponCard w : getSpawnpoint(AmmoCube.CubeColor.YELLOW).getWeaponCards()){
                     weapons.add(w.toString());
                 }
