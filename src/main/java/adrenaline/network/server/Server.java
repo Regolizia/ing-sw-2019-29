@@ -440,6 +440,9 @@ public class Server {
                     if (isCurrentPlayer()) {
                         try {
                             if (Server.isFirstTurn()) {
+                                if(currentPlayer==0) {
+                                    broadcast("\nThe board is number " + boardChosen);
+                                }
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
@@ -566,6 +569,24 @@ public class Server {
         }
         cellsWithoutTiles.clear();
         }
+        public void respawn(Player p){
+            p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
+            List<String> toSend = fromPowerupsToNames(p.getPowerUp());
+            try {
+                sendToClient("RESPAWN");
+                sendListToClient(toSend);
+                int x = (int) inputStream.readObject();
+                x--;
+                PowerUpCard po = p.getPowerUp().remove(x);
+                System.out.println("TO USE AS POSITION " + po.toString());
+
+                p.newLife();
+                setInitialPosition(po.getPowerUpColor(), p);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
         public void firstTurn(){
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
@@ -638,9 +659,14 @@ public class Server {
                    // p.hasDied(); to be removed it does nothing
                     victims.add(p);
                     // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
-                    p.newLife(); //to ressurrect player
 
                 }
+            }
+            for(Player p : victims){
+                // TODO FARE RESPAWN DEL MORTO? gli mandiamo cose da fare
+                p.newLife(); //to ressurrect player
+
+                respawn(p);
             }
             action.canGetPoints(victims,model.getPlayers());     //  GIULIA CONTROLLA CHE TI VADA BENE COME CHIAMATA va bene o punti glieli assegna già se può
                                                                  //  private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED, LO USI? lo uso in give points per vedere
@@ -855,6 +881,7 @@ public class Server {
             printPlayerAmmo(player);
             action.grabTile(player, chosenCell);
             printPlayerAmmo(player);
+            broadcast(stringPlayerAmmo(player));
         }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1564,6 +1591,7 @@ public class Server {
                 break;
 
             case "PowerGlove":
+                if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
@@ -1577,19 +1605,71 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
-
-                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
                     // MOVE PLAYER TO TARGET'S SQUARE
-                    action.run(p,((Player)tt).getCoordinatesWithRooms());
-
+                    action.run(p, ((Player) tt).getCoordinatesWithRooms());
+                }
                 // ALSO IF ALT
-                if(e.getEffect()== AmmoCube.Effect.ALT){
-                    CoordinatesWithRoom c2 = c0.getNextCell(c0,playerPosition,g,false); // GETS CELL AFTER ORIGINAL AND NEW POSITION
-                    if(c2.getX()!=0){
-                        // TODO ASK IF PLAYER WANTS TO MOVE THERE
+                if(e.getEffect()== AmmoCube.Effect.ALT) {
+                    CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
+                    cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int xpf = (int) inputStream.readObject();
+                    xpf--;
+                    action.run(p, cells.get(xpf));
+                    CoordinatesWithRoom cc = cells.get(xpf);
+                    cells.clear();
+                    cells.add(cc);
 
-                        // TO BE CONTINUED...
-                        // TODO POSSO MUOVERE SOLAMENTE IN ALT O DEVO PER FORZA COLPIRE GLI AVVERSARI NELLA MOSSA?????????
+                    targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    sendToClient("CHOOSETARGET");
+                    List<String> toSend = fromTargetsToNames(targets);
+                    toSend.add(0, "No, I dont't want these targets");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int nu = (int) inputStream.readObject();
+                    nu--;
+                    if (nu != 0) {
+                        Object ttt = targets.get(nu);
+                        targets.clear();
+                        targets.add(ttt);
+
+                        w.applyDamage(targets, p, e);
+                        useTargetingScope(p, targets);
+
+                        CoordinatesWithRoom c2 = c0.getNextCell(c0,cc,g, false);
+                        if(c2.getX()==0 || c2.getY()==0){
+                            return new LinkedList<>();
+                        }
+                        cells.clear();
+                        cells.add(c2);// MOVE PLAYER TO TARGET'S SQUARE
+                        toSend.clear();
+                        toSend = fromCellsToNames(cells);
+                        toSend.add(0, "No, I dont't want to move there");
+                        sendToClient("CHOOSECELL");
+                        sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int xif = (int) inputStream.readObject();
+                        xif--;
+                        if(xif!=0) {
+                            action.run(p, c2);
+
+                            targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                            sendToClient("CHOOSETARGET");
+                            toSend.clear();
+                            toSend = fromTargetsToNames(targets);
+                            toSend.add(0, "No, I dont't want these targets");
+                            sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                            int nur = (int) inputStream.readObject();
+                            nur--;
+                            if (nur != 0) {
+                                Object trtt = targets.get(nur);
+                                targets.clear();
+                                targets.add(trtt);
+
+                                w.applyDamage(targets, p, e);
+                                useTargetingScope(p, targets);
+                            }
+                        }
+
                     }
                 }
                 break;
@@ -2171,6 +2251,9 @@ public class Server {
         for(AmmoTile t : model.getMapUsed().getGameBoard().getRooms().get(3).getTiles()){
             System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
         }
+    }
+    public static String stringPlayerAmmo(Player p){
+        return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
     public static void printPlayerAmmo(Player p){
         System.out.println(p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow());
