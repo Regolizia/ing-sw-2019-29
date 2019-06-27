@@ -1417,7 +1417,8 @@ public class Server {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
-                    // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
+                    if (!targets.isEmpty()) {
+                        // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xh = (int)inputStream.readObject();
@@ -1434,18 +1435,30 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
                     lock.unlock();
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     // MOVE 1 SQUARE
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                    if (!one.isEmpty()) {
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int x = (int)inputStream.readObject();
                     x--;
                     p.setPlayerPosition(one.get(x));
+
+                    lock.unlock();
                     broadcast("\n" + p.getName() + " is in "+one.get(x).toString());
+                    lock.lock();
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
+                    }
                 }
                 lock.unlock();
                 break;
@@ -1460,7 +1473,7 @@ public class Server {
 
             case "Flamethrower":lock.lock();
                 cells = playerPosition.oneTileDistant(g,false);
-
+                if (!cells.isEmpty()) {
                 // ASK PLAYER TO CHOSE ONE OR TWO SQUARES  - SHOULD ASK SAYING 1 AND 2 MUST HAVE SAME DIR?
                 sendToClient("CHOOSECELL");
                 sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1476,6 +1489,7 @@ public class Server {
                 if(response.toUpperCase().equals("Y")){
                     List<CoordinatesWithRoom> cellslist2 = w.getPossibleTargetCells(playerPosition,e,g);
                     cellslist2.removeAll(cells1);
+                    if (!cellslist2.isEmpty()) {
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cellslist2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xye = (int)inputStream.readObject();
@@ -1485,6 +1499,10 @@ public class Server {
                     // IF NOT, SECOND NOT ADDED
                     if(cells.get(0).checkSameDirection(cells.get(0),cellslist2.get(xye),10,g,false)) {
                         cells.add(cellslist2.get(xye));
+                    }
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
                     }
                 }
 
@@ -1496,16 +1514,25 @@ public class Server {
                     for(int i=0;i<cells.size();i++) {
                         // ASK 1 TARGET PER OGNI SQUARE (2 FORSE)
                         sendToClient("CHOOSETARGET");
+                        if (!targets.isEmpty()) {
                         sendListToClient(fromTargetsToNames(targets2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xh = (int) inputStream.readObject();
                         xh--;
                         Object tt = targets2.get(xh);
                         targets.add(tt);
                         targets2.remove(tt);
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no targets.");
+                        }
                     }
                 }
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 break;
 
@@ -1529,7 +1556,7 @@ public class Server {
 
                         }
                     }
-
+                    if (!possibleRooms.isEmpty()) {
                     // ASK PLAYER FOR A ROOM (DIFFERENT) - METTILA NELLA COORDINATA ROOM
                     // SEND PLAYER LIST OF ROOMS possibleRooms APPENA CREATA
                     sendToClient("CHOOSEROOM");
@@ -1542,10 +1569,14 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no rooms different from yours.");
+                    }
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
-
+                    if (!cells.isEmpty()) {
                     // ASK PLAYER WHICH TILE, GET ONE BACK IN THAT LIST
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1557,6 +1588,10 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
+                    }
                 }
                 lock.unlock();
                 break;
@@ -1565,7 +1600,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
-
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1584,16 +1619,26 @@ public class Server {
                     if(res.toUpperCase().equals("Y")){
                         CoordinatesWithRoom c =((Player)targets.get(0)).getCoordinatesWithRooms();
                         List<CoordinatesWithRoom> list = c.oneTileDistant(g,false);
+                        if (!list.isEmpty()) {
                         sendToClient("CHOOSECELL");
                         sendListToClient(fromCellsToNames(list)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xyp = (int)inputStream.readObject();
                         xyp--;
                         ((Player) targets.get(0)).setPlayerPosition(list.get(xyp));
                         broadcast("\n" + ((Player) targets.get(0)).getName() + " is in "+list.get(xyp).toString());
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no cells.");
+                        }
+                    }
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    if (!cells.isEmpty()) {
                     // ASK UNA CELLA ANCHE LA TUA
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1605,6 +1650,10 @@ public class Server {
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
+                    }
                 }
                 lock.unlock();
                 break;
@@ -1612,7 +1661,7 @@ public class Server {
             case "Heatseeker":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1624,13 +1673,17 @@ public class Server {
 
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 break;
 
             case "Hellion":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1658,13 +1711,17 @@ public class Server {
 
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets2); // IT HAS JUST FIRST TARGET (THE DAMAGED ONE)
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 break;
 
             case "LockRifle":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1684,6 +1741,10 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE){   // ONLY BASE DAMAGES TARGETS
                     useTargetingScope(p,targets);
                 }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 return targets;
 
@@ -1693,6 +1754,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
+                    if (!targets.isEmpty()) {
                     // ASK TO CHOOSE 1 OR 2 TARGETS -BASE
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1715,6 +1777,10 @@ public class Server {
                     }
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
                     lock.unlock();
                     return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
                 }
@@ -1730,6 +1796,7 @@ public class Server {
 
                         break;
                     }
+                    if (!pastTargets.isEmpty()) {
                     sendListToClient(fromTargetsToNames(pastTargets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int u = (int)inputStream.readObject();
                     u--;
@@ -1738,7 +1805,10 @@ public class Server {
                     targets.add(tor);
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
-
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
                     e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
                     lock.unlock();
                     return targets;         // SAVE IT AFTER BASE TARGETS
@@ -1771,9 +1841,13 @@ public class Server {
                         w.applyDamage(pastTargets, p, e);
                         useTargetingScope(p,pastTargets);
                     }
+                } else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
                 }
                     // SHOOT MAYBE DIFFERENT TARGET FROM BASE
                     targets.removeAll(pastTargets);
+                    if (!targets.isEmpty()) {
                     sendToClient("CHOOSETARGET");
                     List<String> toSend2 = fromTargetsToNames(targets);
                     toSend2.add(0,"No, I dont't want these targets");
@@ -1794,6 +1868,10 @@ public class Server {
                         lock.unlock();
                         return pastTargets2;    // IF SIZE 3 (2 BASE + 1) IF SIZE 2 (1 BASE + 1, SAME TARGET)
                     }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 }
                 lock.unlock();
                 break;
@@ -1802,7 +1880,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, (SAVE IT FOR THE OTHER EFFECT)
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1814,17 +1892,22 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
                     lock.unlock();
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP2){
-                    targets=pastTargets;    // OP2 DOPO BASE PER FORZA
+                    targets=pastTargets;    // TODO OP2 DOPO BASE PER FORZA
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
                     lock.unlock();
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    if (!cells.isEmpty()) {
                     // ASK WHERE TO MOVE
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1833,6 +1916,11 @@ public class Server {
                     lock.unlock();
                     p.setPlayerPosition(cells.get(xg));
                     broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
+                        lock.unlock();
+                    }
                 }
                 break;
 
@@ -1840,6 +1928,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1856,11 +1945,17 @@ public class Server {
                     action.run(p, ((Player) tt).getCoordinatesWithRooms());
                     lock.unlock();
                     broadcast("\n" + p.getName() + " moved to "+((Player)tt).getCoordinatesWithRooms());
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                        lock.unlock();
+                    }
                 }
                 // ALSO IF ALT
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     CoordinatesWithRoom c0 = playerPosition; // SAVED PLAYER'S POSITION
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
+                    if (!cells.isEmpty()) {
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xpf = (int) inputStream.readObject();
@@ -1873,6 +1968,7 @@ public class Server {
                     cells.add(cc);
 
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                        if (!targets.isEmpty()) {
                     sendToClient("CHOOSETARGET");
                     List<String> toSend = fromTargetsToNames(targets);
                     toSend.add(0, "No, I dont't want these targets");
@@ -1890,6 +1986,7 @@ public class Server {
 
                         CoordinatesWithRoom c2 = c0.getNextCell(c0,cc,g, false);
                         if(c2.getX()==0 || c2.getY()==0){
+                            lock.unlock();
                             return new LinkedList<>();
                         }
                         cells.clear();
@@ -1909,6 +2006,7 @@ public class Server {
                             broadcast("\n" + p.getName() + " moved to "+c2.toString());
                             lock.lock();
                             targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                            if (!targets.isEmpty()) {
                             sendToClient("CHOOSETARGET");
                             toSend.clear();
                             toSend = fromTargetsToNames(targets);
@@ -1925,7 +2023,19 @@ public class Server {
                                 w.applyDamage(targets, p, e);
                                 useTargetingScope(p, targets);
                             }
+                            }else{
+                                sendToClient("MESSAGE");
+                                sendToClient("Sorry there are no targets.");
+                            }
                         }
+                    }
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no targets.");
+                        }
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no cells.");
                     }
                 }
                 lock.unlock();
@@ -1936,7 +2046,7 @@ public class Server {
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                 // ASK TO CHOOSE 1 (BASE) OR 1-2 (ALT) TARGETS, REMOVE OTHERS
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -1950,6 +2060,7 @@ public class Server {
                 // ASK IF WANT ANOTHER TARGET IF ALT EFFECT
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     targets3.remove(tg);
+                    if (!targets3.isEmpty()) {
                     sendToClient("CHOOSEANOTHER");
                     String rsp = (String) inputStream.readObject();
                     if (rsp.toUpperCase().equals("Y")) {
@@ -1958,6 +2069,10 @@ public class Server {
                         int xeo = (int) inputStream.readObject();
                         xeo--;
                         targets.add(targets3.get(xeo));
+                    }
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2 &&
@@ -1969,6 +2084,10 @@ public class Server {
                 }
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 break;
 
@@ -1985,7 +2104,7 @@ public class Server {
                         cells.add(((Player)pastTargets.get(0)).getCoordinatesWithRooms());
                     }
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2004,6 +2123,7 @@ public class Server {
                     if (rs.toUpperCase().equals("Y")) {
                         CoordinatesWithRoom ctarget = ((Player)oj).getCoordinatesWithRooms();
                         List<CoordinatesWithRoom> one = ctarget.oneTileDistant(g, false);
+                        if (!one.isEmpty()) {
                         sendToClient("CHOOSECELL");
                         sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xf = (int) inputStream.readObject();
@@ -2020,7 +2140,15 @@ public class Server {
                         pp.setPlayerPosition(ctarget);
                         broadcast("\n" + pp.getName() + " is in "+ctarget);
                         targets.add(pp);
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no cells.");
+                        }
                         return targets;
+                    }
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
                     }
 
                     }
@@ -2028,6 +2156,7 @@ public class Server {
                     if(pastTargets.isEmpty()) { // PRIMA OP2- (NULLA PASSATO) SCEGLI UNA CELLA, COLPISCILI E POI RITORNA LA CELLA (COME GIOCATORE)
                         cells = w.getPossibleTargetCells(playerPosition,e,g);
                         // CHIEDI 1 CELLA, COLPISCILI, RITORNA CELLA COME GIOCATORE
+                        if (!cells.isEmpty()) {
                         sendToClient("CHOOSECELL");
                         sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xg = (int)inputStream.readObject();
@@ -2045,7 +2174,14 @@ public class Server {
                         broadcast("\n" + p2.getName() + " is in "+d.toString());
                         List<Object> lis7 = new LinkedList<>();
                         lis7.add(p2);
+                        lock.unlock();
                         return lis7;
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no targets.");
+                            lock.unlock();
+                            return new LinkedList<>();
+                        }
 
                     }else{  // PRIMA BASE- PRENDI POSIZIONE VECCHIA DI TARGET (PASSATA COME GIOCATORE)
                         cells = w.getPossibleTargetCells(((Player)pastTargets.get(1)).getCoordinatesWithRooms(),e,g);
@@ -2060,6 +2196,7 @@ public class Server {
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
+                    if (!cells.isEmpty()) {
                     // ASK WHERE TO MOVE
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2068,6 +2205,10 @@ public class Server {
                     p.setPlayerPosition(cells.get(xg));
                     lock.unlock();
                     broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no cells.");
+                }
                 }
                 break;
 
@@ -2093,12 +2234,17 @@ public class Server {
                             sendToClient("CHOOSEANOTHER");
                             String rs = (String) inputStream.readObject();
                             if (rs.toUpperCase().equals("Y")) {
+                                if (!list2.isEmpty()) {
                                 sendToClient("CHOOSETARGET");
                                 sendListToClient(fromTargetsToNames(list2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                                 int ye = (int) inputStream.readObject();
                                 ye--;
                                 targets.add(list2.get(ye));
                                 list2.remove(ye);
+                                }else{
+                                    sendToClient("MESSAGE");
+                                    sendToClient("Sorry there are no targets.");
+                                }
                             } else {
                                 break;
                             }
@@ -2142,7 +2288,7 @@ public class Server {
             case "Shotgun":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2162,6 +2308,7 @@ public class Server {
                     if (rs.toUpperCase().equals("Y")) {
 
                     List<CoordinatesWithRoom> one = playerPosition.oneTileDistant(g,false);
+                        if (!one.isEmpty()) {
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(one)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xf = (int)inputStream.readObject();
@@ -2169,14 +2316,23 @@ public class Server {
                     ((Player)targets.get(0)).setPlayerPosition(one.get(xf));
                     lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+one.get(xf).toString());
-
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no targets.");
+                            lock.unlock();
+                        }
                     }
+                }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
                 }
                 break;
 
             case "Sledgehammer":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2191,6 +2347,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     // ASK TO MOVE THAT TARGET 0-1-2 SQUARE SAME DIRECTION
                     List<CoordinatesWithRoom> possibleCells = playerPosition.tilesSameDirection(2,g,false);
+                    if (!possibleCells.isEmpty()) {
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(possibleCells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xj = (int)inputStream.readObject();
@@ -2198,6 +2355,14 @@ public class Server {
                     ((Player)targets.get(0)).setPlayerPosition(possibleCells.get(xj));
                     lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+possibleCells.get(xj).toString());
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
+                }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
                 }
                 lock.unlock();
                 break;
@@ -2216,6 +2381,7 @@ public class Server {
 
                 }
                 targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2227,6 +2393,10 @@ public class Server {
                 w.applyDamage(targets, p, e);
                 useTargetingScope(p,targets);
                 // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 return targets;
 
@@ -2234,7 +2404,7 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);   // CELLS I SEE
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);   // TARGETS DISTANTI MAX 2 DA CIò CHE VEDO(cioè che posso muovere)
-
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2257,7 +2427,7 @@ public class Server {
                             // CHECK CELLS.CONTAINS(A POSSIBLE MOVE)
                         }
                     }
-
+                        if (!listOne.isEmpty()) {
                     // ASK WHERE TO MOVE
                     sendToClient("CHOOSECELL");
                     sendListToClient(fromCellsToNames(listOne)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2266,14 +2436,24 @@ public class Server {
                     ((Player)trg).setPlayerPosition(listOne.get(xgy));
                     lock.unlock();
                     broadcast("\n" + ((Player)trg).getName() + " is in "+listOne.get(xgy).toString());
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no cells.");
 
+                            lock.unlock();
+                        }
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
-
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                        lock.unlock();
+                    }
                 }
                 if(e.getEffect()== AmmoCube.Effect.ALT) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                    if (!targets.isEmpty()) {
                     // ASK WHICH 1 TARGET TO DAMAGE, REMOVE THE OTHERS
                     sendToClient("CHOOSETARGET");
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2286,14 +2466,19 @@ public class Server {
                     ((Player)targets.get(0)).setPlayerPosition(playerPosition);
                     lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+playerPosition.toString());
-
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                        lock.unlock();
+                    }
                 }
                 break;
 
             case "VortexCannon":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
+                if (!cells.isEmpty()) {
                 // CHOOSE A VORTEX
                 sendToClient("CHOOSECELL");
                 sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2305,6 +2490,7 @@ public class Server {
                 list.add(vortex);
 
                 targets = w.fromCellsToTargets(list,playerPosition,g,p,model,e);
+                    if (!targets.isEmpty()) {
                 // ASK FOR 1 TARGET IF BASE OR UP TO 2 IF OP1
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2319,11 +2505,16 @@ public class Server {
                     sendToClient("CHOOSEANOTHER");
                     String rs = (String) inputStream.readObject();
                     if (rs.toUpperCase().equals("Y")) {
+                        if (!targets1.isEmpty()) {
                         sendToClient("CHOOSETARGET");
                         sendListToClient(fromTargetsToNames(targets1)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int ye = (int) inputStream.readObject();
                         ye--;
                         targets.add(targets1.get(ye));
+                        }else{
+                            sendToClient("MESSAGE");
+                            sendToClient("Sorry there are no targets.");
+                        }
                     }
                 }
                 if(!pastTargets.isEmpty()){
@@ -2347,12 +2538,21 @@ public class Server {
 
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
-                return targets;
+                        return targets;
+                    }else{
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry there are no targets.");
+                    }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no cells.");
+                }
+                return new LinkedList<>();
 
             case "Whisper":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
-
+                if (!targets.isEmpty()) {
                 // ASK WHICH 1 TARGET TO DAMAGE
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2363,12 +2563,17 @@ public class Server {
                 targets.add(b);
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
+                }
                 lock.unlock();
                 break;
 
             case "Zx_2":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
+                if (!targets.isEmpty()) {
                 // ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
@@ -2386,12 +2591,17 @@ public class Server {
                         sendToClient("CHOOSEANOTHER");
                         String rs = (String) inputStream.readObject();
                         if (rs.toUpperCase().equals("Y")) {
+                            if (!tar2.isEmpty()) {
                             sendToClient("CHOOSETARGET");
                             sendListToClient(fromTargetsToNames(tar2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                             int ye = (int) inputStream.readObject();
                             ye--;
                             targets.add(tar2.get(ye));
                             tar2.remove(ye);
+                            }else{
+                                sendToClient("MESSAGE");
+                                sendToClient("Sorry there are no targets.");
+                            }
                         } else {
                             break;
                         }
@@ -2400,6 +2610,10 @@ public class Server {
                 w.applyDamage(targets,p,e);
                 if(e.getEffect()== AmmoCube.Effect.BASE){
                     useTargetingScope(p,targets);
+                }
+                }else{
+                    sendToClient("MESSAGE");
+                    sendToClient("Sorry there are no targets.");
                 }
                 lock.unlock();
                 break;
