@@ -9,6 +9,7 @@ import adrenaline.powerups.Teleporter;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.*;
 
 import java.net.ServerSocket;
@@ -52,6 +53,9 @@ public class Server {
     private static ServerSocket serverSocket;
     private Server server;
     private ExecutorService threadPool;
+
+    static ReentrantLock lock = new ReentrantLock();;
+
 
 
     public void setup(String[] args) throws Exception {
@@ -97,8 +101,6 @@ public class Server {
 
     public static class RequestHandler extends Thread {
 
-        Lock lock;
-
         Figure.PlayerColor color;
         String nickname;
 
@@ -109,7 +111,6 @@ public class Server {
         private final transient ObjectOutputStream outputStream;
 
         public RequestHandler(Socket socket) throws IOException {
-
 
             this.socket = socket;
             this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -158,21 +159,17 @@ public class Server {
         }
 
         public void sendToClient(String message){
-            synchronized (outputStream) {
                 try {
                     outputStream.writeObject(message);
                     outputStream.flush();
                 } catch (IOException e) {
                     // DISCONNECTED
                 }
-            }
 
         }
         public void sendListToClient(List<String> messages) throws IOException {
-            synchronized (outputStream) {
                 outputStream.writeObject(messages);
                 outputStream.flush();
-            }
         }
 
         public static void countConnections(){
@@ -250,7 +247,7 @@ public class Server {
                 }
 
             } catch (Exception e) {
-                //e.printStackTrace();
+                e.printStackTrace();/*
                 try {
                     sendToClient("DISCONNECTED");
                     disconnected.add(nickname);
@@ -264,7 +261,7 @@ public class Server {
                     }
                 } catch (IOException ex) {
                     ex.printStackTrace();
-                }
+                }*/
             }
 
         }
@@ -317,11 +314,18 @@ public class Server {
         }
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             Server.model.addPlayer(new Player(name, color));
+            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
+            System.out.println(lock.isLocked() + " " + nickname);
+            System.out.println(lock.getHoldCount() + " " + nickname);
+
+            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
+                lock.unlock();
+
             broadcast(name + " has joined");
         }
 
         public void broadcast(String s){
-
+            lock.lock();
             for (Map.Entry me : writers.entrySet()) {
                 try {
                     ((ObjectOutputStream)me.getValue()).writeObject("MESSAGE");
@@ -334,9 +338,11 @@ public class Server {
                     // DISCONNECTED
                 }
             }
+            lock.unlock();
         }
 
         public void chooseBoard(String name) throws Exception {
+            lock.lock();
             if(boardChosen==42){
 
                 while(boardChosen==42){
@@ -357,6 +363,7 @@ public class Server {
 
                 }
             }
+            lock.unlock();
         }
         ////
 
@@ -388,8 +395,10 @@ public class Server {
                 for (Object o : t) {
                     if ((Player) o == shooter) {
                         try {// ASK IF WANT TO USE
+                            lock.lock();
                             sendToClient("TAGBACKGRENADE");
                             String response = (String) inputStream.readObject();
+                            lock.unlock();
                             if (response.toUpperCase().equals("Y")) {
                                 // ADD MARK
                                 shooter.addMarks(me, 1);
@@ -449,29 +458,38 @@ public class Server {
                         try {
                             if (Server.isFirstTurn()) {
                                 if(currentPlayer==0) {
+
                                     broadcast("\nThe board is number " + boardChosen);
                                 }
+                                lock.lock();
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
                                 sendForBoardSetup();
                                 firstTurn();
+                                lock.unlock();
                                 numberOfActions = 0;
                                 System.out.println("CURRENT PLAYER " + currentPlayer);
                             }
                             if (numberOfActions != 2 && !firstTurn) {
+                                lock.lock();
                                 sendToClient("YOURTURN");
 
                                 String choice = (String) inputStream.readObject();
+                                lock.unlock();
                                 System.out.println("\n"+choice);
                                 switch (choice) {
                                     case "G":
+                                        lock.lock();
                                         sendToClient("GRAB");
                                         grab();
+                                        lock.unlock();
                                         numberOfActions++;
                                         break;
                                     case "R":
+                                        lock.lock();
                                         sendToClient("RUN");
                                         playerRun();
+                                        lock.unlock();
                                         numberOfActions++;
                                         break;
                                     case "M":
@@ -494,8 +512,9 @@ public class Server {
                                 }
                             }
                         } catch (Exception e) {
-                            try {
+                            try {lock.lock();
                                 sendToClient("DISCONNECTED");
+                                lock.unlock();
                                 disconnected.add(nickname);
                                 disconnectedColors.put(nickname,color);
                                 writers.remove(writers.get(nickname));
@@ -546,8 +565,9 @@ public class Server {
         }
 
         public void handleException() {
-
+            lock.lock();
             sendToClient("DISCONNECTED");
+            lock.unlock();
             disconnected.add(nickname);
             disconnectedColors.put(nickname, color);
             writers.remove(writers.get(nickname));
@@ -601,11 +621,12 @@ public class Server {
         public void respawn(Player p){
             p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
             List<String> toSend = fromPowerupsToNames(p.getPowerUp());
-            try {
+            try {lock.lock();
                 sendToClient("RESPAWN");
                 sendListToClient(toSend);
                 int x = (int) inputStream.readObject();
                 x--;
+                lock.unlock();
                 PowerUpCard po = p.getPowerUp().remove(x);
                     System.out.println("TO USE AS POSITION " + po.toString());
 
@@ -618,6 +639,7 @@ public class Server {
         }
 
         public void firstTurn(){
+            lock.lock();
                 LinkedList<PowerUpCard> twoCards= new LinkedList<>();
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
                 twoCards.add(model.powerUpDeck.deck.removeFirst());
@@ -651,7 +673,7 @@ public class Server {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            lock.unlock();
         }
 
         /**
@@ -708,7 +730,7 @@ public class Server {
                        p.toString().equals("Newton, RED") ||p.toString().equals("Newton, YELLOW")){
                         pows.add(p);
                     }
-                }
+                }lock.lock();
                 if(pows.isEmpty()){
                     sendToClient("MESSAGE");
                     sendToClient("Sorry you can't use any of your powerups now");
@@ -732,7 +754,7 @@ public class Server {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
+                }lock.unlock();
             }
         }
 
@@ -740,10 +762,12 @@ public class Server {
             try {
             Player player = model.getPlayers().get(currentPlayer);
             List<CoordinatesWithRoom> possible = player.getTeleporter().getPossibleCells(model,player);
+            lock.lock();
             sendToClient("CHOOSECELL");
             sendListToClient(fromCellsToNames(possible)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
             int x = (int)inputStream.readObject();
             x--;
+            lock.lock();
             player.setPlayerPosition(possible.get(x));
             broadcast("\n" + player.getName() + " teleported in "+possible.get(x).toString());
 
@@ -764,20 +788,23 @@ public class Server {
                 targets.remove(player);
 
                 // ASK WHICH 1 TARGET TO MOVE
+                lock.lock();
                 sendToClient("CHOOSETARGET");
                 sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int xh = (int)inputStream.readObject();
                 xh--;
+                lock.unlock();
                 Object tt = targets.get(xh);
                 targets.clear();
                 targets.add(tt);
                 CoordinatesWithRoom c = ((Player)targets.get(0)).getCoordinatesWithRooms();
                 List<CoordinatesWithRoom> cells =c.tilesSameDirection(2,model.getMapUsed().getGameBoard(),false);
-
+                lock.lock();
                 sendToClient("CHOOSECELL");
                 sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                 int x = (int)inputStream.readObject();
                 x--;
+                lock.unlock();
                 ((Player)targets.get(0)).setPlayerPosition(cells.get(x));
                 broadcast("\n" + ((Player) targets.get(0)).getName() + " moved to "+cells.get(x).toString());
 
@@ -933,7 +960,7 @@ public class Server {
         * a meno di errori quando fai shoot controlla prima che la lista degli effetti pagati non sia nulla*/
 
         LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
-
+        lock.lock();
         //CHIEDI METODO PAGAMENTO AMMO O AMMOPOWER
         sendToClient("PAYMENT");
         int z = 0;
@@ -946,7 +973,7 @@ public class Server {
         }else{
             payOption= Action.PayOption.AMMOPOWER;
         }
-
+        lock.unlock();
         if(payOption.equals(Action.PayOption.AMMOPOWER)){
             playerPowerUpCards=payWithThesePowerUps(player);    // DOVE USI QUESTE POWERUP PER PAGARE QUI?
         }
@@ -976,10 +1003,12 @@ public class Server {
         for (WeaponCard w : player.getHand()) {
             yourWeapons.add(w.toString());
         }
+        lock.lock();
         sendToClient("CHOOSEWEAPON");
         sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
         int y = (int)inputStream.readObject();
         y--;
+        lock.unlock();
         WeaponCard weaponCard =player.getHand().get(y);
 
         //if weapon is already reloaded, player can request other effect
@@ -1121,6 +1150,7 @@ public class Server {
          * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
          * se scarta una carta rimettila nel deck x
          * */
+        lock.lock();
         sendToClient("GRABWEAPON");
         sendToClient(cellItems); // RITORNA 1 O 2 O 3
         try {
@@ -1148,7 +1178,7 @@ public class Server {
         if(!action.canPayCard(weaponCard,player,payOption,AmmoCube.Effect.BASE,playerPowerUpCards)){
             //MANDA MESSAGGIO
             return false;}
-
+        lock.unlock();
 
         // CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
         if(!player.canGrabWeapon()){
@@ -1156,10 +1186,12 @@ public class Server {
             for (WeaponCard w : player.getHand()) {
                 yourWeapons.add(w.toString());
             }
+            lock.lock();
             sendToClient("DROPWEAPON");
             sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
             int y = (int)inputStream.readObject();
             // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
+            lock.unlock();
         }
 
         //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
@@ -1185,12 +1217,13 @@ public class Server {
         LinkedList<PowerUpCard> chosenPower=new LinkedList<>();
         //MANDA CARTE POWER UP IN MANO
         for (PowerUpCard powerUp : player.getPowerUp()) {
+            lock.lock();
             sendToClient("PAYWITHPOWERUP");
             sendToClient(powerUp.toString());   // RITORNA Y O N
             String response = null;
             try {
                 response = (String) inputStream.readObject();
-
+                lock.unlock();
             if(response.toUpperCase().equals("Y")){
                 chosenPower.add(powerUp);
             }
@@ -1238,7 +1271,7 @@ public class Server {
         try {
         switch (w.toString()){
 
-            case "Cyberblade":
+            case "Cyberblade":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE || e.getEffect()== AmmoCube.Effect.OP2){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -1260,7 +1293,7 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
-
+                    lock.unlock();
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -1273,18 +1306,18 @@ public class Server {
                     p.setPlayerPosition(one.get(x));
                     broadcast("\n" + p.getName() + " is in "+one.get(x).toString());
                 }
-
+                lock.unlock();
                 break;
 
-            case "Electroscythe":
+            case "Electroscythe":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
-
+                lock.unlock();
                 break;
 
-            case "Flamethrower":
+            case "Flamethrower":lock.lock();
                 cells = playerPosition.oneTileDistant(g,false);
 
                 // ASK PLAYER TO CHOSE ONE OR TWO SQUARES  - SHOULD ASK SAYING 1 AND 2 MUST HAVE SAME DIR?
@@ -1332,10 +1365,10 @@ public class Server {
                 }
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
-
+                lock.unlock();
                 break;
 
-            case "Furnace":
+            case "Furnace":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     LinkedList<Room> possibleRooms = new LinkedList<>();
 
@@ -1384,9 +1417,10 @@ public class Server {
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
                 }
+                lock.unlock();
                 break;
 
-            case "GrenadeLauncher":
+            case "GrenadeLauncher":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
@@ -1431,9 +1465,10 @@ public class Server {
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
                 }
+                lock.unlock();
                 break;
 
-            case "Heatseeker":
+            case "Heatseeker":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1448,9 +1483,10 @@ public class Server {
 
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
+                lock.unlock();
                 break;
 
-            case "Hellion":
+            case "Hellion":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1481,10 +1517,10 @@ public class Server {
 
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets2); // IT HAS JUST FIRST TARGET (THE DAMAGED ONE)
-
+                lock.unlock();
                 break;
 
-            case "LockRifle":
+            case "LockRifle":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1507,10 +1543,11 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE){   // ONLY BASE DAMAGES TARGETS
                     useTargetingScope(p,targets);
                 }
-
+                lock.unlock();
                 return targets;
 
             case "MachineGun":  // CONSIDERO BASE PRIMA DEGLI ALTRI EFFETTI
+                lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1537,7 +1574,7 @@ public class Server {
                     }
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
-
+                    lock.unlock();
                     return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
                 }
                 // SHOOT AGAIN ONE OF THEM -OP1 FROM PASTTARGETS
@@ -1562,6 +1599,7 @@ public class Server {
                     useTargetingScope(p,targets);
 
                     e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
+                    lock.unlock();
                     return targets;         // SAVE IT AFTER BASE TARGETS
                 }
                 // ASK TO SHOOT THE OTHER OR AND SOMEONE ELSE
@@ -1612,12 +1650,14 @@ public class Server {
 
                     if(e.getNumber()!=1){   // MAYBE OP1 AFTER OP2
                         e.setNumber(2);
+                        lock.unlock();
                         return pastTargets2;    // IF SIZE 3 (2 BASE + 1) IF SIZE 2 (1 BASE + 1, SAME TARGET)
                     }
                 }
+                lock.unlock();
                 break;
 
-            case "PlasmaGun":
+            case "PlasmaGun":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -1633,12 +1673,14 @@ public class Server {
 
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    lock.unlock();
                     return targets;
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP2){
                     targets=pastTargets;    // OP2 DOPO BASE PER FORZA
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
+                    lock.unlock();
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
                     cells = w.getPossibleTargetCells(playerPosition,e,g);
@@ -1647,12 +1689,13 @@ public class Server {
                     sendListToClient(fromCellsToNames(cells)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xg = (int)inputStream.readObject();
                     xg--;
+                    lock.unlock();
                     p.setPlayerPosition(cells.get(xg));
                     broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
                 }
                 break;
 
-            case "PowerGlove":
+            case "PowerGlove":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
@@ -1670,6 +1713,7 @@ public class Server {
 
                     // MOVE PLAYER TO TARGET'S SQUARE
                     action.run(p, ((Player) tt).getCoordinatesWithRooms());
+                    lock.unlock();
                     broadcast("\n" + p.getName() + " moved to "+((Player)tt).getCoordinatesWithRooms());
                 }
                 // ALSO IF ALT
@@ -1720,8 +1764,9 @@ public class Server {
                         if(xif!=0) {
                             xif--;
                             action.run(p, c2);
+                            lock.unlock();
                             broadcast("\n" + p.getName() + " moved to "+c2.toString());
-
+                            lock.lock();
                             targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
                             sendToClient("CHOOSETARGET");
                             toSend.clear();
@@ -1742,9 +1787,10 @@ public class Server {
                         }
                     }
                 }
+                lock.unlock();
                 break;
 
-            case "Railgun":
+            case "Railgun":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1782,10 +1828,10 @@ public class Server {
                 }
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
-
+                lock.unlock();
                 break;
 
-            case "RocketLauncher": // LO FACCIO DOPO
+            case "RocketLauncher": lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     // ASK 1 TARGET (SAVE IT - POSITION - FOR OP2 EFFECT)
                     if(pastTargets.isEmpty()){  // PRIMA BASE- SE NON VIENE PASSATO NULLA RITORNA IL GIOCATORE COLPITO
@@ -1822,6 +1868,7 @@ public class Server {
                         int xf = (int) inputStream.readObject();
                         xf--;
                         ((Player) targets.get(0)).setPlayerPosition(one.get(xf));
+                        lock.unlock();
                         broadcast("\n" + ((Player) targets.get(0)).getName() + " is in "+one.get(xf).toString());
 
                         w.applyDamage(targets,p,e);
@@ -1853,6 +1900,7 @@ public class Server {
 
                         Player p2 = new Player();
                         p2.setPlayerPosition(d);
+                        lock.unlock();
                         broadcast("\n" + p2.getName() + " is in "+d.toString());
                         List<Object> lis7 = new LinkedList<>();
                         lis7.add(p2);
@@ -1866,6 +1914,7 @@ public class Server {
                         }
                         w.applyDamage(targets,p,e);
                         useTargetingScope(p,targets);
+                        lock.unlock();
                     }
                 }
                 if(e.getEffect()== AmmoCube.Effect.OP1){
@@ -1876,11 +1925,12 @@ public class Server {
                     int xg = (int)inputStream.readObject();
                     xg--;
                     p.setPlayerPosition(cells.get(xg));
+                    lock.unlock();
                     broadcast("\n" + p.getName() + " is in "+cells.get(xg).toString());
                 }
                 break;
 
-            case "Shockwave":
+            case "Shockwave":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition, e, g);
                     targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
@@ -1938,9 +1988,10 @@ public class Server {
                     w.applyDamage(targets,p,e);
                     useTargetingScope(p,targets);
                 }
+                lock.unlock();
                 break;
 
-            case "Shotgun":
+            case "Shotgun":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -1968,13 +2019,14 @@ public class Server {
                     int xf = (int)inputStream.readObject();
                     xf--;
                     ((Player)targets.get(0)).setPlayerPosition(one.get(xf));
+                    lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+one.get(xf).toString());
 
                     }
                 }
                 break;
 
-            case "Sledgehammer":
+            case "Sledgehammer":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // ASK WHICH 1 TARGET TO DAMAGE
@@ -1996,11 +2048,13 @@ public class Server {
                     int xj = (int)inputStream.readObject();
                     xj--;
                     ((Player)targets.get(0)).setPlayerPosition(possibleCells.get(xj));
+                    lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+possibleCells.get(xj).toString());
                 }
+                lock.unlock();
                 break;
 
-            case "Thor":
+            case "Thor":lock.lock();
                 cells = new LinkedList<>();
 
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
@@ -2025,9 +2079,10 @@ public class Server {
                 w.applyDamage(targets, p, e);
                 useTargetingScope(p,targets);
                 // RETURN THE TARGET (YOU'LL NEED TO CHECK THEY ARE DIFFERENT)
+                lock.unlock();
                 return targets;
 
-            case "TractorBeam":
+            case "TractorBeam":lock.lock();
                 if(e.getEffect()== AmmoCube.Effect.BASE) {
                     cells = w.getPossibleTargetCells(playerPosition,e,g);   // CELLS I SEE
                     targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);   // TARGETS DISTANTI MAX 2 DA CIò CHE VEDO(cioè che posso muovere)
@@ -2061,6 +2116,7 @@ public class Server {
                     int xgy = (int)inputStream.readObject();
                     xgy--;
                     ((Player)trg).setPlayerPosition(listOne.get(xgy));
+                    lock.unlock();
                     broadcast("\n" + ((Player)trg).getName() + " is in "+listOne.get(xgy).toString());
 
                     w.applyDamage(targets,p,e);
@@ -2080,6 +2136,7 @@ public class Server {
                     targets.add(tu);
                     //MOVE IT TO YOUR SQUARE
                     ((Player)targets.get(0)).setPlayerPosition(playerPosition);
+                    lock.unlock();
                     broadcast("\n" + ((Player)targets.get(0)).getName() + " is in "+playerPosition.toString());
 
                     w.applyDamage(targets,p,e);
@@ -2087,7 +2144,7 @@ public class Server {
                 }
                 break;
 
-            case "VortexCannon":
+            case "VortexCannon":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 // CHOOSE A VORTEX
                 sendToClient("CHOOSECELL");
@@ -2132,6 +2189,7 @@ public class Server {
                         }
                     }
                 }
+                lock.unlock();
                 // MOVE EVERY TARGET ON THE VORTEX
                 for(Object o : targets){
                     ((Player)o).setPlayerPosition(vortex);
@@ -2143,7 +2201,7 @@ public class Server {
                 useTargetingScope(p,targets);
                 return targets;
 
-            case "Whisper":
+            case "Whisper":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
@@ -2157,10 +2215,10 @@ public class Server {
                 targets.add(b);
                 w.applyDamage(targets,p,e);
                 useTargetingScope(p,targets);
-
+                lock.unlock();
                 break;
 
-            case "Zx_2":
+            case "Zx_2":lock.lock();
                 cells = w.getPossibleTargetCells(playerPosition,e,g);
                 targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
                 // ASK FOR 1 TARGET IF BASE OR UP TO 3 IF ALT
@@ -2195,17 +2253,20 @@ public class Server {
                 if(e.getEffect()== AmmoCube.Effect.BASE){
                     useTargetingScope(p,targets);
                 }
+                lock.unlock();
                 break;
         }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        lock.unlock();
         return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
     }
 
     public void useTargetingScope(Player p, List<Object> targets){
             if(p.hasTargetingScope()){
                 try {
+                    lock.lock();
                 // ASK USE TARGETING SCOPE
                 sendToClient("TARGETINGSCOPE");
                 String res = (String) inputStream.readObject();
@@ -2217,6 +2278,7 @@ public class Server {
                     sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                     int xyp = (int)inputStream.readObject();
                     xyp--;
+                    lock.unlock();
                     p.getTargetingScope().plusOneDamage(p,targets.get(xyp));
                     PowerUpCard pow = p.getTargetingScope();
 
