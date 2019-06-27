@@ -174,9 +174,9 @@ public class ClientCLI extends Client{
                     "B: Show your player board\n" +
                     "C: Show other players' information\n" +
                     "P: Use one of your powerups\n"+
-                            "S: Shoot [Default]\n" +
+                            "S: Shoot\n" +
                             "G: Grab\n" +
-                            "R: Run\n"
+                            "R: Run [Default]\n"
                     );
             String s = scanner.nextLine();
             s = s.trim().toUpperCase();
@@ -278,7 +278,7 @@ public class ClientCLI extends Client{
     public void dropWeapon(List<String> weapons){
         System.out.println("\nChoose one of your weapons to drop (first is default):");
         for(int i =0;i<weapons.size();i++) {
-            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+            System.out.println(weapons.get(i) + " ["+(i+1)+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
@@ -291,7 +291,7 @@ public class ClientCLI extends Client{
     public void chooseWeapon(List<String> weapons){
         System.out.println("\nChoose one of your weapons (first is default):");
         for(int i =0;i<weapons.size();i++) {
-            System.out.println(weapons.get(i) + " ["+i+1+"] ");
+            System.out.println(weapons.get(i) + " ["+(i+1)+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
