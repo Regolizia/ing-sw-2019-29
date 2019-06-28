@@ -655,5 +655,8 @@ public class Player {
     public PlayerPos[] getAllPlayerPos() {
         return allPlayerPos;
     }
+    public void addWeaponcard(WeaponCard weaponCard){
+        this.hand.addLast(weaponCard);
+    }
 
 }

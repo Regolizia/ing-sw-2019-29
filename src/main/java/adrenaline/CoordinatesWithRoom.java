@@ -399,4 +399,17 @@ public class CoordinatesWithRoom extends Coordinates {
         return new Spawnpoint();
     }
 
+    public boolean isSpawnpointCoordinates(GameModel model){
+        for (Room r: model.getMapUsed().getGameBoard().getRooms()
+        ) {
+            for (Spawnpoint spw:r.getSpawnpoints()
+            ) {
+                if(getRoom().equals(r)&&getX()==spw.getSpawnpointX()&&getY()==spw.getSpawnpointY())
+                    return true;
+            }
+        }
+        return false;
+    }
+
+
 }

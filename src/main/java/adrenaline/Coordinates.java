@@ -59,4 +59,17 @@ public class Coordinates {
     public String toString() {
         return this.getX() + ", " + this.getY();
     }
+
+    public boolean isSpawnpointCoordinates(GameModel model,Room room){
+        for (Room r: model.getMapUsed().getGameBoard().getRooms()
+        ) {
+            for (Spawnpoint spw:r.getSpawnpoints()
+            ) {
+                if(equals(r)&&getX()==spw.getSpawnpointX()&&getY()==spw.getSpawnpointY()&&r.equals(room))
+                    return true;
+            }
+        }
+        return false;
+    }
+
 }

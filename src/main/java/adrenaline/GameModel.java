@@ -77,6 +77,8 @@ public class GameModel {
         ammoTileDeck.shuffleCards();
     }
 
+    
+
     /**
      * Adds a Player to the list.
      *
@@ -107,7 +109,7 @@ public class GameModel {
 
                 for (AmmoCube ac: a.getAmmoCubes()
                      ) {
-                    ac.setCubeColor(AmmoCube.CubeColor.FREE);
+                        ac.setCubeColor(AmmoCube.CubeColor.FREE);
                 }
             }
 
@@ -132,7 +134,7 @@ public class GameModel {
 
             for (Spawnpoint s : room.getSpawnpoints()
             ) {
-                while (s.getWeaponCards().size() < numMaxWeaponSpawnpoin) {
+                while (s.getWeaponCards().size() < numMaxWeaponSpawnpoin&&!this.weaponDeck.getList().isEmpty()) {
                     s.getWeaponCards().add(weaponDeck.pickUpWeapon());
                 }
             }
@@ -148,12 +150,24 @@ public class GameModel {
      for (Room room : getMapUsed().getGameBoard().getRooms()) {
          for (int x = 1; x <= room.getRoomSizeX(); x++) {
              for (int y = 1; y <= room.getRoomSizeY(); y++) {
+                 if(!isSpawnpointCoordinates(x,y,room)){
                  room.getTiles().add(ammoTileDeck.pickUpAmmoTile());
-                 room.getTiles().getLast().setCoordinates(x, y);
+                 room.getTiles().getLast().setCoordinates(x, y);}
              }
          }
      }
 
+    }
+    public boolean isSpawnpointCoordinates(int x,int y,Room room){
+        for (Room r: this.getMapUsed().getGameBoard().getRooms()
+        ) {
+            for (Spawnpoint spw:r.getSpawnpoints()
+            ) {
+                if(room.equals(r)&&x==spw.getSpawnpointX()&&y==spw.getSpawnpointY())
+                    return true;
+            }
+        }
+        return false;
     }
 
 }
