@@ -144,17 +144,28 @@ public class Server {
             try {
 
                 sendToClient("DISCONNECTED");
-                disconnected.add(nickname);
-                disconnectedColors.put(nickname,color);
+                if(!disconnected.contains(nickname)) {
+                    disconnected.add(nickname);
+                }
+                if(!disconnectedColors.containsKey(nickname)) {
+                    disconnectedColors.put(nickname, color);
+                }
                 writers.remove(writers.get(nickname));
                 for(String s : disconnected){
-                    System.out.println(s+ " METHOD");
-                }// TODO
+                    System.out.println(s+ " DISCONNECTED LIST");
+                }
 
-
+                System.out.println("DISCONNECTED CONTAINS NAME "+disconnected.contains(nickname));
+                System.out.println("DISCONNECTEDCOLORS CONTAINS NAME "+disconnectedColors.containsKey(nickname));
                 socket.close();
                 removeOneConnection();
-                System.out.println("Client Disconnected++++");
+                System.out.println("Client Disconnected++++ HERE -1");
+
+                if(lock.isHeldByCurrentThread()) {
+                    while (lock.getHoldCount() > 0) {
+                        lock.unlock();
+                    }
+                }
             }catch (IOException e) {
                 e.printStackTrace();
             }
@@ -191,10 +202,15 @@ public class Server {
                         nickname = loginName();
                         if (!disconnected.contains(nickname)) {
                             countConnections();
-                            System.out.println(connectionsCount +" connections");
+                            System.out.println(connectionsCount +" connections +++ HERE +1");
+
+                            if(isGameOn()){
+                                sendToClient("MESSAGE");
+                                sendToClient("Sorry, the game has already started without you");
+                                socket.close();
+                            }
 
                             color = checkColor();
-
                             chooseBoard(nickname); // it checks if is firstPlayer and asks board
 
                             sendToClient("ACCEPTED");
@@ -213,12 +229,10 @@ public class Server {
                             sendToClient("Welcome back!");
 
                             countConnections();
-                            System.out.println(connectionsCount +" connections");
+                            System.out.println(connectionsCount +" connections /////HERE +1");
 
-                            if (disconnectedColors.get(nickname) == null) { // HASN'T CHOSEN COLOR
-
+                            if (disconnectedColors.get(nickname) == Figure.PlayerColor.NONE || disconnectedColors.get(nickname)==null) {
                                 color = checkColor();
-
                             }
 
                             chooseBoard(nickname); // it checks if is firstPlayer and asks board
@@ -229,11 +243,7 @@ public class Server {
                                 Countdown c = new Countdown();
                             }
                             addPlayerToGame(nickname, color);
-                            writers.put(nickname, outputStream);
-
-                            disconnected.remove(nickname);
-                            disconnectedColors.remove(nickname);
-
+                            reconnect();
                             break;
 
                         }
@@ -246,6 +256,25 @@ public class Server {
                     sendToClient("Sorry, the game has already started without you");
                     socket.close();
 
+                }else if(!disconnected.isEmpty() && isGameOn()){
+                    nickname = loginName();
+
+                    if (disconnected.contains(nickname)) {
+                        // FALLO GIOCARE, WELCOME BACK
+                        sendToClient("MESSAGE");
+                        sendToClient("Welcome back!");
+
+                        countConnections();
+                        System.out.println(connectionsCount + " connections *****HERE +1");
+
+                        disconnected.remove(nickname);
+                        disconnectedColors.remove(nickname);
+                    }else {
+
+                        sendToClient("MESSAGE");
+                        sendToClient("Sorry, the game has already started without you");
+                        socket.close();
+                    }
                 }
 
             } catch (Exception e) {
@@ -267,6 +296,22 @@ public class Server {
             }
 
         }
+        public void reconnect(){
+            try {
+                writers.put(nickname, outputStream);
+
+                if (disconnected.contains(nickname)) {
+                    disconnected.remove(nickname);
+                    System.out.println("REMOVED 1");
+                }
+                if (disconnectedColors.containsKey(nickname)) {
+                    disconnectedColors.remove(nickname);
+                    System.out.println("REMOVED 2");
+                }
+            }catch (Exception e){
+                System.out.println("DIDN'T REMOVE FROM DISCONNECT");
+            }
+        }
 
         public String loginName() throws Exception {
             sendToClient("LOGIN");
@@ -279,6 +324,12 @@ public class Server {
                             names.add(name);
                             return name;
                         } else if (names.contains(name) && !disconnected.contains(name)) {
+                            System.out.println("names contains name "+names.contains(name));
+                            System.out.println("disconnected contains name "+ disconnected.contains(name));
+                            for(String s : disconnected){
+                                System.out.println(s+ " DISCONNECTED LIST");
+                            }
+
                             sendToClient("LOGIN");
                             name = (String)inputStream.readObject();
                         } else if(disconnected.contains(name)){
@@ -289,13 +340,13 @@ public class Server {
             }
         }
 
-        public Figure.PlayerColor checkColor() throws Exception {
-
+        public Figure.PlayerColor checkColor(){
+        try {
             while (true) {
                 String csv = String.join(", ", possibleColors);  // SEND POSSIBLE COLORS
                 sendToClient("COLOR");
                 sendToClient(csv);
-                String color = (String)inputStream.readObject();
+                String color = (String) inputStream.readObject();
                 if (color != null) {
                     synchronized (possibleColors) {
                         if (!possibleColors.isEmpty() && (possibleColors.contains(color.toUpperCase()) || possibleColors.contains(color))
@@ -313,17 +364,26 @@ public class Server {
                     }
                 }
             }
+        }catch (Exception e){
+            System.out.println("--Color disconnection");
         }
+        return Figure.PlayerColor.NONE;
+        }
+
         public void addPlayerToGame(String name, Figure.PlayerColor color){
-            Server.model.addPlayer(new Player(name, color));
-            System.out.println(lock.isHeldByCurrentThread()+ " held by " + nickname);
-            System.out.println(lock.isLocked() + " is locked " + nickname);
-            System.out.println(lock.getHoldCount() + " count " + nickname);
+           try {
+               Server.model.addPlayer(new Player(name, color));
+               System.out.println(lock.isHeldByCurrentThread() + " held by " + nickname);
+               System.out.println(lock.isLocked() + " is locked " + nickname);
+               System.out.println(lock.getHoldCount() + " count " + nickname);
 
-            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
-                lock.unlock();
+               if (lock.isHeldByCurrentThread() && lock.getHoldCount() == 1)
+                   lock.unlock();
 
-            broadcast(name + " has joined");
+               broadcast(name + " has joined");
+           }catch (Exception e){
+               System.out.println("Couldn't add player to game");
+           }
         }
 
         public void broadcast(String s){
@@ -343,8 +403,9 @@ public class Server {
             lock.unlock();
         }
 
-        public void chooseBoard(String name) throws Exception {
+        public void chooseBoard(String name){
             lock.lock();
+            try {
             if(boardChosen==42){
 
                 while(boardChosen==42){
@@ -364,8 +425,14 @@ public class Server {
                     }
 
                 }
+
+                lock.unlock();
             }
-            lock.unlock();
+            }catch (Exception e){
+                lock.unlock();
+                disconnect();
+                System.out.println("--Board disconnection");
+            }
         }
         ////
 
@@ -527,11 +594,23 @@ public class Server {
                                 socket.close();
                                 if(nickname!=null) {
                                     removeOneConnection();
-                                    System.out.println(nickname+" REMOVED ");
+                                    System.out.println(nickname+" REMOVED HERE -1");
+                                }
+                                if(lock.isHeldByCurrentThread()) {
+                                    while (lock.getHoldCount() > 0) {
+                                        lock.unlock();
+                                    }
+
+                                    replaceAmmo();
+                                    replaceWeapons();
+                                    nextPlayer();
+                                    numberOfActions = 0;
+                                    System.out.println("CURRENT PLAYER " + currentPlayer);
+
                                 }
                                 break;
                             } catch (IOException ex) {
-                                ex.printStackTrace();
+                                //ex.printStackTrace();
                             }
                         }
                         // END OF TURN
@@ -551,6 +630,7 @@ public class Server {
                             System.out.println("CURRENT PLAYER " + currentPlayer);
 
 
+                            System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
@@ -569,7 +649,7 @@ public class Server {
                             numberOfActions = 0;
                             System.out.println("CURRENT PLAYER " + currentPlayer);
 
-
+                            System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
@@ -611,7 +691,12 @@ public class Server {
             }
             if (nickname != null) {
                 removeOneConnection();
-                System.out.println(nickname + " REMOVED ");
+                System.out.println(nickname + " REMOVED ++++HERE -1");
+            }
+            if(lock.isHeldByCurrentThread()) {
+                while (lock.getHoldCount() > 0) {
+                    lock.unlock();
+                }
             }
         }
 
@@ -720,6 +805,9 @@ public class Server {
             if(currentPlayer!=model.getPlayers().size()-1) {currentPlayer++;}
             else{
                 currentPlayer = 0;
+            }
+            if(disconnected.contains(model.getPlayers().get(currentPlayer).getName())){
+                nextPlayer();
             }
         }
 
