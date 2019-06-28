@@ -32,7 +32,7 @@ public class LockRifle extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 2 DAMAGE, 1 MARK, 1 TARGET
                     if(targetList.get(0) instanceof Player){

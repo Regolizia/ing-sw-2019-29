@@ -36,7 +36,7 @@ public class PowerGlove extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 2 MARKS, 1 TARGET
 

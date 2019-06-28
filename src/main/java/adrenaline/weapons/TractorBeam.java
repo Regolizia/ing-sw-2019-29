@@ -74,7 +74,7 @@ public class TractorBeam extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // MOVE 0-1-2 1 TARGET (NOT SPAWNPOINT)
                 if(targetList.get(0) instanceof Player) {

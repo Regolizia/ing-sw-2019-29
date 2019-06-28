@@ -51,7 +51,7 @@ public class Hellion extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1 TARGET, 1 MARK, EVERY PLAYER IN THAT SQUARE
             case ALT:   // 1 DAMAGE, 1 TARGET, 2 MARKS, EVERY PLAYER IN THAT SQUARE

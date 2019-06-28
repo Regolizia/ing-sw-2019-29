@@ -41,7 +41,7 @@ public class RocketLaucher extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 2 DAMAGE, 1 TARGET, THEN YOU MAY MOVE IT 1 SQUARE (MOVE TARGET AFTER OP2 IF OP2 IS IN EFFECTSLIST)
                 if (targetList.get(0) instanceof Player) {

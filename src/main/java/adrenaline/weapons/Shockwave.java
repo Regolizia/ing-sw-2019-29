@@ -32,7 +32,7 @@ public class Shockwave extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, UP TO 3 TARGETS, DIFFERENT SQUARES
             case ALT:   // 1 DAMAGE, EVERY TARGET 1 MOVE AWAY

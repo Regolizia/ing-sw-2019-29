@@ -6,6 +6,7 @@ import adrenaline.gameboard.GameBoard;
 import adrenaline.powerups.Newton;
 import adrenaline.powerups.Teleporter;
 import adrenaline.weapons.MachineGun;
+import adrenaline.weapons.PlasmaGun;
 import adrenaline.weapons.Thor;
 
 import java.io.*;
@@ -605,6 +606,7 @@ public class Server {
                                     replaceWeapons();
                                     nextPlayer();
                                     numberOfActions = 0;
+                                    setNotDamaged();
                                     System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
 
                                 }
@@ -623,6 +625,7 @@ public class Server {
                             scoring();
                             replaceAmmo();
                             replaceWeapons();
+                            setNotDamaged();
 
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
@@ -636,10 +639,11 @@ public class Server {
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
 */
-
-                            if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
-                                lock.unlock();
-
+                            if(lock.isHeldByCurrentThread()) {
+                                while (lock.getHoldCount() > 0) {
+                                    lock.unlock();
+                                }
+                            }
 
                         }
                         if (Server.isFirstTurn()){
@@ -658,21 +662,28 @@ public class Server {
                             System.out.println(lock.getHoldCount() + " " + nickname);
 */
 
-                            int c = lock.getHoldCount();
-                            if(lock.isHeldByCurrentThread()){
-                                while (c>1){
+                            if(lock.isHeldByCurrentThread()) {
+                                while (lock.getHoldCount() > 0) {
                                     lock.unlock();
                                 }
                             }
 
                         }
                     }
-                    else if(hasBeenDamaged()){  //TODO SET DAMAGED AND SHOOTER WHEN YOU SHOOT
+                    else if(hasBeenDamaged()){  //SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
                     }
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
                 }
+                System.out.println("game not on");
+            }
+        }
+
+        public void setNotDamaged(){
+            for (Player p : model.getPlayers()){
+                p.setDamagedStatus(false);
+                p.setShooter(null);
             }
         }
 
@@ -1348,7 +1359,7 @@ public class Server {
         public void changeOrderOfEffects(List<EffectAndNumber> list, WeaponCard w){
             // SOME WEAPONS MUST HAVE A CERTAIN ORDER
             // ASK ONLY IF I CAN CHANGE IT
-            if(w instanceof Thor || w instanceof MachineGun)
+            if(w instanceof Thor || w instanceof MachineGun || w instanceof PlasmaGun)
                 return;
 
 

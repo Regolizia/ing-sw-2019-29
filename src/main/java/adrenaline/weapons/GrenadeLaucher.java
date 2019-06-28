@@ -28,7 +28,7 @@ public class GrenadeLaucher extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, 1 TARGET, THEN CAN MOVE IT
                 if(targetList.get(0) instanceof Player) {

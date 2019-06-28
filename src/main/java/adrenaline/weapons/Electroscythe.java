@@ -36,7 +36,7 @@ public class Electroscythe extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
         switch (e.getEffect()) {
             case BASE:  // 1 DAMAGE, EVERY PLAYER
             case ALT:   // 2 DAMAGE, EVERY PLAYER

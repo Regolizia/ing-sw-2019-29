@@ -32,7 +32,7 @@ public class Thor extends WeaponCard {
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
-
+        setDamaged(targetList,p);
             switch (e.getEffect()) {
                 case BASE:  // 2 DAMAGE, 1 TARGET
                 case OP2:   // 2 DAMAGE, DIFFERENT TARGET
