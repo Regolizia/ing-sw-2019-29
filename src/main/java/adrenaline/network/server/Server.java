@@ -107,6 +107,7 @@ public class Server {
         Figure.PlayerColor color;
         String nickname;
 
+        static PlayerCountdown countdown;
         private final transient Socket socket;
 
         private final transient ObjectInputStream inputStream;
@@ -525,6 +526,9 @@ public class Server {
                 if (isGameOn()) {
 
                     if (isCurrentPlayer()) {
+                        if(numberOfActions==0) {
+                            countdown = new PlayerCountdown(this);
+                        }
                         try {
                             if (Server.isFirstTurn()) {
                                 if(currentPlayer==0) {
@@ -590,6 +594,8 @@ public class Server {
                             try {lock.lock();
                                 sendToClient("DISCONNECTED");
                                 lock.unlock();
+
+                                countdown.timer.cancel();
                                 disconnected.add(nickname);
                                 disconnectedColors.put(nickname,color);
                                 writers.remove(writers.get(nickname));
@@ -624,6 +630,9 @@ public class Server {
                             powerup();
 
                             reload();
+
+                            countdown.timer.cancel();
+
                             scoring();
                             replaceAmmo();
                             replaceWeapons();
@@ -652,6 +661,8 @@ public class Server {
                             if (currentPlayer == model.getPlayers().size() - 1) {
                                 Server.endFirstTurn();
                             }
+
+                            countdown.timer.cancel();
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
@@ -857,6 +868,7 @@ public class Server {
          */
         public static void nextPlayer(){
             try {
+                System.out.println("------CHANGING PLAYER");
                 if (currentPlayer != model.getPlayers().size() - 1) {
                     currentPlayer++;
                 } else {
@@ -866,7 +878,6 @@ public class Server {
                     nextPlayer();
                 }
             }catch (Exception e){
-                //
             }
         }
 
@@ -2871,26 +2882,18 @@ public class Server {
         }
     }
 
-/*    private static class PlayerCountdown{
-        public PlayerCountdown(){
-            final Timer timer = new Timer();
+   private static class PlayerCountdown{
+       public final Timer timer = new Timer();
+        public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time;
+                    int i = time*3;
 
                     public void run() {
                         System.out.println(i--);
-                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
-                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
-                                System.out.println("Game is starting...");
-
-                                gameIsOn = true;
-                                //Server.startGame();
-                                // DO SOMETHING TO START THE GAME
-                            }
-                            else if(connectionsCount<3){
-                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
-                            }
+                        if (i< 0) {
+                            System.out.println("------TIME'S UP FOR "+ handler.nickname);
+                            handler.disconnect();
                             timer.cancel();
                         }
                     }
@@ -2901,7 +2904,7 @@ public class Server {
             }
 
         }
-    }*/
+    }
 
 
 
