@@ -168,6 +168,10 @@ public class Server {
                         lock.unlock();
                     }
                 }
+                replaceAmmo();
+                replaceWeapons();
+                nextPlayer();
+
             }catch (IOException e) {
                 e.printStackTrace();
             }
@@ -207,6 +211,11 @@ public class Server {
                             System.out.println(connectionsCount +" connections +++ HERE +1");
 
                             if(isGameOn()){
+
+                                for(String s : disconnected){
+                                    System.out.println(s + " disconnected+++++++++++");
+                                }
+
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry, the game has already started without you");
                                 socket.close();
@@ -315,31 +324,36 @@ public class Server {
             }
         }
 
-        public String loginName() throws Exception {
-            sendToClient("LOGIN");
-            String name = (String)inputStream.readObject();
-            // Keep requesting a name until we get a unique one.
-            while (true) {
-                if (name != null || !name.equals("null")) {
-                    synchronized (names) {
-                        if (!isBlank(name) && !names.contains(name)) {
-                            names.add(name);
-                            return name;
-                        } else if (names.contains(name) && !disconnected.contains(name)) {
-                            System.out.println("names contains name "+names.contains(name));
-                            System.out.println("disconnected contains name "+ disconnected.contains(name));
-                            for(String s : disconnected){
-                                System.out.println(s+ " DISCONNECTED LIST");
-                            }
+        public String loginName(){
+            try {
+                sendToClient("LOGIN");
+                String name = (String) inputStream.readObject();
+                // Keep requesting a name until we get a unique one.
+                while (true) {
+                    if (name != null || !name.equals("null")) {
+                        synchronized (names) {
+                            if (!isBlank(name) && !names.contains(name)) {
+                                names.add(name);
+                                return name;
+                            } else if (names.contains(name) && !disconnected.contains(name)) {
+                                System.out.println("names contains name " + names.contains(name));
+                                System.out.println("disconnected contains name " + disconnected.contains(name));
+                                for (String s : disconnected) {
+                                    System.out.println(s + " DISCONNECTED LIST");
+                                }
 
-                            sendToClient("LOGIN");
-                            name = (String)inputStream.readObject();
-                        } else if(disconnected.contains(name)){
-                            return name;
+                                sendToClient("LOGIN");
+                                name = (String) inputStream.readObject();
+                            } else if (disconnected.contains(name)) {
+                                return name;
+                            }
                         }
                     }
                 }
+            }catch (Exception e){
+                disconnect();
             }
+            return null;
         }
 
         public Figure.PlayerColor checkColor(){
@@ -550,7 +564,7 @@ public class Server {
 
                                 String choice = (String) inputStream.readObject();
                                 lock.unlock();
-                                System.out.println("\n"+choice);
+                                System.out.println(choice);
                                 switch (choice) {
                                     case "G":
                                         lock.lock();
@@ -591,35 +605,28 @@ public class Server {
                                 }
                             }
                         } catch (Exception e) {
-                            try {lock.lock();
-                                sendToClient("DISCONNECTED");
-                                lock.unlock();
+                            try {
 
                                 countdown.timer.cancel();
-                                disconnected.add(nickname);
-                                disconnectedColors.put(nickname,color);
-                                writers.remove(writers.get(nickname));
-                                System.out.println("Client Disconnected");
-                                socket.close();
-                                if(nickname!=null) {
-                                    removeOneConnection();
-                                    System.out.println(nickname+" REMOVED HERE -1");
-                                }
+
+                                disconnect();
+
                                 if(lock.isHeldByCurrentThread()) {
                                     while (lock.getHoldCount() > 0) {
                                         lock.unlock();
                                     }
 
-                                    replaceAmmo();
-                                    replaceWeapons();
-                                    nextPlayer();
+
                                     numberOfActions = 0;
                                     setNotDamaged();
                                     System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+                                    lock.lock();
+                                    sendToClient("DISCONNECTED");
+                                    lock.unlock();
 
                                 }
                                 break;
-                            } catch (IOException ex) {
+                            } catch (Exception ex) {
                                 //ex.printStackTrace();
                             }
                         }
@@ -875,7 +882,25 @@ public class Server {
                     currentPlayer = 0;
                 }
                 if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
-                    nextPlayer();
+                    if (currentPlayer != model.getPlayers().size() - 1) {
+                        currentPlayer++;
+                    } else {
+                        currentPlayer = 0;
+                    }
+                    if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
+                        if (currentPlayer != model.getPlayers().size() - 1) {
+                            currentPlayer++;
+                        } else {
+                            currentPlayer = 0;
+                        }
+                        if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
+                            if (currentPlayer != model.getPlayers().size() - 1) {
+                                currentPlayer++;
+                            } else {
+                                currentPlayer = 0;
+                            }
+                        }
+                    }
                 }
             }catch (Exception e){
             }
@@ -913,7 +938,7 @@ public class Server {
             //                                                                // quanti max punti accettabili
             System.out.println("Scoring");
             for(Player p : model.getPlayers()){
-                System.out.println(p.getPoints() + " points of "+ nickname);
+                System.out.println(p.getPoints() + " points of "+ p.getName());
             }
         }
 
@@ -1170,7 +1195,7 @@ public class Server {
 
         public void playerRun(){
             System.out.println("RUN");
-            System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
+            //System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
 
             Player player = model.getPlayers().get(currentPlayer);
             LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
@@ -1185,7 +1210,7 @@ public class Server {
                 action.run(player,cells.get(x));
 
                 broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
-                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
+                //System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
                 //e.printStackTrace();
                 disconnect();
@@ -1265,7 +1290,7 @@ public class Server {
             broadcast(stringPlayerAmmo(player));
         }
         } catch (Exception e) {
-            e.printStackTrace();
+            //
         }
     }
 
@@ -1517,7 +1542,9 @@ public class Server {
         broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            disconnect();
+
         }
         return true;
 
