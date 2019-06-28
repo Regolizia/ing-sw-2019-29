@@ -1,24 +1,26 @@
-package adrenaline.network.server;
+
+
+        package adrenaline.network.server;
 
 // SOCKET
-import adrenaline.*;
-import adrenaline.gameboard.GameBoard;
-import adrenaline.powerups.Newton;
-import adrenaline.powerups.Teleporter;
-import adrenaline.weapons.MachineGun;
-import adrenaline.weapons.PlasmaGun;
-import adrenaline.weapons.Thor;
+        import adrenaline.*;
+        import adrenaline.gameboard.GameBoard;
+        import adrenaline.powerups.Newton;
+        import adrenaline.powerups.Teleporter;
+        import adrenaline.weapons.MachineGun;
+        import adrenaline.weapons.PlasmaGun;
+        import adrenaline.weapons.Thor;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.*;
+        import java.io.*;
+        import java.util.*;
+        import java.util.concurrent.locks.Lock;
+        import java.util.concurrent.locks.ReentrantLock;
+        import java.util.stream.*;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+        import java.net.ServerSocket;
+        import java.net.Socket;
+        import java.util.concurrent.ExecutorService;
+        import java.util.concurrent.Executors;
 
 // RMI
 
@@ -39,8 +41,6 @@ public class Server {
     private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
     private static List<String> disconnected = new LinkedList<>();
     private static HashMap<String,Figure.PlayerColor> disconnectedColors = new HashMap<>();
-
-
 
     // STRING LIST OF THE COLORS A PLAYER CAN CHOOSE AND LIST OF THOSE ALREADY CHOSEN
     private static List<String> possibleColors = Stream.of(Figure.PlayerColor.values())
@@ -109,7 +109,6 @@ public class Server {
         Figure.PlayerColor color;
         String nickname;
 
-        static PlayerCountdown countdown;
         private final transient Socket socket;
 
         private final transient ObjectInputStream inputStream;
@@ -170,10 +169,6 @@ public class Server {
                         lock.unlock();
                     }
                 }
-                replaceAmmo();
-                replaceWeapons();
-                nextPlayer();
-
             }catch (IOException e) {
                 e.printStackTrace();
             }
@@ -213,11 +208,6 @@ public class Server {
                             System.out.println(connectionsCount +" connections +++ HERE +1");
 
                             if(isGameOn()){
-
-                                for(String s : disconnected){
-                                    System.out.println(s + " disconnected+++++++++++");
-                                }
-
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry, the game has already started without you");
                                 socket.close();
@@ -326,36 +316,31 @@ public class Server {
             }
         }
 
-        public String loginName(){
-            try {
-                sendToClient("LOGIN");
-                String name = (String) inputStream.readObject();
-                // Keep requesting a name until we get a unique one.
-                while (true) {
-                    if (name != null || !name.equals("null")) {
-                        synchronized (names) {
-                            if (!isBlank(name) && !names.contains(name)) {
-                                names.add(name);
-                                return name;
-                            } else if (names.contains(name) && !disconnected.contains(name)) {
-                                System.out.println("names contains name " + names.contains(name));
-                                System.out.println("disconnected contains name " + disconnected.contains(name));
-                                for (String s : disconnected) {
-                                    System.out.println(s + " DISCONNECTED LIST");
-                                }
-
-                                sendToClient("LOGIN");
-                                name = (String) inputStream.readObject();
-                            } else if (disconnected.contains(name)) {
-                                return name;
+        public String loginName() throws Exception {
+            sendToClient("LOGIN");
+            String name = (String)inputStream.readObject();
+            // Keep requesting a name until we get a unique one.
+            while (true) {
+                if (name != null || !name.equals("null")) {
+                    synchronized (names) {
+                        if (!isBlank(name) && !names.contains(name)) {
+                            names.add(name);
+                            return name;
+                        } else if (names.contains(name) && !disconnected.contains(name)) {
+                            System.out.println("names contains name "+names.contains(name));
+                            System.out.println("disconnected contains name "+ disconnected.contains(name));
+                            for(String s : disconnected){
+                                System.out.println(s+ " DISCONNECTED LIST");
                             }
+
+                            sendToClient("LOGIN");
+                            name = (String)inputStream.readObject();
+                        } else if(disconnected.contains(name)){
+                            return name;
                         }
                     }
                 }
-            }catch (Exception e){
-                disconnect();
             }
-            return null;
         }
 
         public Figure.PlayerColor checkColor(){
@@ -542,9 +527,6 @@ public class Server {
                 if (isGameOn()) {
 
                     if (isCurrentPlayer()) {
-                        if(numberOfActions==0) {
-                            countdown = new PlayerCountdown(this);
-                        }
                         try {
                             if (Server.isFirstTurn()) {
                                 if(currentPlayer==0) {
@@ -566,7 +548,7 @@ public class Server {
 
                                 String choice = (String) inputStream.readObject();
                                 lock.unlock();
-                                System.out.println(choice);
+                                System.out.println("\n"+choice);
                                 switch (choice) {
                                     case "G":
                                         lock.lock();
@@ -607,28 +589,33 @@ public class Server {
                                 }
                             }
                         } catch (Exception e) {
-                            try {
-
-                                countdown.timer.cancel();
-
-                                disconnect();
-
+                            try {lock.lock();
+                                sendToClient("DISCONNECTED");
+                                lock.unlock();
+                                disconnected.add(nickname);
+                                disconnectedColors.put(nickname,color);
+                                writers.remove(writers.get(nickname));
+                                System.out.println("Client Disconnected");
+                                socket.close();
+                                if(nickname!=null) {
+                                    removeOneConnection();
+                                    System.out.println(nickname+" REMOVED HERE -1");
+                                }
                                 if(lock.isHeldByCurrentThread()) {
                                     while (lock.getHoldCount() > 0) {
                                         lock.unlock();
                                     }
 
-
+                                    replaceAmmo();
+                                    replaceWeapons();
+                                    nextPlayer();
                                     numberOfActions = 0;
                                     setNotDamaged();
                                     System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
-                                    lock.lock();
-                                    sendToClient("DISCONNECTED");
-                                    lock.unlock();
 
                                 }
                                 break;
-                            } catch (Exception ex) {
+                            } catch (IOException ex) {
                                 //ex.printStackTrace();
                             }
                         }
@@ -639,9 +626,6 @@ public class Server {
                             powerup();
 
                             reload();
-
-                            countdown.timer.cancel();
-
                             scoring();
                             replaceAmmo();
                             replaceWeapons();
@@ -669,8 +653,6 @@ public class Server {
                             if (currentPlayer == model.getPlayers().size() - 1) {
                                 Server.endFirstTurn();
                             }
-
-                            countdown.timer.cancel();
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
@@ -761,7 +743,7 @@ public class Server {
                         CoordinatesWithRoom c = new CoordinatesWithRoom(x,y,r);
                         listOfCells.add(c.toString());
 
-                        if (c.containsSpawnpoint(model)) {
+                        if (c.isSpawnpointCoordinates(model)) {
                             listOfItems.add("Spawnpoint "+c.getSpawnpoint(model).getColor().toString());
                         }else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                             listOfItems.add(c.getRoom().getAmmoTile(c).toString());
@@ -833,12 +815,12 @@ public class Server {
 
         public void firstTurn(){
             lock.lock();
-                LinkedList<PowerUpCard> twoCards= new LinkedList<>();
-                twoCards.add(model.powerUpDeck.deck.removeFirst());
-                twoCards.add(model.powerUpDeck.deck.removeFirst());
-                List<String> cards = new LinkedList<>();
-                cards.add(0,twoCards.get(0).toString());
-                cards.add(1,twoCards.get(1).toString());
+            LinkedList<PowerUpCard> twoCards= new LinkedList<>();
+            twoCards.add(model.powerUpDeck.deck.removeFirst());
+            twoCards.add(model.powerUpDeck.deck.removeFirst());
+            List<String> cards = new LinkedList<>();
+            cards.add(0,twoCards.get(0).toString());
+            cards.add(1,twoCards.get(1).toString());
             try {
                 sendListToClient(cards);
                 int x =(int)inputStream.readObject();
@@ -876,42 +858,25 @@ public class Server {
          */
         public static void nextPlayer(){
             try {
-                System.out.println("------CHANGING PLAYER");
                 if (currentPlayer != model.getPlayers().size() - 1) {
                     currentPlayer++;
                 } else {
                     currentPlayer = 0;
                 }
                 if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
-                    if (currentPlayer != model.getPlayers().size() - 1) {
-                        currentPlayer++;
-                    } else {
-                        currentPlayer = 0;
-                    }
-                    if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
-                        if (currentPlayer != model.getPlayers().size() - 1) {
-                            currentPlayer++;
-                        } else {
-                            currentPlayer = 0;
-                        }
-                        if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
-                            if (currentPlayer != model.getPlayers().size() - 1) {
-                                currentPlayer++;
-                            } else {
-                                currentPlayer = 0;
-                            }
-                        }
-                    }
+                    nextPlayer();
                 }
             }catch (Exception e){
+                //
             }
         }
 
         public void setInitialPosition(AmmoCube.CubeColor c, Player p){
             for (Room r: model.getMapUsed().getGameBoard().getRooms()){
-                for (Spawnpoint s: r.getSpawnpoints()
+                for (Spawnpoint s:r.getSpawnpoints()
                      ) {
-                    if(s.getColor().equals(c)){
+                    if(s.getColor().equals(c))
+                    {
                         p.setPlayerPosition(s.getSpawnpointX(),s.getSpawnpointY(),r);
                         p.setPlayerPositionSpawnpoint(p.getCoordinatesWithRooms());
                         broadcast("\n" + p.getName() + " is in "+p.getCoordinatesWithRooms().toString());
@@ -919,9 +884,6 @@ public class Server {
                         return;
                     }
                 }
-
-
-
 
             }
         }
@@ -944,7 +906,7 @@ public class Server {
             //                                                                // quanti max punti accettabili
             System.out.println("Scoring");
             for(Player p : model.getPlayers()){
-                System.out.println(p.getPoints() + " points of "+ p.getName());
+                System.out.println(p.getPoints() + " points of "+ nickname);
             }
         }
 
@@ -1201,7 +1163,7 @@ public class Server {
 
         public void playerRun(){
             System.out.println("RUN");
-            //System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
+            System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
 
             Player player = model.getPlayers().get(currentPlayer);
             LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRun(player.getCoordinatesWithRooms());
@@ -1216,88 +1178,89 @@ public class Server {
                 action.run(player,cells.get(x));
 
                 broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
-                //System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
+                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
                 //e.printStackTrace();
                 disconnect();
             }
         }
-    public void botShoot(Bot bot){
+
+        public void botShoot(Bot bot){
             LinkedList<CoordinatesWithRoom> possibleShoots= botAction.canSee(bot.getCoordinatesWithRooms(),bot);
-          //TODO SEND POSSIBLESHOOT TO PLAYER
+            //TODO SEND POSSIBLESHOOT TO PLAYER
             //TODO RECIVED SHOOT TARGET
             CoordinatesWithRoom choosenCoordinate=new CoordinatesWithRoom();
-        //TODO GET TARGET
-             Player victim=new Player();
+            //TODO GET TARGET
+            Player victim=new Player();
             botAction.botShoot(victim,bot);
-    }
-    public void botRun(Bot bot){
+        }
+        public void botRun(Bot bot){
             LinkedList<CoordinatesWithRoom> possibleRun=botAction.proposeCellsRun(bot.getCoordinatesWithRooms());
             //TODO SEND POSSIBLE COORDINATES + CHOOSE ONE
             CoordinatesWithRoom choosenRun=new CoordinatesWithRoom();
             botAction.run(bot,choosenRun);
-        broadcast("\nBot moved to "+choosenRun);
-    }
+            broadcast("\nBot moved to "+choosenRun);
+        }
 
-    public void grab(){
-        Player player = Server.model.getPlayers().get(currentPlayer);
-        LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
-        List<String> listOfCells = new LinkedList<>();
-        List<String> listOfItems = new LinkedList<>();
-        if(possibleCells.size()!=0)
-        {
-            for (CoordinatesWithRoom c : possibleCells){
-                listOfCells.add(c.toString());
-                if (c.isSpawnpointCoordinates(model)&&!c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
-                    Spawnpoint s = c.getSpawnpoint(model);
-                    String weapons = "";
-                    for(WeaponCard w : s.getWeaponCards()){
-                        weapons = weapons.concat(w.toString()+ " ");
+        public void grab(){
+            Player player = Server.model.getPlayers().get(currentPlayer);
+            LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
+            List<String> listOfCells = new LinkedList<>();
+            List<String> listOfItems = new LinkedList<>();
+            if(possibleCells.size()!=0)
+            {
+                for (CoordinatesWithRoom c : possibleCells){
+                    listOfCells.add(c.toString());
+                    if (c.isSpawnpointCoordinates(model)&&!c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
+                        Spawnpoint s = c.getSpawnpoint(model);
+                        String weapons = "";
+                        for(WeaponCard w : s.getWeaponCards()){
+                            weapons = weapons.concat(w.toString()+ " ");
+                        }
+                        listOfItems.add(weapons);
                     }
-                    listOfItems.add(weapons);
-                }
 
-                else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
-                    listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+                    else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
+                        listOfItems.add(c.getRoom().getAmmoTile(c).toString());
 
-                    System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
+                        System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
 
-                }else { // IT DOESN'T HAVE AN AMMOTILE
-                    Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
+                    }else { // IT DOESN'T HAVE AN AMMOTILE
+                        Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
+                    }
                 }
             }
-        }
-        CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
-        try {
-            sendListToClient(listOfItems);
-            sendListToClient(listOfCells); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-            int x = (int)inputStream.readObject();
-            x--;
-            chosenCell = possibleCells.get(x);
-            System.out.println("CELL FOR GRAB " + chosenCell.toString());
+            CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
+            try {
+                sendListToClient(listOfItems);
+                sendListToClient(listOfCells); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int x = (int)inputStream.readObject();
+                x--;
+                chosenCell = possibleCells.get(x);
+                System.out.println("CELL FOR GRAB " + chosenCell.toString());
 
 
-        if(chosenCell.isSpawnpointCoordinates(model)) {
-           grabFromSpawnpoint(chosenCell,player,listOfItems.get(x));
-        }
-        else {
-            //se non spawnpoint
-            //raccolgo un AmmoTile
-            /*
-            * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
-            * dalla mappa e ne aggiungo subito un altro
-            * già incluso pescaggio power up
-            * */
-            printPlayerAmmo(player);
-            action.grabTile(player, chosenCell);
-            printPlayerAmmo(player);
+                if(chosenCell.isSpawnpointCoordinates(model)) {
+                    grabFromSpawnpoint(chosenCell,player,listOfItems.get(x));
+                }
+                else {
+                    //se non spawnpoint
+                    //raccolgo un AmmoTile
+                    /*
+                     * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
+                     * dalla mappa e ne aggiungo subito un altro
+                     * già incluso pescaggio power up
+                     * */
+                    printPlayerAmmo(player);
+                    action.grabTile(player, chosenCell);
+                    printPlayerAmmo(player);
 
-            broadcast(stringPlayerAmmo(player));
+                    broadcast(stringPlayerAmmo(player));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 
@@ -1472,95 +1435,87 @@ public class Server {
         }
 
 
-
-
         public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
 
-        /*
-         * controllo io se può pagarla + ricarica ma tu devi:
-         * 1-controllare che abbia meno di 3 carte in mano x
-         * 2-una volta raccolta devi rimuoverla dalle carte dello spawnpoint
-         * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
-         * se scarta una carta rimettila nel deck x
-         * */
-        lock.lock();
-        sendToClient("GRABWEAPON");
-        sendToClient(cellItems); // RITORNA 1 O 2 O 3
-
-        try {
-            int x = (int)inputStream.readObject();
-            x--;
-            lock.unlock();
-        Spawnpoint s = chosenCell.getSpawnpoint(model);
-        WeaponCard weaponCard=s.getWeaponCards().get(x);
-
-        LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
-
-        //CHIEDI METODO PAGAMENTO
+            /*
+             * controllo io se può pagarla + ricarica ma tu devi:
+             * 1-controllare che abbia meno di 3 carte in mano x
+             * 2-una volta raccolta devi rimuoverla dalle carte dello spawnpoint
+             * 3-una volta finito cio setta la posizione del player nel punto in cui ha scelto di raccogliere
+             * se scarta una carta rimettila nel deck x
+             * */
             lock.lock();
-        sendToClient("PAYMENT");
-        int z = (int)inputStream.readObject();
-        Action.PayOption payOption;
-    
-        if(z==1){
-            payOption= Action.PayOption.AMMO;
-        }else{
-            payOption= Action.PayOption.AMMOPOWER;
-        }
-
-        if(payOption.equals(Action.PayOption.AMMOPOWER)){
-            playerPowerUpCards=payWithThesePowerUps(player);
-        }
-        // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
-        if(!action.canPayCard(weaponCard,player,payOption,AmmoCube.Effect.BASE,playerPowerUpCards)){
-            //MANDA MESSAGGIO
-            return false;}
-        lock.unlock();
-
-        // CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
-        if(!player.canGrabWeapon()){
-            List<String> yourWeapons = new LinkedList<>();
-            for (WeaponCard w : player.getHand()) {
-                yourWeapons.add(w.toString());
-            }
-            lock.lock();
-            sendToClient("DROPWEAPON");
-            sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
-            int y = (int)inputStream.readObject();
-            // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
+            sendToClient("GRABWEAPON");
+            sendToClient(cellItems); // RITORNA 1 O 2 O 3
             lock.unlock();
+            try {
+                int x = (int)inputStream.readObject();
+                x--;
+                Spawnpoint s = chosenCell.getSpawnpoint(model);
+                WeaponCard weaponCard=s.getWeaponCards().get(x);
+
+                LinkedList<PowerUpCard>playerPowerUpCards=new LinkedList<>();
+
+                //CHIEDI METODO PAGAMENTO
+                lock.lock();
+                sendToClient("PAYMENT");
+                int z = (int)inputStream.readObject();
+                Action.PayOption payOption;
+
+                if(z==1){
+                    payOption= Action.PayOption.AMMO;
+                }else{
+                    payOption= Action.PayOption.AMMOPOWER;
+                }
+
+                if(payOption.equals(Action.PayOption.AMMOPOWER)){
+                    playerPowerUpCards=payWithThesePowerUps(player);
+                }
+                // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
+                if(!action.canPayCard(weaponCard,player,payOption,AmmoCube.Effect.BASE,playerPowerUpCards)){
+                    //MANDA MESSAGGIO
+                    return false;}
+                lock.unlock();
+
+                // CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
+                if(!player.canGrabWeapon()){
+                    List<String> yourWeapons = new LinkedList<>();
+                    for (WeaponCard w : player.getHand()) {
+                        yourWeapons.add(w.toString());
+                    }
+                    lock.lock();
+                    sendToClient("DROPWEAPON");
+                    sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
+                    int y = (int)inputStream.readObject();
+                    // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
+                    lock.unlock();
+                }
+
+                //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
+                int number=0;
+
+                if(z==1){action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
+                    weaponCard.setReload();
+
+                }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
+                    weaponCard.setReload();
+                }
+
+                player.getHand().add(weaponCard);
+                s.getWeaponCards().remove(weaponCard);
+                player.getPowerUp().removeAll(playerPowerUpCards);
+                model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+
+                action.run(player,getSpawnpointCoordinates(s));
+                broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+
         }
 
-        //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
-        int number=0;
-
-            if(z==1){action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
-            weaponCard.setReload();
-
-            }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
-            weaponCard.setReload();
-            }
-
-
-        player.addWeaponcard(weaponCard);
-            for (Player p:model.getPlayers()
-                 ) {
-                System.out.println("gallina Test: "+p+player.getHand());
-            }
-
-        s.getWeaponCards().remove(weaponCard);
-        player.getPowerUp().removeAll(playerPowerUpCards);
-        model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-
-        action.run(player,getSpawnpointCoordinates(s));
-        broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-
-    }
         public LinkedList<PowerUpCard> payWithThesePowerUps(Player player){
             LinkedList<PowerUpCard> chosenPower=new LinkedList<>();
             //MANDA CARTE POWER UP IN MANO
@@ -2920,29 +2875,37 @@ public class Server {
         }
     }
 
-    private static class PlayerCountdown{
-        public final Timer timer = new Timer();
-        public PlayerCountdown(RequestHandler handler){
+/*    private static class PlayerCountdown{
+        public PlayerCountdown(){
+            final Timer timer = new Timer();
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*3;
-
+                    int i = time;
                     public void run() {
                         System.out.println(i--);
-                        if (i< 0) {
-                            System.out.println("------TIME'S UP FOR "+ handler.nickname);
-                            handler.disconnect();
+                        if (i< 0 || connectionsCount<3 || connectionsCount==5 && colorsChosen.size()==5) {
+                            if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
+                                System.out.println("Game is starting...");
+                                gameIsOn = true;
+                                //Server.startGame();
+                                // DO SOMETHING TO START THE GAME
+                            }
+                            else if(connectionsCount<3){
+                                System.out.println("TIMER STOPPED: LESS THAN 3 CONNECTIONS");
+                            }
                             timer.cancel();
                         }
                     }
                 }, 0, 1000);
-
             } catch (Exception e) {
                 //
             }
-
         }
-    }
+    }*/
+
+
+
+
 
     public static boolean isBlank(String str) {
         int strLen;
@@ -2984,7 +2947,6 @@ public class Server {
     public static void addCellToList(CoordinatesWithRoom c){
         cellsWithoutTiles.add(c);
     }
-
 
 
 }
