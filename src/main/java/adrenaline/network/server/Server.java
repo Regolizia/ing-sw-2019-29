@@ -676,7 +676,8 @@ public class Server {
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
                 }
-                System.out.println("game not on");
+                //BROADCAST CLASSIFICA
+                //EXIT
             }
         }
 
