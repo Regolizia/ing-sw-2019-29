@@ -537,7 +537,7 @@ public class Server {
                                 firstTurn();
                                 lock.unlock();
                                 numberOfActions = 0;
-                                System.out.println("CURRENT PLAYER " + currentPlayer);
+                                System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
                             }
                             if (numberOfActions != 2 && !firstTurn) {
                                 lock.lock();
@@ -605,7 +605,7 @@ public class Server {
                                     replaceWeapons();
                                     nextPlayer();
                                     numberOfActions = 0;
-                                    System.out.println("CURRENT PLAYER " + currentPlayer);
+                                    System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
 
                                 }
                                 break;
@@ -620,20 +620,22 @@ public class Server {
                             powerup();
 
                             reload();
-                            //scoring();
+                            scoring();
                             replaceAmmo();
                             replaceWeapons();
 
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
-                            System.out.println("CURRENT PLAYER " + currentPlayer);
+                            System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
 
+/*
 
                             System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
+*/
 
                             if(lock.isHeldByCurrentThread()&& lock.getHoldCount()==1)
                                 lock.unlock();
@@ -647,12 +649,14 @@ public class Server {
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
-                            System.out.println("CURRENT PLAYER " + currentPlayer);
+                            System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+/*
 
                             System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
+*/
 
                             int c = lock.getHoldCount();
                             if(lock.isHeldByCurrentThread()){
@@ -708,8 +712,44 @@ public class Server {
                 sendSpawnpointWeaponsBlue();
                 sendSpawnpointWeaponsRed();
                 sendSpawnpointWeaponsYellow();
+                sendAmmoTiles();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        public void sendAmmoTiles(){
+            List<String> listOfCells = new LinkedList<>();
+            List<String> listOfItems = new LinkedList<>();
+            // PER TUTTE LE CELLE DI TUTTE LE STANZE
+
+            for(Room r : model.getMapUsed().getGameBoard().getRooms()){
+                for(int x =1; x<=r.getRoomSizeX();x++){
+                    for(int y =1; y<=r.getRoomSizeY();y++) {
+                        CoordinatesWithRoom c = new CoordinatesWithRoom(x,y,r);
+                        listOfCells.add(c.toString());
+
+                        if (c.containsSpawnpoint(model)) {
+                            listOfItems.add("Spawnpoint "+c.getSpawnpoint(model).getColor().toString());
+                        }else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
+                            listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+                        }else { // IT DOESN'T HAVE AN AMMOTILE
+                            listOfItems.add("No tile");
+                        }
+                    }
+                }
+            }
+            try {
+                sendListToClient(listOfItems);
+                sendListToClient(listOfCells);
+
+                    System.out.println("\nCells&Items on map:");
+                    for(int i =0;i<listOfCells.size();i++){
+                        System.out.println(listOfCells.get(i) + " "+listOfItems.get(i));
+                    }
+
+            }catch (Exception e){
+                System.out.println("Couldn't send tiles");
             }
         }
 
@@ -774,19 +814,19 @@ public class Server {
 
 
                 PowerUpCard p = twoCards.removeFirst();
-                System.out.println("TO KEEP "+p.toString());
+                //System.out.println("TO KEEP "+p.toString());
                 if(x==1){
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
 
                     p = twoCards.removeFirst();
-                    System.out.println("TO USE AS POSITION "+p.toString());
+                    //System.out.println("TO USE AS POSITION "+p.toString());
 
                     setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
                 }else {
                     setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
 
                     p = twoCards.removeFirst();
-                    System.out.println("TO USE AS POSITION "+p.toString());
+                    //System.out.println("TO USE AS POSITION "+p.toString());
 
                     Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                 }
@@ -913,7 +953,7 @@ public class Server {
                 }lock.lock();
                 if(pows.isEmpty()){
                     sendToClient("MESSAGE");
-                    sendToClient("End of turn. Sorry you can't use any of your powerups now");
+                    sendToClient("Sorry you can't use any of your powerups now");
                 }else{
                     sendToClient("POWERUP");
                     try {

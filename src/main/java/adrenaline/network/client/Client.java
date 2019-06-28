@@ -47,7 +47,7 @@ public class Client {
         public void disconnected(){}
         public void boards(List<String> names, List<String> drops){}
         public void waitStart(){}
-        public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow){}
+        public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){}
 
         public String view(){return "Client";}
         public void getOutput(ObjectOutputStream o){}

@@ -479,7 +479,7 @@ public class ClientCLI extends Client{
         }
     }
 
-    public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow){
+    public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){
         mapInfo(n);
         System.out.println("\nPlayers:");
         for(int i =0; i<names.size();i++){
@@ -496,6 +496,14 @@ public class ClientCLI extends Client{
         System.out.println("\nWeapons of Spawnpoint YELLOW:");
         for(int i =0; i<yellow.size();i++){
             System.out.println(yellow.get(i));
+        }
+        printItems(cells,items);
+    }
+
+    public void printItems(List<String> cells,List<String> items){
+        System.out.println("\nItems on map:");
+        for(int i =0;i<cells.size();i++){
+            System.out.println(cells.get(i) + " "+items.get(i));
         }
     }
 
