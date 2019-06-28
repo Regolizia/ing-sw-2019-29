@@ -572,6 +572,8 @@ public class Server {
                                         lock.lock();
                                         sendToClient("BOARDS");
                                         playerBoards();
+                                        sendWeapons();
+                                        sendAmmo();
                                         lock.unlock();
                                         break;
                                     case "P":
@@ -854,12 +856,17 @@ public class Server {
          * If everybody has played, it resets.
          */
         public static void nextPlayer(){
-            if(currentPlayer!=model.getPlayers().size()-1) {currentPlayer++;}
-            else{
-                currentPlayer = 0;
-            }
-            if(disconnected.contains(model.getPlayers().get(currentPlayer).getName())){
-                nextPlayer();
+            try {
+                if (currentPlayer != model.getPlayers().size() - 1) {
+                    currentPlayer++;
+                } else {
+                    currentPlayer = 0;
+                }
+                if (disconnected.contains(model.getPlayers().get(currentPlayer).getName())) {
+                    nextPlayer();
+                }
+            }catch (Exception e){
+                //
             }
         }
 
@@ -1111,6 +1118,38 @@ public class Server {
                     for(Figure.PlayerColor c : p.getTrack()){
                         list.add(c.toString());
                     }
+                }
+                sendListToClient(list);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        public void sendWeapons(){
+            try {
+                List<String> list = new LinkedList<>();
+                for(Player p : model.getPlayers()){
+                    for(int i=0;i<3;i++){
+                        if(p.getHand().size()>i){
+                            list.add(p.getHand().get(i).toString());
+                            list.add(Boolean.toString(p.getHand().get(i).getReload()));
+                        }else {
+                            list.add("[   ]");
+                            list.add("[   ]");
+                        }
+                    }
+                }
+                sendListToClient(list);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        public void sendAmmo(){
+            try {
+                List<String> list = new LinkedList<>();
+                for(Player p : model.getPlayers()){
+                        list.add(Integer.toString(p.getCubeBlue()));
+                        list.add(Integer.toString(p.getCubeRed()));
+                        list.add(Integer.toString(p.getCubeYellow()));
                 }
                 sendListToClient(list);
             }catch (Exception e){
