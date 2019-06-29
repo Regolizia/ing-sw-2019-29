@@ -529,14 +529,20 @@ public class Server {
             }
         }
 
+        public static synchronized void startCountdown(RequestHandler handler){
+            countdown = new PlayerCountdown(handler);
+        }
+
         public void handleTurns(){
             int numberOfActions =0;
+            boolean counterOn=false;
             while(!isEndgame()) {
                 if (isGameOn()) {
 
                     if (isCurrentPlayer()) {
-                        if(numberOfActions==0) {
-                            countdown = new PlayerCountdown(this);
+                        if(!counterOn) {
+                            startCountdown(this);
+                            counterOn=true;
                         }
 
                         try {
@@ -602,7 +608,7 @@ public class Server {
                             }
                         } catch (Exception e) {
                             try {countdown.timer.cancel();
-
+                                counterOn=false;
                                 disconnect();
 
                                 if(lock.isHeldByCurrentThread()) {
@@ -633,7 +639,7 @@ public class Server {
 
                             reload();
                             countdown.timer.cancel();
-
+                            counterOn=false;
                             scoring();
                           //  replaceAmmo();
                            // replaceWeapons();
@@ -663,6 +669,7 @@ public class Server {
                                 Server.endFirstTurn();
                             }
                             countdown.timer.cancel();
+                            counterOn=false;
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
