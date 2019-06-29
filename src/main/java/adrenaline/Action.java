@@ -921,7 +921,7 @@ public class Action {
                 shooters.get(indexPlayer).setPoints(1); //every player get 1 points
             }
         }
-           
+
         }
         }
 

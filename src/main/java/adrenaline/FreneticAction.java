@@ -85,5 +85,68 @@ public class FreneticAction extends Action {
         return list;
     }
 
+    //______________________________________freneticPoints____________________________________________________________//
+    @Override
+    public void canGetPoints(List<Player> victims, List<Player> allPlayers) {
+        List<Player>playersWhoHaveShoot=new LinkedList<>();
+
+
+        for (Player victim: victims
+        ) {
+            for (Figure.PlayerColor color : victim.getTrack()
+            ) {
+                for (Player player : allPlayers
+                ) {
+                    if (player.getColor().equals(color))
+                        playersWhoHaveShoot.add(player);
+
+                }
+
+            }
+            if (playersWhoHaveShoot.size() == 0)
+                break;
+
+            frenzyGivePoints(playersWhoHaveShoot,victim);
+        }
+    }
+
+    public void frenzyGivePoints(List<Player> playersWhoHaveShoot, Player victim) {
+        whoHasDoneMoreDamage(playersWhoHaveShoot,victim).setPoints(victim.getPointTrackFren().length-1);
+        playersWhoHaveShoot.remove(whoHasDoneMoreDamage(playersWhoHaveShoot,victim));
+        for (Player shooter:playersWhoHaveShoot
+             ) {
+            shooter.setPoints(1);
+
+        }
+    }
+
+    public Player whoHasDoneMoreDamage(List<Player> playersWhoHaveShoot, Player victim) {
+        int max=0;
+        Player pMax=new Player();
+        if(max==0) {max=victim.damageByShooter(playersWhoHaveShoot.get(0));
+        pMax=playersWhoHaveShoot.get(0);
+        playersWhoHaveShoot.remove(0);
+        }
+        for (Player player:playersWhoHaveShoot
+             ) {
+            if(victim.damageByShooter(player)>max)
+            {
+                max=victim.damageByShooter(player);
+                pMax=player;
+                playersWhoHaveShoot.remove(player);
+            }
+            else if(victim.damageByShooter(player)==max){
+                pMax=chooseOne(player,pMax,victim);
+                playersWhoHaveShoot.remove(player);
+            }
+        }
+        return pMax;
+    }
+
+    public Player chooseOne(Player player,Player pMax,Player victim){
+        if(victim.getFirstPositionOnTrack(player)<victim.getFirstPositionOnTrack(pMax))
+            return player;
+        return pMax;
+    }
 
 }

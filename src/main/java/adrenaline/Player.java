@@ -12,6 +12,7 @@ public class Player {
     private final static int numMaxCube = 3;
     private final static int trackSize = 12;
     private final static  int trackPointSize=5;
+    private int[] pointTrackFren;
     private Figure.PlayerColor[] track;
     private int[] pointTrack;
     private Figure.PlayerColor[] marks;
@@ -29,6 +30,7 @@ public class Player {
     private boolean damaged = false;
     private String shooter = null;
     private int mortalPoints;
+
 
 
 
@@ -83,6 +85,7 @@ public class Player {
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         this.points = 0;
         this.pointTrack = new int[]{1,2,4,6,8};
+        this.pointTrackFren = new int[]{1,2};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
@@ -667,5 +670,9 @@ public class Player {
 
         return getTrack().length+1;
     }
+    public int[] getPointTrackFren() {
+        return pointTrackFren;
+    }
+
 
 }
