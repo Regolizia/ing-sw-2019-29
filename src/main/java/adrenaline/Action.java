@@ -4,6 +4,7 @@ package adrenaline;
 import adrenaline.gameboard.Door;
 import adrenaline.gameboard.GameBoard;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -757,74 +758,38 @@ public class Action {
     /**
      * canGetPoints
      * this is the method to know if players can get points
+     * if he/they can gives points
      *
      * @param allPlayers
      * @param victims
      */
 //________________________GIVE POINTS_______& ENDOFTHEGAME___________________________//
     public void canGetPoints(List<Player> victims, List<Player> allPlayers) {
-        List<Player> bestPlayerOrderForVictim;
-        for (int indexVictims = 0; indexVictims < victims.size(); indexVictims++) {
-            bestPlayerOrderForVictim = bestShooterOrder(allPlayers, victims.get(indexVictims));
-            givePoints(victims.get(indexVictims), bestPlayerOrderForVictim);
-            //call to give points
-        }
+        List<Player>playersWhoHaveShoot=new LinkedList<>();
+        List<Player>bestShooterOrder=new LinkedList<>();
+        List<Player>bestShooterOrderWithPosition=new LinkedList<>();
 
+        for (Player victim: victims
+             ) {
+            for (Figure.PlayerColor color:victim.getTrack()
+                 ) {
+                for (Player player:allPlayers
+                     ) {
+                    if(player.getColor().equals(color))
+                        playersWhoHaveShoot.add(player);
 
-    }
-
-    /**
-     * givePoints
-     * this is the method to distribute points
-     *
-     * @param victim:   player who has been damaged
-     * @param shooters: all players which have given damage to victim
-     */
-
-    public void givePoints(Player victim, List<Player> shooters) {
-        if (shooters.size() == 0)
-            return;
-        // max point - 2 x death if maxpoint-2<=0 give 1 point
-        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
-        if (victim.getMaxPointAssignableCounter() >= victim.getTrackPointSize()) {
-            for (int indexPlayer = 0; indexPlayer < shooters.size(); indexPlayer++) {
-                shooters.get(indexPlayer).setPoints(1); //every player get 1 points
-            }
-            return;
-        }
-
-        ((Player) ((LinkedList) shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
-        for (int indexPlayer = 1; indexPlayer < shooters.size(); indexPlayer++) {
-            if (victim.getTrack()[0].equals(shooters.get(indexPlayer).getColor()))
-                shooters.get(indexPlayer).setPoints(1);//firstBloodPoints
-            if (victim.getTrack()[victim.getTrackSize() - 1].equals(shooters.get(indexPlayer).getColor()) && shooters.get(indexPlayer).canAddMark(victim))
-                shooters.get(indexPlayer).addMarks(victim, 1);//12°hit
-            if (victim.damageByShooter(shooters.get(indexPlayer)) == victim.damageByShooter(shooters.get(indexPlayer - 1)))
-                ((Player) ((LinkedList) shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
-            else {
-                victim.setMaxPointAssignableCounter(victim.getMaxPointAssignableCounter() + 1);
-                if (victim.getMaxPointAssignableCounter() >= victim.getTrackPointSize())
-                    shooters.get(indexPlayer).setPoints(1);
-                else
-                    ((Player) ((LinkedList) shooters).getFirst()).setPoints(victim.getPointTrack()[victim.getMaxPointAssignableCounter()]);
+                }
 
             }
+            if(playersWhoHaveShoot.size()==0)
+                break;
+            bestShooterOrder.addAll(bestShooterOrder(playersWhoHaveShoot,victim));
+            bestShooterOrderWithPosition.addAll(bestShooterOrderWithPosition(bestShooterOrder,victim));
+            givePoints(victim,bestShooterOrderWithPosition);
+
         }
 
     }
-
-    /**
-     * endOfTheGame
-     *
-     * @return boolean:to know if the game is over
-     **/
-    public boolean endOfTheGame(GameBoard g) {  //every time a player dies
-        //8||5 skulls
-
-        return (g.getNumSkull() <= 0);
-
-    }
-
     /**
      * bestShooterOrder
      * Order by how much damage a player has done to victim
@@ -861,6 +826,119 @@ public class Action {
 
         return bestShooterOrder;
     }
+
+    private Collection<? extends Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
+        LinkedList<Player>bestShooterOrderWithPosition=new LinkedList<>();
+        LinkedList<Player>subList=new LinkedList<>();
+        while(bestShooterOrder.size()>0){
+        for (Player player:bestShooterOrder
+        ) {
+          bestShooterOrderWithPosition.remove(player);
+            for (Player p:bestShooterOrder
+                 ) {
+                if(victim.damageByShooter(player)==victim.damageByShooter(p))
+                    subList.add(p);
+            }
+          subList=orderSubListByPos(player,subList,victim);
+          bestShooterOrder.removeAll(subList);
+            for (Player shooter:subList
+                 ) {
+                bestShooterOrderWithPosition.addLast(shooter);
+            }
+
+        }
+        }
+        return bestShooterOrderWithPosition;
+    }
+
+    private LinkedList<Player> orderSubListByPos(Player player, LinkedList<Player> subList,Player victim) {
+        LinkedList<Player> subListOrder = new LinkedList<>();
+        int pos=victim.getTrack().length+1;
+        for (Player p:subList
+             ) {
+            if(victim.getFirstPositionOnTrack(p)==0){
+                subListOrder.addFirst(p);
+                subList.remove(p);}
+            else{
+                if(pos==victim.getTrack().length+1)
+                    {
+                        pos=victim.getFirstPositionOnTrack(p);
+                        subList.remove(p);
+                        subListOrder.addLast(p);
+                    }
+                else{
+                    if (victim.getFirstPositionOnTrack(p)<pos){
+                        for (Player shooter:subListOrder
+                             ) {
+                            if(victim.getFirstPositionOnTrack(shooter)==pos){
+                                subListOrder.add(subList.indexOf(shooter),p);
+                                subList.remove(p);
+                                pos=victim.getFirstPositionOnTrack(p);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+     return subListOrder;
+
+    }
+
+    /**
+     * givePoints
+     * this is the method to distribute points
+     *
+     * @param victim:   player who has been damaged
+     * @param shooters: all players which have given damage to victim
+     */
+
+    public void givePoints(Player victim, List<Player> shooters) {
+        if (shooters.size() == 0)
+            return;
+        int i=0;
+        //first blood & 12th damage & mortal points
+        for (Player shooter: shooters
+        ) {
+            if(victim.getTrack()[0].equals(shooter.getColor()))
+                shooter.setPoints(1);
+            if(victim.getTrack()[victim.getTrack().length-2].equals(shooter.getColor()))
+                shooter.setMortalPoints(1);
+            if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&&shooter.canAddMark(victim))
+                shooter.addMarks(victim,1);
+        }
+        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
+        for (Player player: shooters
+             ) {
+            i=shooters.indexOf(player);
+        if(victim.getMaxPointAssignableCounter() < victim.getTrackPointSize()&&i<victim.getMaxPointAssignableCounter()){
+           player.setPoints(victim.getPointTrack().length-1-i);
+        } else {
+            for (int indexPlayer = 0; indexPlayer < shooters.size(); indexPlayer++) {
+                shooters.get(indexPlayer).setPoints(1); //every player get 1 points
+            }
+        }
+           
+        }
+        }
+
+
+    /**
+     * endOfTheGame
+     *
+     * @return boolean:to know if the game is over
+     **/
+    public boolean endOfTheGame(GameBoard g) {  //every time a player dies
+        //8||5 skulls
+
+        return (g.getNumSkull() <= 0);
+
+    }
+
+
 
     public int getRemaingPlayer() {
         return numOfRemainingPlayer;

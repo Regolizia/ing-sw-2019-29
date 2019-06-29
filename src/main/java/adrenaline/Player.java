@@ -82,7 +82,7 @@ public class Player {
         this.powerups = new LinkedList<PowerUpCard>();
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         this.points = 0;
-        this.pointTrack = new int[]{8,6,4,2,1};
+        this.pointTrack = new int[]{1,2,4,6,8};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
@@ -657,6 +657,15 @@ public class Player {
     }
     public void addWeaponcard(WeaponCard weaponCard){
         this.hand.addLast(weaponCard);
+    }
+
+    public int getFirstPositionOnTrack(Player enemy){
+        for(int i=0; i<getTrack().length;i++){
+            if(getTrack()[i].equals(enemy.getColor()))
+                return i;
+        }
+
+        return getTrack().length+1;
     }
 
 }
