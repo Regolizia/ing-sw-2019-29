@@ -81,7 +81,7 @@ public class Server {
         try {
             serverSocket = new ServerSocket(4321);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Couldn't start server.");
             // Server non si avvia
         }
         System.out.println("SERVER ONLINE");
@@ -92,7 +92,7 @@ public class Server {
 
                 new RequestHandler(socket).start();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't accept socket connection.");
                 break;
             }
         }
@@ -136,10 +136,10 @@ public class Server {
                         handleTurns();
                     }
                 } catch (IOException | ClassNotFoundException e) {
-                    System.err.println(e);
+                    System.out.println("Handler couldn't reach client. ");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Handler couldn't reach client BIS.");
             }
         }
 
@@ -284,7 +284,8 @@ public class Server {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();/*
+                System.out.println("Client couldn't log in.");
+                /*
                 try {
                     sendToClient("DISCONNECTED");
                     disconnected.add(nickname);
@@ -407,7 +408,6 @@ public class Server {
                     ((ObjectOutputStream)me.getValue()).writeObject(s);
                     ((ObjectOutputStream)me.getValue()).flush();
                 } catch (IOException e) {
-                    //e.printStackTrace();
                     // DISCONNECTED
                 }
             }
@@ -490,7 +490,7 @@ public class Server {
                                 me.setShooter(null);
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            System.out.println("Couldn't use Tagback Grenade.");
                         }
                     }
                 }
@@ -715,7 +715,7 @@ public class Server {
             try {
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't close socket.");
             }
             if (nickname != null) {
                 removeOneConnection();
@@ -738,7 +738,7 @@ public class Server {
                 sendSpawnpointWeaponsYellow();
                 sendAmmoTiles();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't send info about game.");
             }
         }
 
@@ -857,7 +857,7 @@ public class Server {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Couldn't do firstTurn.");
             }
             lock.unlock();
         }
@@ -986,7 +986,7 @@ public class Server {
                 }
                 lock.unlock();
             } catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't reload.");
             }
 
         }
@@ -1023,7 +1023,7 @@ public class Server {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        System.out.println("Couldn't do powerup.");
                     }
                 }lock.unlock();
             }
@@ -1047,7 +1047,7 @@ public class Server {
                 model.powerUpDeck.usedPowerUp.add(power);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Couldn't use Teleporter.");
             }
         }
 
@@ -1084,7 +1084,7 @@ public class Server {
                 model.powerUpDeck.usedPowerUp.add(power);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Couldn't use Newton.");;
             }
         }
 
@@ -1114,7 +1114,7 @@ public class Server {
 
                 sendListToClient(weapons);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't send BLUE weapons.");
             }
         }
         public void sendSpawnpointWeaponsRed(){
@@ -1126,7 +1126,7 @@ public class Server {
 
                 sendListToClient(weapons);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't send RED weapons.");
             }
         }
         public void sendSpawnpointWeaponsYellow(){
@@ -1138,7 +1138,7 @@ public class Server {
                 }
                 sendListToClient(weapons);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Couldn't send YELLOW weapons.");
             }
         }
 
@@ -1153,7 +1153,7 @@ public class Server {
                 }
                 sendListToClient(list);
             }catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't send player boards.");
             }
         }
         public void sendWeapons(){
@@ -1172,7 +1172,7 @@ public class Server {
                 }
                 sendListToClient(list);
             }catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't send hand weapons.");
             }
         }
         public void sendAmmo(){
@@ -1185,7 +1185,7 @@ public class Server {
                 }
                 sendListToClient(list);
             }catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't send ammo.");
             }
         }
 
@@ -1208,8 +1208,7 @@ public class Server {
                 broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
 //                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
             } catch (Exception e) {
-                //e.printStackTrace();
-                disconnect();
+                System.out.println("Couldn't run.");
             }
         }
 
@@ -1379,7 +1378,7 @@ public class Server {
                     }
                 }
             }catch(Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't shoot.");
             }
         }
 
@@ -1420,7 +1419,7 @@ public class Server {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                System.out.println("Couldn't shootOtherEffects.");
             }
         }
 
@@ -1456,7 +1455,7 @@ public class Server {
                 }
 
             }catch (Exception e){
-                e.printStackTrace();
+                System.out.println("Couldn't change order of effects.");
             }
 
             lock.unlock();
@@ -1559,7 +1558,7 @@ public class Server {
                         chosenPower.add(powerUp);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("Couldn't pay with powerups.");
                 }
             }
             return chosenPower;
@@ -2830,6 +2829,7 @@ public class Server {
                         break;
                 }
             } catch (Exception ex) {
+                System.out.println("Couldn't shoot.");
                 ex.printStackTrace();
             }
             lock.unlock();
@@ -2860,6 +2860,7 @@ public class Server {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    System.out.println("Couldn't use Targeting Scope.");
                 }
             }
         }
