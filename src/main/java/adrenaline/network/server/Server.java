@@ -627,9 +627,10 @@ public class Server {
 
                             reload();
                             scoring();
-                            replaceAmmo();
-                            replaceWeapons();
+                          //  replaceAmmo();
+                           // replaceWeapons();
                             setNotDamaged();
+                          synchronized (model.getMapUsed()) {model.populateMap();}
 
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
@@ -1202,7 +1203,7 @@ public class Server {
             broadcast("\nBot moved to "+choosenRun);
         }
 
-        public void grab(){
+         public void grab(){
             Player player = Server.model.getPlayers().get(currentPlayer);
             LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
             List<String> listOfCells = new LinkedList<>();
@@ -1435,7 +1436,7 @@ public class Server {
         }
 
 
-        public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
+    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
 
             /*
              * controllo io se può pagarla + ricarica ma tu devi:
@@ -1501,11 +1502,11 @@ public class Server {
                     weaponCard.setReload();
                 }
 
-                player.getHand().add(weaponCard);
-                s.getWeaponCards().remove(weaponCard);
+               synchronized (player.getHand()) {player.getHand().add(weaponCard); s.getWeaponCards().remove(weaponCard);
+                   System.out.println("test gallina"+player+player.getHand().toString());
+                  }
                 player.getPowerUp().removeAll(playerPowerUpCards);
                 model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-
                 action.run(player,getSpawnpointCoordinates(s));
                 broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
 
