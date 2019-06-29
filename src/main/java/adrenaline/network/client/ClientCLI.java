@@ -482,7 +482,7 @@ public class ClientCLI extends Client{
     }
     public void printWeapons(List<String> names,List<String> weapons){
         for(int i=0;i<names.size();i++){
-            System.out.println(names.get(i)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)
+            System.out.println(names.get(i)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)+" "
                     +weapons.get(i+3)+" "+weapons.get(i+4)+" "+weapons.get(i+5));
         }
     }
