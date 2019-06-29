@@ -153,13 +153,12 @@ public class Server {
                 if(!disconnectedColors.containsKey(nickname)) {
                     disconnectedColors.put(nickname, color);
                 }
-                writers.remove(writers.get(nickname));
+                writers.remove(nickname,outputStream);
                 for(String s : disconnected){
                     System.out.println(s+ " DISCONNECTED LIST");
                 }
 
-                System.out.println("DISCONNECTED CONTAINS NAME "+disconnected.contains(nickname));
-                System.out.println("DISCONNECTEDCOLORS CONTAINS NAME "+disconnectedColors.containsKey(nickname));
+                System.out.println("DISCONNECTED CONTAINS "+ nickname +" "+disconnected.contains(nickname)+" "+disconnectedColors.containsKey(nickname));
                 socket.close();
                 removeOneConnection();
                 System.out.println("Client Disconnected++++ HERE -1");
@@ -249,6 +248,7 @@ public class Server {
                                 Countdown c = new Countdown();
                             }
                             addPlayerToGame(nickname, color);
+                            writers.put(nickname, outputStream);
                             reconnect();
                             break;
 
@@ -273,6 +273,7 @@ public class Server {
                         countConnections();
                         System.out.println(connectionsCount + " connections *****HERE +1");
 
+                        writers.put(nickname, outputStream);
                         disconnected.remove(nickname);
                         disconnectedColors.remove(nickname);
                     }else {
@@ -407,8 +408,33 @@ public class Server {
 
                     ((ObjectOutputStream)me.getValue()).writeObject(s);
                     ((ObjectOutputStream)me.getValue()).flush();
+
                 } catch (IOException e) {
-                    // DISCONNECTED
+                    // CAUSE: DISCONNECTED
+                    //ELIMINA ENTRY IN WRITER
+                    //AGGIUNGI A DISCONNECTED
+                    //AGGIUNGI A DISCONNECTEDCOLORS
+                    System.out.println("Someone disconnected from game and I couldn't reach him.");
+                    if(!disconnected.contains(me.getKey().toString())) {
+                        disconnected.add(me.getKey().toString());
+                    }
+                    if(!disconnectedColors.containsKey(me.getKey().toString())) {
+                        disconnectedColors.put(me.getKey().toString(), disconnectedColors.get(me.getKey().toString()));
+                    }
+                    writers.remove(me.getKey().toString(),(ObjectOutputStream) me.getValue());
+                    for(String d : disconnected){
+                        System.out.println(d+ " DISCONNECTED LIST");
+                    }
+
+                    System.out.println("DISCONNECTED CONTAINS "+me.getKey().toString()+" "+disconnected.contains(me.getKey().toString())+" "+disconnectedColors.containsKey(me.getKey().toString()));
+                    removeOneConnection();
+                    System.out.println("Client Disconnected++ HERE -1");
+
+                    if(lock.isHeldByCurrentThread()) {
+                        while (lock.getHoldCount() > 1) {
+                            lock.unlock();
+                        }
+                    }
                 }
             }
             lock.unlock();
@@ -609,12 +635,13 @@ public class Server {
                         } catch (Exception e) {
                             try {countdown.timer.cancel();
                                 counterOn=false;
-                                disconnect();
+                                System.out.println("EXCEPTION DISCONNECTION");
 
                                 if(lock.isHeldByCurrentThread()) {
                                     while (lock.getHoldCount() > 0) {
                                         lock.unlock();
                                     }
+                                }
 //                                    replaceAmmo();
 //                                    replaceWeapons();
 //                                    nextPlayer();
@@ -622,10 +649,12 @@ public class Server {
                                     numberOfActions = 0;
                                     setNotDamaged();
                                     System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+
+                                disconnect();
+
                                     lock.lock();
                                     sendToClient("DISCONNECTED");
                                     lock.unlock();
-                                }
                                 break;
                             } catch (Exception ex) {
                                 System.out.println("Couldn't disconnect and pass turn.");
@@ -717,7 +746,7 @@ public class Server {
             lock.unlock();
             disconnected.add(nickname);
             disconnectedColors.put(nickname, color);
-            writers.remove(writers.get(nickname));
+            writers.remove(nickname,outputStream);
             System.out.println("Client Disconnected");
             try {
                 socket.close();
@@ -1257,7 +1286,7 @@ public class Server {
                     else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
                         listOfItems.add(c.getRoom().getAmmoTile(c).toString());
 
-                        System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
+                       // System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
 
                     }else { // IT DOESN'T HAVE AN AMMOTILE
                         Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
@@ -1271,7 +1300,7 @@ public class Server {
                 int x = (int)inputStream.readObject();
                 x--;
                 chosenCell = possibleCells.get(x);
-                System.out.println("CELL FOR GRAB " + chosenCell.toString());
+                //System.out.println("CELL FOR GRAB " + chosenCell.toString());
 
 
                 if(chosenCell.isSpawnpointCoordinates(model)) {
@@ -1292,7 +1321,7 @@ public class Server {
                     broadcast(stringPlayerAmmo(player));
                 }
             } catch (Exception e) {
-                System.out.println("Couldn't grab.");
+                System.out.println("Couldn't grab or couldn't broadcast it.");
             }
         }
 
@@ -2916,7 +2945,7 @@ public class Server {
         public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*3;
+                    int i = time*5;
 
                     public void run() {
                         System.out.println(i--);
