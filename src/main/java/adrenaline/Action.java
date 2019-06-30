@@ -199,7 +199,7 @@ public class Action {
      * @return boolean : to know if the action is good ended
      */
     //_____________________________________GRAB OPTION TILE __________________________________________________________//
-    public boolean grabTile(Player player, CoordinatesWithRoom c) {
+    public void grabTile(Player player, CoordinatesWithRoom c) {
         AmmoTile toBeGrabbedTile = c.getRoom().getAmmoTile(c);
         c.getRoom().removeAmmotile(c);
 
@@ -212,7 +212,7 @@ public class Action {
         }
         model.ammoTileDeck.setUsedAmmoTile(toBeGrabbedTile);
 
-        return grabCube(player, toBeGrabbedTile);
+        grabCube(player, toBeGrabbedTile);
 
 
     }
@@ -232,7 +232,7 @@ public class Action {
 
 
     //_______________________________ADDING CUBE______________________________________________________________________//
-    public boolean grabCube(Player player, AmmoTile a) {
+    public void grabCube(Player player, AmmoTile a) {
 
         for (int i = 0; i < 3; i++) {
             switch (a.getAmmoCubes().get(i).getCubeColor()) {
@@ -252,8 +252,6 @@ public class Action {
                     player.setCube(0, 0, 0);
             }
         }
-        return true;
-
     }
 
     /**
