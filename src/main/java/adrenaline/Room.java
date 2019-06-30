@@ -126,10 +126,10 @@ public class Room {
         }
     }
 
-    public boolean hasAmmoTile(Coordinates coordinates){
+    public boolean hasAmmoTile(CoordinatesWithRoom coordinates){
         int index=0;
         for (int i = 0; i<getTiles().size();i++) {
-            if (getTiles().get(i).getCoordinates().equals(coordinates)){
+            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() && getTiles().get(i).getCoordinates().getY()==coordinates.getY()){
                 return true;
 
             }

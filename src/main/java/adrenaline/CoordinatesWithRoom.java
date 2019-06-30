@@ -411,5 +411,13 @@ public class CoordinatesWithRoom extends Coordinates {
         return false;
     }
 
+    public boolean hasAmmoTile(){
+        for(AmmoTile t : this.getRoom().getTiles()){
+            if(this.getX()==t.getCoordinates().getX()&&this.getY()==t.getCoordinates().getY()){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

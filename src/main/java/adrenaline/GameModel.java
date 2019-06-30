@@ -151,19 +151,39 @@ public class GameModel {
          for (int x = 1; x <= room.getRoomSizeX(); x++) {
              for (int y = 1; y <= room.getRoomSizeY(); y++) {
                  if(!isSpawnpointCoordinates(x,y,room)){
-                 room.getTiles().add(ammoTileDeck.pickUpAmmoTile());
-                 room.getTiles().getLast().setCoordinates(x, y);}
+                     AmmoTile t = ammoTileDeck.pickUpAmmoTile();
+                     t.setCoordinates(x,y);
+                 room.getTiles().add(t);
+                 System.out.println(t.toString()+" in "+t.getCoordinates().toString());
+                 }
              }
          }
      }
 
+    System.out.println("IS SPAWNPOINTS IN COORDINATES");
+        for (Room room : getMapUsed().getGameBoard().getRooms()) {
+            for (int x = 1; x <= room.getRoomSizeX(); x++) {
+                for (int y = 1; y <= room.getRoomSizeY(); y++) {
+                    System.out.println(isSpawnpointCoordinates(x, y, room)+ " "+ x+ " "+y+ " Room: "+ room.getToken());
+                }
+            }
+        }
+        System.out.println("\nCOORDINATES OF TILES IN ROOMS");
+            for (Room room: getMapUsed().getGameBoard().getRooms()){
+                System.out.println("room "+room.getToken());
+                for(AmmoTile t : room.getTiles()){
+                    System.out.println("x "+t.getCoordinates().getX()+" y "+ t.getCoordinates().getY());
+                }
+            }
     }
+
+
     public boolean isSpawnpointCoordinates(int x,int y,Room room){
         for (Room r: this.getMapUsed().getGameBoard().getRooms()
         ) {
             for (Spawnpoint spw:r.getSpawnpoints()
             ) {
-                if(room.equals(r)&&x==spw.getSpawnpointX()&&y==spw.getSpawnpointY())
+                if(room.getToken()==r.getToken()&&x==spw.getSpawnpointX()&&y==spw.getSpawnpointY())
                     return true;
             }
         }

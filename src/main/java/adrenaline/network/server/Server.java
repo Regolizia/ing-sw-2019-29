@@ -819,10 +819,11 @@ public class Server {
 
                         if (c.isSpawnpointCoordinates(model)) {
                             listOfItems.add("Spawnpoint "+c.getSpawnpoint(model).getColor().toString());
-                        }else if(c.getRoom().hasAmmoTile(c)){ // IT HAS AMMOTILES
+                        }else if(c.hasAmmoTile()){ // IT HAS AMMOTILES
                             listOfItems.add(c.getRoom().getAmmoTile(c).toString());
                         }else { // IT DOESN'T HAVE AN AMMOTILE
                             listOfItems.add("No tile");
+                            doThis(c);
                         }
                     }
                 }
@@ -840,6 +841,14 @@ public class Server {
                 System.out.println("Couldn't send tiles");
             }
         }
+
+        public void doThis(CoordinatesWithRoom c){
+            System.out.println("Coord "+ c.getX()+ " "+c.getY()+ " "+c.getRoom().getToken());
+            for (AmmoTile t : c.getRoom().getTiles()){
+                System.out.println(t.getCoordinates().getX()+ " "+t.getCoordinates().getY());
+            }
+        }
+
 
         public void replaceWeapons(){
             System.out.println("Replacing weapons...");
