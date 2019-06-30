@@ -2957,7 +2957,7 @@ public class Server {
         public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*5;
+                    int i = time*6;
 
                     public void run() {
                         System.out.println(i--);

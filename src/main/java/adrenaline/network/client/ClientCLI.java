@@ -472,18 +472,22 @@ public class ClientCLI extends Client{
     }
 
     public void boards(List<String> names, List<String> drops,List<String> weapons,List<String> ammo){
-        for(int i=0;i<names.size();i++){
-            System.out.println(names.get(i)+": "+drops.get(i)+" "+drops.get(i+1)+" "+drops.get(i+2)+" "+drops.get(i+3)+" "+
+        int i=0;
+        for(int y=0;y<names.size();y++){
+            System.out.println(names.get(y)+": "+drops.get(i)+" "+drops.get(i+1)+" "+drops.get(i+2)+" "+drops.get(i+3)+" "+
                     drops.get(i+4)+" "+drops.get(i+5)+" "+drops.get(i+6)+" "+
                     drops.get(i+7)+" "+drops.get(i+8)+" "+drops.get(i+9)+" "+drops.get(i+10)+" "+drops.get(i+11));
+            i=i+12;
         }
         printWeapons(names,weapons);
         printAmmo(names,ammo);
     }
     public void printWeapons(List<String> names,List<String> weapons){
-        for(int i=0;i<names.size();i++){
-            System.out.println(names.get(i)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)+" "
+        int i=0;
+        for(int y=0;y<names.size();y++){
+            System.out.println(names.get(y)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)+" "
                     +weapons.get(i+3)+" "+weapons.get(i+4)+" "+weapons.get(i+5));
+            i=i+6;
         }
     }
 
