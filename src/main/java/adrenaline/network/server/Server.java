@@ -772,14 +772,14 @@ public class Server {
                     }
                     // !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
-                }else{
+                }
 
                     //BROADCAST CLASSIFICA
                     //EXIT
-                    setEndgame(true);
-                }
+                    //setEndgame(true);
+
             }
-            System.exit(0);
+            //System.exit(0);
         }
 
         public void setNotDamaged(){
