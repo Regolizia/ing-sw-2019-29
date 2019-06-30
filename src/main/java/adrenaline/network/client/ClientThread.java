@@ -207,6 +207,9 @@ public class ClientThread implements Runnable {
             case "CHANGEORDER":
                 client.changeOrder(getListFromServer());
                 break;
+            case "SCORE":
+                client.score(getListFromServer());
+                break;
         }
         } catch (IOException e) {
             //e.printStackTrace();

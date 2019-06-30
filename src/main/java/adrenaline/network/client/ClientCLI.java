@@ -172,6 +172,7 @@ public class ClientCLI extends Client{
                     //"Z: Exit\n" +
                     "M: Show Map Info\n" +
                     "B: Show player boards\n" +
+                    "C: Show scores\n"+
                     "P: Use one of your powerups\n"+
                             "S: Shoot\n" +
                             "G: Grab\n" +
@@ -182,6 +183,7 @@ public class ClientCLI extends Client{
                 switch (s) {
                     case "M":
                     case "B":
+                    case "C":
                     case "P":
                     case "S":
                     case "G":
@@ -496,6 +498,13 @@ public class ClientCLI extends Client{
         for(int i=0;i<names.size();i++){
             System.out.println(names.get(i)+": BLUE "+ammo.get(y)+" - RED "+ammo.get(y+1)+" - YELLOW "+ammo.get(y+2));
             y=y+3;
+        }
+    }
+
+    public void score(List<String> scores){
+        System.out.println("Scores: ");
+        for(int i=0;i<scores.size();i=i+2){
+            System.out.println(scores.get(i)+":  "+scores.get(i+1));
         }
     }
 
