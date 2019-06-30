@@ -1278,59 +1278,63 @@ public class Server {
         }
 
          public void grab(){
-                Player player = Server.model.getPlayers().get(currentPlayer);
-                LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
-                List<String> listOfCells = new LinkedList<>();
-                List<String> listOfItems = new LinkedList<>();
-                if (!possibleCells.isEmpty()) {
-                    for (CoordinatesWithRoom c : possibleCells) {
-                        listOfCells.add(c.toString());
-                        if (c.isSpawnpointCoordinates(model) && !c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
-                            Spawnpoint s = c.getSpawnpoint(model);
-                            String weapons = "";
-                            for (WeaponCard w : s.getWeaponCards()) {
-                                weapons = weapons.concat(w.toString() + " ");
+            synchronized (Server.model.getPlayers()) {
+                synchronized (Server.model.getMapUsed().getGameBoard()) {
+                    Player player = Server.model.getPlayers().get(currentPlayer);
+                    LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
+                    List<String> listOfCells = new LinkedList<>();
+                    List<String> listOfItems = new LinkedList<>();
+                    if (!possibleCells.isEmpty()) {
+                        for (CoordinatesWithRoom c : possibleCells) {
+                            listOfCells.add(c.toString());
+                            if (c.isSpawnpointCoordinates(model) && !c.getSpawnpoint(model).getWeaponCards().isEmpty()) {
+                                Spawnpoint s = c.getSpawnpoint(model);
+                                String weapons = "";
+                                for (WeaponCard w : s.getWeaponCards()) {
+                                    weapons = weapons.concat(w.toString() + " ");
+                                }
+                                listOfItems.add(weapons);
+                            } else if (c.getRoom().hasAmmoTile(c)) { // IT HAS AMMOTILES
+                                listOfItems.add(c.getRoom().getAmmoTile(c).toString());
+
+                                // System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
+
+                            } else { // IT DOESN'T HAVE AN AMMOTILE
+                                Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                             }
-                            listOfItems.add(weapons);
-                        } else if (c.getRoom().hasAmmoTile(c)) { // IT HAS AMMOTILES
-                            listOfItems.add(c.getRoom().getAmmoTile(c).toString());
-
-                            // System.out.println("LIST OF ITEMS "+c.getRoom().getAmmoTile(c).toString());
-
-                        } else { // IT DOESN'T HAVE AN AMMOTILE
-                            Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
                         }
                     }
-                }
-                CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
-                try {
-                    sendListToClient(listOfItems);
-                    sendListToClient(listOfCells); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                    int x = (int) inputStream.readObject();
-                    x--;
-                    chosenCell = possibleCells.get(x);
-                    //System.out.println("CELL FOR GRAB " + chosenCell.toString());
+                    CoordinatesWithRoom chosenCell = new CoordinatesWithRoom();
+                    try {
+                        sendListToClient(listOfItems);
+                        sendListToClient(listOfCells); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                        int x = (int) inputStream.readObject();
+                        x--;
+                        chosenCell = possibleCells.get(x);
+                        //System.out.println("CELL FOR GRAB " + chosenCell.toString());
 
 
-                    if (chosenCell.isSpawnpointCoordinates(model)) {
-                        grabFromSpawnpoint(chosenCell, player, listOfItems.get(x));
-                    } else {
-                        //se non spawnpoint
-                        //raccolgo un AmmoTile
-                        /*
-                         * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
-                         * dalla mappa e ne aggiungo subito un altro
-                         * già incluso pescaggio power up
-                         * */
-                        printPlayerAmmo(player);
-                        action.grabTile(player, chosenCell);
-                        printPlayerAmmo(player);
+                        if (chosenCell.isSpawnpointCoordinates(model)) {
+                            grabFromSpawnpoint(chosenCell, player, listOfItems.get(x));
+                        } else {
+                            //se non spawnpoint
+                            //raccolgo un AmmoTile
+                            /*
+                             * qui faccio direttamente io l'assegnazione della posizione del player  e rimuovo gia' l'ammotile
+                             * dalla mappa e ne aggiungo subito un altro
+                             * già incluso pescaggio power up
+                             * */
+                            printPlayerAmmo(player);
+                            action.grabTile(player, chosenCell);
+                            printPlayerAmmo(player);
 
-                        broadcast(stringPlayerAmmo(player));
+                            broadcast(stringPlayerAmmo(player));
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Couldn't grab or couldn't broadcast it.");
                     }
-                } catch (Exception e) {
-                    System.out.println("Couldn't grab or couldn't broadcast it.");
                 }
+            }
         }
 
 
