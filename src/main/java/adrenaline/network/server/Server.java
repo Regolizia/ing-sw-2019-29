@@ -1065,7 +1065,7 @@ public class Server {
 
 
         public void sendFinalScoring(){
-            //TODO FINALSCORING
+            action.canGetPoints(model.getPlayers(),model.getPlayers());
             //TODO Server.action.endOfTheGame(model.getMapUsed().getGameBoard())) SE TI SERVE
             action.finalScoring();
             lock.lock();
@@ -1529,6 +1529,8 @@ public class Server {
                         temp = requestsForEveryWeapon(paid,weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
                         pastTragets=temp;
                     }
+                    weaponCard.setNotReload();
+                    weaponCard.setReloadAlt(false);
                 }
             }catch(Exception e){
                 System.out.println("Couldn't shoot.");
@@ -1680,10 +1682,10 @@ public class Server {
                 }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
                     weaponCard.setReload();
                 }
-
-               synchronized (player.getHand()) {player.getHand().add(weaponCard); s.getWeaponCards().remove(weaponCard);
+                lock.lock();
+               player.getHand().add(weaponCard); s.getWeaponCards().remove(weaponCard);
                    System.out.println("test gallina"+player+player.getHand().toString());
-                  }
+                  lock.unlock();
                 player.getPowerUp().removeAll(playerPowerUpCards);
                 model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                 action.run(player,getSpawnpointCoordinates(s));
