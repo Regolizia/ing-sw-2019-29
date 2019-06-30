@@ -112,6 +112,7 @@ public class Server {
 
         Figure.PlayerColor color;
         String nickname;
+        static boolean flag = false;
         static PlayerCountdown countdown;
         private final transient Socket socket;
 
@@ -159,14 +160,16 @@ public class Server {
                     disconnectedColors.put(nickname, color);
                 }
                 writers.remove(nickname,outputStream);
-                for(String s : disconnected){
+               /* for(String s : disconnected){
                     System.out.println(s+ " DISCONNECTED LIST");
                 }
 
-                System.out.println("DISCONNECTED CONTAINS "+ nickname +" "+disconnected.contains(nickname)+" "+disconnectedColors.containsKey(nickname));
+                */System.out.println("DISCONNECTED CONTAINS "+ nickname +" "+disconnected.contains(nickname)+" "+disconnectedColors.containsKey(nickname));
                 socket.close();
                 removeOneConnection();
                 System.out.println("Client Disconnected++++ HERE -1");
+
+                Server.stopHandler(this);
 
                 if(lock.isHeldByCurrentThread()) {
                     while (lock.getHoldCount() > 0) {
@@ -428,11 +431,11 @@ public class Server {
                         disconnectedColors.put(me.getKey().toString(), disconnectedColors.get(me.getKey().toString()));
                     }
                     writers.remove(me.getKey().toString(),(ObjectOutputStream) me.getValue());
-                    for(String d : disconnected){
+                   /* for(String d : disconnected){
                         System.out.println(d+ " DISCONNECTED LIST");
                     }
 
-                    System.out.println("DISCONNECTED CONTAINS "+me.getKey().toString()+" "+disconnected.contains(me.getKey().toString())+" "+disconnectedColors.containsKey(me.getKey().toString()));
+                   */ System.out.println("DISCONNECTED CONTAINS "+me.getKey().toString()+" "+disconnected.contains(me.getKey().toString())+" "+disconnectedColors.containsKey(me.getKey().toString()));
                     removeOneConnection();
                     System.out.println("Client Disconnected++ HERE -1");
 
@@ -563,7 +566,11 @@ public class Server {
 
         public static synchronized void startCountdown(RequestHandler handler){
             countdown = new PlayerCountdown(handler);
-            System.out.println("Thread "+ handler);
+            System.out.println(handler.nickname + " "+ handler);
+        }
+
+        public static void flagFalse(){
+            flag=false;
         }
 
         public void handleTurns(){
@@ -587,9 +594,11 @@ public class Server {
                                 lock.lock();
                                 sendToClient("YOURFIRSTTURN");
                                 System.out.println("FIRST TURN");
+                                System.out.println("\n" + nickname);
                                 sendForBoardSetup();
-                                firstTurn();
+                                System.out.println(nickname+"\n");
                                 lock.unlock();
+                                firstTurn();
                                 numberOfActions = 0;
                                 System.out.println("CURRENT PLAYER " + currentPlayer);
                             }
@@ -689,6 +698,7 @@ public class Server {
                             setNotDamaged();
                           synchronized (model.getMapUsed()) {model.populateMap();}
 
+                            System.out.println("        ---NEXT PLAYER");
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
@@ -707,12 +717,14 @@ public class Server {
                             }
 
                         }
-                        if (Server.isFirstTurn()){
+                        if (Server.isFirstTurn() && !flag){
                             if (currentPlayer == model.getPlayers().size() - 1) {
                                 Server.endFirstTurn();
                             }
                             countdown.timer.cancel();
                             counterOn=false;
+
+                            System.out.println("        +++NEXT PLAYER");
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
@@ -734,6 +746,8 @@ public class Server {
                     }
                     else if(hasBeenDamaged()){  //SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
+                    }else{
+                        flag=false;
                     }
                     // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
@@ -853,7 +867,7 @@ public class Server {
             cellsWithoutTiles.clear();
         }
 
-        public void respawn(Player p){
+        public synchronized void respawn(Player p){
             p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
             List<String> toSend = fromPowerupsToNames(p.getPowerUp());
             try {lock.lock();
@@ -873,47 +887,50 @@ public class Server {
             }
         }
 
-        public void firstTurn(){
-            lock.lock();
-            LinkedList<PowerUpCard> twoCards= new LinkedList<>();
-            twoCards.add(model.powerUpDeck.pickPowerUp());
-            twoCards.add(model.powerUpDeck.pickPowerUp());
-            List<String> cards = new LinkedList<>();
-            cards.add(0,twoCards.get(0).toString());
-            cards.add(1,twoCards.get(1).toString());
-            Player player = Server.model.getPlayers().get(currentPlayer);
-            try {
-                sendListToClient(cards);
-                int x =(int)inputStream.readObject();
-                x--;
-                // CHIEDI QUALE CARTA DA TENERE (1 o 2) E QUALE DA USARE COME RESPAWN
+        public synchronized void firstTurn(){
+            synchronized (Server.model.getPlayers().get(currentPlayer)) {
+                lock.lock();
+                LinkedList<PowerUpCard> twoCards = new LinkedList<>();
+                twoCards.add(model.powerUpDeck.pickPowerUp());
+                twoCards.add(model.powerUpDeck.pickPowerUp());
+                List<String> cards = new LinkedList<>();
+                cards.add(0, twoCards.get(0).toString());
+                cards.add(1, twoCards.get(1).toString());
+                Player player = Server.model.getPlayers().get(currentPlayer);
+                try {
+                    sendListToClient(cards);
+                    int x = (int) inputStream.readObject();
+                    x--;
+                    // CHIEDI QUALE CARTA DA TENERE (1 o 2) E QUALE DA USARE COME RESPAWN
 
 
-                PowerUpCard p = twoCards.removeFirst();
-                //System.out.println("TO KEEP "+p.toString());
-                if(x==1){
-                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+                    PowerUpCard p = twoCards.removeFirst();
+                    //System.out.println("TO KEEP "+p.toString());
+                    if (x == 1) {
+                        Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
 
-                    p = twoCards.removeFirst();
-                    //System.out.println("TO USE AS POSITION "+p.toString());
+                        p = twoCards.removeFirst();
+                        //System.out.println("TO USE AS POSITION "+p.toString());
 
-                    setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
-                }else {
-                    setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+                        setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+                    } else {
+                        setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
 
-                    p = twoCards.removeFirst();
-                    //System.out.println("TO USE AS POSITION "+p.toString());
+                        p = twoCards.removeFirst();
+                        //System.out.println("TO USE AS POSITION "+p.toString());
 
-                    Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+                        Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+                    }
+
+                } catch (Exception e) {
+                    System.out.println("Couldn't do firstTurn. Default.");
+
+                    player.getPowerUp().add(twoCards.get(0));
+                    setInitialPosition(twoCards.get(1).getPowerUpColor(), player);
+                    broadcast("\n" + player.getName() + " is in " + player.getCoordinatesWithRooms().toString());
                 }
-
-            } catch (Exception e) {
-                System.out.println("Couldn't do firstTurn. Default.");
-
-                player.getPowerUp().add(twoCards.get(0));
-                setInitialPosition(twoCards.get(1).getPowerUpColor(), player);
+                lock.unlock();
             }
-            lock.unlock();
         }
 
         /**
@@ -953,7 +970,7 @@ public class Server {
             }
         }
 
-        public void setInitialPosition(AmmoCube.CubeColor c, Player p){
+        public synchronized void setInitialPosition(AmmoCube.CubeColor c, Player p){
             for (Room r: model.getMapUsed().getGameBoard().getRooms()){
                 for (Spawnpoint s:r.getSpawnpoints()
                      ) {
@@ -2963,7 +2980,7 @@ public class Server {
         public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*6;
+                    int i = time*3;
 
                     public void run() {
                         System.out.println(i--);
@@ -2971,7 +2988,9 @@ public class Server {
                             System.out.println("------TIME'S UP FOR "+ handler.nickname);
                             handler.disconnect();
                             timer.cancel();
+                            System.out.println("          NEXT PLAYER");
                             RequestHandler.nextPlayer();
+                            RequestHandler.flagFalse();
                         }
                     }
                 }, 0, 1000);

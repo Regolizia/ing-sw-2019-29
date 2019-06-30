@@ -209,7 +209,7 @@ public class ClientThread implements Runnable {
                 break;
         }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 }
