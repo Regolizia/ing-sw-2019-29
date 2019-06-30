@@ -104,6 +104,10 @@ public class Server {
         firstTurn= false;
     }
 
+    public static void stopHandler(RequestHandler handler){
+        handler.interrupt();
+    }
+
     public static class RequestHandler extends Thread {
 
         Figure.PlayerColor color;
@@ -386,10 +390,11 @@ public class Server {
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             try {
                 Server.model.addPlayer(new Player(name, color));
+                /*
                 System.out.println(lock.isHeldByCurrentThread() + " held by " + nickname);
                 System.out.println(lock.isLocked() + " is locked " + nickname);
                 System.out.println(lock.getHoldCount() + " count " + nickname);
-
+*/
                 if (lock.isHeldByCurrentThread() && lock.getHoldCount() == 1)
                     lock.unlock();
 
@@ -633,15 +638,22 @@ public class Server {
                                 }
                             }
                         } catch (Exception e) {
-                            try {countdown.timer.cancel();
+                            try {//e.printStackTrace();
+
+                                countdown.timer.cancel();
                                 counterOn=false;
+                                /*
                                 System.out.println("EXCEPTION DISCONNECTION");
+                                System.out.println("by "+ this.toString());*/
 
                                 if(lock.isHeldByCurrentThread()) {
                                     while (lock.getHoldCount() > 0) {
                                         lock.unlock();
                                     }
                                 }
+
+                                Server.stopHandler(this);
+                                /*
 //                                    replaceAmmo();
 //                                    replaceWeapons();
 //                                    nextPlayer();
@@ -654,7 +666,7 @@ public class Server {
 
                                     lock.lock();
                                     sendToClient("DISCONNECTED");
-                                    lock.unlock();
+                                    lock.unlock();*/
                                 break;
                             } catch (Exception ex) {
                                 System.out.println("Couldn't disconnect and pass turn.");
@@ -702,7 +714,7 @@ public class Server {
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
-                            System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+                            System.out.println("CURRENT PLAYER " + currentPlayer + " PREVIOUS " + nickname);
 /*
                             System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);

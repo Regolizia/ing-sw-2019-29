@@ -271,14 +271,14 @@ public class Player {
      *check if player can pick up another power up
      */
     public boolean canGrabPowerUp() {
-        return (powerups.size() <= 3);
+        return (powerups.size() < 3);
     }
     /**
      *canGrabWeapon
      *check if player can grab another weapon
      */
     public boolean canGrabWeapon() {
-        return (hand.size() <= 3);
+        return (hand.size() < 3);
     }
 
     //  REMOVE CELL 8,6... WHEN SOMEONE DIES
