@@ -141,6 +141,7 @@ public class Server {
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.out.println("Handler couldn't reach client. ");
+                    Server.stopHandler(this);
                 }
             } catch (Exception e) {
                 System.out.println("Handler couldn't reach client BIS.");
@@ -460,7 +461,7 @@ public class Server {
                             Server.setBoardChosen(result);
                             System.out.println("BOARD CHOSEN " + result);
                             Server.createBoard();
-                            printWeaponSpawnpoints();
+                            //printWeaponSpawnpoints();
                             return;
                         } else {
                             //  ASK AGAIN BECAUSE NOT ACCEPTED
@@ -562,6 +563,7 @@ public class Server {
 
         public static synchronized void startCountdown(RequestHandler handler){
             countdown = new PlayerCountdown(handler);
+            System.out.println("Thread "+ handler);
         }
 
         public void handleTurns(){
@@ -589,7 +591,7 @@ public class Server {
                                 firstTurn();
                                 lock.unlock();
                                 numberOfActions = 0;
-                                System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+                                System.out.println("CURRENT PLAYER " + currentPlayer);
                             }
                             if (numberOfActions != 2 && !firstTurn) {
                                 lock.lock();
@@ -690,7 +692,7 @@ public class Server {
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
-                            System.out.println("CURRENT PLAYER " + currentPlayer + " " + nickname);
+                            System.out.println("CURRENT PLAYER " + currentPlayer);
 
 /*
                             System.out.println("\n Thread info: ");
@@ -714,7 +716,7 @@ public class Server {
                             nextPlayer();
                             //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
                             numberOfActions = 0;
-                            System.out.println("CURRENT PLAYER " + currentPlayer + " PREVIOUS " + nickname);
+                            System.out.println("CURRENT PLAYER " + currentPlayer);
 /*
                             System.out.println("\n Thread info: ");
                             System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
@@ -874,11 +876,12 @@ public class Server {
         public void firstTurn(){
             lock.lock();
             LinkedList<PowerUpCard> twoCards= new LinkedList<>();
-            twoCards.add(model.powerUpDeck.deck.removeFirst());
-            twoCards.add(model.powerUpDeck.deck.removeFirst());
+            twoCards.add(model.powerUpDeck.pickPowerUp());
+            twoCards.add(model.powerUpDeck.pickPowerUp());
             List<String> cards = new LinkedList<>();
             cards.add(0,twoCards.get(0).toString());
             cards.add(1,twoCards.get(1).toString());
+            Player player = Server.model.getPlayers().get(currentPlayer);
             try {
                 sendListToClient(cards);
                 int x =(int)inputStream.readObject();
@@ -905,7 +908,10 @@ public class Server {
                 }
 
             } catch (Exception e) {
-                System.out.println("Couldn't do firstTurn.");
+                System.out.println("Couldn't do firstTurn. Default.");
+
+                player.getPowerUp().add(twoCards.get(0));
+                setInitialPosition(twoCards.get(1).getPowerUpColor(), player);
             }
             lock.unlock();
         }
@@ -3000,7 +3006,7 @@ public class Server {
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         //model.startingMap();
         model.populateMap();
-        printSomeAmmos();
+        //printSomeAmmos();
         action = new Action(model);
     }
 

@@ -492,9 +492,11 @@ public class ClientCLI extends Client{
     }
 
     public void printAmmo(List<String> names,List<String> ammo){
+        int y=0;
         for(int i=0;i<names.size();i++){
-            System.out.println(names.get(i)+": BLUE "+ammo.get(i)+" - RED "+ammo.get(i+1)+" - YELLOW "+ammo.get(i+2));
+            System.out.println(names.get(i)+": BLUE "+ammo.get(y)+" - RED "+ammo.get(y+1)+" - YELLOW "+ammo.get(y+2));
         }
+        y=y+3;
     }
 
     public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){
