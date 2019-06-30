@@ -508,6 +508,15 @@ public class ClientCLI extends Client{
         }
     }
 
+    public void endgame(List<String> scores){// name score name score...
+        System.out.println("Endgame: ");
+        int x =1;
+        for(int i=0;i<scores.size();i=i+2){
+            System.out.println(x+"°: "+scores.get(i)+" points "+scores.get(i+1));
+            x++;
+        }
+    }
+
     public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){
         mapInfo(n);
         System.out.println("\nPlayers:");

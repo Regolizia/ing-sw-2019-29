@@ -30,6 +30,7 @@ public class Client {
         public void moveTarget(){}
         public void tagbackGrenade(){}
         public void targetingScope(){}
+        public void endgame(List<String> scores){}
         public void score(List<String> scores){}
         public void powerups(List<String> cells){}
         public void chooseCell(List<String> cells){}

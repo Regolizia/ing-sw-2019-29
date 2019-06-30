@@ -770,12 +770,16 @@ public class Server {
                     }else{
                         flag=false;
                     }
-                    // TODO !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
+                    // !Server.action.endOfTheGame(model.getMapUsed().getGameBoard()))
                     // SET endgame parameter in this class
+                }else{
+
+                    //BROADCAST CLASSIFICA
+                    //EXIT
+                    setEndgame(true);
                 }
-                //BROADCAST CLASSIFICA
-                //EXIT
             }
+            System.exit(0);
         }
 
         public void setNotDamaged(){
@@ -1039,9 +1043,9 @@ public class Server {
 
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
-                gameIsOn = false;
+
                 sendFinalScoring();
-            //PUNTEGGI FINALI
+                setGameIsOn(false); // EXITS????????????
             }
 
         }
@@ -1059,9 +1063,32 @@ public class Server {
             }
         }
 
-        public void sendFinalScoring(){
 
+        public void sendFinalScoring(){
+            //TODO FINALSCORING
+            //TODO Server.action.endOfTheGame(model.getMapUsed().getGameBoard())) SE TI SERVE
+            action.finalScoring();
+            lock.lock();
+            sendToClient("ENDGAME");
+
+            //sendListToClient(); name score name score...      BROADCAST
+            List<String> finalList = new LinkedList<>();
+
+            for (Map.Entry me : writers.entrySet()) {
+                try {
+                    ((ObjectOutputStream)me.getValue()).writeObject("ENDGAME");
+                    ((ObjectOutputStream)me.getValue()).flush();
+
+                    ((ObjectOutputStream)me.getValue()).writeObject(finalList);
+                    ((ObjectOutputStream)me.getValue()).flush();
+
+                } catch (IOException e) {
+                    // DON'T CARE ITS ENDGAME
+                }
+            }
+            lock.unlock();
         }
+
 
         public void reload(){
             Player player = model.getPlayers().get(currentPlayer);
@@ -3046,7 +3073,7 @@ public class Server {
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
 
-                                gameIsOn = true;
+                                setGameIsOn(true);
                                 //Server.startGame();
                                 // DO SOMETHING TO START THE GAME
                             }
@@ -3135,7 +3162,12 @@ public class Server {
         cellsWithoutTiles.add(c);
     }
 
-
+    public static void setGameIsOn(boolean state){
+        gameIsOn=state;
+    }
+    public static void setEndgame(boolean state){
+        endgame=state;
+    }
 }
 
 

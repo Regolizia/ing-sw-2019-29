@@ -110,8 +110,7 @@ public class ClientThread implements Runnable {
                 client.showMainMenu();
                 break;
             case "ENDGAME":
-                break;
-            case "SHOOT":
+                client.endgame(getListFromServer());
                 break;
             case "CHOOSETARGET":
                 client.chooseTarget(getListFromServer());
