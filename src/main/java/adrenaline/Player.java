@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Eleonora Toscano
  * @version 1.0
  **/
-public class Player implements Serializable {
+public class Player{
     private final int numMaxCube = 3;
     private final int trackSize = 12;
     private final int trackPointSize=5;
@@ -324,7 +324,7 @@ public class Player implements Serializable {
      *getHand
      * @return player's weapons hand
      */
-    public List<WeaponCard> getHand() {
+    public synchronized List<WeaponCard> getHand() {
         return hand;
     }
 

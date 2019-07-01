@@ -144,7 +144,16 @@ public class Server {
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.out.println("Handler couldn't reach client. ");
+                    if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)) {
+                        nextPlayer();
+                        removeOneConnection();
+                    }
                     Server.stopHandler(this);
+
+                    if(connectionsCount<3 && isGameOn()){
+                        System.out.println("Sent Final Scoring");
+                        sendFinalScoring();
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Handler couldn't reach client BIS.");
@@ -178,6 +187,11 @@ public class Server {
                         lock.unlock();
                     }
                 }
+                if(connectionsCount<3 && isGameOn()){
+                    System.out.println("Sent Final Scoring");
+                    sendFinalScoring();
+                }
+
             }catch (IOException e) {
                 System.out.println("Couldn't disconnect.");
             }
@@ -445,6 +459,11 @@ public class Server {
                         while (lock.getHoldCount() > 1) {
                             lock.unlock();
                         }
+                    }
+
+                    if(connectionsCount<3 && isGameOn()){
+                        System.out.println("Sent Final Scoring");
+                        sendFinalScoring();
                     }
                 }
             }
@@ -714,10 +733,12 @@ public class Server {
                             countdown.timer.cancel();
                             counterOn=false;
                             scoring();
-                          //  replaceAmmo();
-                           // replaceWeapons();
                             setNotDamaged();
-                          synchronized (model.getMapUsed()) {model.populateMap();}
+                          //synchronized (model.getMapUsed()) {model.populateMap();}
+
+                            replaceAmmo();
+                            replaceWeapons();
+
 
                             System.out.println("        ---NEXT PLAYER");
                             nextPlayer();
@@ -814,6 +835,11 @@ public class Server {
                 while (lock.getHoldCount() > 0) {
                     lock.unlock();
                 }
+            }
+
+            if(connectionsCount<3 && isGameOn()){
+                System.out.println("Sent Final Scoring");
+                sendFinalScoring();
             }
         }
 
@@ -1065,6 +1091,7 @@ public class Server {
 
 
         public void sendFinalScoring(){
+            lock.lock();
             action.canGetPoints(model.getPlayers(),model.getPlayers());
             //TODO Server.action.endOfTheGame(model.getMapUsed().getGameBoard())) SE TI SERVE
             action.finalScoring();
@@ -1084,13 +1111,16 @@ public class Server {
 
                 } catch (IOException e) {
                     // DON'T CARE ITS ENDGAME
+                    e.printStackTrace();
                 }
             }
+            lock.unlock();
             lock.unlock();
         }
 
 
         public void reload(){
+            System.out.println("Current player reload "+ model.getPlayers().get(currentPlayer).getName());
             Player player = model.getPlayers().get(currentPlayer);
             try{
                 lock.lock();
@@ -1103,7 +1133,7 @@ public class Server {
                 if(!weapons.isEmpty()) {
                     for (WeaponCard w : weapons) {
                         sendToClient("RELOAD");
-                        sendListToClient(fromWeaponsToNames(weapons));
+                        sendToClient(w.toString());
                         String response = (String) inputStream.readObject();
 
                         if (response.toUpperCase().equals("Y")) {
@@ -1385,8 +1415,8 @@ public class Server {
         }
 
          public void grab(){
-            synchronized (Server.model.getPlayers()) {
-                synchronized (Server.model.getMapUsed().getGameBoard()) {
+            lock.lock();
+            lock.lock();
                     Player player = Server.model.getPlayers().get(currentPlayer);
                     LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
                     List<String> listOfCells = new LinkedList<>();
@@ -1408,6 +1438,7 @@ public class Server {
 
                             } else { // IT DOESN'T HAVE AN AMMOTILE
                                 Server.addCellToList(c);    // IT'LL BE ADDED AT THE END OF TURN
+                                System.out.println("ADDED TO LIST " + c.toString());
                             }
                         }
                     }
@@ -1440,8 +1471,9 @@ public class Server {
                     } catch (Exception e) {
                         System.out.println("Couldn't grab or couldn't broadcast it.");
                     }
-                }
-            }
+
+             lock.unlock();
+             lock.unlock();
         }
 
 
@@ -1537,6 +1569,7 @@ public class Server {
                 }
             }catch(Exception e){
                 System.out.println("Couldn't shoot.");
+                e.printStackTrace();
             }
         }
 
@@ -1631,7 +1664,7 @@ public class Server {
             lock.lock();
             sendToClient("GRABWEAPON");
             sendToClient(cellItems); // RITORNA 1 O 2 O 3
-            lock.unlock();
+
             try {
                 int x = (int)inputStream.readObject();
                 x--;
@@ -1685,7 +1718,12 @@ public class Server {
                     weaponCard.setReload();
                 }
                 lock.lock();
-               player.getHand().add(weaponCard);
+
+                System.out.println(player.getHand().size());
+                player.getHand().add(weaponCard);
+                System.out.println(player.getHand().size());
+                System.out.println(player.getHand().get((player.getHand().size())-1));
+
                s.getWeaponCards().remove(weaponCard);
                    System.out.println("test gallina"+player+player.getHand().toString());
                   lock.unlock();
@@ -1697,6 +1735,7 @@ public class Server {
             } catch (Exception e) {
                 System.out.println("Couldn't grab from Spawnpoint.");
             }
+        lock.unlock();
             return true;
 
         }

@@ -2,6 +2,7 @@ package adrenaline;
 
 import adrenaline.gameboard.GameBoard;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class WeaponCard extends Card{

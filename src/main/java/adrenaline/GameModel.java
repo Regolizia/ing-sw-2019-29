@@ -2,6 +2,7 @@ package adrenaline;
 
 import adrenaline.gameboard.*;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * @author Eleonora Toscano
  * @version 1.0
  */
-public class GameModel {
+public class GameModel{
 
     final private int numMaxWeaponSpawnpoin=3;
     private LinkedList<Player> players;
