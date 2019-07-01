@@ -14,7 +14,7 @@ public class ActionTest {
     private Action action;
     @Test
     void constructor() {
-        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);// to do coordinatesWithRoom
+        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false);// to do coordinatesWithRoom
         action = new Action(m); //constructor
         WeaponCard w = new Thor();//
         WeaponCard wyellow = new Cyberblade();

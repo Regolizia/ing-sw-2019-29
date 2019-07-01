@@ -13,7 +13,7 @@ public class WeaponCard2Test {
 
     @Test
     public void testConstructor() {
-        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 4);
+        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 4,false);
         Map map = new MapFour(DEATHMATCH);
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,map.getGameBoard().getRoom(0));
         Player p = new Player(c1, Figure.PlayerColor.GRAY);

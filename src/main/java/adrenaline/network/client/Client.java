@@ -18,6 +18,7 @@ public class Client {
         public void login(){}
         public void chooseColor(String s){}
         public void chooseBoard(){}
+        public void frenzy(){}
         public void run(List<String> s){}
         public void grab(List<String> items,List<String> cells){}
         public void payment(){}

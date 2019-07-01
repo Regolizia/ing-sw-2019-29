@@ -18,7 +18,7 @@ public class HellionTest {
         @Test
         public void testConstructor() {
 
-            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
+            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1,false);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c3 = new CoordinatesWithRoom(3,1,m.getMapUsed().getGameBoard().getRoom(1));

@@ -34,6 +34,7 @@ public class GameModel{
     protected Mode mode;
     private Map mapUsed;
     protected Bot bot;
+    protected FrenzyMode frenzyMode;
     private boolean doesntExists;
     public WeaponDeck weaponDeck;
     public PowerUpDeck powerUpDeck;
@@ -47,7 +48,7 @@ public class GameModel{
      * @param chosenMap the map chosen
      */
     public GameModel(Mode m, Bot b,
-                     int chosenMap) {
+                     int chosenMap, boolean frenzyChoice) {
 
         players = new LinkedList<>();
 
@@ -76,6 +77,13 @@ public class GameModel{
         powerUpDeck.shuffleCards();
         ammoTileDeck = new AmmoTileDeck();
         ammoTileDeck.shuffleCards();
+
+        if(frenzyChoice){
+            frenzyMode=FrenzyMode.ON;
+        }else{
+            frenzyMode=FrenzyMode.OFF;
+        }
+
     }
 
     

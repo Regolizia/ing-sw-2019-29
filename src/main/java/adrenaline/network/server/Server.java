@@ -36,6 +36,7 @@ public class Server {
     private static int time = 0;
     private static int connectionsCount = 0;
     private static int boardChosen = 42;
+    private static boolean frenzy = false;  // TO KNOW IF I HAVE CHOSEN YET
     private static boolean gameIsOn = false;
     private static boolean endgame = false;
     private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
@@ -241,6 +242,7 @@ public class Server {
 
                             color = checkColor();
                             chooseBoard(nickname); // it checks if is firstPlayer and asks board
+                            chooseFrenzy();
 
                             sendToClient("ACCEPTED");
 
@@ -265,6 +267,7 @@ public class Server {
                             }
 
                             chooseBoard(nickname); // it checks if is firstPlayer and asks board
+                            chooseFrenzy();
 
                             sendToClient("ACCEPTED");
 
@@ -484,8 +487,7 @@ public class Server {
 
                             setBoardChosen(result);
                             System.out.println("BOARD CHOSEN " + result);
-                            createBoard();
-                            //printWeaponSpawnpoints();
+
                             return;
                         } else {
                             //  ASK AGAIN BECAUSE NOT ACCEPTED
@@ -499,6 +501,36 @@ public class Server {
                 lock.unlock();
                 disconnect();
                 System.out.println("--Board disconnection");
+            }
+        }
+        public void chooseFrenzy(){
+            try {
+                if(!frenzy){
+                    lock.lock();
+                    while(!frenzy){
+
+                        sendToClient("FRENZY");
+                        String response = (String) inputStream.readObject();
+                        if (response.toUpperCase().equals("Y")) {
+
+                            createBoard(true);
+                            setFrenzyChosen();
+                            lock.unlock();
+                            return;
+                        } else {
+                            createBoard(false);
+                            setFrenzyChosen();
+                            lock.unlock();
+                            return;
+                        }
+
+                    }
+
+                }
+            }catch (Exception e){
+                lock.unlock();
+                disconnect();
+                System.out.println("--Frenzy disconnection");
             }
         }
         ////
@@ -3215,13 +3247,16 @@ public class Server {
         }
         return true;
     }
+    public void setFrenzyChosen(){
+        frenzy=true;
+    }
 
     public static void setBoardChosen(int i){
         boardChosen = i;
     }
 
-    public void createBoard(){
-        model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
+    public void createBoard(boolean frenzyChoice){
+        model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen, frenzyChoice);
         //model.startingMap();
         model.populateMap();
         //printSomeAmmos();

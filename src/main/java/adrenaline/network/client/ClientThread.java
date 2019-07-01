@@ -88,6 +88,9 @@ public class ClientThread implements Runnable {
             case "BOARD":
                 client.chooseBoard();
                 break;
+            case "FRENZY":
+                client.frenzy();
+                break;
             case "ACCEPTED":
                 client.waitStart();
                 break;

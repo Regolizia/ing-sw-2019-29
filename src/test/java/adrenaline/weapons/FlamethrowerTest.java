@@ -20,7 +20,7 @@ import java.util.LinkedList;
         @Test
         public void testConstructor() {
             flamethrower=new Flamethrower();
-            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 3);
+            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 3,false);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(4));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(1, 2, m.getMapUsed().getGameBoard().getRoom(3));
             CoordinatesWithRoom c3 = new CoordinatesWithRoom(1, 2, m.getMapUsed().getGameBoard().getRoom(3));

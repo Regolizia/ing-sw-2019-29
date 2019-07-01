@@ -19,7 +19,7 @@ private Zx_2 zx_2;
         @Test
         public void testConstructor() {
             zx_2=new Zx_2();
-            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
+            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1,false);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(3,1,m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c3 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(2));

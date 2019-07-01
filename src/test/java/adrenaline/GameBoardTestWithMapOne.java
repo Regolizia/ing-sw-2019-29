@@ -11,12 +11,12 @@ public class GameBoardTestWithMapOne {
 
     @Test
     public void testConstructor() {
-        GameModel g = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
-        GameModel g2 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,2);
-        GameModel g3 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,3);
-        GameModel g4 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,4);
+        GameModel g = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1,false);
+        GameModel g2 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,2,false);
+        GameModel g3 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,3,false);
+        GameModel g4 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,4,false);
 
-        GameModel g5 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,5);
+        GameModel g5 = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,5,false);
 
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,g.getMapUsed().getGameBoard().getRoom(0));
         g.addPlayer(new Player(c1, Figure.PlayerColor.BLUE));

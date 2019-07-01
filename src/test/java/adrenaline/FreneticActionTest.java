@@ -11,10 +11,10 @@ class FreneticActionTest {
     private FreneticAction actionF;
     @Test
     void constructor(){
-        actionF=new FreneticAction(new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1));
+        actionF=new FreneticAction(new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false));
         WeaponCard w=new Thor();
         WeaponCard wyellow=new Cyberblade();
-        CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1).getMapUsed().getGameBoard().getRoom(0));
+        CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false).getMapUsed().getGameBoard().getRoom(0));
         Player player=new Player(c1, Figure.PlayerColor.GREEN);
 
         actionF.proposeCellsRunFrenzy(c1);

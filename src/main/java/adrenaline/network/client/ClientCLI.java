@@ -6,10 +6,7 @@ import adrenaline.Figure;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 public class ClientCLI extends Client{
 
@@ -339,6 +336,16 @@ public class ClientCLI extends Client{
                 sendToServer(x);
             }else sendToServer("Y");
         }else sendToServer("Y");
+    }
+
+    public void frenzy(){
+        System.out.println("Do you want with Frenzy, [Y] or [N]? ([N] is default): ");
+        if(scanner.hasNextLine()){
+            String x = (String)scanner.nextLine();
+            if(x.toUpperCase().equals("Y") ||x.toUpperCase().equals("N")){
+                sendToServer(x);
+            }else sendToServer("N");
+        }else sendToServer("N");
     }
 
     public void op1(){

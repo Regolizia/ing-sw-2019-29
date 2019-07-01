@@ -19,7 +19,7 @@ public class PlasmaGunTest {
         @Test
         public void testConstructor() {
 
-            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,3);
+            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,3,false);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(2,1,m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c3 = new CoordinatesWithRoom(2,2,m.getMapUsed().getGameBoard().getRoom(3));

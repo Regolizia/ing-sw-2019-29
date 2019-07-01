@@ -10,7 +10,7 @@ class BotActionTest {
 
     @Test
     void constructor(){
-        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1);
+        GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false);
         botAction=new BotAction(m);
         CoordinatesWithRoom c1 = new CoordinatesWithRoom(1, 1, m.getMapUsed().getGameBoard().getRoom(0));
         Player player = new Player(c1, Figure.PlayerColor.GREEN);

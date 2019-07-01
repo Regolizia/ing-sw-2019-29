@@ -20,7 +20,7 @@ public class ThorTest {
         @Test
         public void testConstructor() {
             thor=new Thor();
-            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1);
+            GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1,false);
             CoordinatesWithRoom c1 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(0));
             CoordinatesWithRoom c2 = new CoordinatesWithRoom(3,1,m.getMapUsed().getGameBoard().getRoom(1));
             CoordinatesWithRoom c3 = new CoordinatesWithRoom(1,1,m.getMapUsed().getGameBoard().getRoom(3));
