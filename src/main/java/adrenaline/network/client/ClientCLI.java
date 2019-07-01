@@ -139,6 +139,16 @@ public class ClientCLI extends Client{
          System.out.println(message);
      }
 
+     public void frenzy2(){
+         System.out.println("\nDo you want to Shoot Frenzy [1] or Grab Frenzy [2] [Default]?");
+         if(scanner.hasNextInt()){
+             int x = scanner.nextInt();
+             scanner.nextLine();
+             if(x==2||x==1){
+                 sendIntToServer(x);
+             }else sendIntToServer(2);
+         }else sendIntToServer(2);
+     }
      public void firstTurn(List<String> list){
          System.out.println("\nChoose one card, its color will decide your respawn coordinates. You'll keep the other one:");
          System.out.println(list.get(0) + " [1] [Default] or " + list.get(1) + " [2]\n");
@@ -182,6 +192,32 @@ public class ClientCLI extends Client{
                     case "B":
                     case "C":
                     case "P":
+                    case "S":
+                    case "G":
+                    case "R":
+                        sendToServer(s);
+                        break;
+                    default:
+                        sendToServer("R");
+                        break;
+                }
+
+    } public void frenzy1() {
+            System.out.println("\nFrenzy Menu:\n" +
+                    //"Z: Exit\n" +
+                    "M: Show Map Info\n" +
+                    "B: Show player boards\n" +
+                    "C: Show scores\n"+
+                            "S: Shoot Frenzy\n" +
+                            "G: Grab Frenzy\n" +
+                            "R: Run Frenzy[Default]\n"
+                    );
+            String s = scanner.nextLine();
+            s = s.trim().toUpperCase();
+                switch (s) {
+                    case "M":
+                    case "B":
+                    case "C":
                     case "S":
                     case "G":
                     case "R":

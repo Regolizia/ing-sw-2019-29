@@ -43,6 +43,8 @@ public class Client {
         public void reload(String s){}
         public void mapInfo(String s){}
         public void showMainMenu(){}
+        public void frenzy1(){}
+        public void frenzy2(){}
         public void op1(){}
         public void op2(){}
         public void alt(){}

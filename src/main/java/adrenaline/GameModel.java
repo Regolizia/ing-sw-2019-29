@@ -86,7 +86,13 @@ public class GameModel{
 
     }
 
-    
+    public boolean hasFrenzyOn(){
+        if(frenzyMode==FrenzyMode.ON){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * Adds a Player to the list.

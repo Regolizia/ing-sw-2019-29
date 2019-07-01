@@ -37,6 +37,8 @@ public class Server {
     private static int connectionsCount = 0;
     private static int boardChosen = 42;
     private static boolean frenzy = false;  // TO KNOW IF I HAVE CHOSEN YET
+    private static boolean frenzyState = false;  // TO KNOW IF IT STARTED
+    private static boolean firstPlayerFrenzy = false;
     private static boolean gameIsOn = false;
     private static boolean endgame = false;
     private static List<CoordinatesWithRoom> cellsWithoutTiles = new LinkedList<>();
@@ -116,6 +118,7 @@ public class Server {
         boolean flag = false;
         PlayerCountdown countdown;
         int numberOfActions =0;
+        int numberOfActionsFrenzy =0;
 
         private final Socket socket;
 
@@ -473,6 +476,20 @@ public class Server {
             lock.unlock();
         }
 
+        public void ending(){
+
+            if(model.hasFrenzyOn()){
+                //FRENZY
+                // SI PASSA A DUE TURNI SPECIALI
+                frenzyState=true;
+
+            }else {
+
+                sendFinalScoring();
+                //setGameIsOn(false); // EXITS????????????
+            }
+        }
+
         public void chooseBoard(String name){
             lock.lock();
             try {
@@ -616,6 +633,21 @@ public class Server {
                 return endgame;
             }
         }
+        public boolean hasFirstPlayerPlayedFrenzy(){
+            synchronized (this){
+                return firstPlayerFrenzy;
+            }
+        }
+        public boolean isFrenzyOn(){
+            synchronized (this){
+                return frenzyState;
+            }
+        }
+        public void firstPlayerPlayedFrenzy(){
+            synchronized (this){
+                firstPlayerFrenzy=true;
+            }
+        }
 
         public synchronized void startCountdown(RequestHandler handler){
             countdown = new PlayerCountdown(handler);
@@ -640,6 +672,20 @@ public class Server {
             w.setReload();
         }
 
+        public void setNumberOfActionsFrenzy(int x){
+            numberOfActionsFrenzy=x;
+        }
+        public int getNumberOfActionsFrenzy(){
+            return numberOfActionsFrenzy;
+        }
+        public void numberofActionsFrenzyPlusOne(){
+            numberOfActionsFrenzy++;
+        }
+        public void numberofActionsFrenzyMinusOne(WeaponCard w){
+            numberOfActionsFrenzy--;
+            w.setReload();
+        }
+
         public void handleTurns(){
             setNumberofActions(0);
             boolean counterOn=false;
@@ -647,14 +693,15 @@ public class Server {
                 if (isGameOn()) {
 
                     if (isCurrentPlayer()) {
-                        if(!counterOn) {
+         if(!isFrenzyOn()){
+                        if (!counterOn) {
                             startCountdown(this);
-                            counterOn=true;
+                            counterOn = true;
                         }
 
                         try {
                             if (Server.isFirstTurn()) {
-                                if(currentPlayer==0) {
+                                if (currentPlayer == 0) {
 
                                     broadcast("\nThe board is number " + boardChosen);
                                 }
@@ -663,7 +710,7 @@ public class Server {
                                 System.out.println("FIRST TURN");
                                 System.out.println("\n" + nickname);
                                 sendForBoardSetup();
-                                System.out.println(nickname+"\n");
+                                System.out.println(nickname + "\n");
                                 lock.unlock();
                                 firstTurn();
                                 setNumberofActions(0);
@@ -680,7 +727,7 @@ public class Server {
                                     case "G":
                                         lock.lock();
                                         sendToClient("GRAB");
-                                        grab();
+                                        grab(false,false);
                                         lock.unlock();
                                         numberofActionsPlusOne();
                                         break;
@@ -727,12 +774,12 @@ public class Server {
                             try {//e.printStackTrace();
 
                                 countdown.timer.cancel();
-                                counterOn=false;
+                                counterOn = false;
                                 /*
                                 System.out.println("EXCEPTION DISCONNECTION");
                                 System.out.println("by "+ this.toString());*/
 
-                                if(lock.isHeldByCurrentThread()) {
+                                if (lock.isHeldByCurrentThread()) {
                                     while (lock.getHoldCount() > 0) {
                                         lock.unlock();
                                     }
@@ -766,10 +813,10 @@ public class Server {
 
                             reload();
                             countdown.timer.cancel();
-                            counterOn=false;
+                            counterOn = false;
                             scoring();
                             setNotDamaged();
-                          //synchronized (model.getMapUsed()) {model.populateMap();}
+                            //synchronized (model.getMapUsed()) {model.populateMap();}
 
                             replaceAmmo();
                             replaceWeapons();
@@ -787,19 +834,19 @@ public class Server {
                             System.out.println(lock.isLocked() + " " + nickname);
                             System.out.println(lock.getHoldCount() + " " + nickname);
 */
-                            if(lock.isHeldByCurrentThread()) {
+                            if (lock.isHeldByCurrentThread()) {
                                 while (lock.getHoldCount() > 0) {
                                     lock.unlock();
                                 }
                             }
 
                         }
-                        if (Server.isFirstTurn() && !flag){
+                        if (Server.isFirstTurn() && !flag) {
                             if (currentPlayer == model.getPlayers().size() - 1) {
                                 Server.endFirstTurn();
                             }
                             countdown.timer.cancel();
-                            counterOn=false;
+                            counterOn = false;
 
                             System.out.println("        +++NEXT PLAYER");
                             nextPlayer();
@@ -813,14 +860,141 @@ public class Server {
                             System.out.println(lock.getHoldCount() + " " + nickname);
 */
 
-                            if(lock.isHeldByCurrentThread()) {
+                            if (lock.isHeldByCurrentThread()) {
                                 while (lock.getHoldCount() > 0) {
                                     lock.unlock();
                                 }
                             }
 
                         }
-                    }
+
+         }else { // FRENZY ON
+
+             if (!counterOn) {
+                 startCountdown(this);
+                 counterOn = true;
+             }
+             try{
+             if(!hasFirstPlayerPlayedFrenzy() && !model.getPlayers().get(0).getName().equals(nickname)) {
+
+                 lock.lock();
+                 sendToClient("FRENZY1");
+
+                 String choice = (String) inputStream.readObject();
+                 lock.unlock();
+                 System.out.println(choice);
+                 switch (choice) {
+                     case "G":
+                         lock.lock();
+                         grabFrenzy();
+                         numberofActionsPlusOne();
+                         lock.unlock();
+                         break;
+                     case "R":
+                         lock.lock();
+                         runFrenzy();
+                         numberofActionsPlusOne();
+                         lock.unlock();
+                         break;
+                     case "M":
+                         lock.lock();
+                         sendToClient("MAP");
+                         sendForBoardSetup();
+                         lock.unlock();
+                         break;
+                     case "C":
+                         lock.lock();
+                         sendToClient("SCORE");
+                         sendScoring();
+                         lock.unlock();
+                         break;
+                     case "B":
+                         lock.lock();
+                         sendToClient("BOARDS");
+                         playerBoards();
+                         sendMarks();
+                         sendWeapons();
+                         sendPowerUps();
+                         sendAmmo();
+                         lock.unlock();
+                         break;
+                     case "S":
+                     default:
+                         lock.lock();
+                         shootFrenzy();
+                         numberofActionsPlusOne();
+                         lock.unlock();
+                         break;
+                 }
+
+                 if(numberOfActionsFrenzy ==2) {
+                     countdown.timer.cancel();
+                     counterOn = false;
+                     scoring();
+                     setNotDamaged();
+                     replaceAmmo();
+                     replaceWeapons();
+
+                 }
+             }else{ // FIRST PLAYER HAS PLAYED FRENZY
+
+                 if (model.getPlayers().get(0).getName().equals(nickname)) {
+                     firstPlayerPlayedFrenzy();
+                 }
+
+
+                 lock.lock();
+                 sendToClient("FRENZY2");
+                 int z = (int) inputStream.readObject(); // RITORNA 1 O 2
+                 lock.unlock();
+                 if (z == 1) {
+
+                     lock.lock();
+                     shootFrenzy2();
+                     lock.unlock();
+
+                 } else {
+
+                     lock.lock();
+                     grabFrenzy2();
+                     lock.unlock();
+
+                 }
+
+                 countdown.timer.cancel();
+                 counterOn = false;
+                 scoring();
+                 setNotDamaged();
+                 replaceAmmo();
+                 replaceWeapons();
+
+
+                 if(model.getPlayers().get(model.getPlayers().size()-1).getName().equals(nickname)){
+                     sendFinalScoring();
+                 }
+
+             }
+         } catch (Exception e) {
+                            try {//e.printStackTrace();
+
+                                countdown.timer.cancel();
+                                counterOn = false;
+
+                                if (lock.isHeldByCurrentThread()) {
+                                    while (lock.getHoldCount() > 0) {
+                                        lock.unlock();
+                                    }
+                                }
+
+                                Server.stopHandler(this);
+                                break;
+                            } catch (Exception ex) {
+                                System.out.println("Couldn't disconnect and pass turn.");
+                            }
+                        }
+
+         }
+                    } // NOT CURRENT PLAYER
                     else if(hasBeenDamaged()){  //SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
                     }else{
@@ -837,6 +1011,85 @@ public class Server {
             }
             //System.exit(0);
         }
+
+        public void grabFrenzy(){
+
+                grab(true,false);
+        }
+
+        public void runFrenzy() {
+            try {
+                Player p =model.getPlayers().get(currentPlayer);
+                List<CoordinatesWithRoom> four = freneticAction.proposeCellsRunFrenzy(p.getCoordinatesWithRooms());
+                sendToClient("CHOOSECELL");
+                sendListToClient(fromCellsToNames(four)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                int x = (int) inputStream.readObject();
+                x--;
+                    p.setPlayerPosition(four.get(x));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        public void shootFrenzy(){
+            Player p = model.getPlayers().get(currentPlayer);
+            try {
+                List<CoordinatesWithRoom> one = p.getCoordinatesWithRooms().oneTileDistant(model.getMapUsed().getGameBoard(), false);
+                if (!one.isEmpty()) {
+                    List<String> toSend = new LinkedList<>();
+                    toSend = fromCellsToNames(one);
+                    toSend.add(0,"No, I don't want to move");
+
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int) inputStream.readObject();
+                    x--;
+                    if(x!=0) {
+                        x--;
+                        p.setPlayerPosition(one.get(x));
+                    }
+                }
+                reload();
+
+                shoot();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        public void shootFrenzy2(){
+            Player p = model.getPlayers().get(currentPlayer);
+            try {
+                List<CoordinatesWithRoom> two = p.getCoordinatesWithRooms().oneTileDistant(model.getMapUsed().getGameBoard(), false);
+                two.addAll(p.getCoordinatesWithRooms().xTilesDistant(model.getMapUsed().getGameBoard(),2));
+                if (!two.isEmpty()) {
+                    List<String> toSend = new LinkedList<>();
+                    toSend = fromCellsToNames(two);
+                    toSend.add(0,"No, I don't want to move");
+
+                    sendToClient("CHOOSECELL");
+                    sendListToClient(toSend); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                    int x = (int) inputStream.readObject();
+                    x--;
+                    if(x!=0) {
+                        x--;
+                        p.setPlayerPosition(two.get(x));
+                    }
+                }
+                reload();
+
+                shoot();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        public void grabFrenzy2(){
+                grab(true,true);
+        }
+
 
         public void setNotDamaged(){
             for (Player p : model.getPlayers()){
@@ -1082,6 +1335,7 @@ public class Server {
             }
         }
 
+        // EVERY TURN
         public void scoring(){
             List<Player> victims = new LinkedList<>();
             for(Player p : model.getPlayers()){
@@ -1105,8 +1359,7 @@ public class Server {
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
 
-                sendFinalScoring();
-                setGameIsOn(false); // EXITS????????????
+                ending();
             }
 
         }
@@ -1489,9 +1742,21 @@ public class Server {
             broadcast("\nBot moved to "+choosenRun);
         }
 
-         public void grab(){
+         public void grab(boolean frenzy, boolean second){
                     Player player = model.getPlayers().get(currentPlayer);
-                    LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
+                    List<CoordinatesWithRoom> possibleCells = new LinkedList<>();
+
+                    if(frenzy){ // FRENZY GRAB - UP TO 2
+                        possibleCells = player.getCoordinatesWithRooms().oneTileDistant(model.getMapUsed().getGameBoard(),false);
+                        possibleCells.addAll(player.getCoordinatesWithRooms().xTilesDistant(model.getMapUsed().getGameBoard(),2));
+                        possibleCells.add(player.getCoordinatesWithRooms());
+                        if(second){
+                            possibleCells.addAll(player.getCoordinatesWithRooms().xTilesDistant(model.getMapUsed().getGameBoard(),3));
+                        }
+
+                    }else { //NORMAL GRAB
+                        possibleCells = action.proposeCellsGrab(player);
+                    }
                     List<String> listOfCells = new LinkedList<>();
                     List<String> listOfItems = new LinkedList<>();
                     if (!possibleCells.isEmpty()) {
@@ -3262,6 +3527,7 @@ public class Server {
         model.populateMap();
         //printSomeAmmos();
         action = new Action(model);
+        freneticAction = new FreneticAction(model);
     }
 
     public void printSomeAmmos(){

@@ -112,6 +112,12 @@ public class ClientThread implements Runnable {
             case "YOURTURN":
                 client.showMainMenu();
                 break;
+            case "FRENZY1":
+                client.frenzy1();
+                break;
+            case "FRENZY2":
+                client.frenzy2();
+                break;
             case "ENDGAME":
                 client.endgame(getListFromServer());
                 break;
