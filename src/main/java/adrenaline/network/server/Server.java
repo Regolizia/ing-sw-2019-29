@@ -818,9 +818,9 @@ public class Server {
                             setNotDamaged();
                             //synchronized (model.getMapUsed()) {model.populateMap();}
 
-                            replaceAmmo();
-                            replaceWeapons();
-
+                            //replaceAmmo();
+                            //replaceWeapons();
+                            model.populateMap();
 
                             System.out.println("        ---NEXT PLAYER");
                             nextPlayer();
@@ -1442,15 +1442,17 @@ public class Server {
                             if (!action.canPayCard(w, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
                                 //MANDA MESSAGGIO
                                 System.out.println("CAN'T PAY");
-                            } else {
-                                if (z == 1) {
+                            }
+                            if (z == 1&&action.canPayCard(w,player,payOption, AmmoCube.Effect.BASE,playerPowerUpCards)) {
                                     action.payAmmo(player, w, AmmoCube.Effect.BASE, 0);
+                                    w.setReload();
                                 } else {
                                     action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.BASE, 0);
                                     player.getPowerUp().removeAll(playerPowerUpCards);
                                     model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                                     playerPowerUpCards.clear();
-                                }
+                                    w.setReload();
+
                             }
                         }
                     }
@@ -1813,6 +1815,7 @@ public class Server {
 
 
         public void shoot(){
+            synchronized (model){
             Player player = model.getPlayers().get(currentPlayer);
             LinkedList<WeaponCard>playerWeaponCards=new LinkedList<>();
             WeaponCard weaponCard=new WeaponCard();
@@ -1906,7 +1909,7 @@ public class Server {
             }catch(Exception e){
                 System.out.println("Couldn't shoot.");
                 e.printStackTrace();
-            }
+            }}
         }
 
         public void shootOtherEffect(AmmoCube.Effect e, WeaponCard weaponCard, Player player, List<EffectAndNumber> effects) {
