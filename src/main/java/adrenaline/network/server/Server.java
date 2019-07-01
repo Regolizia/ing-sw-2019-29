@@ -116,11 +116,11 @@ public class Server {
         static PlayerCountdown countdown;
         static int numberOfActions =0;
 
-        private final transient Socket socket;
+        private final Socket socket;
 
-        private final transient ObjectInputStream inputStream;
+        private final ObjectInputStream inputStream;
 
-        private final transient ObjectOutputStream outputStream;
+        private final ObjectOutputStream outputStream;
 
         public RequestHandler(Socket socket) throws IOException {
 
@@ -1138,6 +1138,7 @@ public class Server {
                 }
                 lock.unlock();
             } catch (Exception e){
+                e.printStackTrace();
                 System.out.println("Couldn't reload.");
             }
 
@@ -1618,7 +1619,6 @@ public class Server {
 
 
     public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
-
             /*
              * controllo io se può pagarla + ricarica ma tu devi:
              * 1-controllare che abbia meno di 3 carte in mano x
@@ -3099,7 +3099,7 @@ public class Server {
         public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*5;
+                    int i = time*20;
 
                     public void run() {
                         System.out.println(i--);

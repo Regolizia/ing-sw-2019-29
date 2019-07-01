@@ -1,17 +1,21 @@
 package adrenaline;
 
 
+import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * player's class
  * @author Giulia Valcamonica
  * @author Eleonora Toscano
  * @version 1.0
  **/
-public class Player {
-    private final static int numMaxCube = 3;
-    private final static int trackSize = 12;
-    private final static  int trackPointSize=5;
+public class Player implements Serializable {
+    private final int numMaxCube = 3;
+    private final int trackSize = 12;
+    private final int trackPointSize=5;
     private int[] pointTrackFren;
     private Figure.PlayerColor[] track;
     private int[] pointTrack;
@@ -20,8 +24,8 @@ public class Player {
     private CoordinatesWithRoom coordinates;
     private Figure.PlayerColor color;
     private CoordinatesWithRoom respawnCoordinates;
-    private LinkedList<WeaponCard> hand;
-    private LinkedList<PowerUpCard> powerups;
+    private List<WeaponCard> hand;
+    private List<PowerUpCard> powerups;
     private int points;
     private int indexPointCounter; //to indicate max points assegnable
     private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
@@ -320,7 +324,7 @@ public class Player {
      *getHand
      * @return player's weapons hand
      */
-    public LinkedList<WeaponCard> getHand() {
+    public List<WeaponCard> getHand() {
         return hand;
     }
 
@@ -340,7 +344,7 @@ public class Player {
         return x;
     }
 
-    public LinkedList<PowerUpCard> getPowerUp() {
+    public List<PowerUpCard> getPowerUp() {
         return powerups;
     }
 
@@ -659,7 +663,7 @@ public class Player {
         return allPlayerPos;
     }
     public void addWeaponcard(WeaponCard weaponCard){
-        this.hand.addLast(weaponCard);
+        this.hand.add(weaponCard);
     }
 
     public int getFirstPositionOnTrack(Player enemy){
