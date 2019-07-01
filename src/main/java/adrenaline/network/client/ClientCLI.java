@@ -143,7 +143,7 @@ public class ClientCLI extends Client{
      }
 
      public void firstTurn(List<String> list){
-         System.out.println("\nChoose one card to keep, the color of the other one will decide your respawn coordinates:");
+         System.out.println("\nChoose one card, its color will decide your respawn coordinates. You'll keep the other one:");
          System.out.println(list.get(0) + " [1] [Default] or " + list.get(1) + " [2]\n");
          if(scanner.hasNextInt()){
              int x = scanner.nextInt();
