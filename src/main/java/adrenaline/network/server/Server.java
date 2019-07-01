@@ -1415,8 +1415,6 @@ public class Server {
         }
 
          public void grab(){
-            lock.lock();
-            lock.lock();
                     Player player = Server.model.getPlayers().get(currentPlayer);
                     LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
                     List<String> listOfCells = new LinkedList<>();
@@ -1472,8 +1470,6 @@ public class Server {
                         System.out.println("Couldn't grab or couldn't broadcast it.");
                     }
 
-             lock.unlock();
-             lock.unlock();
         }
 
 
@@ -1709,7 +1705,6 @@ public class Server {
                 }
 
                 //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
-                int number=0;
 
                 if(z==1){action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
                     weaponCard.setReload();
@@ -1717,6 +1712,8 @@ public class Server {
                 }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
                     weaponCard.setReload();
                 }
+
+
                 lock.lock();
 
                 System.out.println(player.getHand().size());
@@ -1726,10 +1723,11 @@ public class Server {
 
                s.getWeaponCards().remove(weaponCard);
                    System.out.println("test gallina"+player+player.getHand().toString());
-                  lock.unlock();
+
                 player.getPowerUp().removeAll(playerPowerUpCards);
                 model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                 action.run(player,getSpawnpointCoordinates(s));
+                lock.unlock();
                 broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
 
             } catch (Exception e) {

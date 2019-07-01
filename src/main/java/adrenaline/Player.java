@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 1.0
  **/
 public class Player{
+    private static final long serialversionUId=1;
     private final int numMaxCube = 3;
     private final int trackSize = 12;
     private final int trackPointSize=5;
@@ -34,6 +35,7 @@ public class Player{
     private boolean damaged = false;
     private String shooter = null;
     private int mortalPoints;
+    transient private Thread myThread;
 
 
 
@@ -96,6 +98,7 @@ public class Player{
         this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH,PlayerPos.SIXTH};
         mortalPoints=0;
         this.name=name;
+        this.myThread = new Thread();
     }
 
     /**
