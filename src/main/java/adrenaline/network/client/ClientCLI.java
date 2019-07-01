@@ -477,7 +477,7 @@ public class ClientCLI extends Client{
     public void chooseRoom(List<String> rooms){
         System.out.println("\nChoose a room (first is default):");
         for(int i =0;i<rooms.size();i++) {
-            System.out.println(rooms.get(i) + " ["+i+1+"] ");
+            System.out.println(rooms.get(i) + " ["+(i+1)+"] ");
         }
         if(scanner.hasNextInt()){
             int x = scanner.nextInt();
