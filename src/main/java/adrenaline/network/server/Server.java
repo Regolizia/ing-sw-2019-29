@@ -674,6 +674,7 @@ public class Server {
                                         lock.lock();
                                         sendToClient("BOARDS");
                                         playerBoards();
+                                        sendMarks();
                                         sendWeapons();
                                         sendAmmo();
                                         lock.unlock();
@@ -1342,6 +1343,23 @@ public class Server {
                 System.out.println("Couldn't send player boards.");
             }
         }
+
+        public void sendMarks(){
+            try {
+                List<String> list = new LinkedList<>();
+                for(Player p : model.getPlayers()){
+                    synchronized (p.getHand()) {
+                        for (int i = 0; i < 12; i++) {
+                                list.add(p.getMarks()[i].toString());
+                        }
+                    }
+                }
+                sendListToClient(list);
+            }catch (Exception e){
+                System.out.println("Couldn't send marks.");
+            }
+        }
+
         public void sendWeapons(){
             try {
                 List<String> list = new LinkedList<>();

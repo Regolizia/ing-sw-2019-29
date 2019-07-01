@@ -473,19 +473,22 @@ public class ClientCLI extends Client{
         reconnect();
     }
 
-    public void boards(List<String> names, List<String> drops,List<String> weapons,List<String> ammo){
+    public void boards(List<String> names, List<String> drops,List<String> marks, List<String> weapons,List<String> ammo){
         int i=0;
+        System.out.println("Player Boards");
         for(int y=0;y<names.size();y++){
             System.out.println(names.get(y)+": "+drops.get(i)+" "+drops.get(i+1)+" "+drops.get(i+2)+" "+drops.get(i+3)+" "+
                     drops.get(i+4)+" "+drops.get(i+5)+" "+drops.get(i+6)+" "+
                     drops.get(i+7)+" "+drops.get(i+8)+" "+drops.get(i+9)+" "+drops.get(i+10)+" "+drops.get(i+11));
             i=i+12;
         }
+        printMarks(names,marks);
         printWeapons(names,weapons);
         printAmmo(names,ammo);
     }
     public void printWeapons(List<String> names,List<String> weapons){
         int i=0;
+        System.out.println("Weapons");
         for(int y=0;y<names.size();y++){
             System.out.println(names.get(y)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)+" "
                     +weapons.get(i+3)+" "+weapons.get(i+4)+" "+weapons.get(i+5));
@@ -493,8 +496,20 @@ public class ClientCLI extends Client{
         }
     }
 
+    public void printMarks(List<String> names,List<String> marks){
+        int i=0;
+        System.out.println("Marks");
+        for(int y=0;y<names.size();y++){
+            System.out.println(names.get(y)+": "+marks.get(i)+" "+marks.get(i+1)+" "+marks.get(i+2)+" "
+                    +marks.get(i+3)+" "+marks.get(i+4)+" "+marks.get(i+5)+" "+marks.get(i+6)+" "+marks.get(i+7)+" "+marks.get(i+8)+" "
+                    +marks.get(i+9)+" "+marks.get(i+10)+" "+marks.get(i+11));
+            i=i+12;
+        }
+    }
+
     public void printAmmo(List<String> names,List<String> ammo){
         int y=0;
+        System.out.println("Ammo");
         for(int i=0;i<names.size();i++){
             System.out.println(names.get(i)+": BLUE "+ammo.get(y)+" - RED "+ammo.get(y+1)+" - YELLOW "+ammo.get(y+2));
             y=y+3;
