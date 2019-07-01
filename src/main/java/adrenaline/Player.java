@@ -2,6 +2,7 @@ package adrenaline;
 
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -86,8 +87,8 @@ public class Player{
         this.respawnCoordinates = new CoordinatesWithRoom(0,0,new Room());
         this.coordinates = new CoordinatesWithRoom(0,0,new Room());
         // they are lists because we need to add and remove easily
-        this.hand = new LinkedList<WeaponCard>();
-        this.powerups = new LinkedList<PowerUpCard>();
+        this.hand = Collections.synchronizedList(new LinkedList<WeaponCard>());
+        this.powerups = Collections.synchronizedList(new LinkedList<PowerUpCard>());
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         this.points = 0;
         this.pointTrack = new int[]{1,2,4,6,8};

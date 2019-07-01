@@ -27,12 +27,6 @@ class ServerTest {
         String string[]=new String[47];
        try{ server.setup(string);}catch (Exception e){}
       server.printPlayerAmmo(player);
-        try{Server.RequestHandler requestHandler=new Server.RequestHandler(socket);
-
-        requestHandler.sendToClient("");
-
-        }catch (Exception e){}
-
 
 
     }

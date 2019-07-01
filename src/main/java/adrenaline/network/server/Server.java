@@ -26,7 +26,7 @@
 
 public class Server {
 
-    private static GameModel model;
+    private GameModel model;
     private static Action action;
     private static BotAction botAction;
     private static FreneticAction freneticAction;
@@ -77,7 +77,7 @@ public class Server {
     }
 
 
-    public static void start() {
+    public void start() {
         try {
             serverSocket = new ServerSocket(4321);
         } catch (IOException e) {
@@ -108,13 +108,13 @@ public class Server {
         handler.interrupt();
     }
 
-    public static class RequestHandler extends Thread {
+    public class RequestHandler extends Thread {
 
         Figure.PlayerColor color;
         String nickname;
-        static boolean flag = false;
-        static PlayerCountdown countdown;
-        static int numberOfActions =0;
+        boolean flag = false;
+        PlayerCountdown countdown;
+        int numberOfActions =0;
 
         private final Socket socket;
 
@@ -144,7 +144,7 @@ public class Server {
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     System.out.println("Handler couldn't reach client. ");
-                    if(Server.model.getPlayers().get(currentPlayer).getName().equals(nickname)) {
+                    if(model.getPlayers().get(currentPlayer).getName().equals(nickname)) {
                         nextPlayer();
                         removeOneConnection();
                     }
@@ -211,11 +211,11 @@ public class Server {
             outputStream.flush();
         }
 
-        public static void countConnections(){
+        public void countConnections(){
 
             Server.connectionsCount++;
         }
-        public static void removeOneConnection(){
+        public void removeOneConnection(){
 
             Server.connectionsCount--;
         }
@@ -409,7 +409,7 @@ public class Server {
 
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             try {
-                Server.model.addPlayer(new Player(name, color));
+                model.addPlayer(new Player(name, color));
                 /*
                 System.out.println(lock.isHeldByCurrentThread() + " held by " + nickname);
                 System.out.println(lock.isLocked() + " is locked " + nickname);
@@ -482,9 +482,9 @@ public class Server {
                         if (result == 1 || result == 2 || result == 3 || result == 4) {
                             if(boardChosen!=42) return;
 
-                            Server.setBoardChosen(result);
+                            setBoardChosen(result);
                             System.out.println("BOARD CHOSEN " + result);
-                            Server.createBoard();
+                            createBoard();
                             //printWeaponSpawnpoints();
                             return;
                         } else {
@@ -554,12 +554,12 @@ public class Server {
         }
 
         public boolean isCurrentPlayer(){
-            synchronized (Server.model.getPlayers().get(currentPlayer)){
-                return Server.model.getPlayers().get(currentPlayer).getName().equals(nickname);
+            synchronized (model.getPlayers().get(currentPlayer)){
+                return model.getPlayers().get(currentPlayer).getName().equals(nickname);
             }
         }
         public boolean hasBeenDamaged(){
-            synchronized (Server.model.getPlayers()){
+            synchronized (model.getPlayers()){
                 return fromNameToPlayer(nickname).damagedStatus();
             }
         }
@@ -585,25 +585,25 @@ public class Server {
             }
         }
 
-        public static synchronized void startCountdown(RequestHandler handler){
+        public synchronized void startCountdown(RequestHandler handler){
             countdown = new PlayerCountdown(handler);
             System.out.println(handler.nickname + " "+ handler);
         }
 
-        public static void flagFalse(){
+        public void flagFalse(){
             flag=false;
         }
 
-        public static void setNumberofActions(int x){
+        public void setNumberofActions(int x){
             numberOfActions=x;
         }
-        public static int getNumberofActions(){
+        public int getNumberofActions(){
             return numberOfActions;
         }
-        public static void numberofActionsPlusOne(){
+        public void numberofActionsPlusOne(){
             numberOfActions++;
         }
-        public static void numberofActionsMinusOne(){
+        public void numberofActionsMinusOne(){
             numberOfActions--;
         }
 
@@ -948,7 +948,7 @@ public class Server {
         }
 
         public synchronized void firstTurn(){
-            synchronized (Server.model.getPlayers().get(currentPlayer)) {
+            synchronized (model.getPlayers().get(currentPlayer)) {
                 lock.lock();
                 LinkedList<PowerUpCard> twoCards = new LinkedList<>();
                 twoCards.add(model.powerUpDeck.pickPowerUp());
@@ -956,7 +956,7 @@ public class Server {
                 List<String> cards = new LinkedList<>();
                 cards.add(0, twoCards.get(0).toString());
                 cards.add(1, twoCards.get(1).toString());
-                Player player = Server.model.getPlayers().get(currentPlayer);
+                Player player = model.getPlayers().get(currentPlayer);
                 try {
                     sendListToClient(cards);
                     int x = (int) inputStream.readObject();
@@ -967,19 +967,19 @@ public class Server {
                     PowerUpCard p = twoCards.removeFirst();
                     //System.out.println("TO KEEP "+p.toString());
                     if (x == 1) {
-                        Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+                        model.getPlayers().get(currentPlayer).getPowerUp().add(p);
 
                         p = twoCards.removeFirst();
                         //System.out.println("TO USE AS POSITION "+p.toString());
 
-                        setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+                        setInitialPosition(p.getPowerUpColor(), model.getPlayers().get(currentPlayer));
                     } else {
-                        setInitialPosition(p.getPowerUpColor(), Server.model.getPlayers().get(currentPlayer));
+                        setInitialPosition(p.getPowerUpColor(), model.getPlayers().get(currentPlayer));
 
                         p = twoCards.removeFirst();
                         //System.out.println("TO USE AS POSITION "+p.toString());
 
-                        Server.model.getPlayers().get(currentPlayer).getPowerUp().add(p);
+                        model.getPlayers().get(currentPlayer).getPowerUp().add(p);
                     }
 
                 } catch (Exception e) {
@@ -997,7 +997,7 @@ public class Server {
          * Updates index of next Player.
          * If everybody has played, it resets.
          */
-        public static void nextPlayer(){
+        public void nextPlayer(){
             try {                System.out.println("------CHANGING PLAYER");
                 if (currentPlayer != model.getPlayers().size() - 1) {
                     currentPlayer++;
@@ -1345,13 +1345,15 @@ public class Server {
             try {
                 List<String> list = new LinkedList<>();
                 for(Player p : model.getPlayers()){
-                    for(int i=0;i<3;i++){
-                        if(p.getHand().size()>i){
-                            list.add(p.getHand().get(i).toString());
-                            list.add(Boolean.toString(p.getHand().get(i).getReload()));
-                        }else {
-                            list.add("[   ]");
-                            list.add("[   ]");
+                    synchronized (p.getHand()) {
+                        for (int i = 0; i < 3; i++) {
+                            if (p.getHand().size() > i) {
+                                list.add(p.getHand().get(i).toString());
+                                list.add(Boolean.toString(p.getHand().get(i).getReload()));
+                            } else {
+                                list.add("[   ]");
+                                list.add("[   ]");
+                            }
                         }
                     }
                 }
@@ -1415,7 +1417,7 @@ public class Server {
         }
 
          public void grab(){
-                    Player player = Server.model.getPlayers().get(currentPlayer);
+                    Player player = model.getPlayers().get(currentPlayer);
                     LinkedList<CoordinatesWithRoom> possibleCells = action.proposeCellsGrab(player);
                     List<String> listOfCells = new LinkedList<>();
                     List<String> listOfItems = new LinkedList<>();
@@ -1482,9 +1484,11 @@ public class Server {
             int z = 0;
             try {
                 //CHIEDI CARTA DA PAGARE
-                for (WeaponCard w : player.getHand()) {
-                    if (w.getReload()) {
-                        playerWeaponCards.add(w);
+                synchronized (player.getHand()) {
+                    for (WeaponCard w : player.getHand()) {
+                        if (w.getReload()) {
+                            playerWeaponCards.add(w);
+                        }
                     }
                 }
                 if (playerWeaponCards.isEmpty()) {
@@ -1693,8 +1697,10 @@ public class Server {
                 // CONTROLLA SE PUO RACCOGLIERE ALTRIMENTI RICHIEDI DROP ARMA, METTILA IN DCARD
                 if(!player.canGrabWeapon()){
                     List<String> yourWeapons = new LinkedList<>();
-                    for (WeaponCard w : player.getHand()) {
-                        yourWeapons.add(w.toString());
+                    synchronized (player.getHand()) {
+                        for (WeaponCard w : player.getHand()) {
+                            yourWeapons.add(w.toString());
+                        }
                     }
                     lock.lock();
                     sendToClient("DROPWEAPON");
@@ -1704,29 +1710,24 @@ public class Server {
                     lock.unlock();
                 }
 
+                lock.lock();
+
                 //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
 
-                if(z==1){action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
+                if(z==1){
+                    action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
                     weaponCard.setReload();
 
-                }else{action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
+                }else{
+                    action.payPowerUp(weaponCard,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
                     weaponCard.setReload();
                 }
 
+                //////
+                CoordinatesWithRoom spc = getSpawnpointCoordinates(s);
+                action.grabWeapon(player,weaponCard, s, playerPowerUpCards, spc);
+                //////
 
-                lock.lock();
-
-                System.out.println(player.getHand().size());
-                player.getHand().add(weaponCard);
-                System.out.println(player.getHand().size());
-                System.out.println(player.getHand().get((player.getHand().size())-1));
-
-               s.getWeaponCards().remove(weaponCard);
-                   System.out.println("test gallina"+player+player.getHand().toString());
-
-                player.getPowerUp().removeAll(playerPowerUpCards);
-                model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-                action.run(player,getSpawnpointCoordinates(s));
                 lock.unlock();
                 broadcast(player+" grabbed "+weaponCard.toString()+ " from Spawnpoint "+ s.getColor().toString());
 
@@ -3062,7 +3063,6 @@ public class Server {
                 numberofActionsMinusOne();
                 ex.printStackTrace();
             }
-            lock.unlock();
             return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
         }
 
@@ -3148,8 +3148,8 @@ public class Server {
                             handler.disconnect();
                             timer.cancel();
                             System.out.println("          NEXT PLAYER");
-                            RequestHandler.nextPlayer();
-                            RequestHandler.flagFalse();
+                            handler.nextPlayer();
+                            handler.flagFalse();
                         }
                     }
                 }, 0, 1000);
@@ -3163,7 +3163,7 @@ public class Server {
 
 
 
-    public static boolean isBlank(String str) {
+    public boolean isBlank(String str) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
             return true;
@@ -3180,7 +3180,7 @@ public class Server {
         boardChosen = i;
     }
 
-    public static void createBoard(){
+    public void createBoard(){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen);
         //model.startingMap();
         model.populateMap();
@@ -3188,7 +3188,7 @@ public class Server {
         action = new Action(model);
     }
 
-    public static void printSomeAmmos(){
+    public void printSomeAmmos(){
         for(AmmoTile t : model.getMapUsed().getGameBoard().getRooms().get(3).getTiles()){
             System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
         }

@@ -3,6 +3,7 @@ package adrenaline;
 
 import adrenaline.gameboard.Door;
 import adrenaline.gameboard.GameBoard;
+import adrenaline.network.server.Server;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -1185,7 +1186,32 @@ public class Action {
     }
 
 
+        public void grabWeapon(Player player,WeaponCard weaponCard, Spawnpoint s, List<PowerUpCard> playerPowerUpCards, CoordinatesWithRoom spawncoord) {
+               try {
+                   synchronized (player.getHand()) {
+                   System.out.println(player.getHand().size());
+                   player.getHand().add(weaponCard);
+                   System.out.println(player.getHand().size());
+                   System.out.println(player.getHand().get((player.getHand().size()) - 1));
+                   System.out.println(weaponCard.getReload());
 
+                       for (WeaponCard w : player.getHand()) {
+                           System.out.println(w.toString());
+                       }
+
+                   s.getWeaponCards().remove(weaponCard);
+                   System.out.println("test gallina" + player + player.getHand().toString());
+
+                   player.getPowerUp().removeAll(playerPowerUpCards);
+                   model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+                   run(player, spawncoord);
+                   }
+
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
+
+            }
 
 }
 
