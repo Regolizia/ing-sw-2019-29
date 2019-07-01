@@ -635,8 +635,9 @@ public class Server {
         public void numberofActionsPlusOne(){
             numberOfActions++;
         }
-        public void numberofActionsMinusOne(){
+        public void numberofActionsMinusOne(WeaponCard w){
             numberOfActions--;
+            w.setReload();
         }
 
         public void handleTurns(){
@@ -1567,7 +1568,7 @@ public class Server {
                     lock.lock();
                     sendToClient("MESSAGE");
                     sendToClient("Sorry, you don't have reloaded weapons in your hand");
-                    numberofActionsMinusOne();
+                    numberofActionsMinusOne(new WeaponCard());
                     lock.unlock();
                 } else {
                     lock.lock();
@@ -1916,7 +1917,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                             lock.unlock();
                             return targets;
@@ -2003,7 +2004,7 @@ public class Server {
                                     }else{
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no targets.");
-                                        numberofActionsMinusOne();
+                                        numberofActionsMinusOne(w);
                                     }
                                 }
                             }
@@ -2012,7 +2013,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -2053,7 +2054,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no rooms different from yours.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -2073,7 +2074,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         lock.unlock();
@@ -2117,7 +2118,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.OP1) {
@@ -2137,7 +2138,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         lock.unlock();
@@ -2161,7 +2162,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -2200,7 +2201,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -2231,7 +2232,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         return targets;
@@ -2268,7 +2269,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                             lock.unlock();
                             return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
@@ -2297,7 +2298,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                             e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
                             lock.unlock();
@@ -2334,7 +2335,7 @@ public class Server {
                             } else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                             // SHOOT MAYBE DIFFERENT TARGET FROM BASE
                             targets.removeAll(pastTargets);
@@ -2362,7 +2363,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         lock.unlock();
@@ -2387,7 +2388,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                             lock.unlock();
                             return targets;
@@ -2412,7 +2413,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                                 lock.unlock();
                             }
                         }
@@ -2442,7 +2443,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                                 lock.unlock();
                             }
                         }
@@ -2527,12 +2528,12 @@ public class Server {
                                 }else{
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
-                                    numberofActionsMinusOne();
+                                    numberofActionsMinusOne(w);
                                 }
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         lock.unlock();
@@ -2584,7 +2585,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -2641,14 +2642,14 @@ public class Server {
                                     }else{
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no cells.");
-                                        numberofActionsMinusOne();
+                                        numberofActionsMinusOne(w);
                                     }
                                     return targets;
                                 }
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
 
                         }
@@ -2679,7 +2680,7 @@ public class Server {
                                 }else{
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
-                                    numberofActionsMinusOne();
+                                    numberofActionsMinusOne(w);
                                     lock.unlock();
                                     return new LinkedList<>();
                                 }
@@ -2709,7 +2710,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         break;
@@ -2776,7 +2777,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -2829,7 +2830,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         break;
 
@@ -2862,13 +2863,13 @@ public class Server {
                                 }else{
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
-                                    numberofActionsMinusOne();
+                                    numberofActionsMinusOne(w);
                                 }
                             }
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -2902,7 +2903,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         return targets;
@@ -2953,7 +2954,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                                 lock.unlock();
                             }
                         }
@@ -2978,7 +2979,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                                 lock.unlock();
                             }
                         }
@@ -3050,12 +3051,12 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                numberofActionsMinusOne();
+                                numberofActionsMinusOne(w);
                             }
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no cells.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         return new LinkedList<>();
 
@@ -3076,7 +3077,7 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
@@ -3125,14 +3126,14 @@ public class Server {
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
-                            numberofActionsMinusOne();
+                            numberofActionsMinusOne(w);
                         }
                         lock.unlock();
                         break;
                 }
             } catch (Exception ex) {
                 System.out.println("Couldn't shoot.");
-                numberofActionsMinusOne();
+                numberofActionsMinusOne(w);
                 ex.printStackTrace();
             }
             return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
