@@ -676,6 +676,7 @@ public class Server {
                                         playerBoards();
                                         sendMarks();
                                         sendWeapons();
+                                        sendPowerUps();
                                         sendAmmo();
                                         lock.unlock();
                                         break;
@@ -1348,7 +1349,7 @@ public class Server {
             try {
                 List<String> list = new LinkedList<>();
                 for(Player p : model.getPlayers()){
-                    synchronized (p.getHand()) {
+                    synchronized (p.getMarks()) {
                         for (int i = 0; i < 12; i++) {
                                 list.add(p.getMarks()[i].toString());
                         }
@@ -1371,6 +1372,26 @@ public class Server {
                                 list.add(Boolean.toString(p.getHand().get(i).getReload()));
                             } else {
                                 list.add("[   ]");
+                                list.add("[   ]");
+                            }
+                        }
+                    }
+                }
+                sendListToClient(list);
+            }catch (Exception e){
+                System.out.println("Couldn't send hand weapons.");
+            }
+        }
+
+        public void sendPowerUps(){
+            try {
+                List<String> list = new LinkedList<>();
+                for(Player p : model.getPlayers()){
+                    synchronized (p.getPowerUp()) {
+                        for (int i = 0; i < 3; i++) {
+                            if (p.getPowerUp().size() > i) {
+                                list.add(p.getPowerUp().get(i).toString());
+                            } else {
                                 list.add("[   ]");
                             }
                         }

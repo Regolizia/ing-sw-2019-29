@@ -473,7 +473,7 @@ public class ClientCLI extends Client{
         reconnect();
     }
 
-    public void boards(List<String> names, List<String> drops,List<String> marks, List<String> weapons,List<String> ammo){
+    public void boards(List<String> names, List<String> drops,List<String> marks, List<String> weapons,List<String> powerups,List<String> ammo){
         int i=0;
         System.out.println("Player Boards");
         for(int y=0;y<names.size();y++){
@@ -484,6 +484,7 @@ public class ClientCLI extends Client{
         }
         printMarks(names,marks);
         printWeapons(names,weapons);
+        printPowerups(names,powerups);
         printAmmo(names,ammo);
     }
     public void printWeapons(List<String> names,List<String> weapons){
@@ -493,6 +494,15 @@ public class ClientCLI extends Client{
             System.out.println(names.get(y)+": "+weapons.get(i)+" "+weapons.get(i+1)+" "+weapons.get(i+2)+" "
                     +weapons.get(i+3)+" "+weapons.get(i+4)+" "+weapons.get(i+5));
             i=i+6;
+        }
+    }
+
+    public void printPowerups(List<String> names,List<String> powerups){
+        int i=0;
+        System.out.println("Powerups");
+        for(int y=0;y<names.size();y++){
+            System.out.println(names.get(y)+": "+powerups.get(i)+" "+powerups.get(i+1)+" "+powerups.get(i+2));
+            i=i+3;
         }
     }
 
