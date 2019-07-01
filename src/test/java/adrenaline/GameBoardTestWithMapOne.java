@@ -36,9 +36,9 @@ public class GameBoardTestWithMapOne {
         g.getPlayers().get(0).setPlayerPosition(1,1,g.getMapUsed().getGameBoard().getRoom(1));
         g.getPlayers().get(0).getTrack()[11] = Figure.PlayerColor.BLUE;
         g.getPlayers().get(0).isDead();
-        g.getPlayers().get(0).hasDied();
+        //g.getPlayers().get(0).hasDied();
         System.out.printf(Arrays.toString(g.getPlayers().get(0).getPointsArray()));
-        g.getPlayers().get(0).hasDied();
+        //g.getPlayers().get(0).hasDied();
         System.out.printf(Arrays.toString(g.getPlayers().get(0).getPointsArray()));
 
     }
