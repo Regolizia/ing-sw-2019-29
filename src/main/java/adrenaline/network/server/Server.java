@@ -1124,7 +1124,8 @@ public class Server {
             Player player = model.getPlayers().get(currentPlayer);
             try{
                 lock.lock();
-                List<WeaponCard> weapons = player.getHand();
+                List<WeaponCard> weapons = new LinkedList<>();
+                weapons.addAll(player.getHand());
                 for (WeaponCard w : weapons){
                     if(w.getReload()){
                         weapons.remove(w);
