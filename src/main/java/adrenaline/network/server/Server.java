@@ -1100,38 +1100,40 @@ public class Server {
                         weapons.remove(w);
                     }
                 }
-                for(WeaponCard w : weapons){
-                    sendToClient("RELOAD");
-                    sendListToClient(fromWeaponsToNames(weapons));
-                    String response = (String) inputStream.readObject();
+                if(!weapons.isEmpty()) {
+                    for (WeaponCard w : weapons) {
+                        sendToClient("RELOAD");
+                        sendListToClient(fromWeaponsToNames(weapons));
+                        String response = (String) inputStream.readObject();
 
-                    if(response.toUpperCase().equals("Y")){
-                        LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
-                        sendToClient("PAYMENT");
-                        int z = (int) inputStream.readObject();
-                        lock.unlock();
-                        Action.PayOption payOption;
+                        if (response.toUpperCase().equals("Y")) {
+                            LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
+                            sendToClient("PAYMENT");
+                            int z = (int) inputStream.readObject();
+                            lock.unlock();
+                            Action.PayOption payOption;
 
-                        if (z == 1) {
-                            payOption = Action.PayOption.AMMO;
-                        } else {
-                            payOption = Action.PayOption.AMMOPOWER;
-                        }
+                            if (z == 1) {
+                                payOption = Action.PayOption.AMMO;
+                            } else {
+                                payOption = Action.PayOption.AMMOPOWER;
+                            }
 
-                        if (payOption.equals(Action.PayOption.AMMOPOWER)) {
-                            playerPowerUpCards = payWithThesePowerUps(player);
-                        }
-                        if (!action.canPayCard(w, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
-                            //MANDA MESSAGGIO
-                            System.out.println("CAN'T PAY");
-                        } else {
-                            if(z==1){
-                                action.payAmmo(player,w, AmmoCube.Effect.BASE,0);
-                            }else{
-                                action.payPowerUp(w,playerPowerUpCards,player, AmmoCube.Effect.BASE,0);
-                                player.getPowerUp().removeAll(playerPowerUpCards);
-                                model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
-                                playerPowerUpCards.clear();
+                            if (payOption.equals(Action.PayOption.AMMOPOWER)) {
+                                playerPowerUpCards = payWithThesePowerUps(player);
+                            }
+                            if (!action.canPayCard(w, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
+                                //MANDA MESSAGGIO
+                                System.out.println("CAN'T PAY");
+                            } else {
+                                if (z == 1) {
+                                    action.payAmmo(player, w, AmmoCube.Effect.BASE, 0);
+                                } else {
+                                    action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.BASE, 0);
+                                    player.getPowerUp().removeAll(playerPowerUpCards);
+                                    model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
+                                    playerPowerUpCards.clear();
+                                }
                             }
                         }
                     }
@@ -1683,7 +1685,8 @@ public class Server {
                     weaponCard.setReload();
                 }
                 lock.lock();
-               player.getHand().add(weaponCard); s.getWeaponCards().remove(weaponCard);
+               player.getHand().add(weaponCard);
+               s.getWeaponCards().remove(weaponCard);
                    System.out.println("test gallina"+player+player.getHand().toString());
                   lock.unlock();
                 player.getPowerUp().removeAll(playerPowerUpCards);
