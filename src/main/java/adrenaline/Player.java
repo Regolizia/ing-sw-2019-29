@@ -289,20 +289,7 @@ public class Player{
         return (hand.size() < 3);
     }
 
-    //  REMOVE CELL 8,6... WHEN SOMEONE DIES
-    /**
-     *hasDied //todo delete
-     *
-     */
-    public void hasDied() {
-        // SETS FIRST 1 TO 0
-        for (int i = 0; i < pointsArray.length; i++) {
-            if (pointsArray[i]) {
-                pointsArray[i] = false;
-                break;
-            }
-        }
-    }
+
     /**
      *getPointsArray
      *returns player's pointsArray

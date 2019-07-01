@@ -1340,7 +1340,6 @@ public class Server {
             List<Player> victims = new LinkedList<>();
             for(Player p : model.getPlayers()){
                 if(p.isDead()){
-                    p.hasDied();
                     victims.add(p);
                 }
             }
@@ -1381,7 +1380,6 @@ public class Server {
         public void sendFinalScoring(){
             lock.lock();
             action.canGetPoints(model.getPlayers(),model.getPlayers());
-            //TODO Server.action.endOfTheGame(model.getMapUsed().getGameBoard())) SE TI SERVE
             action.finalScoring();
             lock.lock();
             sendToClient("ENDGAME");
@@ -1429,7 +1427,7 @@ public class Server {
                             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
                             sendToClient("PAYMENT");
                             int z = (int) inputStream.readObject();
-                            lock.unlock();
+
                             Action.PayOption payOption;
 
                             if (z == 1) {
@@ -1841,7 +1839,7 @@ public class Server {
                     sendListToClient(fromWeaponsToNames(playerWeaponCards));
                     z = (int) inputStream.readObject();
                     z--;
-                    weaponCard = playerWeaponCards.get(z);  // TODO REMEMBER TO UNLOAD WEAPONCARD AFTER USING IT
+                    weaponCard = playerWeaponCards.get(z);
                     lock.unlock();
 
                     int number = 0;
@@ -2044,7 +2042,7 @@ public class Server {
                     sendToClient("DROPWEAPON");
                     sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
                     int y = (int)inputStream.readObject();
-                    // TODO METTERE L'ARMA SCARTATA NELLO SPAWNPOINT CON IL PRIMO CUBO PAGATO E BASTA
+                    player.getHand().remove(y-1).setReload();
                     lock.unlock();
                 }
 
@@ -3412,8 +3410,23 @@ public class Server {
                     sendToClient("TARGETINGSCOPE");
                     String res = (String) inputStream.readObject();
                     if(res.toUpperCase().equals("Y")){
+                        LinkedList<AmmoCube.CubeColor>colors=new LinkedList<>();
+                        for (AmmoCube.CubeColor c:AmmoCube.CubeColor.values()
+                             ) {
+                            if(action.canPayTargetingScope(c,p));
+                            colors.add(c);
+                        }
+                        if(!colors.isEmpty()){
+                            //todo you can shoot up minimo tra numero cubi tot e numero giocaotir prendibili
+                            //avrò una lista target che devo ricevere in ingresso
 
-                        // TODO Pay 1 ammo cube of any color
+
+                        }
+                        // TODO ask color
+                        char response='0';
+                        switch (response){
+                            //case 'Y': useTargetingScope();
+                        }
 
                         sendToClient("CHOOSETARGET");
                         sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
