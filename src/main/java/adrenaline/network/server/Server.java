@@ -57,6 +57,8 @@ public class Server {
     // The set of all the print writers for all the clients, used for broadcast.
     private static HashMap<String,ObjectOutputStream> writers = new HashMap<String,ObjectOutputStream>();
 
+    private static HashMap<String,ObjectOutputStream> writesRespawn = new HashMap<String,ObjectOutputStream>();
+
 
     private static ServerSocket serverSocket;
     private Server server;
@@ -175,6 +177,7 @@ public class Server {
                     disconnectedColors.put(nickname, color);
                 }
                 writers.remove(nickname,outputStream);
+
                /* for(String s : disconnected){
                     System.out.println(s+ " DISCONNECTED LIST");
                 }
@@ -1927,10 +1930,15 @@ public class Server {
                     for(EffectAndNumber paid : paidEffectAndNumber){
                         List<Object> temp = new LinkedList<>();
                         temp = requestsForEveryWeapon(paid,weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
+
                         pastTragets=temp;
+                        if(pastTragets!=null&&!pastTragets.isEmpty()&&(paid.getEffect().equals(AmmoCube.Effect.BASE)||paid.getEffect().equals(AmmoCube.Effect.ALT)))
+                        {
+                            weaponCard.setNotReload();
+                            weaponCard.setReloadAlt(false);
+                        }
                     }
-                    weaponCard.setNotReload();
-                    weaponCard.setReloadAlt(false);
+
                 }
             }catch(Exception e){
                 System.out.println("Couldn't shoot.");
@@ -2056,6 +2064,7 @@ public class Server {
                 // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
                 if(!action.canPayCard(weaponCard,player,payOption,AmmoCube.Effect.BASE,playerPowerUpCards)){
                     //MANDA MESSAGGIO
+                    playerPowerUpCards.clear();
                     return false;}
                 lock.unlock();
 
@@ -2209,6 +2218,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
+                                w.setReload();
                                 numberofActionsMinusOne(w);
                             }
                             lock.unlock();
@@ -2229,6 +2239,7 @@ public class Server {
                                 lock.lock();
                             }else{
                                 sendToClient("MESSAGE");
+                                w.setReload();
                                 sendToClient("Sorry there are no cells.");
                             }
                         }
