@@ -2218,7 +2218,6 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
-                                w.setReload();
                                 numberofActionsMinusOne(w);
                             }
                             lock.unlock();
@@ -2239,7 +2238,6 @@ public class Server {
                                 lock.lock();
                             }else{
                                 sendToClient("MESSAGE");
-                                w.setReload();
                                 sendToClient("Sorry there are no cells.");
                             }
                         }
