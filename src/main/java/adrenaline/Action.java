@@ -525,7 +525,7 @@ public class Action {
                     default:
                 }
             }
-            if (yellow - yellowToPay < 0 || red - redToPay < 0 || blue - blueToPay < 0)
+            if (yellow - yellowToPay < 0 || red - redToPay <0 || blue - blueToPay < 0)
                 return false;
         }
         return true;
@@ -825,7 +825,13 @@ public class Action {
 
         return bestShooterOrder;
     }
-
+/**
+ * bestShooterOrderWithPosition()
+ * @param bestShooterOrder list of player order by #bloodMark
+ * @param victim who is dead
+ *
+ * @return list of player order by #blooMark and their position
+ * */
     public LinkedList<Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
         LinkedList<Player>bestShooterOrderWithPosition=new LinkedList<>();
         LinkedList<Player>subList=new LinkedList<>();
@@ -849,7 +855,10 @@ public class Action {
         }
         return bestShooterOrderWithPosition;
     }
-
+/**orderSubListByPos()
+ * @param victim who is dead
+ * @param subList a subList where all the players have done same damage
+ * @return list ordered bloodMark positions*/
     public LinkedList<Player> orderSubListByPos(Player player, LinkedList<Player> subList,Player victim) {
         LinkedList<Player> subListOrder = new LinkedList<>();
         int pos=victim.getTrack().length+1;
@@ -1055,6 +1064,7 @@ public class Action {
     }
 
     //______________________________________________________SCORING__________________________________________________//
+
     public void finalScoring() {
         LinkedList<Player> mostPointsOrder = new LinkedList<>();
 
@@ -1066,7 +1076,17 @@ public class Action {
 
 
     }
-
+/**
+ * mostPointsOrder()
+ *
+ * @param players
+ * @param allPlayers
+ * @param i_allPlayers
+ * @param i_players
+ *
+ * @return a list order by points
+ *
+ * */
     public LinkedList<Player> mostPointsOrder(LinkedList<Player> players, List<Player> allPlayers, int i_players, int i_allPlayers) {
         if (players.size() == 0 && i_allPlayers < allPlayers.size())
             players.addFirst(allPlayers.get(i_allPlayers));
@@ -1090,6 +1110,11 @@ public class Action {
 
     //orders by mortalPoints
     //still don't know FIRST SECOND ECC..
+    /**checkBestOrderScenario()
+     * @param players an ordered list by points
+     * @return a list order by mortalPoints
+     *
+     * */
     public LinkedList<Player> checkBestOrderScenario(LinkedList<Player> players) {
         LinkedList<Player> effectiveOrder = new LinkedList<>();
         LinkedList<Player> confront = players;
@@ -1120,6 +1145,11 @@ public class Action {
         return effectiveOrder;
     }
 
+    /**
+     * orderByMortalPoints()
+     * @param subList a subList where all players have same points
+     *
+     * @return a list of player order by points and mortalPoints*/
     public LinkedList orderByMortalPoints(LinkedList<Player> subList) {
         Player player = new Player();
         for (int i = 0; i < subList.size(); i++) {
@@ -1131,7 +1161,10 @@ public class Action {
         return subList;
     }
 
-
+/**setPosition()
+ * @param orderPlayerByPointsPlusMortalPoints
+ * assign player position
+ * */
     public void setPosition(LinkedList<Player> orderPlayerByPointsPlusMortalPoints){
         orderPlayerByPointsPlusMortalPoints.getFirst().setPlayerPos(Player.PlayerPos.FIRST);
         LinkedList<Player> disposedPlayer=new LinkedList<>();
