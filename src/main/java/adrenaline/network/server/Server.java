@@ -1822,6 +1822,31 @@ public class Server {
             WeaponCard weaponCard=new WeaponCard();
             LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
             int z = 0;
+            sendToClient("RUN");
+                {
+
+                    LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRunBeforeShoot(player);
+                    List<String> possibilities = new LinkedList<>();
+                    for(CoordinatesWithRoom c : cells){
+                        possibilities.add(c.toString());
+                    }
+                    possibilities.add(0,player.getCoordinatesWithRooms().toString()+"  This is your position");
+                    try {
+                        sendListToClient(possibilities); // RITORNA 1 OPPURE 2 OPPURE 3 .... il primo è la pos iniziale
+                        int x = (int)inputStream.readObject();
+                        x--;
+                        action.run(player,cells.get(x));
+
+                        broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
+//                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
+                    } catch (Exception e) {
+                        System.out.println("Couldn't run.");
+
+
+                    }
+
+
+                }
             try {
                 //CHIEDI CARTA DA PAGARE
                 synchronized (player.getHand()) {
