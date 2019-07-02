@@ -4,7 +4,10 @@ import adrenaline.CoordinatesWithRoom;
 import adrenaline.Room;
 
 import static adrenaline.gameboard.Door.*;
-
+/**
+ * Is the class that represents walls
+ *
+ */
 public class Wall {
 
     private CoordinatesWithRoom c1;
@@ -20,12 +23,29 @@ public class Wall {
 
     }
 
+
+    /**
+     * getCoordinates1()
+     *
+     * @return wall's coordinates by first room
+     */
     public CoordinatesWithRoom getCoordinates1(){
         return c1;
     }
+
+    /**
+     * getCoordinates2()
+     *
+     * @return wall's coordinates by second room
+     */
     public CoordinatesWithRoom getCoordinates2(){
         return c2;
     }
+    /**
+     * getDir
+     *
+     * @return wall's direction
+     */
     public Direction getDir(){ return this.dir; }
 
 

@@ -3,7 +3,15 @@ package adrenaline.gameboard;
 import adrenaline.CoordinatesWithRoom;
 import adrenaline.Room;
 
+
+/**
+ * Is the class that represents doors
+ *
+ */
+
 public class Door{
+
+
 
     private CoordinatesWithRoom c1;
     private CoordinatesWithRoom c2;
@@ -21,12 +29,28 @@ public class Door{
 
     }
 
+
+    /**
+     * getCoordinates1()
+     *
+     * @return door's coordinates by first room
+     */
     public CoordinatesWithRoom getCoordinates1(){
         return c1;
     }
+    /**
+     * getCoordinates1()
+     *
+     * @return door's coordinates by second room
+     */
     public CoordinatesWithRoom getCoordinates2(){
         return c2;
     }
+    /**
+     * getDir
+     *
+     * @return door's direction
+     */
     public Direction getDir(){ return this.dir; }
 
 
