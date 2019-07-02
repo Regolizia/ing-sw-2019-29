@@ -1343,17 +1343,18 @@ public class Server {
                     victims.add(p);
                 }
             }
-            for(Player p : victims){
-
-                respawn(p);
-            }
-
             action.canGetPoints(victims,model.getPlayers());
 
             System.out.println("Scoring");
             for(Player p : model.getPlayers()){
                 System.out.println(p.getPoints() + " points of "+ p.getName());
             }
+
+            for(Player p : victims){
+
+                respawn(p);
+            }
+
 
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
@@ -2468,6 +2469,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return Collections.emptyList();
                         }
                         lock.unlock();
                         break;
@@ -2981,7 +2983,8 @@ public class Server {
                         }
                         break;
 
-                    case "Shockwave":lock.lock();
+                    case "Shockwave":
+                        lock.lock();
                         if(e.getEffect()== AmmoCube.Effect.BASE) {
                             cells = w.getPossibleTargetCells(playerPosition, e, g);
                             targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
@@ -3044,6 +3047,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return Collections.emptyList();
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -3413,23 +3417,6 @@ public class Server {
                     sendToClient("TARGETINGSCOPE");
                     String res = (String) inputStream.readObject();
                     if(res.toUpperCase().equals("Y")){
-                        LinkedList<AmmoCube.CubeColor>colors=new LinkedList<>();
-                        for (AmmoCube.CubeColor c:AmmoCube.CubeColor.values()
-                             ) {
-                            if(action.canPayTargetingScope(c,p));
-                            colors.add(c);
-                        }
-                        if(!colors.isEmpty()){
-                            //todo you can shoot up minimo tra numero cubi tot e numero giocaotir prendibili
-                            //avrò una lista target che devo ricevere in ingresso
-
-
-                        }
-                        // TODO ask color
-                        char response='0';
-                        switch (response){
-                            //case 'Y': useTargetingScope();
-                        }
 
                         sendToClient("CHOOSETARGET");
                         sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
