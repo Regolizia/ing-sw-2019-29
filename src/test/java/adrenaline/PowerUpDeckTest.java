@@ -47,6 +47,11 @@ private PowerUpDeck deck;
         System.out.println(deck.getPowerUpDeck().size());
         deck.pickPowerUp();
         System.out.print(deck.getPowerUpDeck().size());
+        PowerUpCard p=deck.pickPowerUp();
+        Bot bot=new Bot(Figure.PlayerColor.YELLOW);
+        p.getCanBeUsedOnBot();
+        p.plusOneDamage(bot,bot);
+
 
     }
 }

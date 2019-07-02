@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class ActionTest {
     private Action action;
+    private Bot bot;
     @Test
     void constructor() {
         GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false);// to do coordinatesWithRoom
@@ -202,6 +203,26 @@ public class ActionTest {
         w.getReloadAlt();
         w.toString();
 
+        action.canGetPoints(players,players);
+        bot = new Bot( Figure.PlayerColor.BLUE);
+        bot.setOwner(player);
+        bot.getOwner();
+    player.setPlayerPositionSpawnpoint(c1);
+    player.getPoints();
+    player.getMortalPoints();
+    player.setMortalPoints(1);
+    player.incrementMortalPoints();
+    player.getPlayerPos();
+    player.setPlayerPos(Player.PlayerPos.FIRST);
+    player.getAllPlayerPos();
+    player.addWeaponcard(w);
+    player.getFirstPositionOnTrack(player);
+    player.getPointTrackFren();
+    PowerUpCard p=m.powerUpDeck.pickPowerUp();
+    p.getPossibleCells(m,player);
+    p.plusOneDamage(player,player);
+    m.getMapUsed().getGameBoard().getRooms().get(0).removeAmmotile(c1);
+        m.getMapUsed().getGameBoard().getRooms().get(0).hasAmmoTile(c1);
     }
 }
 /*
