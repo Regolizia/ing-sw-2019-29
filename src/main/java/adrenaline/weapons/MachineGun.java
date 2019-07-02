@@ -29,7 +29,12 @@ public class MachineGun extends WeaponCard {
     public boolean canShootOp2(){
         return true;
     }
-
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
 
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {

@@ -30,7 +30,13 @@ public class RocketLaucher extends WeaponCard {
     public boolean canShootOp2(){
         return true;
     }
-
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+     */
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         List list = super.getPossibleTargetCells(c, en, g);
@@ -38,7 +44,12 @@ public class RocketLaucher extends WeaponCard {
         return list;
     }
 
-
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
         setDamaged(targetList,p);

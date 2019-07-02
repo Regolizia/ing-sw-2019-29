@@ -23,7 +23,18 @@ public class Heatseeker extends WeaponCard {
     public boolean canShootBase(){
         return true;
     }
-
+/**
+ * fromCellsToTargets()
+ *
+ * @param p player
+ * @param en effect selected
+ * @param g used gameboard
+ * @param c player's coordinates
+ * @param m model
+ * @param list list of coordinates
+ *
+ * @return list of targets
+ * */
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         List<Object> listOne = super.fromCellsToTargets(list,c, g, p, m, en);
@@ -44,6 +55,12 @@ public class Heatseeker extends WeaponCard {
         return listOthers;
     }
 
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
         setDamaged(targetList,p);

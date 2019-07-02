@@ -29,6 +29,13 @@ public class TractorBeam extends WeaponCard {
     }
 
     // USED FOR ALT EFFECT
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+     */
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         if(en.getEffect()== AmmoCube.Effect.ALT){
@@ -44,6 +51,16 @@ public class TractorBeam extends WeaponCard {
 
     // USED FOR BASE EFFECT
     // MOVE 0-1-2 1 TARGET TO A CELL YOU SEE
+    /**
+     * fromCellsToTargets()
+     * @param list list of coordinates
+     * @param m model selected
+     * @param g used gameboard
+     * @param en effect selected
+     * @param p player
+     * @param c player's coordinates
+     *
+     * @return a list of targest*/
     @Override
     public List<Object> fromCellsToTargets(List<CoordinatesWithRoom> list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
         if(en.getEffect()== AmmoCube.Effect.BASE) {
@@ -71,7 +88,12 @@ public class TractorBeam extends WeaponCard {
             return super.fromCellsToTargets(list,c,g,p,m,en);
         }
     }
-
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
         setDamaged(targetList,p);

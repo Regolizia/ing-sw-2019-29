@@ -6,8 +6,9 @@ import adrenaline.gameboard.GameBoard;
 import java.util.LinkedList;
 import java.util.List;
 
+
 /**
- * 
+ * represents Cyberblade WeaponCard
  */
 public class Cyberblade extends WeaponCard {
 
@@ -31,6 +32,15 @@ public class Cyberblade extends WeaponCard {
         return true;
     }
 
+
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+    */
+
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
         LinkedList<CoordinatesWithRoom> list = new LinkedList<>();
@@ -38,7 +48,12 @@ public class Cyberblade extends WeaponCard {
         return list;
     }
 
-
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
 setDamaged(targetList,p);

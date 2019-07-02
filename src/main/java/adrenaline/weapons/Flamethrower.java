@@ -6,7 +6,7 @@ import adrenaline.gameboard.GameBoard;
 import java.util.List;
 
 /**
- * 
+ * represent Flamethrower WeaponCard
  */
 public class Flamethrower extends WeaponCard {
 
@@ -26,6 +26,13 @@ public class Flamethrower extends WeaponCard {
         return true;
     }
 
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+         */
 
     @Override
     public List<CoordinatesWithRoom> getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
@@ -46,6 +53,12 @@ public class Flamethrower extends WeaponCard {
         return targets;
     }
 
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
     @Override
     public void applyDamage(List<Object> targetList, Player p, EffectAndNumber e) {
         setDamaged(targetList,p);
