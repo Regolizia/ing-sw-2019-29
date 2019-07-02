@@ -826,7 +826,7 @@ public class Action {
         return bestShooterOrder;
     }
 
-    private Collection<? extends Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
+    public LinkedList<Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
         LinkedList<Player>bestShooterOrderWithPosition=new LinkedList<>();
         LinkedList<Player>subList=new LinkedList<>();
         while(bestShooterOrder.size()>0){
@@ -850,7 +850,7 @@ public class Action {
         return bestShooterOrderWithPosition;
     }
 
-    private LinkedList<Player> orderSubListByPos(Player player, LinkedList<Player> subList,Player victim) {
+    public LinkedList<Player> orderSubListByPos(Player player, LinkedList<Player> subList,Player victim) {
         LinkedList<Player> subListOrder = new LinkedList<>();
         int pos=victim.getTrack().length+1;
         for (Player p:subList
