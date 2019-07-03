@@ -223,7 +223,22 @@ public class ActionTest {
     p.plusOneDamage(player,player);
     m.getMapUsed().getGameBoard().getRooms().get(0).removeAmmotile(c1);
         m.getMapUsed().getGameBoard().getRooms().get(0).hasAmmoTile(c1);
+    action.grabWeapon(player,w,c1.getSpawnpoint(m),player.getPowerUp(),c1);
+
+    action.setPosition(players);
+    players.getFirst().setMortalPoints(1);
+    players.getLast().setMortalPoints(3);
+    action.setPosition(players);
+    action.orderByMortalPoints(players);
+    players.getLast().setMortalPoints(4);
+    action.orderByMortalPoints(players);
+    //action.checkBestOrderScenario(players);
+
+
+
     }
+
+
 }
 /*
  * pay() covered
