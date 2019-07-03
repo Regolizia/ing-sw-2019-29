@@ -86,6 +86,15 @@ public class FreneticAction extends Action {
     }
 
     //______________________________________freneticPoints____________________________________________________________//
+
+    /**
+     * canGetPoints()
+     * @param allPlayers possible shooters
+     * @param victims dead players
+     *
+     */
+
+
     @Override
     public void canGetPoints(List<Player> victims, List<Player> allPlayers) {
         List<Player>playersWhoHaveShoot=new LinkedList<>();
@@ -109,7 +118,11 @@ public class FreneticAction extends Action {
             frenzyGivePoints(playersWhoHaveShoot,victim);
         }
     }
-
+    /**
+     *frenzyGivePoints()
+     * @param victim dead player
+     * @param playersWhoHaveShoot victim's shooters
+     */
     public void frenzyGivePoints(List<Player> playersWhoHaveShoot, Player victim) {
         whoHasDoneMoreDamage(playersWhoHaveShoot,victim).setPoints(victim.getPointTrackFren().length-1);
         playersWhoHaveShoot.remove(whoHasDoneMoreDamage(playersWhoHaveShoot,victim));
@@ -119,7 +132,11 @@ public class FreneticAction extends Action {
 
         }
     }
-
+    /**
+     *whoHasDoneMoreDamage()
+     * @param playersWhoHaveShoot victim's shooters
+     * @param victim
+     */
     public Player whoHasDoneMoreDamage(List<Player> playersWhoHaveShoot, Player victim) {
         int max=0;
         Player pMax=new Player();
@@ -142,7 +159,13 @@ public class FreneticAction extends Action {
         }
         return pMax;
     }
-
+    /**
+     *chooseOne()
+     * @param victim
+     * @param player
+     * @param pMax
+     * choose between shooters with same points, pick up the one who has damage first the victim
+     */
     public Player chooseOne(Player player,Player pMax,Player victim){
         if(victim.getFirstPositionOnTrack(player)<victim.getFirstPositionOnTrack(pMax))
             return player;

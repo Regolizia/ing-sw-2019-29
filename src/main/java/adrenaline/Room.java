@@ -114,6 +114,11 @@ public class Room {
         //return getTiles().get(index);
         return at;
     }
+    /**
+     * removeAmmoTile()
+     * @param coordinates
+     * remove Tile in coordinates position
+     */
 
     public void removeAmmotile(CoordinatesWithRoom coordinates){
         for (int i = 0; i<getTiles().size();i++) {
@@ -125,7 +130,11 @@ public class Room {
             }
         }
     }
-
+    /**
+     *hasAmmoTile()
+     * @param coordinates
+     * check if has an ammoTile in coordinates
+     */
     public boolean hasAmmoTile(CoordinatesWithRoom coordinates){
         int index=0;
         for (int i = 0; i<getTiles().size();i++) {
@@ -183,7 +192,12 @@ public class Room {
     public LinkedList<AmmoTile> getTiles(){
         return this.tiles;
     }
-
+    /**
+     *getSpawnpoint()
+     * @param y
+     * @param x
+     * @return spawnpoint
+     */
     public Spawnpoint getSpawnpoint(int x, int y){
         for (Spawnpoint s: getSpawnpoints()) {
             if(s.getSpawnpointX()==x&& s.getSpawnpointY()== y)

@@ -192,7 +192,14 @@ public class GameModel{
             }
     }
 
-
+    /**
+     *isSpawnpointCoordinates()
+     * @param x coordinate x
+     * @param y coordinate y
+     * @param room room to check
+     *
+     * return if a spawnpoint's cell
+     */
     public boolean isSpawnpointCoordinates(int x,int y,Room room){
         for (Room r: this.getMapUsed().getGameBoard().getRooms()
         ) {

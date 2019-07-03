@@ -398,7 +398,12 @@ public class CoordinatesWithRoom extends Coordinates {
         }
         return new Spawnpoint();
     }
-
+    /**
+     *isSpawnpointCoordinates()
+     * @param model
+     *
+     * return if current coordinateWithRooms is a spawnpoint
+     */
     public boolean isSpawnpointCoordinates(GameModel model){
         for (Room r: model.getMapUsed().getGameBoard().getRooms()
         ) {
@@ -410,6 +415,10 @@ public class CoordinatesWithRoom extends Coordinates {
         }
         return false;
     }
+    /**
+     * hasAmmoTile()
+     * check if current coordinateWithRooms has an ammoTile
+     */
 
     public boolean hasAmmoTile(){
         for(AmmoTile t : this.getRoom().getTiles()){

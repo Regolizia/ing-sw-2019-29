@@ -38,12 +38,22 @@ public class PowerUpCard extends Card {
         this.canBeUsedOnBot = canBeUsedOnBot;
     }
 
+    /**
+     *plusOneDamage()
+     * @param player
+     * @param target
+     * add one damage to target
+     */
     public void plusOneDamage(Player player,Object target){
         if(target instanceof Player)
             ((Player) target).damageByShooter(player);
 
     }
-
+    /**
+     *getPossibleCells()
+     * @param p
+     * @param m
+     */
     public List<CoordinatesWithRoom> getPossibleCells(GameModel m, Player p){
 
         List<CoordinatesWithRoom>cWr=new LinkedList<CoordinatesWithRoom>();

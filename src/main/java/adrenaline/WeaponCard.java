@@ -138,7 +138,11 @@ public class WeaponCard extends Card{
     public String toString() {
         return "Generic weapon card";
     }
-
+    /**
+     *setDamaged()
+     * @param shooter
+     * @param targets
+     */
     public void setDamaged(List<Object> targets,Player shooter){
         for(Object o : targets){
             if(o instanceof Player){
