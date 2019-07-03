@@ -124,6 +124,9 @@ public class FreneticAction extends Action {
      * @param playersWhoHaveShoot victim's shooters
      */
     public void frenzyGivePoints(List<Player> playersWhoHaveShoot, Player victim) {
+        if(playersWhoHaveShoot.size()==1)
+        { playersWhoHaveShoot.get(0).setPoints(2);
+            return;}
         whoHasDoneMoreDamage(playersWhoHaveShoot,victim).setPoints(victim.getPointTrackFren().length-1);
         playersWhoHaveShoot.remove(whoHasDoneMoreDamage(playersWhoHaveShoot,victim));
         for (Player shooter:playersWhoHaveShoot
