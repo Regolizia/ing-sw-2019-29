@@ -1152,11 +1152,19 @@ public class Action {
      * @return a list of player order by points and mortalPoints*/
     public LinkedList orderByMortalPoints(LinkedList<Player> subList) {
         Player player = new Player();
-        for (int i = 0; i < subList.size(); i++) {
+        for (int i = 0; i < subList.size()-1; i++) {
             if (subList.get(i).getMortalPoints() < subList.get(i + 1).getMortalPoints() && subList.get(i) != null)
                 player = subList.get(i);
             subList.set(i, subList.get(i + 1));
             subList.set(i + 1, player);
+        }
+        for (Player player2:subList
+             ) {
+            if(subList.getLast().getMortalPoints()>player2.getMortalPoints())
+            {
+                player=subList.removeLast();
+                subList.add(subList.indexOf(player2),player);
+            }
         }
         return subList;
     }
@@ -1166,57 +1174,43 @@ public class Action {
  * assign player position
  * */
     public void setPosition(LinkedList<Player> orderPlayerByPointsPlusMortalPoints){
+        if(orderPlayerByPointsPlusMortalPoints.isEmpty())
+            return;
         orderPlayerByPointsPlusMortalPoints.getFirst().setPlayerPos(Player.PlayerPos.FIRST);
-        LinkedList<Player> disposedPlayer=new LinkedList<>();
         int i=0;
-        while(true)
-        {
+
             for (Player player : orderPlayerByPointsPlusMortalPoints
                  ) {
                 if(player.getMortalPoints()==orderPlayerByPointsPlusMortalPoints.getFirst().getMortalPoints()&&
                 player.getPoints()==orderPlayerByPointsPlusMortalPoints.getFirst().getPoints())
-                    if(i<player.getAllPlayerPos().length){
-                    player.setPlayerPos(player.getAllPlayerPos()[i]);
-                disposedPlayer.add(orderPlayerByPointsPlusMortalPoints.getFirst());
-                disposedPlayer.add(player);}
-                else{
-                    orderPlayerByPointsPlusMortalPoints.removeAll(disposedPlayer);
-                        for (Player p2:orderPlayerByPointsPlusMortalPoints
-                             ) {
-                            if(p2.getMortalPoints()==disposedPlayer.getLast().getMortalPoints()&&p2.getMortalPoints()==disposedPlayer.getLast().getMortalPoints())
-                                p2.setPlayerPos(disposedPlayer.getLast().getPlayerPos());
-                            else if(!disposedPlayer.getLast().getPlayerPos().equals(Player.PlayerPos.FIRST)){
-                                int j;
-                                for(j=0;j<player.getAllPlayerPos().length;j++){
-                                    if(player.getAllPlayerPos()[j]==disposedPlayer.getLast().getPlayerPos())
-                                        break;
+                    player.setPlayerPos(orderPlayerByPointsPlusMortalPoints.getFirst().getPlayerPos());
+                else {
+                    for (Player playerTo:orderPlayerByPointsPlusMortalPoints
+                         ) {
+                        if(orderPlayerByPointsPlusMortalPoints.indexOf(playerTo)>orderPlayerByPointsPlusMortalPoints.indexOf(player))
+                        {
+                            if(player.getPoints()==playerTo.getPoints()&&playerTo.getMortalPoints()==player.getMortalPoints())
+                                playerTo.setPlayerPos(player.getPlayerPos());
+                            else
+                            {
+                                i++;
+                                if(player.getAllPlayerPos().length-i-1>0)
+                                {
+                                    playerTo.setPlayerPos(player.getAllPlayerPos()[player.getAllPlayerPos().length-1-i]);
                                 }
-                                player.setPlayerPos(player.getAllPlayerPos()[j+1]);
-                                orderPlayerByPointsPlusMortalPoints.removeAll(disposedPlayer);
-                                disposedPlayer.clear();
-                                disposedPlayer.add(player);
-                            }
-                            else{
-                                for (Player player2:orderPlayerByPointsPlusMortalPoints
-                                     ) {
-                                    player2.setPlayerPos(Player.PlayerPos.FIRST);
-                                }
-                                return;
+                                else playerTo.setPlayerPos(Player.PlayerPos.FIRST);
                             }
                         }
+
                     }
+                }
 
             }
-            orderPlayerByPointsPlusMortalPoints.removeAll(disposedPlayer);
-            disposedPlayer.clear();
-            i++;
-
-        }
-
-
-
 
     }
+
+
+
 
 
         public void grabWeapon(Player player,WeaponCard weaponCard, Spawnpoint s, List<PowerUpCard> playerPowerUpCards, CoordinatesWithRoom spawncoord) {

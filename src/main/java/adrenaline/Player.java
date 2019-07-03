@@ -42,10 +42,11 @@ public class Player{
 
 
     public static enum PlayerPos {
-        FIRST,SECOND,THIRD,FOURTH,FIFTH,SIXTH
+        FIRST,SECOND,THIRD,FOURTH,FIFTH,NONE
     }
     private PlayerPos playerPos;
     private PlayerPos[] allPlayerPos;
+
     public void setDamagedStatus(boolean b){
         damaged = b;
     }
@@ -96,10 +97,11 @@ public class Player{
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
-        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH,PlayerPos.SIXTH};
+        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH};
         mortalPoints=0;
         this.name=name;
         this.myThread = new Thread();
+        this.playerPos=PlayerPos.NONE;
     }
 
     /**
@@ -132,6 +134,10 @@ public class Player{
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
         name="";
+        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH};
+        mortalPoints=0;
+        this.playerPos=PlayerPos.NONE;
+
     }
     /**
      * toString
@@ -644,7 +650,7 @@ public class Player{
         return false;
     }
     public PlayerPos getPlayerPos() {
-        return playerPos;
+        return this.playerPos;
     }
 
     public void setPlayerPos(PlayerPos playerPos) {
@@ -659,8 +665,8 @@ public class Player{
 
     public int getFirstPositionOnTrack(Player enemy){
         for(int i=0; i<getTrack().length;i++){
-            if(getTrack()[i].equals(enemy.getColor()))
-                return i;
+            if(track[i].equals(enemy.getColor())){
+                return i;}
         }
 
         return getTrack().length+1;
