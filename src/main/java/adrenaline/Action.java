@@ -475,6 +475,40 @@ public class Action {
         }
         return false;
     }
+    /**
+     * canPayGrab()
+     *
+     * @param player
+     * @param weaponCard
+     * @param powers
+     * */
+
+    public boolean canPayGrab(WeaponCard weaponCard,Player player,LinkedList<PowerUpCard>powers){
+        int red=0; int blue=0; int yellow=0;
+        int redToPay=0; int blueToPay=0; int yellowToPay=0;
+        if(!powers.isEmpty())
+        {
+            for (PowerUpCard p:powers
+                 ) {
+                switch (p.getPowerUpColor()){
+                    case RED: red++;break;
+                    case YELLOW:yellow++;break;
+                    case BLUE:blue++;break;
+                }
+            }
+        }
+        for (AmmoCube c:weaponCard.getPrice()
+             ) {
+            switch (c.getCubeColor()){
+                case BLUE:blueToPay++;break;
+                case YELLOW:yellowToPay++;break;
+                case RED:redToPay++;break;
+            }
+        }
+        if(player.getCubeBlue()+blue-blueToPay>=0&&player.getCubeRed()+red-redToPay>=0&&player.getCubeYellow()+yellow-yellowToPay>=0)
+            return true;
+        return false;
+    }
 
     /**
      * canPayAmmo
@@ -606,13 +640,24 @@ public class Action {
         // if pay base don't psy alt
         List<AmmoCube> cost = weapon.getPrice();
 
+        if(firstOptionToPay.equals(AmmoCube.Effect.GRAB)){
+            for (AmmoCube ammoCube : cost) {
+
+                if (ammoCube.getEffect().equals(AmmoCube.Effect.BASE)&&!ammoCube.equals(weapon.getPrice().get(0))) {
+                    pay(player, ammoCube);
+                }
+
+            }
+        }
+
+        else {
         for (AmmoCube ammoCube : cost) {
 
             if (ammoCube.getEffect().equals(firstOptionToPay)) {
                 pay(player, ammoCube);
             }
 
-        }
+        }}
         return new EffectAndNumber(firstOptionToPay, number);
 
     }
@@ -694,9 +739,11 @@ public class Action {
      * @param price   : price of weaponCard
      */
     public void payPower(Player player, List<AmmoCube> price, int red, int blue, int yellow, AmmoCube.Effect effect) {
+
+
         for (AmmoCube cube : price) {
 
-            if (cube.getEffect().equals(effect)) {
+            if (cube.getEffect().equals(effect)||effect.equals(AmmoCube.Effect.GRAB)&&!cube.equals(price.get(0))&&cube.getEffect().equals(AmmoCube.Effect.BASE)) {
                 switch (cube.getCubeColor()) {
                     case RED:
                         if (red <= 0)
@@ -720,8 +767,8 @@ public class Action {
                     default:
                 }
             }
-        }
-    }
+        }}
+
 
     /**
      * getEndTurn

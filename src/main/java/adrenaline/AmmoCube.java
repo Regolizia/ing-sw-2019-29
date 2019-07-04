@@ -18,7 +18,7 @@ public class AmmoCube {
         RED, YELLOW, BLUE, POWERUP, FREE
     }
     public enum Effect {
-        BASE, OP1, OP2, ALT
+        BASE, OP1, OP2, ALT,GRAB
     }
 
     private CubeColor color;
