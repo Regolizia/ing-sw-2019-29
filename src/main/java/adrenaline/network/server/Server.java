@@ -57,7 +57,7 @@ public class Server {
     // The set of all the print writers for all the clients, used for broadcast.
     private static HashMap<String,ObjectOutputStream> writers = new HashMap<String,ObjectOutputStream>();
 
-    private static HashMap<String,ObjectOutputStream> writesRespawn = new HashMap<String,ObjectOutputStream>();
+    private static HashMap<String,ObjectInputStream> writers2 = new HashMap<>();
 
 
     private static ServerSocket serverSocket;
@@ -177,6 +177,7 @@ public class Server {
                     disconnectedColors.put(nickname, color);
                 }
                 writers.remove(nickname,outputStream);
+                writers2.remove(nickname,inputStream);
 
                /* for(String s : disconnected){
                     System.out.println(s+ " DISCONNECTED LIST");
@@ -257,6 +258,7 @@ public class Server {
                             }
                             addPlayerToGame(nickname, color);
                             writers.put(nickname, outputStream);
+                            writers2.put(nickname, inputStream);
 
                             break;
                         }
@@ -282,6 +284,7 @@ public class Server {
                             }
                             addPlayerToGame(nickname, color);
                             writers.put(nickname, outputStream);
+                            writers2.put(nickname, inputStream);
                             reconnect();
                             break;
 
@@ -307,6 +310,7 @@ public class Server {
                         System.out.println(connectionsCount + " connections *****HERE +1");
 
                         writers.put(nickname, outputStream);
+                        writers2.put(nickname, inputStream);
                         disconnected.remove(nickname);
                         disconnectedColors.remove(nickname);
                     }else {
@@ -340,6 +344,7 @@ public class Server {
         public void reconnect(){
             try {
                 writers.put(nickname, outputStream);
+                writers2.put(nickname, inputStream);
 
                 if (disconnected.contains(nickname)) {
                     disconnected.remove(nickname);
@@ -456,6 +461,7 @@ public class Server {
                         disconnectedColors.put(me.getKey().toString(), disconnectedColors.get(me.getKey().toString()));
                     }
                     writers.remove(me.getKey().toString(),(ObjectOutputStream) me.getValue());
+                    writers2.remove(me.getKey().toString());
                    /* for(String d : disconnected){
                         System.out.println(d+ " DISCONNECTED LIST");
                     }
@@ -1112,6 +1118,7 @@ public class Server {
             disconnected.add(nickname);
             disconnectedColors.put(nickname, color);
             writers.remove(nickname,outputStream);
+            writers2.remove(nickname,inputStream);
             System.out.println("Client Disconnected");
             try {
                 socket.close();
@@ -1222,17 +1229,32 @@ public class Server {
             p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
             List<String> toSend = fromPowerupsToNames(p.getPowerUp());
             try {lock.lock();
-                sendToClient("RESPAWN");
-                sendListToClient(toSend);
-                int x = (int) inputStream.readObject();
-                x--;
-                lock.unlock();
-                PowerUpCard po = p.getPowerUp().remove(x);
-                System.out.println("TO USE AS POSITION " + po.toString());
 
-                p.newLife();
-                setInitialPosition(po.getPowerUpColor(), p);
+                for (Map.Entry me : writers.entrySet()) {
+                        if(me.getKey().equals(p.getName())){
+                            ((ObjectOutputStream)me.getValue()).writeObject("RESPAWN");
+                            ((ObjectOutputStream)me.getValue()).flush();
 
+                            ((ObjectOutputStream)me.getValue()).writeObject(toSend);
+                            ((ObjectOutputStream)me.getValue()).flush();
+
+                            int x =1;
+                            for (Map.Entry me2 : writers2.entrySet()) {
+                                if(me2.getKey().equals(me.getKey())) {
+
+                                    x = (int) ((ObjectInputStream)me2.getValue()).readObject();
+                                    x--;
+                                }
+
+                                lock.unlock();
+                                PowerUpCard po = p.getPowerUp().remove(x);
+                                System.out.println("TO USE AS POSITION " + po.toString());
+
+                                p.newLife();
+                                setInitialPosition(po.getPowerUpColor(), p);
+                            }
+                        }
+                }
             }catch (Exception e){
                 handleException();
             }
