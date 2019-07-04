@@ -1835,9 +1835,11 @@ public class Server {
                         sendListToClient(possibilities); // RITORNA 1 OPPURE 2 OPPURE 3 .... il primo è la pos iniziale
                         int x = (int)inputStream.readObject();
                         x--;
-                        action.run(player,cells.get(x));
-                        lock.unlock();
-                        broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
+                        if(x>0) {
+                            action.run(player, cells.get(x));
+                            lock.unlock();
+                            broadcast("\n" + nickname + " moved to " + cells.get(x).toString());
+                        }
 //                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
                     } catch (Exception e) {
                         System.out.println("Couldn't run.");
@@ -1991,7 +1993,7 @@ public class Server {
         public void changeOrderOfEffects(List<EffectAndNumber> list, WeaponCard w){
             // SOME WEAPONS MUST HAVE A CERTAIN ORDER
             // ASK ONLY IF I CAN CHANGE IT
-            if(w instanceof Thor || w instanceof MachineGun || w instanceof PlasmaGun)
+            if(w instanceof Thor || w instanceof MachineGun)
                 return;
 
 
@@ -2006,7 +2008,7 @@ public class Server {
 
                     for(int i=0;i<x;i++){
                         //CHIEDI UN EFFETTO
-                        sendToClient("CHOOSEORDER");
+                        sendToClient("CHANGEORDER");
                         sendListToClient(fromEffectsAndNumberToNames(list2));
                         int z = (int) inputStream.readObject();
                         z--;
@@ -3533,17 +3535,18 @@ public class Server {
                         System.out.println(i--);
                         if (i< 0) {
                             System.out.println("------TIME'S UP FOR "+ handler.nickname);
-                            handler.disconnect();
                             timer.cancel();
                             System.out.println("          NEXT PLAYER");
-                            handler.nextPlayer();
-                            handler.flagFalse();
 
                             if(lock.isHeldByCurrentThread()) {
                                 while (lock.getHoldCount() > 0) {
                                     lock.unlock();
                                 }
                             }
+
+                            handler.disconnect();
+                            handler.nextPlayer();
+                            handler.flagFalse();
                         }
                     }
                 }, 0, 1000);

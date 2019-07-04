@@ -67,6 +67,11 @@ public class ClientThread implements Runnable {
         try {
             action = (List<String >)input.readObject();
         } catch (ClassNotFoundException e) {
+            try{
+                System.out.println(input.readObject());
+            }catch (Exception ee) {
+                ee.printStackTrace();
+            }
             e.printStackTrace();
         }
     return action;
