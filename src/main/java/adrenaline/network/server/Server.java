@@ -409,7 +409,9 @@ public class Server {
 
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             try {
+                lock.lock();
                 model.addPlayer(new Player(name, color));
+                lock.unlock();
                 /*
                 System.out.println(lock.isHeldByCurrentThread() + " held by " + nickname);
                 System.out.println(lock.isLocked() + " is locked " + nickname);
@@ -2003,7 +2005,7 @@ public class Server {
                 String response = (String) inputStream.readObject();
                 if(response.toUpperCase().equals("Y")){
                     int x = list.size();
-                    List<EffectAndNumber> list2 = list;
+                    List<EffectAndNumber> list2 = new LinkedList<>(list);
                     list.clear();
 
                     for(int i=0;i<x;i++){
@@ -2267,12 +2269,13 @@ public class Server {
                             cells.clear();
                             cells.add(chosen);
 
+                            List<CoordinatesWithRoom> cellslist2 = w.getPossibleTargetCells(playerPosition,e,g);
+                            cellslist2.removeAll(cells1);
+                            if (!cellslist2.isEmpty()) {
+
                             sendToClient("CHOOSEANOTHER");
                             String response = (String) inputStream.readObject();
                             if(response.toUpperCase().equals("Y")){
-                                List<CoordinatesWithRoom> cellslist2 = w.getPossibleTargetCells(playerPosition,e,g);
-                                cellslist2.removeAll(cells1);
-                                if (!cellslist2.isEmpty()) {
                                     sendToClient("CHOOSECELL");
                                     sendListToClient(fromCellsToNames(cellslist2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                                     int xye = (int)inputStream.readObject();
@@ -2283,10 +2286,10 @@ public class Server {
                                     if(cells.get(0).checkSameDirection(cells.get(0),cellslist2.get(xye),10,g,false)) {
                                         cells.add(cellslist2.get(xye));
                                     }
-                                }else{
-                                    sendToClient("MESSAGE");
-                                    sendToClient("Sorry there are no cells.");
                                 }
+                            }else{
+                                sendToClient("MESSAGE");
+                                sendToClient("Sorry there are no cells.");
                             }
 
                             targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -3505,7 +3508,11 @@ public class Server {
                             if(i<0 || connectionsCount==5 && colorsChosen.size()==5) {
                                 System.out.println("Game is starting...");
 
+                                while (names.size()!=colorsChosen.size()){
+                                    names.remove(names.size()-1);
+                                }
                                 setGameIsOn(true);
+
                                 //Server.startGame();
                                 // DO SOMETHING TO START THE GAME
                             }
