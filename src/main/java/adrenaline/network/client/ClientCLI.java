@@ -573,6 +573,7 @@ public class ClientCLI extends Client{
         for(int i=0;i<scores.size();i=i+3){
             System.out.println(scores.get(i)+": "+scores.get(i+1)+" points "+scores.get(i+2));
         }
+        System.exit(0);
     }
 
     public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){

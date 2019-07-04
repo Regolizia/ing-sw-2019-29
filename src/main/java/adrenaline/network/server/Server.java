@@ -167,26 +167,28 @@ public class Server {
 
         public void disconnect(){
             try {
-
-                sendToClient("DISCONNECTED");
-                if(!disconnected.contains(nickname)) {
-                    disconnected.add(nickname);
-                }
-                if(!disconnectedColors.containsKey(nickname)) {
-                    disconnectedColors.put(nickname, color);
-                }
-                writers.remove(nickname,outputStream);
-                writers2.remove(nickname,inputStream);
+                if(nickname!=null) {
+                    sendToClient("DISCONNECTED");
+                    if (!disconnected.contains(nickname)) {
+                        disconnected.add(nickname);
+                    }
+                    if (!disconnectedColors.containsKey(nickname)) {
+                        disconnectedColors.put(nickname, color);
+                    }
+                    writers.remove(nickname, outputStream);
+                    writers2.remove(nickname, inputStream);
 
                /* for(String s : disconnected){
                     System.out.println(s+ " DISCONNECTED LIST");
                 }
 
-                */System.out.println("DISCONNECTED CONTAINS "+ nickname +" "+disconnected.contains(nickname)+" "+disconnectedColors.containsKey(nickname));
-                socket.close();
-                removeOneConnection();
-                System.out.println("Client Disconnected++++ HERE -1");
+                */
+                    System.out.println("DISCONNECTED CONTAINS " + nickname + " " + disconnected.contains(nickname) + " " + disconnectedColors.containsKey(nickname));
 
+                    removeOneConnection();
+                    System.out.println("Client Disconnected++++ HERE -1");
+                }
+                    socket.close();
                 Server.stopHandler(this);
 
                 if(lock.isHeldByCurrentThread()) {
@@ -322,21 +324,6 @@ public class Server {
 
             } catch (Exception e) {
                 System.out.println("Client couldn't log in.");
-                /*
-                try {
-                    sendToClient("DISCONNECTED");
-                    disconnected.add(nickname);
-                    disconnectedColors.put(nickname,color);
-                    writers.remove(writers.get(nickname));
-                    System.out.println("Client Disconnected");
-                    socket.close();
-                    if(nickname!=null) {
-                        removeOneConnection();
-                        System.out.println(nickname+" REMOVED ");
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }*/
             }
 
         }
@@ -448,27 +435,30 @@ public class Server {
                     ((ObjectOutputStream)me.getValue()).flush();
 
                 } catch (IOException e) {
-                    // CAUSE: DISCONNECTED
-                    //ELIMINA ENTRY IN WRITER
-                    //AGGIUNGI A DISCONNECTED
-                    //AGGIUNGI A DISCONNECTEDCOLORS
-                    System.out.println("Someone disconnected from game and I couldn't reach him.");
-                    if(!disconnected.contains(me.getKey().toString())) {
-                        disconnected.add(me.getKey().toString());
-                    }
-                    if(!disconnectedColors.containsKey(me.getKey().toString())) {
-                        disconnectedColors.put(me.getKey().toString(), disconnectedColors.get(me.getKey().toString()));
-                    }
-                    writers.remove(me.getKey().toString(),(ObjectOutputStream) me.getValue());
-                    writers2.remove(me.getKey().toString());
+                    if(nickname!=null) {
+                        // CAUSE: DISCONNECTED
+                        //ELIMINA ENTRY IN WRITER
+                        //AGGIUNGI A DISCONNECTED
+                        //AGGIUNGI A DISCONNECTEDCOLORS
+                        System.out.println("Someone disconnected from game and I couldn't reach him.");
+                        if (!disconnected.contains(me.getKey().toString())) {
+                            disconnected.add(me.getKey().toString());
+                        }
+                        if (!disconnectedColors.containsKey(me.getKey().toString())) {
+                            disconnectedColors.put(me.getKey().toString(), disconnectedColors.get(me.getKey().toString()));
+                        }
+                        writers.remove(me.getKey().toString(), (ObjectOutputStream) me.getValue());
+                        writers2.remove(me.getKey().toString());
                    /* for(String d : disconnected){
                         System.out.println(d+ " DISCONNECTED LIST");
                     }
 
-                   */ System.out.println("DISCONNECTED CONTAINS "+me.getKey().toString()+" "+disconnected.contains(me.getKey().toString())+" "+disconnectedColors.containsKey(me.getKey().toString()));
-                    removeOneConnection();
-                    System.out.println("Client Disconnected++ HERE -1");
+                   */
+                        System.out.println("DISCONNECTED CONTAINS " + me.getKey().toString() + " " + disconnected.contains(me.getKey().toString()) + " " + disconnectedColors.containsKey(me.getKey().toString()));
+                        removeOneConnection();
+                        System.out.println("Client Disconnected++ HERE -1");
 
+                    }
                     if(lock.isHeldByCurrentThread()) {
                         while (lock.getHoldCount() > 1) {
                             lock.unlock();
@@ -2564,17 +2554,19 @@ public class Server {
                                 targets.add(tr);
                                 targ2.remove(tr);
 
-                                sendToClient("CHOOSEANOTHER");
-                                String rsp = (String) inputStream.readObject();
-                                if (rsp.toUpperCase().equals("Y")) {
-                                    sendToClient("CHOOSETARGET");
-                                    sendListToClient(fromTargetsToNames(targ2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
-                                    int xpo = (int) inputStream.readObject();
-                                    xpo--;
-                                    targets.add(targ2.get(xpo));
+                                if(!targ2.isEmpty()) {
+                                    sendToClient("CHOOSEANOTHER");
+                                    String rsp = (String) inputStream.readObject();
+                                    if (rsp.toUpperCase().equals("Y")) {
+                                        sendToClient("CHOOSETARGET");
+                                        sendListToClient(fromTargetsToNames(targ2)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
+                                        int xpo = (int) inputStream.readObject();
+                                        xpo--;
+                                        targets.add(targ2.get(xpo));
+                                    }
+                                    w.applyDamage(targets, p, e);
+                                    useTargetingScope(p, targets);
                                 }
-                                w.applyDamage(targets,p,e);
-                                useTargetingScope(p,targets);
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
@@ -2703,9 +2695,11 @@ public class Server {
                             return targets;
                         }
                         if(e.getEffect()== AmmoCube.Effect.OP2){
-                            targets=pastTargets;    // TODO OP2 DOPO BASE PER FORZA
-                            w.applyDamage(targets,p,e);
-                            useTargetingScope(p,targets);
+                            if(!pastTargets.isEmpty()) {
+                                targets = pastTargets; 
+                                w.applyDamage(targets, p, e);
+                                useTargetingScope(p, targets);
+                            }
                             lock.unlock();
                         }
                         if(e.getEffect()== AmmoCube.Effect.OP1){
