@@ -147,6 +147,16 @@ public class ClientCLI extends Client{
              }else sendIntToServer(2);
          }else sendIntToServer(2);
      }
+     public void chooseCube(){
+         System.out.println("\nChoose an AmmoCube to pay: BLUE [1] [Default], RED [2], YELLOW [3]");
+         if(scanner.hasNextInt()){
+             int x = scanner.nextInt();
+             scanner.nextLine();
+             if(x==2||x==1|| x==3){
+                 sendIntToServer(x);
+             }else sendIntToServer(1);
+         }else sendIntToServer(1);
+     }
      public void firstTurn(List<String> list){
          System.out.println("\nChoose one card, its color will decide your respawn coordinates. You'll keep the other one:");
          System.out.println(list.get(0) + " [1] [Default] or " + list.get(1) + " [2]\n");

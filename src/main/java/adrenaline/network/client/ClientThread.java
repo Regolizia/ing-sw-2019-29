@@ -94,6 +94,9 @@ public class ClientThread implements Runnable {
             case "ACCEPTED":
                 client.waitStart();
                 break;
+            case "CUBE":
+                client.chooseCube();
+                break;
             case "START":
                 break;
             case "YOURFIRSTTURN":

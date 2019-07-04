@@ -29,6 +29,7 @@ public class Client {
         public void chooseTarget(List<String> targets){}
         public void chooseAnother(){}
         public void moveTarget(){}
+        public void chooseCube(){}
         public void tagbackGrenade(){}
         public void targetingScope(){}
         public void endgame(List<String> scores){}

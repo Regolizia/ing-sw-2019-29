@@ -3437,6 +3437,15 @@ public class Server {
                     String res = (String) inputStream.readObject();
                     if(res.toUpperCase().equals("Y")){
 
+                        sendToClient("CUBE");
+                        int r = (int) inputStream.readObject();
+                        AmmoCube.CubeColor cube = AmmoCube.CubeColor.FREE;
+                        if(r==1){ cube = AmmoCube.CubeColor.BLUE;}
+                        if(r==2){ cube = AmmoCube.CubeColor.RED;}
+                        if(r==3){ cube = AmmoCube.CubeColor.YELLOW;}
+
+                        action.canPayTargetingScope(cube,p);
+
                         sendToClient("CHOOSETARGET");
                         sendListToClient(fromTargetsToNames(targets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                         int xyp = (int)inputStream.readObject();
