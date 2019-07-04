@@ -2258,7 +2258,7 @@ public class Server {
                             int xe = (int)inputStream.readObject();
                             xe--;
                             CoordinatesWithRoom chosen = cells.get(xe);
-                            List<CoordinatesWithRoom> cells1 = cells;
+                            List<CoordinatesWithRoom> cells1 = new LinkedList<>(cells);
                             cells.clear();
                             cells.add(chosen);
 
@@ -2287,7 +2287,7 @@ public class Server {
                             targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
 
                             if(e.getEffect()== AmmoCube.Effect.BASE){
-                                List<Object> targets2=targets;
+                                List<Object> targets2=new LinkedList<>(targets);
                                 targets.clear();
                                 for(int i=0;i<cells.size();i++) {
                                     // ASK 1 TARGET PER OGNI SQUARE (2 FORSE)
@@ -2549,7 +2549,7 @@ public class Server {
                                 int nu = (int) inputStream.readObject();
                                 nu--;
                                 Object tr = targets.get(nu);
-                                List<Object> targ2 = targets;
+                                List<Object> targ2 = new LinkedList<>(targets);
                                 targets.clear();
                                 targets.add(tr);
                                 targ2.remove(tr);
@@ -2625,7 +2625,7 @@ public class Server {
                                 if (nu != 0) {
                                     nu--;
                                     Object tr = pastTargets.get(nu);
-                                    pastTargets2 = pastTargets;    // ORIGINAL PASTTARGETS (I NEED THEM IF E.NUMBER!=1)
+                                    pastTargets2 = new LinkedList<>(pastTargets);    // ORIGINAL PASTTARGETS (I NEED THEM IF E.NUMBER!=1)
                                     pastTargets2.add(tr);
 
                                     pastTargets.clear();
@@ -2696,7 +2696,7 @@ public class Server {
                         }
                         if(e.getEffect()== AmmoCube.Effect.OP2){
                             if(!pastTargets.isEmpty()) {
-                                targets = pastTargets; 
+                                targets = new LinkedList<>(pastTargets);
                                 w.applyDamage(targets, p, e);
                                 useTargetingScope(p, targets);
                             }
@@ -2854,7 +2854,7 @@ public class Server {
                             int i = (int)inputStream.readObject();
                             i--;
                             Object tg = targets.get(i);
-                            List<Object> targets3 = targets;
+                            List<Object> targets3 = new LinkedList<>(targets);
                             targets.clear();
                             targets.add(tg);
 
@@ -3032,7 +3032,7 @@ public class Server {
                                 int nm = (int) inputStream.readObject();
                                 nm--;
                                 Object ot = targets.get(nm);
-                                List<Object> list2 = targets;
+                                List<Object> list2 = new LinkedList<>(targets);
                                 targets.clear();
                                 targets.add(ot);
                                 list2.remove(ot);
@@ -3397,7 +3397,7 @@ public class Server {
                             int qw = (int)inputStream.readObject();
                             qw--;
                             Object tw = targets.get(qw);
-                            List<Object> tar2 = targets;
+                            List<Object> tar2 = new LinkedList<>(targets);
                             targets.clear();
                             targets.add(tw);
                             tar2.remove(tw);
