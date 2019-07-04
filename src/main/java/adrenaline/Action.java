@@ -876,24 +876,30 @@ public class Action {
     public LinkedList<Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
         LinkedList<Player>bestShooterOrderWithPosition=new LinkedList<>();
         LinkedList<Player>subList=new LinkedList<>();
-        while(bestShooterOrder.size()>0){
-        for (Player player:bestShooterOrder
-        ) {
-          bestShooterOrderWithPosition.remove(player);
-            for (Player p:bestShooterOrder
-                 ) {
-                if(victim.damageByShooter(player)==victim.damageByShooter(p))
-                    subList.add(p);
-            }
-          subList=orderSubListByPos(subList,victim);
-          bestShooterOrder.removeAll(subList);
-            for (Player shooter:subList
-                 ) {
-                bestShooterOrderWithPosition.addLast(shooter);
+        LinkedList<Player>list=new LinkedList<>();
+        list.addAll(bestShooterOrder);
+
+        while(list.size()>0) {
+            for (int i = 0; i < bestShooterOrder.size(); i++) {
+                list.remove(bestShooterOrder.get(i));
+
+                for (int j=0;j<bestShooterOrder.size();j++){
+                    if(!bestShooterOrder.get(i).equals(bestShooterOrder.get(j))&&!list.contains(bestShooterOrder.get(j))&&victim.damageByShooter(bestShooterOrder.get(i))==victim.damageByShooter(bestShooterOrder.get(j)))
+                        subList.add(bestShooterOrder.get(j));
+                }
+                subList.add(bestShooterOrder.get(i));
+                subList=orderSubListByPos(subList,victim);
+                list.removeAll(subList);
+
+                for (Player shooter:subList
+                ) {
+                    bestShooterOrderWithPosition.addLast(shooter);
+                }
             }
 
+
         }
-        }
+
         return bestShooterOrderWithPosition;
     }
 /**orderSubListByPos()
