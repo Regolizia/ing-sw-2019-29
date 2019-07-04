@@ -2030,7 +2030,7 @@ public class Server {
         }
 
 
-    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
+   public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
             /*
              * controllo io se può pagarla + ricarica ma tu devi:
              * 1-controllare che abbia meno di 3 carte in mano x
