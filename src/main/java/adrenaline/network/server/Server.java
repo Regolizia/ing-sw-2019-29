@@ -1824,20 +1824,22 @@ public class Server {
             WeaponCard weaponCard=new WeaponCard();
             LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
             int z = 0;
-            lock.lock();
-            sendToClient("RUN");
+
+            if(player.checkDamage()==2) {
+                lock.lock();
+                sendToClient("RUN");
                 {
                     LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRunBeforeShoot(player);
                     List<String> possibilities = new LinkedList<>();
-                    for(CoordinatesWithRoom c : cells){
+                    for (CoordinatesWithRoom c : cells) {
                         possibilities.add(c.toString());
                     }
-                    possibilities.add(0,player.getCoordinatesWithRooms().toString()+"  This is your position");
+                    possibilities.add(0, player.getCoordinatesWithRooms().toString() + "  This is your position");
                     try {
                         sendListToClient(possibilities); // RITORNA 1 OPPURE 2 OPPURE 3 .... il primo è la pos iniziale
-                        int x = (int)inputStream.readObject();
+                        int x = (int) inputStream.readObject();
                         x--;
-                        if(x>0) {
+                        if (x > 0) {
                             action.run(player, cells.get(x));
                             lock.unlock();
                             broadcast("\n" + nickname + " moved to " + cells.get(x).toString());
@@ -1845,12 +1847,13 @@ public class Server {
 //                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
                     } catch (Exception e) {
                         System.out.println("Couldn't run.");
-
+                        lock.unlock();
 
                     }
 
 
                 }
+            }
             try {
                 //CHIEDI CARTA DA PAGARE
                 synchronized (player.getHand()) {
