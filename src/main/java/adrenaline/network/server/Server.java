@@ -1414,7 +1414,6 @@ public class Server {
 
                 } catch (IOException e) {
                     // DON'T CARE ITS ENDGAME
-                    e.printStackTrace();
                 }
             }
             lock.unlock();
@@ -1457,11 +1456,11 @@ public class Server {
                             if (payOption.equals(Action.PayOption.AMMOPOWER)) {
                                 playerPowerUpCards = payWithThesePowerUps(player);
                             }
-                            if (!action.canPayCard(w, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
+                            if (!action.canPayGrab(w, player,playerPowerUpCards)) {
                                 //MANDA MESSAGGIO
                                 System.out.println("CAN'T PAY");
                             }
-                            if (z == 1&&action.canPayCard(w,player,payOption, AmmoCube.Effect.BASE,playerPowerUpCards)) {
+                            if (z == 1 && action.canPayGrab(w, player,playerPowerUpCards)) {
                                     action.payAmmo(player, w, AmmoCube.Effect.BASE, 0);
                                     w.setReload();
                                 } else {
@@ -1823,9 +1822,9 @@ public class Server {
             WeaponCard weaponCard=new WeaponCard();
             LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
             int z = 0;
+            lock.lock();
             sendToClient("RUN");
                 {
-
                     LinkedList<CoordinatesWithRoom> cells = action.proposeCellsRunBeforeShoot(player);
                     List<String> possibilities = new LinkedList<>();
                     for(CoordinatesWithRoom c : cells){
@@ -1837,7 +1836,7 @@ public class Server {
                         int x = (int)inputStream.readObject();
                         x--;
                         action.run(player,cells.get(x));
-
+                        lock.unlock();
                         broadcast("\n" + nickname + " moved to "+cells.get(x).toString());
 //                System.out.println("CURRENT POSITION " + player.getCoordinatesWithRooms().toString());
                     } catch (Exception e) {
