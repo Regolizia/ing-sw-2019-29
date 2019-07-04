@@ -958,8 +958,8 @@ public class Action {
                 shooter.setPoints(1);
             if(victim.getTrack()[victim.getTrack().length-2].equals(shooter.getColor()))
                 shooter.setMortalPoints(1);
-            if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&&shooter.canAddMark(victim))
-                shooter.addMarks(victim,1);
+            if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&&victim.canAddMark(shooter))
+                victim.addMarks(shooter,1);
         }
         victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
         for (Player player: shooters
