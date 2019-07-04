@@ -1931,7 +1931,7 @@ public class Server {
             }}
         }
 
-        public void shootOtherEffect(AmmoCube.Effect e, WeaponCard weaponCard, Player player, List<EffectAndNumber> effects) {
+        public void shootOtherEffect(AmmoCube.Effect e, WeaponCard weaponCard, Player player, List<EffectAndNumber> paidEffects) {
 
             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
             try {
@@ -1952,16 +1952,16 @@ public class Server {
                     playerPowerUpCards = payWithThesePowerUps(player);
                 }
                 // CONTROLLA SE PUO' PAGARE L'EFFETTO BASE SE NO ESCI E ANNULLA AZIONE
-                if (!action.canPayCard(weaponCard, player, payOption, AmmoCube.Effect.BASE, playerPowerUpCards)) {
+                if (!action.canPayCard(weaponCard, player, payOption, e, playerPowerUpCards)) {
                     //MANDA MESSAGGIO
                     System.out.println("CAN'T PAY");
                     return;
 
                 } else {
                     if(z==1){
-                        effects.add(action.payAmmo(player,weaponCard,e,0));
+                        paidEffects.add(action.payAmmo(player,weaponCard,e,0));
                     }else{
-                        effects.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,0));
+                        paidEffects.add(action.payPowerUp(weaponCard,playerPowerUpCards,player,e,0));
                         player.getPowerUp().removeAll(playerPowerUpCards);
                         model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                         playerPowerUpCards.clear();
