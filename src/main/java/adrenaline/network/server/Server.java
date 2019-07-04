@@ -1427,11 +1427,12 @@ public class Server {
             Player player = model.getPlayers().get(currentPlayer);
             try{
                 lock.lock();
-                List<WeaponCard> weapons = new LinkedList<>();
-                weapons.addAll(player.getHand());
-                for (WeaponCard w : weapons){
+                List<WeaponCard> weapons = new LinkedList<>(player.getHand());
+                for (WeaponCard w : player.getHand()){
                     if(w.getReload()){
                         weapons.remove(w);
+                    }else{
+                        System.out.println(w.toString()+" "+w.getReload());
                     }
                 }
                 if(!weapons.isEmpty()) {
@@ -2077,13 +2078,16 @@ public class Server {
                     sendToClient("DROPWEAPON");
                     sendListToClient(yourWeapons); // RISPOSTA 1 O 2 O 3
                     int y = (int)inputStream.readObject();
-                    player.getHand().remove(y-1).setReload();
+                    y--;
+                    WeaponCard weaponCard1 = player.getHand().remove(y);
+                    weaponCard1.setNotReload();
+                    weaponCard1.getPrice().get(0).setPaid(true);
+                    s.getWeaponCards().add(weaponCard1);
                     lock.unlock();
                 }
 
                 lock.lock();
 
-                //DOVRAI FARTI DARE UN NUMERO DALLE CARTE PER EFFECT&NUMBER??
 
                 if(z==1){
                     action.payAmmo(player,weaponCard, AmmoCube.Effect.BASE,0);
