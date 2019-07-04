@@ -1461,10 +1461,10 @@ public class Server {
                                 System.out.println("CAN'T PAY");
                             }
                             if (z == 1 && action.canPayGrab(w, player,playerPowerUpCards)) {
-                                    action.payAmmo(player, w, AmmoCube.Effect.BASE, 0);
+                                    action.payAmmo(player, w, AmmoCube.Effect.GRAB, 0);
                                     w.setReload();
                                 } else {
-                                    action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.BASE, 0);
+                                    action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.GRAB, 0);
                                     player.getPowerUp().removeAll(playerPowerUpCards);
                                     model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                                     playerPowerUpCards.clear();
