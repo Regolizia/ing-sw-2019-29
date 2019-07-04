@@ -252,7 +252,9 @@ public class ActionTest {
         w.applyDamage(victims,p1,en);
         players.add(p1);
         action.bestShooterOrder(players,victim);
-
+        LinkedList<PowerUpCard> powerUps=new LinkedList<>();
+        action.canPayGrab(w,player,powerUps);
+        action.canPayGrab(w,player,powers);
     }
 
 
