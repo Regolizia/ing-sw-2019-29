@@ -430,8 +430,11 @@ public class Server {
                 System.out.println(lock.isLocked() + " is locked " + nickname);
                 System.out.println(lock.getHoldCount() + " count " + nickname);
 */
-                if (lock.isHeldByCurrentThread() && lock.getHoldCount() == 1)
-                    lock.unlock();
+                if (lock.isHeldByCurrentThread()) {
+                    while (lock.getHoldCount() >= 1) {
+                        lock.unlock();
+                    }
+                }
 
                 broadcast(name + " has joined");
             }catch (Exception e){
@@ -1960,18 +1963,16 @@ public class Server {
 
                     List<Object> pastTragets = new LinkedList<>();
                     // SHOOT
-                    for(EffectAndNumber paid : paidEffectAndNumber){
-                        List<Object> temp = new LinkedList<>();
-                        temp = requestsForEveryWeapon(paid,weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
-
-                        pastTragets=temp;
-                       if(pastTragets!=null&&!pastTragets.equals(new LinkedList<>())&&(paid.getEffect().equals(AmmoCube.Effect.BASE)||paid.getEffect().equals(AmmoCube.Effect.ALT)))
-                        {
+                    for(int i = 0; i<paidEffectAndNumber.size();i++){
+                        if(i==0){
                             weaponCard.setNotReload();
                             weaponCard.setReloadAlt(false);
                         }
-                      //  weaponCard.setNotReload();
-                      //  weaponCard.setReloadAlt(false);
+                        List<Object> temp = new LinkedList<>();
+                        temp = requestsForEveryWeapon(paidEffectAndNumber.get(i),weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
+
+                        pastTragets=temp;
+
                     }
 
                 }
