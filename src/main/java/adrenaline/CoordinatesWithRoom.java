@@ -409,7 +409,7 @@ public class CoordinatesWithRoom extends Coordinates {
         ) {
             for (Spawnpoint spw:r.getSpawnpoints()
             ) {
-                if(getRoom().equals(r)&&getX()==spw.getSpawnpointX()&&getY()==spw.getSpawnpointY())
+                if(getRoom().getToken()==(r.getToken())&&getX()==spw.getSpawnpointX()&&getY()==spw.getSpawnpointY())
                     return true;
             }
         }

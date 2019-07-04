@@ -351,7 +351,7 @@ public class Server {
                 String name = (String) inputStream.readObject();
                 // Keep requesting a name until we get a unique one.
                 while (true) {
-                    if (name != null || !name.equals("null")) {
+                    if (name != null) {
                         synchronized (names) {
                             if (!isBlank(name) && !names.contains(name)) {
                                 names.add(name);
@@ -983,6 +983,8 @@ public class Server {
                     } // NOT CURRENT PLAYER
                     else if(hasBeenDamaged()){  //SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
+                    }else if(getPlayerFromName(nickname).isDead()){
+                        respawn(getPlayerFromName(nickname));
                     }else{
                         flag=false;
                     }
@@ -1214,26 +1216,28 @@ public class Server {
             cellsWithoutTiles.clear();
         }
 
+        public Player getPlayerFromName(String s){
+            for(Player p : model.getPlayers()){
+                if(p.getName().equals(s)){
+                    return p;
+                }
+            }
+            return new Player();
+        }
+
         public synchronized void respawn(Player p){
             p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
             List<String> toSend = fromPowerupsToNames(p.getPowerUp());
             try {lock.lock();
 
-                for (Map.Entry me : writers.entrySet()) {
-                        if(me.getKey().equals(p.getName())){
-                            ((ObjectOutputStream)me.getValue()).writeObject("RESPAWN");
-                            ((ObjectOutputStream)me.getValue()).flush();
+                            outputStream.writeObject("RESPAWN");
+                            outputStream.flush();
 
-                            ((ObjectOutputStream)me.getValue()).writeObject(toSend);
-                            ((ObjectOutputStream)me.getValue()).flush();
+                            outputStream.writeObject(toSend);
+                            outputStream.flush();
 
-                            int x =1;
-                            for (Map.Entry me2 : writers2.entrySet()) {
-                                if(me2.getKey().equals(me.getKey())) {
-
-                                    x = (int) ((ObjectInputStream)me2.getValue()).readObject();
+                                    int x = (int) inputStream.readObject();
                                     x--;
-                                }
 
                                 lock.unlock();
                                 PowerUpCard po = p.getPowerUp().remove(x);
@@ -1241,9 +1245,6 @@ public class Server {
 
                                 p.newLife();
                                 setInitialPosition(po.getPowerUpColor(), p);
-                            }
-                        }
-                }
             }catch (Exception e){
                 handleException();
             }
@@ -1363,12 +1364,6 @@ public class Server {
             for(Player p : model.getPlayers()){
                 System.out.println(p.getPoints() + " points of "+ p.getName());
             }
-
-            for(Player p : victims){
-
-                respawn(p);
-            }
-
 
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
