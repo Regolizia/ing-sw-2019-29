@@ -31,6 +31,7 @@ public class Server {
     private static FreneticAction freneticAction;
     private static int currentPlayer = 0;
     private static boolean firstTurn = true;
+    private static boolean respawning = false;
 
     private static int time = 0;
     private static int connectionsCount = 0;
@@ -107,6 +108,14 @@ public class Server {
     public static void endFirstTurn(){
         firstTurn= false;
     }
+    public static void setRespawning(boolean state){
+            respawning = state;
+    }
+    public boolean getRespawning(){
+        synchronized (this) {
+            return respawning;
+        }
+    }
 
     public static void stopHandler(RequestHandler handler){
         handler.interrupt();
@@ -162,6 +171,10 @@ public class Server {
                 }
             } catch (Exception e) {
                 System.out.println("Handler couldn't reach client BIS.");
+                if(model.getPlayers().get(currentPlayer).getName().equals(nickname)) {
+                    nextPlayer();
+                    removeOneConnection();
+                }
             }
         }
 
@@ -426,7 +439,7 @@ public class Server {
             }
         }
 
-        public void broadcast(String s){
+        public synchronized void broadcast(String s){
             lock.lock();
             for (Map.Entry me : writers.entrySet()) {
                 try {
@@ -599,11 +612,14 @@ public class Server {
         }
 
         public Player fromNameToPlayer(String s){
+            lock.lock();
             for (Player p : model.getPlayers()){
                 if(p.getName().equals(s)){
+                    lock.unlock();
                     return p;
                 }
             }
+            lock.unlock();
             return new Player();
         }
 
@@ -678,100 +694,109 @@ public class Server {
                 if (isGameOn()) {
 
                     if (isCurrentPlayer()) {
-         if(!isFrenzyOn()){
-                        if (!counterOn) {
-                            startCountdown(this);
-                            counterOn = true;
-                        }
 
-                        try {
-                            if (Server.isFirstTurn()) {
-                                if (currentPlayer == 0) {
-
-                                    broadcast("\nThe board is number " + boardChosen);
-                                }
-                                lock.lock();
-                                sendToClient("YOURFIRSTTURN");
-                                System.out.println("FIRST TURN");
-                                System.out.println("\n" + nickname);
-                                sendForBoardSetup();
-                                System.out.println(nickname + "\n");
-                                lock.unlock();
-                                firstTurn();
-                                setNumberofActions(0);
-                                System.out.println("CURRENT PLAYER " + currentPlayer);
+                        if(getRespawning()) {
+                            if (fromNameToPlayer(nickname).isDead()) {
+                                respawn(fromNameToPlayer(nickname));
                             }
-                            if (getNumberofActions() != 2 && !firstTurn) {
-                                lock.lock();
-                                sendToClient("YOURTURN");
+                            nextPlayer();
+                        }else {
 
-                                String choice = (String) inputStream.readObject();
-                                lock.unlock();
-                                System.out.println(choice);
-                                switch (choice) {
-                                    case "G":
+
+                            if (!isFrenzyOn()) {
+                                if (!counterOn) {
+                                    startCountdown(this);
+                                    counterOn = true;
+                                }
+
+                                try {
+                                    if (Server.isFirstTurn()) {
+                                        if (currentPlayer == 0) {
+
+                                            broadcast("\nThe board is number " + boardChosen);
+                                        }
                                         lock.lock();
-                                        sendToClient("GRAB");
-                                        grab(false,false);
-                                        lock.unlock();
-                                        numberofActionsPlusOne();
-                                        break;
-                                    case "R":
-                                        lock.lock();
-                                        sendToClient("RUN");
-                                        playerRun();
-                                        lock.unlock();
-                                        numberofActionsPlusOne();
-                                        break;
-                                    case "M":
-                                        lock.lock();
-                                        sendToClient("MAP");
+                                        sendToClient("YOURFIRSTTURN");
+                                        System.out.println("FIRST TURN");
+                                        System.out.println("\n" + nickname);
                                         sendForBoardSetup();
+                                        System.out.println(nickname + "\n");
                                         lock.unlock();
-                                        break;
-                                    case "C":
+                                        firstTurn();
+                                        setNumberofActions(0);
+                                        System.out.println("CURRENT PLAYER " + currentPlayer);
+                                    }
+                                    if (getNumberofActions() != 2 && !firstTurn) {
                                         lock.lock();
-                                        sendToClient("SCORE");
-                                        sendScoring();
-                                        lock.unlock();
-                                        break;
-                                    case "B":
-                                        lock.lock();
-                                        sendToClient("BOARDS");
-                                        playerBoards();
-                                        sendMarks();
-                                        sendWeapons();
-                                        sendPowerUps();
-                                        sendAmmo();
-                                        sendPositions();
-                                        lock.unlock();
-                                        break;
-                                    case "P":
-                                        powerup();
-                                        break;
-                                    case "S":
-                                    default:
-                                        shoot();
-                                        numberofActionsPlusOne();
-                                        break;
-                                }
-                            }
-                        } catch (Exception e) {
-                            try {//e.printStackTrace();
+                                        sendToClient("YOURTURN");
 
-                                countdown.timer.cancel();
-                                counterOn = false;
+                                        String choice = (String) inputStream.readObject();
+                                        lock.unlock();
+                                        System.out.println(choice);
+                                        switch (choice) {
+                                            case "G":
+                                                lock.lock();
+                                                sendToClient("GRAB");
+                                                grab(false, false);
+                                                lock.unlock();
+                                                numberofActionsPlusOne();
+                                                break;
+                                            case "R":
+                                                lock.lock();
+                                                sendToClient("RUN");
+                                                playerRun();
+                                                lock.unlock();
+                                                numberofActionsPlusOne();
+                                                break;
+                                            case "M":
+                                                lock.lock();
+                                                sendToClient("MAP");
+                                                sendForBoardSetup();
+                                                lock.unlock();
+                                                break;
+                                            case "C":
+                                                lock.lock();
+                                                sendToClient("SCORE");
+                                                sendScoring();
+                                                lock.unlock();
+                                                break;
+                                            case "B":
+                                                lock.lock();
+                                                sendToClient("BOARDS");
+                                                playerBoards();
+                                                sendMarks();
+                                                sendWeapons();
+                                                sendPowerUps();
+                                                sendAmmo();
+                                                sendPositions();
+                                                lock.unlock();
+                                                break;
+                                            case "P":
+                                                powerup();
+                                                break;
+                                            case "S":
+                                            default:
+                                                shoot();
+                                                numberofActionsPlusOne();
+                                                break;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    try {//e.printStackTrace();
+
+                                        countdown.timer.cancel();
+                                        counterOn = false;
                                 /*
                                 System.out.println("EXCEPTION DISCONNECTION");
                                 System.out.println("by "+ this.toString());*/
 
-                                if (lock.isHeldByCurrentThread()) {
-                                    while (lock.getHoldCount() > 0) {
-                                        lock.unlock();
-                                    }
-                                }
+                                        if (lock.isHeldByCurrentThread()) {
+                                            while (lock.getHoldCount() > 0) {
+                                                lock.unlock();
+                                            }
+                                        }
 
-                                Server.stopHandler(this);
+                                        Server.stopHandler(this);
                                 /*
 //                                    replaceAmmo();
 //                                    replaceWeapons();
@@ -786,205 +811,203 @@ public class Server {
                                     lock.lock();
                                     sendToClient("DISCONNECTED");
                                     lock.unlock();*/
-                                break;
-                            } catch (Exception ex) {
-                                System.out.println("Couldn't disconnect and pass turn.");
-                            }
-                        }
-                        // END OF TURN
-                        if (getNumberofActions() == 2 && !firstTurn) {
-
-                            // CAN USE SOME POWERUPS BEFORE END OF TURN
-                            powerup();
-
-                            reload();
-                            countdown.timer.cancel();
-                            counterOn = false;
-                            scoring();
-                            setNotDamaged();
-                            //synchronized (model.getMapUsed()) {model.populateMap();}
-
-                            //replaceAmmo();
-                            //replaceWeapons();
-                            model.populateMap();
-
-                            System.out.println("        ---NEXT PLAYER");
-                            nextPlayer();
-                            //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
-                            setNumberofActions(0);
-                            System.out.println("CURRENT PLAYER " + currentPlayer);
-
-/*
-                            System.out.println("\n Thread info: ");
-                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
-                            System.out.println(lock.isLocked() + " " + nickname);
-                            System.out.println(lock.getHoldCount() + " " + nickname);
-*/
-                            if (lock.isHeldByCurrentThread()) {
-                                while (lock.getHoldCount() > 0) {
-                                    lock.unlock();
-                                }
-                            }
-
-                        }
-                        if (Server.isFirstTurn() && !flag) {
-                            if (currentPlayer == model.getPlayers().size() - 1) {
-                                Server.endFirstTurn();
-                            }
-                            countdown.timer.cancel();
-                            counterOn = false;
-
-                            System.out.println("        +++NEXT PLAYER");
-                            nextPlayer();
-                            //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
-                            setNumberofActions(0);
-                            System.out.println("CURRENT PLAYER " + currentPlayer);
-/*
-                            System.out.println("\n Thread info: ");
-                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
-                            System.out.println(lock.isLocked() + " " + nickname);
-                            System.out.println(lock.getHoldCount() + " " + nickname);
-*/
-
-                            if (lock.isHeldByCurrentThread()) {
-                                while (lock.getHoldCount() > 0) {
-                                    lock.unlock();
-                                }
-                            }
-
-                        }
-
-         }else { // FRENZY ON
-
-             if (!counterOn) {
-                 startCountdown(this);
-                 counterOn = true;
-             }
-             try{
-             if(!hasFirstPlayerPlayedFrenzy() && !model.getPlayers().get(0).getName().equals(nickname)) {
-
-                 lock.lock();
-                 sendToClient("FRENZY1");
-
-                 String choice = (String) inputStream.readObject();
-                 lock.unlock();
-                 System.out.println(choice);
-                 switch (choice) {
-                     case "G":
-                         lock.lock();
-                         grabFrenzy();
-                         numberofActionsPlusOne();
-                         lock.unlock();
-                         break;
-                     case "R":
-                         lock.lock();
-                         runFrenzy();
-                         numberofActionsPlusOne();
-                         lock.unlock();
-                         break;
-                     case "M":
-                         lock.lock();
-                         sendToClient("MAP");
-                         sendForBoardSetup();
-                         lock.unlock();
-                         break;
-                     case "C":
-                         lock.lock();
-                         sendToClient("SCORE");
-                         sendScoring();
-                         lock.unlock();
-                         break;
-                     case "B":
-                         lock.lock();
-                         sendToClient("BOARDS");
-                         playerBoards();
-                         sendMarks();
-                         sendWeapons();
-                         sendPowerUps();
-                         sendAmmo();
-                         lock.unlock();
-                         break;
-                     case "S":
-                     default:
-                         lock.lock();
-                         shootFrenzy();
-                         numberofActionsPlusOne();
-                         lock.unlock();
-                         break;
-                 }
-
-                 if(numberOfActionsFrenzy ==2) {
-                     countdown.timer.cancel();
-                     counterOn = false;
-                     scoring();
-                     setNotDamaged();
-                     replaceAmmo();
-                     replaceWeapons();
-
-                 }
-             }else{ // FIRST PLAYER HAS PLAYED FRENZY
-
-                 if (model.getPlayers().get(0).getName().equals(nickname)) {
-                     firstPlayerPlayedFrenzy();
-                 }
-
-
-                 lock.lock();
-                 sendToClient("FRENZY2");
-                 int z = (int) inputStream.readObject(); // RITORNA 1 O 2
-                 lock.unlock();
-                 if (z == 1) {
-
-                     lock.lock();
-                     shootFrenzy2();
-                     lock.unlock();
-
-                 } else {
-
-                     lock.lock();
-                     grabFrenzy2();
-                     lock.unlock();
-
-                 }
-
-                 countdown.timer.cancel();
-                 counterOn = false;
-                 scoring();
-                 setNotDamaged();
-                 replaceAmmo();
-                 replaceWeapons();
-
-
-                 if(model.getPlayers().get(model.getPlayers().size()-1).getName().equals(nickname)){
-                     sendFinalScoring();
-                 }
-
-             }
-         } catch (Exception e) {
-                            try {//e.printStackTrace();
-
-                                countdown.timer.cancel();
-                                counterOn = false;
-
-                                if (lock.isHeldByCurrentThread()) {
-                                    while (lock.getHoldCount() > 0) {
-                                        lock.unlock();
+                                        break;
+                                    } catch (Exception ex) {
+                                        System.out.println("Couldn't disconnect and pass turn.");
                                     }
                                 }
+                                // END OF TURN
+                                if (getNumberofActions() == 2 && !firstTurn) {
 
-                                Server.stopHandler(this);
-                                break;
-                            } catch (Exception ex) {
-                                System.out.println("Couldn't disconnect and pass turn.");
+                                    // CAN USE SOME POWERUPS BEFORE END OF TURN
+                                    powerup();
+
+                                    reload();
+                                    countdown.timer.cancel();
+                                    counterOn = false;
+                                    scoring();
+                                    setNotDamaged();
+                                    //synchronized (model.getMapUsed()) {model.populateMap();}
+
+                                    //replaceAmmo();
+                                    //replaceWeapons();
+                                    model.populateMap();
+
+                                    System.out.println("        ---NEXT PLAYER");
+                                    nextPlayer();
+                                    //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
+                                    setNumberofActions(0);
+                                    System.out.println("CURRENT PLAYER " + currentPlayer);
+
+/*
+                            System.out.println("\n Thread info: ");
+                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
+                            System.out.println(lock.isLocked() + " " + nickname);
+                            System.out.println(lock.getHoldCount() + " " + nickname);
+*/
+                                    if (lock.isHeldByCurrentThread()) {
+                                        while (lock.getHoldCount() > 0) {
+                                            lock.unlock();
+                                        }
+                                    }
+
+                                }
+                                if (Server.isFirstTurn() && !flag) {
+                                    if (currentPlayer == model.getPlayers().size() - 1) {
+                                        Server.endFirstTurn();
+                                    }
+                                    countdown.timer.cancel();
+                                    counterOn = false;
+
+                                    System.out.println("        +++NEXT PLAYER");
+                                    nextPlayer();
+                                    //broadcast(nickname +" ended his turn. Now is the turn of "+model.getPlayers().get(currentPlayer));
+                                    setNumberofActions(0);
+                                    System.out.println("CURRENT PLAYER " + currentPlayer);
+/*
+                            System.out.println("\n Thread info: ");
+                            System.out.println(lock.isHeldByCurrentThread()+ " " + nickname);
+                            System.out.println(lock.isLocked() + " " + nickname);
+                            System.out.println(lock.getHoldCount() + " " + nickname);
+*/
+
+                                    if (lock.isHeldByCurrentThread()) {
+                                        while (lock.getHoldCount() > 0) {
+                                            lock.unlock();
+                                        }
+                                    }
+
+                                }
+
+                            } else { // FRENZY ON
+
+                                if (!counterOn) {
+                                    startCountdown(this);
+                                    counterOn = true;
+                                }
+                                try {
+                                    if (!hasFirstPlayerPlayedFrenzy() && !model.getPlayers().get(0).getName().equals(nickname)) {
+
+                                        lock.lock();
+                                        sendToClient("FRENZY1");
+
+                                        String choice = (String) inputStream.readObject();
+                                        lock.unlock();
+                                        System.out.println(choice);
+                                        switch (choice) {
+                                            case "G":
+                                                lock.lock();
+                                                grabFrenzy();
+                                                numberofActionsPlusOne();
+                                                lock.unlock();
+                                                break;
+                                            case "R":
+                                                lock.lock();
+                                                runFrenzy();
+                                                numberofActionsPlusOne();
+                                                lock.unlock();
+                                                break;
+                                            case "M":
+                                                lock.lock();
+                                                sendToClient("MAP");
+                                                sendForBoardSetup();
+                                                lock.unlock();
+                                                break;
+                                            case "C":
+                                                lock.lock();
+                                                sendToClient("SCORE");
+                                                sendScoring();
+                                                lock.unlock();
+                                                break;
+                                            case "B":
+                                                lock.lock();
+                                                sendToClient("BOARDS");
+                                                playerBoards();
+                                                sendMarks();
+                                                sendWeapons();
+                                                sendPowerUps();
+                                                sendAmmo();
+                                                lock.unlock();
+                                                break;
+                                            case "S":
+                                            default:
+                                                lock.lock();
+                                                shootFrenzy();
+                                                numberofActionsPlusOne();
+                                                lock.unlock();
+                                                break;
+                                        }
+
+                                        if (numberOfActionsFrenzy == 2) {
+                                            countdown.timer.cancel();
+                                            counterOn = false;
+                                            scoring();
+                                            setNotDamaged();
+                                            replaceAmmo();
+                                            replaceWeapons();
+
+                                        }
+                                    } else { // FIRST PLAYER HAS PLAYED FRENZY
+
+                                        if (model.getPlayers().get(0).getName().equals(nickname)) {
+                                            firstPlayerPlayedFrenzy();
+                                        }
+
+
+                                        lock.lock();
+                                        sendToClient("FRENZY2");
+                                        int z = (int) inputStream.readObject(); // RITORNA 1 O 2
+                                        lock.unlock();
+                                        if (z == 1) {
+
+                                            lock.lock();
+                                            shootFrenzy2();
+                                            lock.unlock();
+
+                                        } else {
+
+                                            lock.lock();
+                                            grabFrenzy2();
+                                            lock.unlock();
+
+                                        }
+
+                                        countdown.timer.cancel();
+                                        counterOn = false;
+                                        scoring();
+                                        setNotDamaged();
+                                        replaceAmmo();
+                                        replaceWeapons();
+
+
+                                        if (model.getPlayers().get(model.getPlayers().size() - 1).getName().equals(nickname)) {
+                                            sendFinalScoring();
+                                        }
+
+                                    }
+                                } catch (Exception e) {
+                                    try {//e.printStackTrace();
+
+                                        countdown.timer.cancel();
+                                        counterOn = false;
+
+                                        if (lock.isHeldByCurrentThread()) {
+                                            while (lock.getHoldCount() > 0) {
+                                                lock.unlock();
+                                            }
+                                        }
+
+                                        Server.stopHandler(this);
+                                        break;
+                                    } catch (Exception ex) {
+                                        System.out.println("Couldn't disconnect and pass turn.");
+                                    }
+                                }
                             }
                         }
-
-         }
                     } // NOT CURRENT PLAYER
                     else if(hasBeenDamaged()){  //SET DAMAGED AND SHOOTER WHEN YOU SHOOT
                         tagbackGrenade();
-                    }else if(getPlayerFromName(nickname).isDead()){
-                        respawn(getPlayerFromName(nickname));
                     }else{
                         flag=false;
                     }
@@ -1217,11 +1240,14 @@ public class Server {
         }
 
         public Player getPlayerFromName(String s){
+        lock.lock();
             for(Player p : model.getPlayers()){
                 if(p.getName().equals(s)){
+                    lock.unlock();
                     return p;
                 }
             }
+            lock.unlock();
             return new Player();
         }
 
@@ -1365,6 +1391,14 @@ public class Server {
                 System.out.println(p.getPoints() + " points of "+ p.getName());
             }
 
+            if(!victims.isEmpty()) {
+                setRespawning(true);
+                nextPlayer();
+                while (!isCurrentPlayer()) {
+
+                }
+                setRespawning(false);
+            }
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
 
@@ -2288,6 +2322,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
+                                return new LinkedList<>();
                             }
 
                             targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -2594,6 +2629,7 @@ public class Server {
                                 break;
                             }
                             if (!pastTargets.isEmpty()) {
+                                sendToClient("CHOOSETARGET");
                                 sendListToClient(fromTargetsToNames(pastTargets)); // RITORNA 1 OPPURE 2 OPPURE 3 ....
                                 int u = (int)inputStream.readObject();
                                 u--;
@@ -2845,7 +2881,6 @@ public class Server {
                                 numberofActionsMinusOne(w);
                             }
                         }
-                        lock.unlock();
                         break;
 
                     case "Railgun":lock.lock();
@@ -3056,14 +3091,18 @@ public class Server {
                                             list2.remove(ye);
                                         }else{
                                             sendToClient("MESSAGE");
-                                            sendToClient("Sorry there are no targets.");
+                                            sendToClient("Sorry there are no more targets.");
+
+                                            w.applyDamage(targets, p, e);
+                                            useTargetingScope(p, targets);
+                                            return new LinkedList<>();
                                         }
                                     } else {
                                         break;
                                     }
                                 }
                                 boolean ok = false;
-                                while (!ok) {
+                                while (!ok || !targets.isEmpty()) {
                                     if ((targets.size() == 3 &&
                                             !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(1)).getCoordinatesWithRooms())
                                             && !((Player) targets.get(0)).getCoordinatesWithRooms().equals(((Player) targets.get(2)).getCoordinatesWithRooms())
@@ -3193,9 +3232,13 @@ public class Server {
                         }
 
                         if(e.getEffect()== AmmoCube.Effect.OP1 || e.getEffect()== AmmoCube.Effect.OP2) {
-                            // PUT HERE TARGET'S POSITION, GLIEL'HA PASSATA
-                            CoordinatesWithRoom targetPos=((Player)pastTargets.get(0)).getCoordinatesWithRooms();
-                            cells = w.getPossibleTargetCells(targetPos, e, g);
+                            if(!pastTargets.isEmpty()) {
+                                // PUT HERE TARGET'S POSITION, GLIEL'HA PASSATA
+                                CoordinatesWithRoom targetPos = ((Player) pastTargets.get(0)).getCoordinatesWithRooms();
+                                cells = w.getPossibleTargetCells(targetPos, e, g);
+                            }else {
+                                return new LinkedList<>();
+                            }
 
                         }
                         targets = w.fromCellsToTargets(cells, playerPosition, g, p, model, e);
@@ -3334,6 +3377,7 @@ public class Server {
                                         }else{
                                             sendToClient("MESSAGE");
                                             sendToClient("Sorry there are no targets.");
+                                            return new LinkedList<>();
                                         }
                                     }
                                 }
@@ -3549,8 +3593,8 @@ public class Server {
                                 }
                             }
 
-                            handler.disconnect();
                             handler.nextPlayer();
+                            handler.disconnect();
                             handler.flagFalse();
                         }
                     }
