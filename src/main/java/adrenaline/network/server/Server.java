@@ -1462,11 +1462,11 @@ public class Server {
                                 //MANDA MESSAGGIO
                                 System.out.println("CAN'T PAY");
                             }
-                            if (z == 1 && action.canPayGrab(w, player,playerPowerUpCards)) {
-                                    action.payAmmo(player, w, AmmoCube.Effect.GRAB, 0);
+                            if (z == 1 && action.canPayCard(w, player,payOption, AmmoCube.Effect.BASE,playerPowerUpCards)) {
+                                    action.payAmmo(player, w, AmmoCube.Effect.BASE, 0);
                                     w.setReload();
-                                } else {
-                                    action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.GRAB, 0);
+                                } else if(z!=1&&action.canPayCard(w, player,payOption, AmmoCube.Effect.BASE,playerPowerUpCards) ) {
+                                    action.payPowerUp(w, playerPowerUpCards, player, AmmoCube.Effect.BASE, 0);
                                     player.getPowerUp().removeAll(playerPowerUpCards);
                                     model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);
                                     playerPowerUpCards.clear();
@@ -1936,11 +1936,13 @@ public class Server {
                         temp = requestsForEveryWeapon(paid,weaponCard,player,model.getMapUsed().getGameBoard(),model,pastTragets);
 
                         pastTragets=temp;
-                        if(pastTragets!=null&&!pastTragets.isEmpty()&&(paid.getEffect().equals(AmmoCube.Effect.BASE)||paid.getEffect().equals(AmmoCube.Effect.ALT)))
+                       if(pastTragets!=null&&!pastTragets.equals(new LinkedList<>())&&(paid.getEffect().equals(AmmoCube.Effect.BASE)||paid.getEffect().equals(AmmoCube.Effect.ALT)))
                         {
                             weaponCard.setNotReload();
                             weaponCard.setReloadAlt(false);
                         }
+                      //  weaponCard.setNotReload();
+                      //  weaponCard.setReloadAlt(false);
                     }
 
                 }
@@ -2226,6 +2228,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                             lock.unlock();
                             return targets;
@@ -2246,6 +2249,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
+                                return new LinkedList<>();
                             }
                         }
                         lock.unlock();
@@ -2293,6 +2297,7 @@ public class Server {
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
+                                return new LinkedList<>();
                             }
 
                             targets = w.fromCellsToTargets(cells,playerPosition,g,p,model,e);
@@ -2314,6 +2319,8 @@ public class Server {
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no targets.");
                                         numberofActionsMinusOne(w);
+                                        return new LinkedList<>();
+
                                     }
                                 }
                             }
@@ -2323,6 +2330,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -2364,6 +2372,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no rooms different from yours.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -2384,6 +2393,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         lock.unlock();
@@ -2422,12 +2432,14 @@ public class Server {
                                     }else{
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no cells.");
+                                        return new LinkedList<>();
                                     }
                                 }
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.OP1) {
@@ -2448,6 +2460,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         lock.unlock();
@@ -2472,6 +2485,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -2511,7 +2525,8 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
-                            return Collections.emptyList();
+                            //return Collections.emptyList();
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -2543,6 +2558,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         return targets;
@@ -2582,6 +2598,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                             lock.unlock();
                             return targets;             //SAVE THEM AS FIRST IN PASTTARGETS
@@ -2611,6 +2628,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                             e.setNumber(1);     // IT MEANS THAT I EXECUTED OP1 (PASTTARGETS FROM OP1)
                             lock.unlock();
@@ -2648,6 +2666,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                             // SHOOT MAYBE DIFFERENT TARGET FROM BASE
                             targets.removeAll(pastTargets);
@@ -2676,6 +2695,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         lock.unlock();
@@ -2701,6 +2721,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                             lock.unlock();
                             return targets;
@@ -2729,6 +2750,7 @@ public class Server {
                                 sendToClient("Sorry there are no cells.");
                                 numberofActionsMinusOne(w);
                                 lock.unlock();
+                                return new LinkedList<>();
                             }
                         }
                         break;
@@ -2759,6 +2781,7 @@ public class Server {
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
                                 lock.unlock();
+                                return new LinkedList<>();
                             }
                         }
                         // ALSO IF ALT
@@ -2836,6 +2859,7 @@ public class Server {
                                             }else{
                                                 sendToClient("MESSAGE");
                                                 sendToClient("Sorry there are no targets.");
+                                                return new LinkedList<>();
                                             }
                                         }
                                     }
@@ -2843,11 +2867,13 @@ public class Server {
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
                                     numberofActionsMinusOne(w);
+                                    return new LinkedList<>();
                                 }
                             }else{
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         lock.unlock();
@@ -2885,6 +2911,7 @@ public class Server {
                                 }else{
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
+                                    return new LinkedList<>();
                                 }
                             }
                             if(e.getEffect()== AmmoCube.Effect.ALT && targets.size()==2 &&
@@ -2900,6 +2927,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -2957,6 +2985,7 @@ public class Server {
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no cells.");
                                         numberofActionsMinusOne(w);
+                                        return new LinkedList<>();
                                     }
                                     return targets;
                                 }
@@ -2964,6 +2993,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
 
                         }
@@ -3025,6 +3055,7 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no cells.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }
                         break;
@@ -3062,6 +3093,7 @@ public class Server {
                                         }else{
                                             sendToClient("MESSAGE");
                                             sendToClient("Sorry there are no targets.");
+                                            return new LinkedList<>();
                                         }
                                     } else {
                                         break;
@@ -3093,7 +3125,8 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
-                                return Collections.emptyList();
+                                //return Collections.emptyList();
+                                return new LinkedList<>();
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -3140,6 +3173,7 @@ public class Server {
                                         sendToClient("MESSAGE");
                                         sendToClient("Sorry there are no targets.");
                                         lock.unlock();
+                                        return new LinkedList<>();
                                     }
                                 }
                             }
@@ -3147,6 +3181,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         break;
 
@@ -3180,12 +3215,14 @@ public class Server {
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no targets.");
                                     numberofActionsMinusOne(w);
+                                    return new LinkedList<>();
                                 }
                             }
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -3220,6 +3257,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         return targets;
@@ -3264,6 +3302,7 @@ public class Server {
                                     sendToClient("MESSAGE");
                                     sendToClient("Sorry there are no cells.");
                                     lock.unlock();
+                                    return new LinkedList<>();
                                 }
                                 w.applyDamage(targets,p,e);
                                 useTargetingScope(p,targets);
@@ -3272,6 +3311,7 @@ public class Server {
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
                                 lock.unlock();
+                                return new LinkedList<>();
                             }
                         }
                         if(e.getEffect()== AmmoCube.Effect.ALT) {
@@ -3297,6 +3337,7 @@ public class Server {
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
                                 lock.unlock();
+                                return new LinkedList<>();
                             }
                         }
                         break;
@@ -3339,6 +3380,7 @@ public class Server {
                                         }else{
                                             sendToClient("MESSAGE");
                                             sendToClient("Sorry there are no targets.");
+                                            return new LinkedList<>();
                                         }
                                     }
                                 }
@@ -3368,13 +3410,15 @@ public class Server {
                                 sendToClient("MESSAGE");
                                 sendToClient("Sorry there are no targets.");
                                 numberofActionsMinusOne(w);
+                                return new LinkedList<>();
                             }
                         }else{
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no cells.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
-                        return new LinkedList<>();
+
 
                     case "Whisper":lock.lock();
                         cells = w.getPossibleTargetCells(playerPosition,e,g);
@@ -3394,6 +3438,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -3429,6 +3474,7 @@ public class Server {
                                         }else{
                                             sendToClient("MESSAGE");
                                             sendToClient("Sorry there are no targets.");
+                                            return new LinkedList<>();
                                         }
                                     } else {
                                         break;
@@ -3443,6 +3489,7 @@ public class Server {
                             sendToClient("MESSAGE");
                             sendToClient("Sorry there are no targets.");
                             numberofActionsMinusOne(w);
+                            return new LinkedList<>();
                         }
                         lock.unlock();
                         break;
@@ -3452,7 +3499,7 @@ public class Server {
                 numberofActionsMinusOne(w);
                 ex.printStackTrace();
             }
-            return Collections.emptyList(); // SE NON DIVERSAMENTE SPECIFICATO
+            return new LinkedList<>(); // SE NON DIVERSAMENTE SPECIFICATO
         }
 
         public void useTargetingScope(Player p, List<Object> targets){
