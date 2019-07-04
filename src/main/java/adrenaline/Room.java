@@ -19,7 +19,6 @@ import java.util.*;
 public class Room {
 
     private Coordinates size;
-    private Coordinates ccAmmoTile;
     private LinkedList<AmmoTile> tiles;
     private AmmoTile at;
     private int token;
@@ -47,7 +46,6 @@ public class Room {
         this.size = new Coordinates(x,y);
         at=new AmmoTile(AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE);
         setToken(99);
-        ccAmmoTile=new Coordinates(0,0);
     }
 
 
@@ -136,7 +134,6 @@ public class Room {
      * check if has an ammoTile in coordinates
      */
     public boolean hasAmmoTile(CoordinatesWithRoom coordinates){
-        int index=0;
         for (int i = 0; i<getTiles().size();i++) {
             if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() && getTiles().get(i).getCoordinates().getY()==coordinates.getY()){
                 return true;

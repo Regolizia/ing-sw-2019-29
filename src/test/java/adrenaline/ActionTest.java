@@ -2,11 +2,7 @@ package adrenaline;
 import adrenaline.weapons.*;
 import org.junit.jupiter.api.Test;
 
-import javax.management.BadAttributeValueExpException;
-import javax.swing.*;
-import java.io.ByteArrayInputStream;
 import java.util.LinkedList;
-import java.util.prefs.BackingStoreException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
@@ -99,7 +95,7 @@ public class ActionTest {
         enL.add(en);
 
         victims.add(player);
-        action.shoot(w, player, enL.getFirst(), victims);
+        action.shoot();
         LinkedList<AmmoCube.Effect> list = new LinkedList<>();
         list.add(AmmoCube.Effect.BASE);
         action.reload(player, w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE, new LinkedList<>());
@@ -171,7 +167,6 @@ public class ActionTest {
         action.canPayTargetingScope(AmmoCube.CubeColor.FREE,player);
         m.getMapUsed().getGameBoard().getDirection(c1,coo.getFirst());
         m.getMapUsed().getGameBoard().pickASkull();
-        m.getMapUsed().getGameBoard().getNumberOfRooms();
         CoordinatesWithRoom c3 = new CoordinatesWithRoom(2, 2, m.getMapUsed().getGameBoard().getRoom(2));
         m.getMapUsed().getGameBoard().getDirection(c1,c3);
         PowerGlove powerGlove=new PowerGlove();

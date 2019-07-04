@@ -7,8 +7,6 @@ import java.util.*;
  */
 public class Card {
 
-Player owner;
-
 
     /**
      * Default constructor

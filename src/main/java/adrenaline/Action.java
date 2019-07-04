@@ -1,11 +1,8 @@
 package adrenaline;
 
 
-import adrenaline.gameboard.Door;
 import adrenaline.gameboard.GameBoard;
-import adrenaline.network.server.Server;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,11 +23,10 @@ public class Action {
     private GameModel model;
 
     public static enum ActionType {
-        GRAB, RUN, SHOOT, RELOAD
+        RUN
     }
 
     public static enum Direction {
-        UP, DOWN, LEFT, RIGHT
     }
 
     public static enum PayOption {
@@ -280,18 +276,9 @@ public class Action {
      * shoot
      * this is the method to shoot
      *
-     * @param p:            player who does the action
-     * @param w:            weapon card choosen to shoot
-     * @param victim:       player's targets with the same effect
-     * @param attackEffect: one effect paid by player
-     *                      <p>
-     *                      * this action can't
-     *                      CONV:
-     *                      i)you can shoot even at empty cells
-     *                      ii)victim coordinatesWithRooms is contained in weapon possible targets
      */
     //______________________________________SHOOT_____________________________________________________________________//
-    public void shoot(WeaponCard w, Player p, EffectAndNumber attackEffect, LinkedList<Object> victim) {
+    public void shoot() {
 
         // w.weaponShoot(victim,p.getCoordinatesWithRooms(),p,attackEffect,getModel());
     }
@@ -844,7 +831,7 @@ public class Action {
                 if(victim.damageByShooter(player)==victim.damageByShooter(p))
                     subList.add(p);
             }
-          subList=orderSubListByPos(player,subList,victim);
+          subList=orderSubListByPos(subList,victim);
           bestShooterOrder.removeAll(subList);
             for (Player shooter:subList
                  ) {
@@ -856,10 +843,10 @@ public class Action {
         return bestShooterOrderWithPosition;
     }
 /**orderSubListByPos()
- * @param victim who is dead
  * @param subList a subList where all the players have done same damage
+ * @param victim who is dead
  * @return list ordered bloodMark positions*/
-    public LinkedList<Player> orderSubListByPos(Player player, LinkedList<Player> subList,Player victim) {
+    public LinkedList<Player> orderSubListByPos(LinkedList<Player> subList, Player victim) {
         LinkedList<Player> subListOrder = new LinkedList<>();
         int pos=victim.getTrack().length+1;
         for (Player p:subList

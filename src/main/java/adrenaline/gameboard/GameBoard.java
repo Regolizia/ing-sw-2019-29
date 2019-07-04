@@ -161,5 +161,4 @@ public class GameBoard {
     public void pickASkull(){
      this.numSkull--;
 }
-    public int getNumberOfRooms(){return 0;}
 }

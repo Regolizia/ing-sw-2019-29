@@ -13,8 +13,4 @@ class DominationBoardTest {
         dominationBoard = new DominationBoard();
     }
 
-    @Test
-    void getNumberOfRooms() {
-        assertFalse(dominationBoard.getNumberOfRooms()>0);
-    }
 }

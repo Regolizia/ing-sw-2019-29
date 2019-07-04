@@ -41,7 +41,6 @@ public class Client {
         public void changeOrder(List<String> list){}
         public void printMessage(String s){}
         public void reload(String s){}
-        public void mapInfo(String s){}
         public void showMainMenu(){}
         public void frenzy1(){}
         public void frenzy2(){}
@@ -54,7 +53,6 @@ public class Client {
         public void waitStart(){}
         public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){}
 
-        public String view(){return "Client";}
         public void getOutput(ObjectOutputStream o){}
     }
 

@@ -40,7 +40,4 @@ public class DominationBoard extends GameBoard {
         return rooms.get(i);
     }
 
-    @Override
-    public int getNumberOfRooms(){return this.rooms.size();}
-
 }

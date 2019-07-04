@@ -12,10 +12,4 @@ class DeathmatchBoardTest {
         deathmatchBoard = new DeathmatchBoard() ;
     }
 
-    @Test
-    void getNumberOfRooms() {
-
-        assertFalse(deathmatchBoard.getNumberOfRooms()>0);
-
-    }
 }

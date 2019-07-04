@@ -15,8 +15,6 @@ public class ClientCLI extends Client{
 
     public static Scanner scanner = new Scanner(System.in);
 
-    private static boolean quit = false;
-
     private ObjectOutputStream output;
 
     public static final String ANSI_YELLOW = "\u001B[33m";
@@ -230,9 +228,6 @@ public class ClientCLI extends Client{
 
     }
 
-    public static void back() {
-        // GO BACK TO MAIN MENU
-    }
 
     public void run(List<String> list) {
         System.out.println("\nChoose a cell (first is default):");
@@ -486,22 +481,6 @@ public class ClientCLI extends Client{
                 sendIntToServer(x);
             }else sendIntToServer(1);
         }else sendIntToServer(1);
-    }
-
-
-    public static void shoot() {
-    }
-
-    public static void showOtherPlayers() {
-        // SHOW INFO ABOUT OTHER PLAYERS
-    }
-
-    public static void showPlayerBoard() {
-        // SHOW INFO ABOUT PLAYER, CARDS ETC...
-    }
-
-    public static void showMapInfo() {
-        // TODO PRINT BOARD OR SOMETHING
     }
 
     public void waitStart(){

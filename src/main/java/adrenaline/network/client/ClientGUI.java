@@ -1,3 +1,4 @@
+/*
 package adrenaline.network.client;
 import javax.swing.*;
 import java.awt.*;
@@ -383,7 +384,8 @@ public class ClientGUI extends Client{
                 } else if (line.startsWith("DUPLICATE NAME ")) {
                     closeMessageTextField();
                     setMessageTextField("This nickname is already taken, insert again:");
-                /*} else if (line.startsWith("WORD NOT ACCEPTED ")) {
+                */
+/*} else if (line.startsWith("WORD NOT ACCEPTED ")) {
                     System.out.println("rjbhkeb");
                     //closeMessageTextField();
                     messageTextField.setText("Word not accepted, insert again:");
@@ -391,7 +393,8 @@ public class ClientGUI extends Client{
                     //setMessageTextField("Word not accepted, insert again:");
                 } else if (line.startsWith("NOT ACCEPTED, TRY AGAIN")) {
                     closeMessageTextField();
-                    setMessageTextField("Not accepted, insert again:");*/
+                    setMessageTextField("Not accepted, insert again:");*//*
+
                 } else if (line.startsWith("COLOR ACCEPTED ")) {
                     closeTextField();
                     closeMessageTextField();
@@ -616,7 +619,8 @@ public class ClientGUI extends Client{
 
         frame.setVisible(true);
 
-   /*     try {
+   */
+/*     try {
             File fontFile = new File(this.getClass().getResource("\\fonts\\ethnocentric.ttf").toURI());
             fontFile.getAbsolutePath();
             fontFile.canRead();
@@ -630,7 +634,8 @@ public class ClientGUI extends Client{
             e.printStackTrace();
         }
         frame.setFont(font);
-*/
+*//*
+
     }
 
     // 90 OR -90
@@ -826,3 +831,4 @@ public class ClientGUI extends Client{
 
 
 
+*/

@@ -28,7 +28,6 @@ public class Server {
 
     private GameModel model;
     private static Action action;
-    private static BotAction botAction;
     private static FreneticAction freneticAction;
     private static int currentPlayer = 0;
     private static boolean firstTurn = true;
@@ -562,21 +561,6 @@ public class Server {
         ////
 
 
-        public void printWeaponSpawnpoints(){
-            Spawnpoint s = getSpawnpoint(AmmoCube.CubeColor.BLUE);
-            for (WeaponCard w : s.getWeaponCards()){
-                System.out.println(w.toString());
-            }
-            s = getSpawnpoint(AmmoCube.CubeColor.RED);
-            for (WeaponCard w : s.getWeaponCards()){
-                System.out.println(w.toString());
-            }
-            s = getSpawnpoint(AmmoCube.CubeColor.YELLOW);
-            for (WeaponCard w : s.getWeaponCards()){
-                System.out.println(w.toString());
-            }
-        }
-
         public void tagbackGrenade() {
             // CAN SEE SHOOTER
             Player me = fromNameToPlayer(nickname);
@@ -1105,10 +1089,6 @@ public class Server {
                 p.setDamagedStatus(false);
                 p.setShooter(null);
             }
-        }
-
-        public void mapInfo(){
-            sendToClient(Integer.toString(boardChosen));
         }
 
         public void handleException() {
@@ -1749,23 +1729,6 @@ public class Server {
             } catch (Exception e) {
                 System.out.println("Couldn't run.");
             }
-        }
-
-        public void botShoot(Bot bot){
-            LinkedList<CoordinatesWithRoom> possibleShoots= botAction.canSee(bot.getCoordinatesWithRooms(),bot);
-            //TODO SEND POSSIBLESHOOT TO PLAYER
-            //TODO RECIVED SHOOT TARGET
-            CoordinatesWithRoom choosenCoordinate=new CoordinatesWithRoom();
-            //TODO GET TARGET
-            Player victim=new Player();
-            botAction.botShoot(victim,bot);
-        }
-        public void botRun(Bot bot){
-            LinkedList<CoordinatesWithRoom> possibleRun=botAction.proposeCellsRun(bot.getCoordinatesWithRooms());
-            //TODO SEND POSSIBLE COORDINATES + CHOOSE ONE
-            CoordinatesWithRoom choosenRun=new CoordinatesWithRoom();
-            botAction.run(bot,choosenRun);
-            broadcast("\nBot moved to "+choosenRun);
         }
 
          public void grab(boolean frenzy, boolean second){
@@ -3589,11 +3552,6 @@ public class Server {
         freneticAction = new FreneticAction(model);
     }
 
-    public void printSomeAmmos(){
-        for(AmmoTile t : model.getMapUsed().getGameBoard().getRooms().get(3).getTiles()){
-            System.out.println(t.toString()+" "+t.getCoordinates().getX()+" "+t.getCoordinates().getY());
-        }
-    }
     public static String stringPlayerAmmo(Player p){
         return p.toString()+": BLUE "+p.getCubeBlue()+" RED "+p.getCubeRed()+" YELLOW "+p.getCubeYellow();
     }
