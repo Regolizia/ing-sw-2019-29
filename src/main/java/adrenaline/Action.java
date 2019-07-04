@@ -793,22 +793,29 @@ public class Action {
                     maxDamage = victim.damageByShooter(players.get(i));
                     bestShooterOrder.addFirst(players.get(i));
                 } else {
-                    for (int indexBestShooterOrder = 0; indexBestShooterOrder < bestShooterOrder.size(); indexBestShooterOrder++) {
-                        if (victim.damageByShooter(players.get(i)) >= victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder))) {
-                            bestShooterOrder.add(indexBestShooterOrder, players.get(i));
-                            break;
+                    if (bestShooterOrder.size() == 1) {
+                        bestShooterOrder.add(players.get(i));
+                    } else {
+                        for (int indexBestShooterOrder = 0; indexBestShooterOrder < bestShooterOrder.size() - 1; indexBestShooterOrder++) {
+                            if (victim.damageByShooter(players.get(i)) >= victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder))) {
+                                bestShooterOrder.add(indexBestShooterOrder, players.get(i));
+                                break;
+                            } else if (victim.damageByShooter(players.get(i)) < victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder)) &&
+                                    victim.damageByShooter(players.get(i)) >= victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder++))) {
+                                bestShooterOrder.add(indexBestShooterOrder++, players.get(i));
+                                break;
+                            } else if (victim.damageByShooter(players.get(i)) < victim.damageByShooter(bestShooterOrder.getLast())) {
+                                bestShooterOrder.addLast(players.get(i));
+                                break;
+                            }
                         }
                     }
-                    //here we get out from the for 2 options: our player is the last in the list or it is the one with least points of all and
-                    // it's still to be add
-                    if (!bestShooterOrder.contains(players.get(i)))
-                        bestShooterOrder.addLast(players.get(i));
                 }
+
+
+                //if ==0 no points to add to the player
             }
-
-            //if ==0 no points to add to the player
         }
-
 
         return bestShooterOrder;
     }
@@ -846,42 +853,38 @@ public class Action {
  * @param subList a subList where all the players have done same damage
  * @param victim who is dead
  * @return list ordered bloodMark positions*/
-    public LinkedList<Player> orderSubListByPos(LinkedList<Player> subList, Player victim) {
+    public LinkedList<Player> orderSubListByPos( LinkedList<Player> subList,Player victim) {
         LinkedList<Player> subListOrder = new LinkedList<>();
-        int pos=victim.getTrack().length+1;
-        for (Player p:subList
-             ) {
-            if(victim.getFirstPositionOnTrack(p)==0){
-                subListOrder.addFirst(p);
-                subList.remove(p);}
-            else{
-                if(pos==victim.getTrack().length+1)
-                    {
-                        pos=victim.getFirstPositionOnTrack(p);
-                        subList.remove(p);
-                        subListOrder.addLast(p);
-                    }
-                else{
-                    if (victim.getFirstPositionOnTrack(p)<pos){
-                        for (Player shooter:subListOrder
-                             ) {
-                            if(victim.getFirstPositionOnTrack(shooter)==pos){
-                                subListOrder.add(subList.indexOf(shooter),p);
-                                subList.remove(p);
-                                pos=victim.getFirstPositionOnTrack(p);
-                                break;
-                            }
-                        }
+        int pos = victim.getTrack().length + 1;
+
+        for (Player player : subList
+        ) {
+            if (subListOrder.isEmpty() || subList.size() == 1 && victim.getFirstPositionOnTrack(player) > victim.getFirstPositionOnTrack(subListOrder.getFirst()))
+                subListOrder.add(player);
+            else if (subListOrder.size() == 1)
+                subListOrder.addFirst(player);
+            else {
+                for (int i=0; i<subListOrder.size()-1;i++) {
+
+                        if (victim.getFirstPositionOnTrack(subListOrder.get(i)) < victim.getFirstPositionOnTrack(player) && victim.getFirstPositionOnTrack(player) < victim.getFirstPositionOnTrack(subListOrder.get(i+1)))
+                        {subListOrder.add(subListOrder.indexOf(subListOrder.get(i+1)), player);
+                            break;}
+                        else if (victim.getFirstPositionOnTrack(subListOrder.get(i)) > victim.getFirstPositionOnTrack(player))
+                        {   subListOrder.add(subListOrder.indexOf(subListOrder.get(i)), player);
+                            break;}
+                        else if(victim.getFirstPositionOnTrack(player)>=victim.getFirstPositionOnTrack(subListOrder.getLast()))
+                            {   subListOrder.addLast(player);
+                            break;}
+
                     }
                 }
             }
-        }
-
-
-
-     return subListOrder;
-
+        return subListOrder;
     }
+
+
+
+
 
     /**
      * givePoints
@@ -1055,7 +1058,7 @@ public class Action {
     public void finalScoring() {
         LinkedList<Player> mostPointsOrder = new LinkedList<>();
 
-        mostPointsOrder = mostPointsOrder(mostPointsOrder, getModel().getPlayers(), 0, 0);
+        mostPointsOrder = mostPointsOrder(mostPointsOrder);
         mostPointsOrder = checkBestOrderScenario(mostPointsOrder);
         mostPointsOrder=orderByMortalPoints(mostPointsOrder);
         setPosition(mostPointsOrder);
@@ -1067,32 +1070,39 @@ public class Action {
  * mostPointsOrder()
  *
  * @param players
- * @param allPlayers
- * @param i_allPlayers
- * @param i_players
+ *
  *
  * @return a list order by points
  *
  * */
-    public LinkedList<Player> mostPointsOrder(LinkedList<Player> players, List<Player> allPlayers, int i_players, int i_allPlayers) {
-        if (players.size() == 0 && i_allPlayers < allPlayers.size())
-            players.addFirst(allPlayers.get(i_allPlayers));
-        else if (players.get(i_allPlayers).getPoints() >= players.get(i_players).getPoints() && i_allPlayers < allPlayers.size()) {
-            players.set(i_players, allPlayers.get(i_allPlayers));
-            players.set(i_players + 1, players.get(i_players));
-            i_players++;
-            mostPointsOrder(players, allPlayers, i_players, i_allPlayers);
-        } else {
-            if (i_allPlayers < allPlayers.size()) {
-                i_allPlayers++;
-                mostPointsOrder(players, allPlayers, 0, i_allPlayers);
-            } else
-                return players;
+    public LinkedList<Player> mostPointsOrder(LinkedList<Player> players) {
+        LinkedList<Player> orderedByPoints=new LinkedList<>();
 
-        }
+        for (Player player:players
+             ) {
+            if(orderedByPoints.isEmpty()||orderedByPoints.size()==1&&orderedByPoints.getFirst().getPoints()>=player.getPoints())
+                orderedByPoints.add(player);
+            else if(orderedByPoints.size()==1)
+                orderedByPoints.addFirst(player);
+            else{
+                }
+                for (int i=0; i<orderedByPoints.size()-1;i++) {
 
-        return players;
+                    if (player.getPoints() < orderedByPoints.get(i).getPoints()&&player.getPoints()>=orderedByPoints.get(i+1).getPoints())
+                    {orderedByPoints.add(orderedByPoints.indexOf(orderedByPoints.get(i+1)), player);
+                        break;}
+                    else if (player.getPoints() >= orderedByPoints.get(i).getPoints())
+                    {   orderedByPoints.add(orderedByPoints.indexOf(orderedByPoints.get(i)), player);
+                        break;}
+                    else if(player.getPoints()<=orderedByPoints.getLast().getPoints())
+                    {   orderedByPoints.addLast(player);
+                        break;}
 
+                }
+            }
+
+
+      return orderedByPoints;
     }
 
     //orders by mortalPoints
@@ -1104,31 +1114,40 @@ public class Action {
      * */
     public LinkedList<Player> checkBestOrderScenario(LinkedList<Player> players) {
         LinkedList<Player> effectiveOrder = new LinkedList<>();
-        LinkedList<Player> confront = players;
         LinkedList<Player> samePointsSubList = new LinkedList<>();
-        int i = 0;
-        for (Player player : players
-        ) {
+        LinkedList<Player> playersClone=new LinkedList<>();
+        playersClone.addAll((LinkedList<Player>)players.clone());
+
+        for (Player player : players) {
             samePointsSubList.add(player);
-            confront.remove(player);
-            for (Player p : confront
+            playersClone.remove(player);
+            for (Player p : playersClone
             ) {
                 if (player.getPoints() == p.getPoints()) {
                     samePointsSubList.add(p);
                 }
             }
-            if (effectiveOrder.size() != 0) {
-                samePointsSubList = orderByMortalPoints(samePointsSubList);
-
-                while (effectiveOrder.get(i).getPoints() >= samePointsSubList.getFirst().getPoints()) {
-                    i++;
+                if(effectiveOrder.isEmpty()||effectiveOrder.size()==1)
+                {
+                    effectiveOrder.addAll(orderByMortalPoints(samePointsSubList));
                 }
-                effectiveOrder.addAll(i, samePointsSubList);
-            } else
-                effectiveOrder = orderByMortalPoints(samePointsSubList);
+                else{
+                    for (int i=0; i<effectiveOrder.size()-1;i++) {
+
+                        if (samePointsSubList.getFirst().getPoints() < effectiveOrder.get(i).getPoints()&&samePointsSubList.getFirst().getPoints()>=effectiveOrder.get(i+1).getPoints())
+                        {effectiveOrder.addAll(effectiveOrder.indexOf(effectiveOrder.get(i+1)), orderByMortalPoints(samePointsSubList));
+                            break;}
+                        else if (samePointsSubList.getFirst().getPoints() >= effectiveOrder.get(i).getPoints())
+                        {   effectiveOrder.addAll(effectiveOrder.indexOf(effectiveOrder.get(i)), orderByMortalPoints(samePointsSubList));
+                            break;}
+                        else if(samePointsSubList.getFirst().getPoints()<=effectiveOrder.getLast().getPoints())
+                        {   effectiveOrder.addAll(orderByMortalPoints(samePointsSubList));
+                            break;}
+
+                    }
+               }
+            samePointsSubList.clear();
         }
-
-
         return effectiveOrder;
     }
 
@@ -1137,23 +1156,37 @@ public class Action {
      * @param subList a subList where all players have same points
      *
      * @return a list of player order by points and mortalPoints*/
-    public LinkedList orderByMortalPoints(LinkedList<Player> subList) {
-        Player player = new Player();
-        for (int i = 0; i < subList.size()-1; i++) {
-            if (subList.get(i).getMortalPoints() < subList.get(i + 1).getMortalPoints() && subList.get(i) != null)
-                player = subList.get(i);
-            subList.set(i, subList.get(i + 1));
-            subList.set(i + 1, player);
-        }
-        for (Player player2:subList
+    public LinkedList<Player> orderByMortalPoints(LinkedList<Player> subList) {
+        LinkedList<Player> orderedByMortalPoints=new LinkedList<>();
+        for (Player player:subList
              ) {
-            if(subList.getLast().getMortalPoints()>player2.getMortalPoints())
-            {
-                player=subList.removeLast();
-                subList.add(subList.indexOf(player2),player);
+
+            if(orderedByMortalPoints.isEmpty()||orderedByMortalPoints.size()==1&&player.getMortalPoints()<orderedByMortalPoints.getFirst().getMortalPoints())
+                orderedByMortalPoints.add(player);
+            else if(orderedByMortalPoints.size()==1)
+                orderedByMortalPoints.addFirst(player);
+            else{
+
+
+                for (int i=0; i<orderedByMortalPoints.size()-1;i++) {
+
+                    if (player.getMortalPoints() < orderedByMortalPoints.get(i).getMortalPoints()&&player.getMortalPoints()>=orderedByMortalPoints.get(i+1).getMortalPoints())
+                    {orderedByMortalPoints.add(orderedByMortalPoints.indexOf(orderedByMortalPoints.get(i+1)),player);
+                        break;}
+                    else if (player.getMortalPoints() >= orderedByMortalPoints.get(i).getMortalPoints())
+                    {   orderedByMortalPoints.add(orderedByMortalPoints.indexOf(orderedByMortalPoints.get(i)),player);
+                        break;}
+                    else if(player.getMortalPoints()<=orderedByMortalPoints.getLast().getMortalPoints())
+                    {   orderedByMortalPoints.addLast(player);
+                        break;}
+
+                }
+
+
             }
+
         }
-        return subList;
+        return orderedByMortalPoints;
     }
 
 /**setPosition()

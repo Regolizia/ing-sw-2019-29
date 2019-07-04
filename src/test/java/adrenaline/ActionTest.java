@@ -219,7 +219,7 @@ public class ActionTest {
     m.getMapUsed().getGameBoard().getRooms().get(0).removeAmmotile(c1);
         m.getMapUsed().getGameBoard().getRooms().get(0).hasAmmoTile(c1);
     action.grabWeapon(player,w,c1.getSpawnpoint(m),player.getPowerUp(),c1);
-
+    w.applyDamage(victims,player,en);
     action.setPosition(players);
     players.getFirst().setMortalPoints(1);
     players.getLast().setMortalPoints(3);
@@ -227,9 +227,31 @@ public class ActionTest {
     action.orderByMortalPoints(players);
     players.getLast().setMortalPoints(4);
     action.orderByMortalPoints(players);
-    //action.checkBestOrderScenario(players);
+    action.checkBestOrderScenario(players);
+    action.mostPointsOrder(players);
+    victim.newLife();
+    LinkedList<Player>victimss=new LinkedList<>();
+    victimss.add(victim);
+    LinkedList<Player>shoot=new LinkedList<>();
+    Player p1=new Player(c1, Figure.PlayerColor.GRAY);
+    shoot.add(p1);
+    action.canGetPoints(victimss,shoot);
+    action.finalScoring();
+        for (Player playerl:players
+             ) {
+            System.out.println(playerl+":"+" "+playerl.getPlayerPos().toString());
+        }
 
-
+    action.bestShooterOrderWithPosition(players,victim);
+        w.applyDamage(victims,player,en);
+        w.applyDamage(victims,player,en);
+        players.addFirst(player);
+        w.applyDamage(victims,player2,en);
+        players.add(player2);
+        action.bestShooterOrder(players,victim);
+        w.applyDamage(victims,p1,en);
+        players.add(p1);
+        action.bestShooterOrder(players,victim);
 
     }
 
