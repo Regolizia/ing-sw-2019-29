@@ -42,7 +42,7 @@ public class Hellion extends WeaponCard {
         listOne = c.oneTileDistant(g, false);
         listOne.add(c);
 
-        for(int k=list.size()-1;k>=0;k--){
+        for(int k=(list.size()-1);k>=0;k--){
             for(CoordinatesWithRoom c2: listOne){
                 if(list.get(k).getX()==c2.getX() &&
                         list.get(k).getY()==c2.getY() &&

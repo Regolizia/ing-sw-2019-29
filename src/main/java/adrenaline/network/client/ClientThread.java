@@ -194,7 +194,8 @@ public class ClientThread implements Runnable {
                 List<String> weapons = getListFromServer();
                 List<String> powerups = getListFromServer();
                 List<String> ammo = getListFromServer();
-                client.boards(namesp,drops,marks,weapons,powerups,ammo);
+                List<String> positions = getListFromServer();
+                client.boards(namesp,drops,marks,weapons,powerups,ammo,positions);
                 break;
             case "MESSAGE":
                 client.printMessage(getFromServer());

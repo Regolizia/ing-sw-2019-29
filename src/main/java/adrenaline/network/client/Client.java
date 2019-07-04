@@ -50,7 +50,7 @@ public class Client {
         public void alt(){}
         public void change(){}
         public void disconnected(){}
-        public void boards(List<String> names, List<String> drops,List<String> marks,List<String> weapons,List<String> powerups,List<String> ammo){}
+        public void boards(List<String> names, List<String> drops,List<String> marks,List<String> weapons,List<String> powerups,List<String> ammo,List<String> positions){}
         public void waitStart(){}
         public void boardSetup(int n, List<String> colors, List<String> names, List<String> blue, List<String> red, List<String> yellow,List<String> cells,List<String> items){}
 

@@ -93,8 +93,7 @@ public class ClientCLI extends Client{
             output.writeObject(message);
             output.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-
+           System.out.println("You've been disconnected from server, try to reenter the game.");
         }
     }
 
@@ -103,7 +102,7 @@ public class ClientCLI extends Client{
             output.writeObject(number);
             output.flush();
         } catch (IOException e){
-            e.printStackTrace();
+            System.out.println("You've been disconnected from server, try to reenter the game.");
 
         }
     }
@@ -497,15 +496,12 @@ public class ClientCLI extends Client{
         System.out.println("Waiting for other players...");
     }
 
-    public static void printPlayerDetails(String playerName, int score, Figure.PlayerColor color) {
-        System.out.println("Player: "+"\n"+"Name: " + playerName+"\n"+"Color: " + color+"\n"+"Score: " + score);
-    }
     public void disconnected(){
         System.out.println("You've been disconnected!");
         reconnect();
     }
 
-    public void boards(List<String> names, List<String> drops,List<String> marks, List<String> weapons,List<String> powerups,List<String> ammo){
+    public void boards(List<String> names, List<String> drops,List<String> marks, List<String> weapons,List<String> powerups,List<String> ammo,List<String> positions){
         int i=0;
         System.out.println("Player Boards");
         for(int y=0;y<names.size();y++){
@@ -518,6 +514,7 @@ public class ClientCLI extends Client{
         printWeapons(names,weapons);
         printPowerups(names,powerups);
         printAmmo(names,ammo);
+        printPositions(names,positions);
     }
     public void printWeapons(List<String> names,List<String> weapons){
         int i=0;
@@ -557,6 +554,12 @@ public class ClientCLI extends Client{
             y=y+3;
         }
     }
+    public void printPositions(List<String> names,List<String> positions){
+        System.out.println("Positions");
+        for(int i=0;i<names.size();i++){
+            System.out.println(names.get(i)+" in "+positions.get(i));
+        }
+    }
 
     public void score(List<String> scores){
         System.out.println("Scores: ");
@@ -567,10 +570,8 @@ public class ClientCLI extends Client{
 
     public void endgame(List<String> scores){// name score name score...
         System.out.println("Endgame: ");
-        int x =1;
-        for(int i=0;i<scores.size();i=i+2){
-            System.out.println(x+"°: "+scores.get(i)+" points "+scores.get(i+1));
-            x++;
+        for(int i=0;i<scores.size();i=i+3){
+            System.out.println(scores.get(i)+": "+scores.get(i+1)+" points "+scores.get(i+2));
         }
     }
 

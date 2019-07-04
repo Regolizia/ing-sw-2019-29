@@ -751,6 +751,7 @@ public class Server {
                                         sendWeapons();
                                         sendPowerUps();
                                         sendAmmo();
+                                        sendPositions();
                                         lock.unlock();
                                         break;
                                     case "P":
@@ -1135,6 +1136,22 @@ public class Server {
             }
         }
 
+        public void sendPositions(){
+            List<String> positions = new LinkedList<>();
+            for(Player p : model.getPlayers()){
+                if(!Server.isFirstTurn()){
+                    positions.add(p.getCoordinatesWithRooms().toString());
+                }else{
+                    positions.add("NOT YET DECIDED");
+                }
+            }
+            try {
+            sendListToClient(positions);
+        }catch (Exception e){
+            System.out.println("Couldn't send positions");
+        }
+        }
+
         public void sendAmmoTiles(){
             List<String> listOfCells = new LinkedList<>();
             List<String> listOfItems = new LinkedList<>();
@@ -1390,8 +1407,12 @@ public class Server {
             lock.lock();
             sendToClient("ENDGAME");
 
-            //sendListToClient(); name score name score...      BROADCAST
             List<String> finalList = new LinkedList<>();
+            for(Player p : model.getPlayers()){
+                finalList.add(p.getPlayerPos().toString());
+                finalList.add(p.getName());
+                finalList.add(Integer.toString(p.getPoints()));
+            }
 
             for (Map.Entry me : writers.entrySet()) {
                 try {
@@ -1794,6 +1815,7 @@ public class Server {
                             printPlayerAmmo(player);
 
                             broadcast(stringPlayerAmmo(player));
+                            broadcast(nickname + " moved to "+ player.getCoordinatesWithRooms().toString());
                         }
                     } catch (Exception e) {
                         System.out.println("Couldn't grab or couldn't broadcast it.");
@@ -3295,7 +3317,7 @@ public class Server {
                                 int xn = (int)inputStream.readObject();
                                 xn--;
                                 Object ty = targets.get(xn);
-                                List<Object> targets1 = targets;
+                                List<Object> targets1 = new LinkedList<>(targets);
                                 targets.clear();
                                 targets.add(ty);
                                 targets1.remove(ty);
