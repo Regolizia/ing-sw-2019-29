@@ -3538,6 +3538,12 @@ public class Server {
                             System.out.println("          NEXT PLAYER");
                             handler.nextPlayer();
                             handler.flagFalse();
+
+                            if(lock.isHeldByCurrentThread()) {
+                                while (lock.getHoldCount() > 0) {
+                                    lock.unlock();
+                                }
+                            }
                         }
                     }
                 }, 0, 1000);
