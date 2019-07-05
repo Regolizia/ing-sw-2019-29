@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PowerUpDeck2Test {
+    /*testing pickPowerUp and setUsedPowerUp methods construction*/
     private PowerUpDeck powerUpDeck;
 
     @BeforeEach

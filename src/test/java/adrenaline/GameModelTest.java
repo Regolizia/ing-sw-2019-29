@@ -8,6 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameModelTest {
+    /*GameModel creation plus setting methods for the game*/
     @Test
     void constructor() {
 

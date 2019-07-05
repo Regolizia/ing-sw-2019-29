@@ -8,7 +8,7 @@ import java.util.Arrays;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class GameBoardTestWithMapOne {
-
+/*creationg of map1 with deathmach gameboard*/
     @Test
     public void testConstructor() {
         GameModel g = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT,1,false);

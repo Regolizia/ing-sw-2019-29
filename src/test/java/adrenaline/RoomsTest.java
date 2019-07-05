@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class RoomsTest {
-
+/*creation of the room*/
     @Test
     public void testConstructor() {
         Coordinates c1 = new Coordinates(1,1);

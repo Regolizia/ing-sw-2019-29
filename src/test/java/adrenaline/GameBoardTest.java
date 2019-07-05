@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class GameBoardTest {
-
+/*testing creation of Gameboard*/
     @Test
     public void testConstructor() {
 

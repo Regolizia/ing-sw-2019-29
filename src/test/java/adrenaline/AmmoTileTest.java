@@ -11,6 +11,7 @@ public class AmmoTileTest {
 
     @Test
     public void testConstructor() {
+        /*testing ammoTile creation and setting coordinates*/
         Coordinates c1 = new Coordinates(1,2);
         AmmoTile a = new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE);
         AmmoTile b = new AmmoTile(AmmoCube.CubeColor.POWERUP, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE);

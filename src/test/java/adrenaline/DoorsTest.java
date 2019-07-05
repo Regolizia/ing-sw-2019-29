@@ -10,7 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class DoorsTest {
-
+/*test
+* adding doors to a room and direction*/
     @Test
     public void testConstructor() {
 

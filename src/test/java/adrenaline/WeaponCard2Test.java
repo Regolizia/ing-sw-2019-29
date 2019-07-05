@@ -10,7 +10,7 @@ import java.util.List;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class WeaponCard2Test {
-
+    /*testing damage methods*/
     @Test
     public void testConstructor() {
         GameModel m = new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 4,false);

@@ -10,6 +10,10 @@ import java.util.List;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class FourTilesDistanceTest {
+    /*map creation, getGameBoard, creation of CoordinatesWithRoom
+    *
+    * check all coordinatesWithRoom that have 4 tile distance from initial CoordinatesWithRoom
+    * */
 
 
         @Test

@@ -7,6 +7,13 @@ import java.util.LinkedList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 public class ActionTest {
+    /*
+    * this class tests Action's methods needed for controller, payment methods,and points methods
+    *
+    *
+    *
+    *
+    * */
     private Action action;
     @Test
     void constructor() {
@@ -29,6 +36,8 @@ public class ActionTest {
         players.add(player);
         players.add(victim);
         //LinkedList<CoordinatesWithRoom> c=action.proposeCellsGrab(c1,m.getMapUsed().getGameBoard());//to do grab()
+
+     //________________________________HAND METHODS____________________________________________________________________//
         LinkedList<PowerUpCard> powers = new LinkedList<>();//to do payPowerUp()
         PowerUpCard powerOne = new PowerUpCard(AmmoCube.CubeColor.RED);//
         PowerUpCard powerTwo = new PowerUpCard(AmmoCube.CubeColor.BLUE);//
@@ -52,6 +61,9 @@ public class ActionTest {
         //  action.chooseWeaponCard(player.getHand());//
         //  action.chooseTargets(victims,1);//
 
+
+     //___________________________________PAYMENT____________________________________________________________________//
+
         // action.paidEffect(new Thor(),player, Action.PayOption.AMMO, AmmoCube.Effect.BASE,m);//
         action.pay(player, new AmmoCube(AmmoCube.CubeColor.RED));// pay()
         action.pay(player, new AmmoCube(AmmoCube.CubeColor.BLUE));//pay()
@@ -65,6 +77,9 @@ public class ActionTest {
         //action.reload(player,w, Action.PayOption.AMMOPOWER, AmmoCube.Effect.BASE,m);//
         //action.reload(player,w, Action.PayOption.NONE, AmmoCube.Effect.BASE,m);//
         // action.proposeCellsRunBeforeShoot(c1,m.getMapUsed().getGameBoard());//
+
+
+    //_____________________________RUN AND GRAB METHODS______________________________________________________________________________//
         action.proposeCellsRun(player.getCoordinatesWithRooms());
         action.proposeCellsRunBeforeShoot(player);
         player.damageByShooter(player);
@@ -92,7 +107,7 @@ public class ActionTest {
         EffectAndNumber en = new EffectAndNumber(AmmoCube.Effect.BASE, 0);
         LinkedList<EffectAndNumber> enL = new LinkedList();
         enL.add(en);
-
+//_______________________WEAPON, PAYMENT, RELOAD_________________________________________________________________________//
         victims.add(player);
         action.shoot();
         LinkedList<AmmoCube.Effect> list = new LinkedList<>();
@@ -196,7 +211,7 @@ public class ActionTest {
         w.setReloadAlt(true);
         w.getReloadAlt();
         w.toString();
-
+//__________________________________________PAYMENT TEST____________________________________________________________//
         action.canGetPoints(players,players);
     player.setPlayerPositionSpawnpoint(c1);
     player.getPoints();
@@ -274,6 +289,7 @@ public class ActionTest {
         for (Player pl:players
              ) {
             System.out.println(pl+""+""+pl.getPoints());
+
         }
 
 

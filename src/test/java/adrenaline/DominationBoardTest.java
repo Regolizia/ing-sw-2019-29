@@ -1,4 +1,4 @@
-package adrenaline;
+/*package adrenaline;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,4 +13,4 @@ class DominationBoardTest {
         dominationBoard = new DominationBoard();
     }
 
-}
+}*/

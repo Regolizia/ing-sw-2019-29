@@ -12,7 +12,7 @@ import java.util.List;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class PowerGloveTest {
-
+/*testing damage done by PowerGlove*/
 
         // NO PAYMENT, NO SPAWNPOINTS, NO PLAYER'S CHOICE (NO CHECK DIFFERENT TARGETS)
 

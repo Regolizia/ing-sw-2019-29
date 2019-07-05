@@ -9,6 +9,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class Player2Test {
 
+/*player creation plus some of its methods*/
     @Test
     public void testConstructor() {
         WeaponCard weapon=null;
@@ -37,6 +38,7 @@ public class Player2Test {
         p.putASkullOnTrack();
         p.isFirstTurn();
         p.returnPoints();
+        //testing respawn
         p.damageByShooter(p);
         p.damageByShooter(p);
         p.damageByShooter(p);

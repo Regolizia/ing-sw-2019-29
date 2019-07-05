@@ -8,7 +8,7 @@ public class AmmoCubeTest {
 
     @Test
     public void testConstructor() {
-
+            /*testing Ammocube colors,effects,payment*/
         AmmoCube c = new AmmoCube(AmmoCube.CubeColor.BLUE);
         c.setEffect(AmmoCube.Effect.ALT);
         c.setPaid(true);

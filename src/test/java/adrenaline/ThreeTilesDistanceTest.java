@@ -11,7 +11,10 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
  public class ThreeTilesDistanceTest {
 
-
+     /*map creation, getGameBoard, creation of CoordinatesWithRoom
+      *
+      * check all coordinatesWithRoom that have 3 tile distance from initial CoordinatesWithRoom
+      * */
         @Test
         public void testConstructor() {
             GameBoard g;

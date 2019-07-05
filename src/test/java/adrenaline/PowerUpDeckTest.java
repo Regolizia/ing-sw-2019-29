@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 public class PowerUpDeckTest {
-
+/*testing pickUp from powerUpDeck*/
 private PowerUpDeck deck;
     @Test
     public void testConstructor() {

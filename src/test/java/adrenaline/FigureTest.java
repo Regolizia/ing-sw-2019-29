@@ -14,6 +14,7 @@ private Figure fig;
         f.setPlayerColor(Figure.PlayerColor.YELLOW);
 
     }*/
+   /*test Figure creation, Figure.PlayerColor, getPlayerColor and setPlayerColor*/
    @Test
     void constructor(){
        fig=new Figure(Figure.PlayerColor.PURPLE);

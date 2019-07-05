@@ -10,7 +10,10 @@ import java.util.List;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 public class OneTileDistanceTest {
-
+    /*map creation, getGameBoard, creation of CoordinatesWithRoom
+     *
+     * check all coordinatesWithRoom that have 1 tile distance from initial CoordinatesWithRoom
+     * */
 
     @Test
     public void testConstructor() {

@@ -18,6 +18,7 @@ class EffectAndNumberTest {
         effectAndNumber.setEffect(AmmoCube.Effect.ALT);
         assertEquals(AmmoCube.Effect.ALT,effectAndNumber.getEffect());
     }*/
+ /*test creation of EffectAndNumber, Adding AmmoCube.Effect, setEffect and addEffect plus setNumber*/
  @Test
  void constructor(){
      effectAndNumber=new EffectAndNumber(AmmoCube.Effect.BASE,1);

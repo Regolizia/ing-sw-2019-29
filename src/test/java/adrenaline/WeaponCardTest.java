@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class WeaponCardTest {
+    /*Weapon card creation and reload's methods*/
     private WeaponCard weaponCard;
     @BeforeEach
     void setUp() {

@@ -13,7 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class FreneticActionTest {
     private FreneticAction actionF;
     @Test
+    /*testing frenetic action*/
     void constructor(){
+
+   //____________________________________PROPOSE CELLS__________________________________________________________________________//
         actionF=new FreneticAction(new GameModel(DEATHMATCH, GameModel.Bot.NOBOT, 1,false));
         WeaponCard w=new Thor();
         WeaponCard wyellow=new Cyberblade();
@@ -26,6 +29,7 @@ class FreneticActionTest {
         actionF.proposeCellsGrabFrenzy(c1, FreneticAction.PlayerOrder.AFTER);
         actionF.proposeCellsRunBeforeShootFrenzy(c1, FreneticAction.PlayerOrder.AFTER);
         actionF.proposeCellsRunBeforeShootFrenzy(c1, FreneticAction.PlayerOrder.FIRST);
+    //___________________________DAMAGE AND ORDER __to do points methods______________________________________________//
         victim.newLife();
         LinkedList<Object>victims=new LinkedList<>();
         victims.add(victim);
@@ -60,8 +64,25 @@ class FreneticActionTest {
         actionF.whoHasDoneMoreDamage(players,victim);
         List<Player>victimss=new LinkedList<>();
         victimss.add(victim);
-        actionF.canGetPoints(victimss,players);
 
+        Player aldo=new Player(c1, Figure.PlayerColor.BLUE);
+        Player giovanni=new Player(c1, Figure.PlayerColor.YELLOW);
+        Player giacomo=new Player(c1, Figure.PlayerColor.GREEN);
+        LinkedList<Object> victimsso=new LinkedList<>();
+        players.clear();
+        players.add(aldo);
+        players.add(giacomo);
+        victimss.clear();
+        victimss.add(giovanni);
+        victimsso.add(giovanni);
+        w.applyDamage(victimsso,aldo,effectAndNumber);
+        w.applyDamage(victimsso,giacomo,effectAndNumber);
+        w.applyDamage(victimsso,giacomo,effectAndNumber);
+        actionF.canGetPoints(victimss,players);
+        for (Player p:players
+             ) {
+            System.out.print(p+":"+p.getPoints());
+        }
 
 
     }

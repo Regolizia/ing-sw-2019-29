@@ -8,7 +8,7 @@ import static adrenaline.GameModel.Mode.DEATHMATCH;
 
 
 public class GameBoardTestWithMapTwo {
-
+/*creation of map2 with deatchmath Gameboard*/
     @Test
     public void testConstructor() {
 

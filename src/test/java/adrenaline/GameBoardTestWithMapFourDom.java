@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static adrenaline.GameModel.Mode.DOMINATION;
 
     public class GameBoardTestWithMapFourDom {
-
+        /*testing map 4 Domination Gameboard*/
         @Test
         public void testConstructor() {
 

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class WeaponDeckTest {
     private WeaponDeck weaponDeck;
-
+    /*testing pick up WeaponCard from Deck*/
 
     @BeforeEach
     void setUp() {

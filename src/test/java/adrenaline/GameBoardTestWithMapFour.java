@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static adrenaline.GameModel.Mode.DEATHMATCH;
 
     public class GameBoardTestWithMapFour {
-
+        /*testing map 4 DEATHMATCH Gameboard*/
         @Test
         public void testConstructor() {
 

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SpawnpointTest {
+    /*testing add and remove methods needed for grab action*/
     private Spawnpoint spawnpoint;
 
     @BeforeEach
