@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: adrenaline.network.server.StartServer
+Main-Class: adrenaline.network.client.ClientCLI
 
