@@ -808,7 +808,7 @@ public class Action {
                  ) {
                 for (Player player:allPlayers
                      ) {
-                    if(player.getColor().equals(color))
+                    if(player.getColor().equals(color)&&!playersWhoHaveShoot.contains(player))
                         playersWhoHaveShoot.add(player);
 
                 }
@@ -818,6 +818,7 @@ public class Action {
                 return;
             bestShooterOrder.addAll(bestShooterOrder(playersWhoHaveShoot,victim));
             bestShooterOrderWithPosition.addAll(bestShooterOrderWithPosition(bestShooterOrder,victim));
+            System.out.println("prima di givePoints"+bestShooterOrderWithPosition);
             givePoints(victim,bestShooterOrderWithPosition);
 
         }
@@ -832,6 +833,7 @@ public class Action {
      * @return List<Player>: order list of player
      **/
     public List<Player> bestShooterOrder(List<Player> players, Player victim) {
+        System.out.println("chi ha sparato? "+players);
         LinkedList<Player> bestShooterOrder = new LinkedList<>();
         int maxDamage = 0;
         for (int i = 0; i < players.size(); i++) {
@@ -874,32 +876,52 @@ public class Action {
  * @return list of player order by #blooMark and their position
  * */
     public LinkedList<Player> bestShooterOrderWithPosition(List<Player> bestShooterOrder, Player victim) {
-        LinkedList<Player>bestShooterOrderWithPosition=new LinkedList<>();
-        LinkedList<Player>subList=new LinkedList<>();
-        LinkedList<Player>list=new LinkedList<>();
-        list.addAll(bestShooterOrder);
+        LinkedList<Player> bestShooterOrderWithPosition=new LinkedList<>();
+        bestShooterOrderWithPosition.clear();
+        System.out.println("prima di bestShooter con pos: "+bestShooterOrder);
+        //if bestShooterOrderIsEmptyAddElement
+        for (Player player : bestShooterOrder
+        ) {
+            if (bestShooterOrderWithPosition.isEmpty())
+                bestShooterOrderWithPosition.addFirst(player);
+            else if (bestShooterOrderWithPosition.size() == 1 && !bestShooterOrderWithPosition.contains(player)) {
+                if (victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) < victim.getFirstPositionOnTrack(player))
+                    bestShooterOrderWithPosition.add(player);
+                else if (victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) > victim.getFirstPositionOnTrack(player) &&
+                        victim.damageByShooter(bestShooterOrderWithPosition.getFirst()) == victim.damageByShooter(player))
+                    bestShooterOrderWithPosition.addFirst(player);
+            } else {
+                for (int i = 1; i < bestShooterOrderWithPosition.size() - 1; i++) {
 
-        while(list.size()>0) {
-            for (int i = 0; i < bestShooterOrder.size(); i++) {
-                list.remove(bestShooterOrder.get(i));
+                    if (!bestShooterOrderWithPosition.contains(player) && victim.damageByShooter(player) == victim.damageByShooter(bestShooterOrderWithPosition.getFirst())
+                            && victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) > victim.getFirstPositionOnTrack(player)) {
+                        bestShooterOrderWithPosition.addFirst(player);
+                        break;
+                    } else if (!bestShooterOrderWithPosition.contains(player) && victim.damageByShooter(player) == victim.damageByShooter(bestShooterOrderWithPosition.getLast())
+                            && victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getLast()) < victim.getFirstPositionOnTrack(player)) {
+                        bestShooterOrderWithPosition.addLast(player);
+                        break;
+                    } else if (!bestShooterOrderWithPosition.contains(player) && victim.damageByShooter(player) <= victim.damageByShooter(bestShooterOrderWithPosition.get(i - 1)) &&
+                            victim.damageByShooter(player) >= victim.damageByShooter(bestShooterOrderWithPosition.get(i + 1)) &&
+                            victim.getFirstPositionOnTrack(player) > victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.get(i - 1))
+                            && victim.getFirstPositionOnTrack(player) < victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.get(i + 1))) {
+                        bestShooterOrderWithPosition.add(i + 1, player);
+                        break;
 
-                for (int j=0;j<bestShooterOrder.size();j++){
-                    if(!bestShooterOrder.get(i).equals(bestShooterOrder.get(j))&&!list.contains(bestShooterOrder.get(j))&&victim.damageByShooter(bestShooterOrder.get(i))==victim.damageByShooter(bestShooterOrder.get(j)))
-                        subList.add(bestShooterOrder.get(j));
-                }
-                subList.add(bestShooterOrder.get(i));
-                subList=orderSubListByPos(subList,victim);
-                list.removeAll(subList);
+                    }
 
-                for (Player shooter:subList
-                ) {
-                    bestShooterOrderWithPosition.addLast(shooter);
+
+                    //se uguale punteggio dell ultimo e > pos in coda
+                    //contenuto tra i due
+
+
                 }
             }
-
-
+            if(!bestShooterOrderWithPosition.contains(player))
+                bestShooterOrderWithPosition.addLast(player);
         }
 
+        System.out.println("da dare prima di give points:"+bestShooterOrderWithPosition);
         return bestShooterOrderWithPosition;
     }
 /**orderSubListByPos()
@@ -932,6 +954,7 @@ public class Action {
                     }
                 }
             }
+
         return subListOrder;
     }
 
@@ -948,12 +971,12 @@ public class Action {
      */
 
     public void givePoints(Player victim, List<Player> shooters) {
-        LinkedList<Player>sameDamage=new LinkedList<>();
-        LinkedList<Player>sameDamagePlusOrdered=new LinkedList<>();
-        LinkedList<Player>effectiveOredr=new LinkedList<>();
         if (shooters.size() == 0)
             return;
-        int i=0;
+        System.out.println("best"+shooters);
+       //
+        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
+        int i=victim.getMaxPointAssignableCounter();
         //first blood & 12th damage & mortal points
         for (Player shooter: shooters
         ) {
@@ -963,65 +986,18 @@ public class Action {
                 shooter.setMortalPoints(1);
             if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&&victim.canAddMark(shooter))
                 victim.addMarks(shooter,1);
-        }
+
         //this.pointTrack = new int[]{8,6,4,2,1};
-        victim.setMaxPointAssignableCounter(victim.numberOfDeaths()-1);
-
-        //1 subList same damage then order by
-        for (Player player:shooters
-             ) {
-            for (Player p:shooters
-                 ) {
-                if(victim.damageByShooter(p)==victim.damageByShooter(player))
-                    sameDamage.add(p);
-
-            }
-            for (Player p:sameDamage)
-            {
-                if(sameDamagePlusOrdered.isEmpty()||sameDamagePlusOrdered.size()==1
-                        &&victim.getFirstPositionOnTrack(p)<victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getFirst()))
-                    sameDamagePlusOrdered.addFirst(player);
-                else if(sameDamagePlusOrdered.size()==1)
-                    sameDamagePlusOrdered.add(player);
-                else{
-                    for(int j=1;i<victim.getPointTrack().length-1;j++){
-                        if(victim.damageByShooter(sameDamagePlusOrdered.getLast())>victim.damageByShooter(player)){
-                            sameDamagePlusOrdered.addLast(player);
-                                break;}
-                       else if(victim.damageByShooter(sameDamagePlusOrdered.getLast())==victim.damageByShooter(player)
-                                    && victim.getFirstPositionOnTrack(player) < victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getLast())) {
-                            sameDamagePlusOrdered.add(sameDamagePlusOrdered.indexOf(sameDamagePlusOrdered.getLast()), player);
-                                    break;}
-                       else if(victim.damageByShooter(player)>victim.damageByShooter(sameDamagePlusOrdered.getFirst())||
-                                victim.damageByShooter(player)==victim.damageByShooter(sameDamagePlusOrdered.getFirst())
-                                        &&victim.getFirstPositionOnTrack(player)<victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getFirst())){
-                            sameDamagePlusOrdered.addFirst(player);
-                                break;}
-                       else if(victim.damageByShooter(sameDamagePlusOrdered.get(i-1))>=victim.damageByShooter(player)&&
-                                victim.damageByShooter(sameDamagePlusOrdered.get(i+1))<=victim.damageByShooter(player))
-                        sameDamagePlusOrdered.add(i++,player);
-                    }
-
-
-
-
-                }
-
-            }
-            i=0;
-            victim.setMaxPointAssignableCounter(victim.numberOfDeaths()-1);
-            //ordered list now give points
-            while (!sameDamagePlusOrdered.isEmpty()){
-                if(i+victim.getMaxPointAssignableCounter()<victim.getPointTrack().length-1)
-                    sameDamagePlusOrdered.getFirst().setPoints(victim.getPointTrack()[i+victim.getMaxPointAssignableCounter()]);
-                else
-                    sameDamagePlusOrdered.getFirst().setPoints(1);
-                i++;
-                sameDamagePlusOrdered.removeFirst();
-            }
+            if(shooters.indexOf(shooter)+i<victim.getPointTrack().length)
+               shooter.setPoints(victim.getPointTrack()[i+shooters.indexOf(shooter)]);
+           else if(shooters.indexOf(shooter)+i>=victim.getPointTrack().length)
+               shooter.setPoints(1);
         }
 
-    }
+        }
+
+
+
 
 
     /**
