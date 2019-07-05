@@ -233,10 +233,7 @@ public class ActionTest {
     shoot.add(p1);
     action.canGetPoints(victimss,shoot);
     action.finalScoring();
-        for (Player playerl:players
-             ) {
-            System.out.println(playerl+":"+" "+playerl.getPlayerPos().toString());
-        }
+
 
     action.bestShooterOrderWithPosition(players,victim);
         w.applyDamage(victims,player,en);
@@ -251,6 +248,53 @@ public class ActionTest {
         LinkedList<PowerUpCard> powerUps=new LinkedList<>();
         action.canPayGrab(w,player,powerUps);
         action.canPayGrab(w,player,powers);
+
+        victim.newLife();
+        Player player3=new Player(c1, Figure.PlayerColor.GRAY);
+        Player player4=new Player(c1, Figure.PlayerColor.GREEN);
+        Player v=new Player(c1, Figure.PlayerColor.YELLOW);
+        LinkedList<Object>target=new LinkedList<>();
+        target.add(v);
+        w.applyDamage(target,player3,en);
+        w.applyDamage(target,player4,en);
+        w.applyDamage(target,player4,en);
+        players.clear();
+        players.add(player3);
+        players.add(player4);
+        LinkedList<Player>targets=new LinkedList<>();
+        targets.add(v);
+        action.canGetPoints(targets,players);
+        players.clear();
+        players.add(player3);
+        players.add(player4);
+        Player pippo=new Player("An", Figure.PlayerColor.BLUE);
+        System.out.println(action.bestShooterOrderWithPosition(players,v));
+        action.orderSubListByPos(players,v);
+
+        for (Player pl:players
+             ) {
+            System.out.println(pl+""+""+pl.getPoints());
+        }
+
+
+
+
+        action.canGetPoints(targets,players);
+        action.finalScoring();
+        for (Player pla:players
+
+             ) { System.out.print(pla+""+pla.getPoints());
+
+        }
+
+        System.out.print(action.mostPointsOrder(players));
+
+        System.out.println(action.checkBestOrderScenario(action.mostPointsOrder(players)));
+       action.setPosition(action.checkBestOrderScenario(action.mostPointsOrder(players)));
+        for (Player pla:players
+             ) {
+            System.out.print(pla+" P:"+pla.getPoints()+" MP:"+pla.getMortalPoints()+" POS:"+pla.getPlayerPos());
+        }
     }
 
 
