@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Shotgun.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.weapons</a> &gt; <span class="el_source">Shotgun.java</span></div><h1>Shotgun.java</h1><pre class="source lang-java linenums">package adrenaline.weapons;
+
+import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * 
+ */
+public class Shotgun extends WeaponCard {
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L17">    public Shotgun() {</span>
+<span class="fc" id="L18">        price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,true));</span>
+<span class="fc" id="L19">        price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));</span>
+<span class="fc" id="L20">    }</span>
+
+    public boolean canShootBase(){
+<span class="fc" id="L23">        return true;</span>
+    }
+    public boolean canShootAlt(){
+<span class="fc" id="L26">        return true;</span>
+    }
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+     */
+    @Override
+    public List&lt;CoordinatesWithRoom&gt; getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+<span class="fc" id="L37">        List&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if(en.getEffect() == AmmoCube.Effect.BASE){</span>
+<span class="fc" id="L39">            list.add(c);</span>
+        }
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if(en.getEffect() == AmmoCube.Effect.ALT){</span>
+<span class="fc" id="L42">            list = c.oneTileDistant(g, false);</span>
+        }
+<span class="fc" id="L44">        return list;</span>
+    }
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
+
+    @Override
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e) {
+<span class="fc" id="L55">        setDamaged(targetList,p);</span>
+<span class="pc bpc" id="L56" title="1 of 3 branches missed.">        switch (e.getEffect()) {</span>
+            case BASE:  // 3 DAMAGE, 1 TARGET
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">                if(targetList.get(0) instanceof Player) {</span>
+<span class="fc" id="L59">                    int i =((Player) targetList.get(0)).marksByShooter(p);</span>
+<span class="fc" id="L60">                    i=i+3;</span>
+<span class="fc" id="L61">                    ((Player) targetList.get(0)).addDamageToTrack(p,i);</span>
+
+<span class="fc" id="L63">                    break;</span>
+                }
+                else {
+                    // DAMAGE SPAWNPOINT
+                }
+
+                // TODO MOVE 1 IF YOU WANT
+                break;
+
+            case ALT:   // 2 DAMAGE, 1 TARGET
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">                if(targetList.get(0) instanceof Player) {</span>
+<span class="fc" id="L74">                    int i =((Player) targetList.get(0)).marksByShooter(p);</span>
+<span class="fc" id="L75">                    i=i+2;</span>
+<span class="fc" id="L76">                    ((Player) targetList.get(0)).addDamageToTrack(p,i);</span>
+                }
+                else {
+                    // DAMAGE SPAWNPOINT
+                }
+                break;
+        }
+<span class="fc" id="L83">    }</span>
+    @Override
+    public String toString() {
+<span class="fc" id="L86">        return &quot;Shotgun&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

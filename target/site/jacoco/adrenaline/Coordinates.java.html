@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Coordinates.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">Coordinates.java</span></div><h1>Coordinates.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+/**
+ * Is the class that represents the coordinates in the game.
+ * It contains two integers.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
+public class Coordinates {
+
+    private int x;
+    private int y;
+
+    /**
+     * Default constructor.
+     */
+<span class="fc" id="L18">    Coordinates(){</span>
+<span class="fc" id="L19">        this.x =0;</span>
+<span class="fc" id="L20">        this.y =0;</span>
+<span class="fc" id="L21">    }</span>
+
+    /**
+     * Constructor with two integers
+     *
+     * @param x first integer
+     * @param y second integer
+     */
+<span class="fc" id="L29">    public Coordinates(int x,int y){</span>
+<span class="fc" id="L30">        this.x = x;</span>
+<span class="fc" id="L31">        this.y = y;</span>
+<span class="fc" id="L32">    }</span>
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L35" title="All 4 branches missed.">        return (this.x==(((Coordinates) obj).x)</span>
+                &amp;&amp; this.y==(((Coordinates) obj).y));
+    }
+    public int getX() {
+<span class="fc" id="L39">        return x;</span>
+    }
+
+    public void setX(int x) {
+<span class="fc" id="L43">        this.x = x;</span>
+<span class="fc" id="L44">    }</span>
+
+    public int getY() {
+<span class="fc" id="L47">        return y;</span>
+    }
+
+    public void setY(int y) {
+<span class="fc" id="L51">        this.y = y;</span>
+<span class="fc" id="L52">    }</span>
+
+     public void setCoordinates(int x, int y){
+<span class="fc" id="L55">        this.x = x;</span>
+<span class="fc" id="L56">        this.y = y;</span>
+<span class="fc" id="L57">     }</span>
+    @Override
+    public String toString() {
+<span class="fc" id="L60">        return this.getX() + &quot;, &quot; + this.getY();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

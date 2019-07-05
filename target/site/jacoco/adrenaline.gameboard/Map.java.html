@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.gameboard</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums">package adrenaline.gameboard;
+
+import adrenaline.AmmoCube;
+import adrenaline.GameModel;
+
+/**
+ * Is the class that represents the Map of the Board.
+ * It contains:
+ * &lt;ul&gt;
+ *     &lt;li&gt; The Game Board
+ *     &lt;li&gt; Two arrays with the measures of the Rooms
+ *     &lt;li&gt; Three arrays with the location of the Spawnpoints
+ *     &lt;li&gt; Six arrays with the location of the Doors
+ *     &lt;li&gt; Six arrays with the location of the Walls
+ * &lt;/ul&gt;
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
+public class Map {
+
+    private GameBoard gameboard;
+
+    int[] arrayX;
+    int[] arrayY;
+    int[] arraySpawnR;
+    int[] arraySpawnX;
+    int[] arraySpawnY;
+    int[] doorR1;
+    int[] doorX1;
+    int[] doorY1;
+    int[] doorR2;
+    int[] doorX2;
+    int[] doorY2;
+    Door.Direction[] doorDir;
+
+    int[] wallR1;
+    int[] wallX1;
+    int[] wallY1;
+    int[] wallR2;
+    int[] wallX2;
+    int[] wallY2;
+    Door.Direction[] wallDir;
+
+    /**
+     * Default constructor.
+     */
+<span class="fc" id="L48">    public Map() {</span>
+
+<span class="fc" id="L50">    }</span>
+
+    /**
+     * Constructor with Game Mode.
+     * Overridden.
+     *
+     * @param m the Game Mode
+     */
+<span class="nc" id="L58">    public Map(GameModel.Mode m) { }</span>
+
+    public GameBoard getGameBoard(){
+<span class="fc" id="L61">        return gameboard;</span>
+    }
+    public int[] getArrayX(){
+<span class="fc" id="L64">        return  this.arrayX;</span>
+    }
+    public int[] getArrayY(){
+<span class="fc" id="L67">        return  this.arrayY;</span>
+    }
+
+    void setGameBoard(GameBoard g){
+<span class="fc" id="L71">        this.gameboard = g;</span>
+<span class="fc" id="L72">    }</span>
+
+    //0 -&gt; BLUE
+    //1 -&gt; RED
+    //2 -&gt; YELLOW
+    public AmmoCube.CubeColor fromIndexToColor(int i){
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if(i==0) return AmmoCube.CubeColor.BLUE;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if(i==1) return AmmoCube.CubeColor.RED;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if(i==2) return AmmoCube.CubeColor.YELLOW;</span>
+<span class="fc" id="L81">        return AmmoCube.CubeColor.BLUE;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

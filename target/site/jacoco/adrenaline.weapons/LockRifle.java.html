@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LockRifle.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.weapons</a> &gt; <span class="el_source">LockRifle.java</span></div><h1>LockRifle.java</h1><pre class="source lang-java linenums">package adrenaline.weapons;
+
+import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static adrenaline.AmmoCube.Effect.BASE;
+
+/**
+ * 
+ */
+public class LockRifle extends WeaponCard {
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L19">    public LockRifle() {</span>
+<span class="fc" id="L20">        price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, BASE,true));</span>
+<span class="fc" id="L21">        price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, BASE,false));</span>
+<span class="fc" id="L22">        price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.OP1,false));</span>
+<span class="fc" id="L23">    }</span>
+
+    public boolean canShootBase(){
+<span class="fc" id="L26">        return true;</span>
+    }
+    public boolean canShootOp1(){
+<span class="fc" id="L29">        return true;</span>
+    }
+
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
+    @Override
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e) {
+<span class="fc" id="L40">        setDamaged(targetList,p);</span>
+<span class="pc bpc" id="L41" title="1 of 3 branches missed.">        switch (e.getEffect()) {</span>
+            case BASE:  // 2 DAMAGE, 1 MARK, 1 TARGET
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                    if(targetList.get(0) instanceof Player){</span>
+<span class="fc" id="L44">                        int i =((Player) targetList.get(0)).marksByShooter(p);</span>
+<span class="fc" id="L45">                        i=i+2;</span>
+<span class="fc" id="L46">                        ((Player) targetList.get(0)).addDamageToTrack(p,i);</span>
+
+<span class="fc" id="L48">                        ((Player) targetList.get(0)).addMarks(p,1);</span>
+
+                        //((LinkedList)targetList).removeFirst();
+
+<span class="fc" id="L52">                    }</span>
+                    else{
+                        // DAMAGE SPAWNPOINT
+                    }
+
+                break;
+            case OP1:   // 1 MARK, DIFFERENT TARGET
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">                if(targetList.get(0) instanceof Player){</span>
+<span class="fc" id="L60">                    ((Player) targetList.get(0)).addMarks(p,1);</span>
+
+                    //((LinkedList&lt;Object&gt;)targetList).removeFirst();
+
+                }
+                break;
+
+
+        }
+
+<span class="fc" id="L70">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L74">        return &quot;LockRifle&quot;;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

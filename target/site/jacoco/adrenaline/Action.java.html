@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Action.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">Action.java</span></div><h1>Action.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static adrenaline.AmmoCube.CubeColor.*;
+
+/**
+ * Is the class that describes players' actions
+ * @author Giulia Valcamonica
+ * @version 2.0
+ **/
+public class Action {
+
+
+    private int numOfRemainingPlayer;
+
+    private boolean endTurn;
+
+    private GameModel model;
+
+<span class="fc" id="L25">    public static enum ActionType {</span>
+<span class="fc" id="L26">        RUN</span>
+    }
+
+<span class="nc" id="L29">    public static enum Direction {</span>
+    }
+
+<span class="fc" id="L32">    public static enum PayOption {</span>
+<span class="fc" id="L33">        AMMO, AMMOPOWER, NONE</span>
+    }
+
+    /*
+     * -------------------------------CHANGE IN PROGRESS----------------------------------------------
+     *now the effective controller is the Server
+     * Action contains methods' implementation
+     *
+     * scheme is :  SERVER -&gt;CONTROLLER    CONTROLLER-&gt;MODEL  CLIENT-&gt;SERVER
+     *                      -&gt;MODEL                                 &lt;-
+     * -----------------------------------------------------------------------------------------------
+     * */
+
+    /**
+     * Class constructor.
+     * * @version 2.0
+     */
+
+<span class="fc" id="L51">    public Action(GameModel m) {</span>
+<span class="fc" id="L52">        this.model = m;</span>
+<span class="fc" id="L53">    }</span>
+
+
+    //--------------------------------------PROPOSING CELLS-----------------------------------------------------------//
+
+
+    /**
+     * proposeCellsRun
+     *
+     * @param c: player position
+     *           this action can't be deleted
+     *           CONV:
+     *           i)this is the not Frenzy option method
+     *           ii) move at least by one cell
+     *           iii) move max by three cell
+     * @return LinkedList&lt;CoordinatesWithRoom&gt; : a LinkedList of selectable cells where to run
+     */
+    //___________________________ PROPOSE CELL WHERE TO GO (DISTANCE 1-2-3)___________________________________________//
+    public LinkedList&lt;CoordinatesWithRoom&gt; proposeCellsRun(CoordinatesWithRoom c) {
+<span class="fc" id="L72">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(c.xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));</span>
+<span class="fc" id="L73">        list.addAll(c.xTilesDistant(getModel().getMapUsed().getGameBoard(), 2));</span>
+<span class="fc" id="L74">        list.addAll(c.xTilesDistant(getModel().getMapUsed().getGameBoard(), 3));</span>
+<span class="fc" id="L75">        return list;</span>
+    }
+
+
+    /**
+     * proposeCellsRunBeforeShoot
+     *
+     * @param player: player in turn
+     *                this action can't be deleted
+     *                CONV:
+     *                i)this is the not Frenzy option method
+     *                ii) you can move only by one cell if not adrenaline
+     *                iii)you can move up to two cells if adrenaline (calls adrenaline option)
+     *                iv)you can delete moving by selecting your cell
+     * @return LinkedList&lt;CoordinatesWithRoom&gt; : a LinkedList of selectable cells where to run before shooting
+     */
+    //__________________________PROPOSE CELL TO MOVE BEFORE SHOOT ____________________________________________________//
+    public LinkedList&lt;CoordinatesWithRoom&gt; proposeCellsRunBeforeShoot(Player player) {
+<span class="fc" id="L93">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));</span>
+<span class="fc" id="L94">        list.add(player.getCoordinatesWithRooms());</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (player.checkDamage() &gt;= 2)</span>
+<span class="nc" id="L96">            list.addAll(proposeCellsRunBeforeShootAdrenaline(player));</span>
+<span class="fc" id="L97">        return list;</span>
+    }
+
+
+    /**
+     * proposeCellsRunBeforeShootAdrenaline
+     *
+     * @param player: player in turn
+     *                this action can't be deleted
+     *                CONV:
+     *                i)this is the not Frenzy option method
+     *                ii)you can move up two cells
+     *                iii) option of proposeCellsRunBeforeShoot
+     * @return LinkedList&lt;CoordinatesWithRoom&gt; : a LinkedList of selectable cells where to run before shooting
+     */
+
+    //_________________________PROPOSE CELL TO MOVE BEFORE SHOOT ADRENALINE___________________________________________//
+    public LinkedList&lt;CoordinatesWithRoom&gt; proposeCellsRunBeforeShootAdrenaline(Player player) {
+<span class="fc" id="L115">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 2));</span>
+<span class="fc" id="L116">        return list;</span>
+    }
+
+
+    /**
+     * proposeCellsGrab
+     *
+     * @param player: player in turn
+     *                &lt;p&gt;
+     *                this action can't be deleted
+     *                CONV:
+     *                i)this is the not Frenzy option method
+     *                ii) you can grab on your position
+     *                iii) you can grab max one cell distant (includes moving)
+     *                iv) you can grab max 2 cell distant if adrenaline (call adrenaline option)
+     *                v)you can delete movement option by selecting your starting cell
+     * @return LinkedList&lt;CoordinatesWithRoom&gt; : a LinkedList of selectable cells where to Grab
+     */
+
+    //_______________ PROPOSE CELLS WHERE TO GRAB (DISTANCE 0-1 OR 0-1-2 IF ADRENALINE)_______________________________//
+    public LinkedList&lt;CoordinatesWithRoom&gt; proposeCellsGrab(Player player) {
+<span class="fc" id="L137">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(player.getCoordinatesWithRooms().xTilesDistant(this.getModel().getMapUsed().getGameBoard(), 1));</span>
+<span class="fc" id="L138">        list.add(player.getCoordinatesWithRooms());</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (player.checkDamage() &gt;= 1)</span>
+<span class="nc" id="L140">            list.addAll(proposeCellsGrabAdrenaline(player));</span>
+<span class="fc" id="L141">        return list;</span>
+    }
+
+    /**
+     * proposeCellsGrabAdrenaline
+     *
+     * @param player: player in turn
+     *                this action can't be deleted
+     *                CONV:
+     *                i)this is the not Frenzy option method
+     *                ii) you can grab in the same cells of proposeCellsGrab
+     *                iii) you can grab max two cells distant (includes moving)
+     *                iv)option of proposeCellsGrab method
+     * @return LinkedList&lt;CoordinatesWithRoom&gt; : a LinkedList of selectable cells where to Grab
+     */
+    //____________PROPOSE CELLS GRAB WITH ADRENALINE checkDamage=(1||2)
+    public LinkedList&lt;CoordinatesWithRoom&gt; proposeCellsGrabAdrenaline(Player player) {
+<span class="fc" id="L158">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(player.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 2));</span>
+<span class="fc" id="L159">        return list;</span>
+    }
+
+
+    //---------------------------------------RUNNING/CHANGING POSITION------------------------------------------------//
+
+    /**
+     * run: to do effective run action
+     *
+     * @param c: player position
+     * @param p: running player
+     *           this action can't be deleted
+     *           CONV:
+     *           i)c position is contain in proposeCellsRun
+     *           ii) it's used by grabbing methods and by some weapon effects
+     */
+    //_______________________________________________RUN______________________________________________________________//
+    public void run(Player p, CoordinatesWithRoom c) {
+
+<span class="fc" id="L178">        p.setPlayerPosition(c.getX(), c.getY(), c.getRoom());</span>
+<span class="fc" id="L179">    }</span>
+
+
+    //-------------------------------------GRABBING METHODS-----------------------------------------------------------//
+
+    /**
+     * grabTile
+     * this is the method to grab an ammo tile
+     *
+     * @param c:      grab position
+     * @param player: player who does the action
+     *                &lt;p&gt;
+     *                this action can't be deleted if the player doesn't grab anything
+     *                &lt;p&gt;
+     *                CONV:
+     *                i)c is in proposeCellsGrab
+     *                ii)this action includes player movement
+     * @return boolean : to know if the action is good ended
+     */
+    //_____________________________________GRAB OPTION TILE __________________________________________________________//
+    public void grabTile(Player player, CoordinatesWithRoom c) {
+<span class="fc" id="L200">        AmmoTile toBeGrabbedTile = c.getRoom().getAmmoTile(c);</span>
+<span class="fc" id="L201">        c.getRoom().removeAmmotile(c);</span>
+
+        // grab ammo or powerUp
+<span class="fc" id="L204">        run(player, c);</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        for (AmmoCube cube : toBeGrabbedTile.getAmmoCubes()</span>
+        ) {
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            if (cube.getCubeColor() == POWERUP)</span>
+<span class="nc" id="L208">                grabPowerUp(player);</span>
+<span class="fc" id="L209">        }</span>
+<span class="fc" id="L210">        model.ammoTileDeck.setUsedAmmoTile(toBeGrabbedTile);</span>
+
+<span class="fc" id="L212">        grabCube(player, toBeGrabbedTile);</span>
+
+
+<span class="fc" id="L215">    }</span>
+
+    /**
+     * grabCube
+     * this is the method to grab a color cube
+     *
+     * @param player: player who does the action
+     * @param a:      ammo tile to be grabbed
+     *                &lt;p&gt;
+     *                CONV:
+     *                i) if the player has already three  cube of one color, he can't pick up more cube of that color
+     *                ii) even if the player has already max number of all colors this action can't be deleted
+     * @return boolean : to know if the action is good ended
+     */
+
+
+    //_______________________________ADDING CUBE______________________________________________________________________//
+    public void grabCube(Player player, AmmoTile a) {
+
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        for (int i = 0; i &lt; 3; i++) {</span>
+<span class="pc bpc" id="L235" title="1 of 5 branches missed.">            switch (a.getAmmoCubes().get(i).getCubeColor()) {</span>
+                case YELLOW:
+<span class="fc" id="L237">                    player.setCube(0, 0, 1);</span>
+<span class="fc" id="L238">                    break;</span>
+                case BLUE:
+<span class="fc" id="L240">                    player.setCube(0, 1, 0);</span>
+<span class="fc" id="L241">                    break;</span>
+
+                case RED:
+<span class="fc" id="L244">                    player.setCube(1, 0, 0);</span>
+<span class="fc" id="L245">                    break;</span>
+                case POWERUP:
+<span class="nc" id="L247">                    break;</span>
+                default:
+<span class="fc" id="L249">                    player.setCube(0, 0, 0);</span>
+            }
+        }
+<span class="fc" id="L252">    }</span>
+
+    /**
+     * grabPowerUp
+     * this is the method to grab a power up card
+     * it is called only when an ammo tile has field POWER
+     *
+     * @param p: player who does the action
+     *           this action can be deleted if the player can't grab the power up
+     *           CONV:
+     *           i)     if you can grab the card you can't delete the action
+     *           ii)    if you have already three powerups you can't pickup this ammotile
+     * @return boolean : to know if the action is good ended
+     */
+    public void grabPowerUp(Player p) {
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (p.canGrabPowerUp()) {</span>
+<span class="fc" id="L268">            PowerUpCard power = getModel().powerUpDeck.pickPowerUp();</span>
+<span class="fc" id="L269">            p.getPowerUp().add(power);</span>
+        }
+<span class="fc" id="L271">    }</span>
+
+//-----------------------------------------SHOOTING &amp; WEAPONS METHODS-------------------------------------------------//
+
+    /**
+     * shoot
+     * this is the method to shoot
+     *
+     */
+    //______________________________________SHOOT_____________________________________________________________________//
+    public void shoot() {
+
+        // w.weaponShoot(victim,p.getCoordinatesWithRooms(),p,attackEffect,getModel());
+<span class="fc" id="L284">    }</span>
+    //HA SWITCH CASE IN BASE A CHE ARMA, SE NORMALI(QUELLO CHE VEDO) CASE COMUNE
+
+    //GET TARGETS and THEN ADD NUMBER OF TARGETS TO EFFECTSLIST FOR EVERY EFFECT PAID FOR
+
+    //FOR EXAMPLE IN MACHINEGUN IF I WANT BASE+OP1+OP2 TARGET OP1 MUST BE DIFFERENT FROM TARGET OP2 ELSE I DON'T ADD IT
+    // WEAPONSHOOT ACTS ONLY ON THE TARGETS OF THE SELECTED EFFECT AND DOESN'T CHECK IN BETWEEN EFFECTS
+
+
+    //è in weaponCard
+    // TARGETS ORDER
+    // LockRifle
+    // MachineGun, CHECK TARGET OP1 IS ONE OF THE TARGETS OF BASE, CHECK TARGET OP2 IS DIFFERENT FROM TARGET OP1
+    // Thor(fagli scegliere un solo target alla volta, se ha pagato per le op fagli scegliere per op1
+    // un target tra quello che vede il target della base, per op2 un target tra quello che vede il target di op1)
+    // Tractor beam
+    // VortexCannon(fagli scegliere tra le caselle che vede una chiamata vortex, prendi i giocatori nel vortex e 1 distanti da lì
+    // e fagli scegliere il target) lo danneggi e sposti, uguale per op1
+    // Furnace offri tutte le caselle delle stanze, prendi una sola stanza(cella, parametro di proposeTragets)
+    // Cyberblade target diversi CHECK
+    //  RocketLaucher SAVE FIRST TARGET'S POSITION, IN OP2 I NEED IT (IT SHOULD BE PASSED AS c)
+
+    // EFFECTS ORDER
+    // Thor
+
+
+    //  // ONLY WEAPONS WITH OP1 OR OP2 NEED THE REMOVAL OF TARGETS AFTER DOING DAMAGE
+
+
+    /**
+     * reload
+     * this is the method to reload a weapon card
+     * you can choose if reload by AMMO or by AMMOPOWER
+     *
+     * @param p:      player who does the action
+     * @param option: payment option to reload
+     * @param wallet: list of choosen powerUps to be used as a payment (can be empty)
+     * @param w:      weapon card to be reload
+     *                this action can be deleted if the player can't reload the weapon
+     *                CONV: if you can reload the card you can't delete the action
+     * @return boolean : to know if the action is good ended
+     */
+//_____________________________________RELOAD________________________________________________________________________//
+    public boolean reload(Player p, WeaponCard w, PayOption option, AmmoCube.Effect firstOptionToPay, LinkedList&lt;PowerUpCard&gt; wallet) {
+
+
+<span class="fc bfc" id="L330" title="All 3 branches covered.">        switch (option) {</span>
+            case AMMO:
+<span class="fc" id="L332">                return reloadAmmo(p, w, p.getCubeBlue(), p.getCubeRed(), p.getCubeYellow(), firstOptionToPay);</span>
+            case AMMOPOWER:
+<span class="fc" id="L334">                return reloadAmmoPower(p, w, firstOptionToPay, wallet);</span>
+            default:
+<span class="fc" id="L336">                return false;</span>
+        }
+
+    }
+
+
+    /**
+     * reloadAmmoPower
+     * this is the method to reload a weapon card with powerUp+cubeColor
+     *
+     * @param player: player who does the action
+     * @param weapon: weapon card to be reloaded
+     * @param wallet: list of choosen powerUps to be used as a payment
+     *                this action can be deleted if the player can't reload the weapon
+     *                CONV:
+     *                i)if you can reload the card you can't delete the action
+     *                ii)even if a powerUp isn't used it would be deleted
+     *                iii)if wallet is empty check if I can pay with only ammoCube
+     * @return boolean : to know if the action is good ended
+     */
+
+    //__________________________________reloadAmmoPower_______________________________________________________________//
+    public boolean reloadAmmoPower(Player player, WeaponCard weapon, AmmoCube.Effect firstOptionToPay, LinkedList&lt;PowerUpCard&gt; wallet) {
+
+<span class="fc" id="L360">        int redCube = player.getCubeRed();</span>
+<span class="fc" id="L361">        int blueCube = player.getCubeBlue();</span>
+<span class="fc" id="L362">        int yellowCube = player.getCubeYellow();</span>
+
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        for (PowerUpCard power : wallet) {</span>
+<span class="pc bpc" id="L365" title="2 of 5 branches missed.">            switch (power.getPowerUpColor()) {</span>
+                case RED:
+<span class="fc" id="L367">                    redCube++;</span>
+<span class="fc" id="L368">                    break;</span>
+                case YELLOW:
+<span class="fc" id="L370">                    yellowCube++;</span>
+<span class="fc" id="L371">                    break;</span>
+                case BLUE:
+<span class="fc" id="L373">                    blueCube++;</span>
+<span class="fc" id="L374">                    break;</span>
+                case POWERUP: //invalid
+<span class="nc" id="L376">                    break;</span>
+                case FREE://invalid
+                    break;
+            }
+<span class="fc" id="L380">        }</span>
+
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">        if (!reloadAmmo(player, weapon, blueCube, redCube, yellowCube, firstOptionToPay))</span>
+<span class="nc" id="L383">            return false;</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">        for (PowerUpCard power : wallet) {</span>
+<span class="fc" id="L385">            player.getPowerUp().remove(power);</span>
+<span class="fc" id="L386">            getModel().powerUpDeck.getPowerUpDeck().addLast(power);</span>
+<span class="fc" id="L387">        }</span>
+
+<span class="fc" id="L389">        return true;</span>
+    }
+
+    /**
+     * reloadAmmoPower
+     * this is the method to reload a weapon card with cubeColor (also with power up)
+     *
+     * @param p:     player who does the action
+     * @param w:     weapon card to be reloaded
+     * @param blue:  number of blue cube color
+     * @param red    :number of red cube color
+     * @param yellow :number of yellow cube color
+     *               this action can be deleted if the player can't reload the weapon
+     *               CONV:
+     *               i)if you can reload the card you can't delete the action
+     *               ii)if you pay with power up blu,red,yellow get number of player's cube color plus powerup's colors
+     * @return boolean : to know if the action is good ended
+     */
+//_____________________________________reloadAmmo_____________________________________________________________________//
+    public boolean reloadAmmo(Player p, WeaponCard w, int blue, int red, int yellow, AmmoCube.Effect firstOptionToPay) {
+<span class="fc" id="L409">        int blueToPay = 0;</span>
+<span class="fc" id="L410">        int yellowToPay = 0;</span>
+<span class="fc" id="L411">        int redToPay = 0;</span>
+
+<span class="fc bfc" id="L413" title="All 2 branches covered.">        for (AmmoCube ammoCube : w.getPrice()) {</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">            if (ammoCube.getEffect().equals(firstOptionToPay)) {</span>
+<span class="fc bfc" id="L415" title="All 2 branches covered.">                if (ammoCube.getCubeColor() == AmmoCube.CubeColor.BLUE)</span>
+<span class="fc" id="L416">                    blueToPay++;</span>
+<span class="fc bfc" id="L417" title="All 2 branches covered.">                if (ammoCube.getCubeColor() == AmmoCube.CubeColor.RED)</span>
+<span class="fc" id="L418">                    redToPay++;</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">                if (ammoCube.getCubeColor() == AmmoCube.CubeColor.YELLOW)</span>
+<span class="fc" id="L420">                    yellowToPay++;</span>
+            }
+<span class="fc" id="L422">        }</span>
+
+<span class="pc bpc" id="L424" title="3 of 6 branches missed.">        if (blue - blueToPay &lt; 0 || red - redToPay &lt; 0 || yellow - yellowToPay &lt; 0) {</span>
+<span class="nc" id="L425">            return false;</span>
+        }
+
+<span class="pc bpc" id="L428" title="2 of 3 branches missed.">        switch (firstOptionToPay) {</span>
+            case ALT:
+<span class="nc" id="L430">                w.setReloadAlt(true);</span>
+<span class="nc" id="L431">                break;</span>
+            case BASE:
+<span class="fc" id="L433">                w.setReload();</span>
+<span class="fc" id="L434">                break;</span>
+            default: //nothing
+
+        }
+<span class="fc" id="L438">        p.getAmmoBox()[0] = blue - blueToPay;</span>
+<span class="fc" id="L439">        p.getAmmoBox()[1] = red - redToPay;</span>
+<span class="fc" id="L440">        p.getAmmoBox()[2] = yellow - yellowToPay;</span>
+
+
+<span class="fc" id="L443">        return true;</span>
+    }
+//---------------------------------------PAYMENT METHODS--------------------------------------------------------------//
+
+
+    /**
+     * canPayCard
+     * this is the method to know if player can pay a weapon card
+     *
+     * @param weapon:         weapon selected
+     * @param player          : player who does the action
+     * @param powers:selected powerUps used to pay
+     * @param option          : payment option
+     *                        this action can be deleted if can't pay weapon
+     * @return boolean: to know if method has a good end
+     */
+//_____________________________________canPayCard(TRUE if can pay or alt base effect)_________________________________//
+    public boolean canPayCard(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay, LinkedList&lt;PowerUpCard&gt; powers) {
+<span class="pc bpc" id="L461" title="3 of 6 branches missed.">        if (option != PayOption.AMMO || option != PayOption.AMMOPOWER || option == PayOption.NONE) {</span>
+<span class="fc bfc" id="L462" title="All 3 branches covered.">            switch (option) {</span>
+
+                case AMMOPOWER: {
+<span class="fc" id="L465">                    return canPayAmmoPower(weapon, player, powers, firstOptionToPay);</span>
+                }
+
+                case AMMO: {
+<span class="fc" id="L469">                    return canPayAmmo(weapon, player.getCubeRed(), player.getCubeYellow(), player.getCubeBlue(), firstOptionToPay);</span>
+                }//nope
+
+                case NONE: //invalid
+                    break;
+            }
+        }
+<span class="fc" id="L476">        return false;</span>
+    }
+    /**
+     * canPayGrab()
+     *
+     * @param player
+     * @param weaponCard
+     * @param powers
+     * */
+
+    public boolean canPayGrab(WeaponCard weaponCard,Player player,LinkedList&lt;PowerUpCard&gt;powers){
+<span class="fc" id="L487">        int red=0; int blue=0; int yellow=0;</span>
+<span class="fc" id="L488">        int redToPay=0; int blueToPay=0; int yellowToPay=0;</span>
+<span class="fc bfc" id="L489" title="All 2 branches covered.">        if(!powers.isEmpty())</span>
+        {
+<span class="fc bfc" id="L491" title="All 2 branches covered.">            for (PowerUpCard p:powers</span>
+                 ) {
+<span class="pc bpc" id="L493" title="3 of 4 branches missed.">                switch (p.getPowerUpColor()){</span>
+<span class="nc" id="L494">                    case RED: red++;break;</span>
+<span class="fc" id="L495">                    case YELLOW:yellow++;break;</span>
+<span class="nc" id="L496">                    case BLUE:blue++;break;</span>
+                }
+<span class="fc" id="L498">            }</span>
+        }
+<span class="fc bfc" id="L500" title="All 2 branches covered.">        for (AmmoCube c:weaponCard.getPrice()</span>
+             ) {
+<span class="pc bpc" id="L502" title="2 of 4 branches missed.">            switch (c.getCubeColor()){</span>
+<span class="fc" id="L503">                case BLUE:blueToPay++;break;</span>
+<span class="nc" id="L504">                case YELLOW:yellowToPay++;break;</span>
+<span class="fc" id="L505">                case RED:redToPay++;break;</span>
+            }
+<span class="fc" id="L507">        }</span>
+<span class="pc bpc" id="L508" title="5 of 6 branches missed.">        if(player.getCubeBlue()+blue-blueToPay&gt;=0&amp;&amp;player.getCubeRed()+red-redToPay&gt;=0&amp;&amp;player.getCubeYellow()+yellow-yellowToPay&gt;=0)</span>
+<span class="nc" id="L509">            return true;</span>
+<span class="fc" id="L510">        return false;</span>
+    }
+
+    /**
+     * canPayAmmo
+     * this is the method to know if can pay a weapon card effect whit only cube colors (also power up)
+     *
+     * @param red:   number of player's red cube color
+     * @param yellow :number of player's yellow cube color
+     * @param blue   :number of player's blue color
+     *               this method can be deleted if player can't pay any BASE/ALT/OP weapon card effect
+     *               CONV:
+     *               if payment method is with power up red,yellow,cube + powerup's colors
+     * @return boolean: to know if good ended
+     */
+    //______________________________________________canPayOnlyCube____________________________________________________//
+    public boolean canPayAmmo(WeaponCard weapon, int red, int yellow, int blue, AmmoCube.Effect firstOptionToPay) {
+<span class="fc" id="L527">        List&lt;AmmoCube&gt; cost = weapon.getPrice();</span>
+<span class="fc" id="L528">        int redToPay = 0;</span>
+<span class="fc" id="L529">        int blueToPay = 0;</span>
+<span class="fc" id="L530">        int yellowToPay = 0;</span>
+
+        //can you pay base effect or you can pay alt
+<span class="fc bfc" id="L533" title="All 2 branches covered.">        for (AmmoCube ammoCube : cost</span>
+        ) {
+<span class="fc bfc" id="L535" title="All 2 branches covered.">            if (ammoCube.getEffect().equals(firstOptionToPay)) {</span>
+<span class="pc bpc" id="L536" title="1 of 4 branches missed.">                switch (ammoCube.getCubeColor()) {</span>
+                    case RED:
+<span class="fc" id="L538">                        redToPay++;</span>
+<span class="fc" id="L539">                        break;</span>
+                    case BLUE:
+<span class="fc" id="L541">                        blueToPay++;</span>
+<span class="fc" id="L542">                        break;</span>
+                    case YELLOW:
+<span class="fc" id="L544">                        yellowToPay++;</span>
+<span class="fc" id="L545">                        break;</span>
+                    default:
+                }
+            }
+<span class="pc bpc" id="L549" title="2 of 6 branches missed.">            if (yellow - yellowToPay &lt; 0 || red - redToPay &lt;0 || blue - blueToPay &lt; 0)</span>
+<span class="fc" id="L550">                return false;</span>
+<span class="fc" id="L551">        }</span>
+<span class="fc" id="L552">        return true;</span>
+    }
+
+    /**
+     * canPayAmmoPower
+     * this is the method to know if can pay a weapon card whit only cube colors+ power up
+     *
+     * @param player:       player
+     * @param weapon:       weapon selected
+     * @param powerUpCards: list of all player's powerups (if it is empty check if can pay with ammoTile)
+     *                      this method can be deleted if player can't pay any BASE/ALT weapon card effect
+     *                      CONV:
+     *                      if player selects a powerup that doesn't need to be used that power up is lost
+     * @return boolean: to know if good ended
+     */
+    ////////////////////___________________canPayAmmoPower pay bse effect with power up_____________________________________________________________//////////////
+    public boolean canPayAmmoPower(WeaponCard weapon, Player player, LinkedList&lt;PowerUpCard&gt; powerUpCards, AmmoCube.Effect firstOptionToPay) {
+
+<span class="fc" id="L570">        int redPower = 0;</span>
+<span class="fc" id="L571">        int bluePower = 0;</span>
+<span class="fc" id="L572">        int yellowPower = 0;</span>
+<span class="fc bfc" id="L573" title="All 2 branches covered.">        for (PowerUpCard power : powerUpCards</span>
+        ) {
+<span class="pc bpc" id="L575" title="1 of 4 branches missed.">            switch (power.getPowerUpColor()) {</span>
+                case RED:
+<span class="fc" id="L577">                    redPower++;</span>
+<span class="fc" id="L578">                    break;</span>
+                case BLUE:
+<span class="fc" id="L580">                    bluePower++;</span>
+<span class="fc" id="L581">                    break;</span>
+                case YELLOW:
+<span class="fc" id="L583">                    yellowPower++;</span>
+<span class="fc" id="L584">                    break;</span>
+                default:
+            }
+<span class="fc" id="L587">        }</span>
+
+<span class="fc" id="L589">        int redCube = player.getCubeRed() + redPower;</span>
+<span class="fc" id="L590">        int blueCube = player.getCubeBlue() + bluePower;</span>
+<span class="fc" id="L591">        int yellowCube = player.getCubeYellow() + yellowPower;</span>
+
+<span class="fc" id="L593">        return canPayAmmo(weapon, redCube, blueCube, yellowCube, firstOptionToPay);</span>
+
+    }
+
+
+    /**
+     * paidEffect
+     * this is the method to choose weapon's effect to pay and pay
+     *
+     * @param player:           player
+     * @param number:           a param used to indicate number of victims or other things
+     * @param weapon:           weapon choosen
+     * @param firstOptionToPay: selected effect
+     * @param option:           option payment
+     *                          this method can be deleted if returned list is null
+     * @return List&lt;EffectAndNumber&gt;: paid effects
+     */
+    //_____________________________________payMethods_________________________________________________________________//
+    public EffectAndNumber paidEffect(WeaponCard weapon, Player player, PayOption option, AmmoCube.Effect firstOptionToPay, LinkedList&lt;PowerUpCard&gt; wallet, int number) {
+
+<span class="fc bfc" id="L613" title="All 3 branches covered.">        switch (option) {</span>
+            case AMMO:
+<span class="fc" id="L615">                return payAmmo(player, weapon, firstOptionToPay, number);</span>
+            case AMMOPOWER:
+<span class="fc" id="L617">                return payPowerUp(weapon, wallet, player, firstOptionToPay, number);</span>
+            default:
+<span class="fc" id="L619">                return null;</span>
+        }
+    }
+
+
+    /**
+     * payAmmoPlusPowerUp
+     * this is the method to choose weapon's effect to pay and pay with only cube colors
+     *
+     * @param player: player
+     * @param weapon: weapon card choosen
+     * @param number: a param used to indicate number of victims or other things
+     *                &lt;p&gt;
+     *                &lt;p&gt;
+     *                CONV:
+     *                i) can pay only one between BASE and ALT
+     *                ii) must pay i) before pay OPTIONS
+     * @return List&lt;EffectAndNumber&gt;: paid effects
+     */
+    //_______________________________________________payOnlyAmmo__________________________________________________//
+    public EffectAndNumber payAmmo(Player player, WeaponCard weapon, AmmoCube.Effect firstOptionToPay, int number) {
+        // if pay base don't psy alt
+<span class="fc" id="L641">        List&lt;AmmoCube&gt; cost = weapon.getPrice();</span>
+
+<span class="pc bpc" id="L643" title="1 of 2 branches missed.">        if(firstOptionToPay.equals(AmmoCube.Effect.GRAB)){</span>
+<span class="nc bnc" id="L644" title="All 2 branches missed.">            for (AmmoCube ammoCube : cost) {</span>
+
+<span class="nc bnc" id="L646" title="All 4 branches missed.">                if (ammoCube.getEffect().equals(AmmoCube.Effect.BASE)&amp;&amp;!ammoCube.equals(weapon.getPrice().get(0))) {</span>
+<span class="nc" id="L647">                    pay(player, ammoCube);</span>
+                }
+
+<span class="nc" id="L650">            }</span>
+        }
+
+        else {
+<span class="fc bfc" id="L654" title="All 2 branches covered.">        for (AmmoCube ammoCube : cost) {</span>
+
+<span class="fc bfc" id="L656" title="All 2 branches covered.">            if (ammoCube.getEffect().equals(firstOptionToPay)) {</span>
+<span class="fc" id="L657">                pay(player, ammoCube);</span>
+            }
+
+<span class="fc" id="L660">        }}</span>
+<span class="fc" id="L661">        return new EffectAndNumber(firstOptionToPay, number);</span>
+
+    }
+
+    /**
+     * pay
+     * this is the method to pay
+     * pay one cube at time
+     *
+     * @param player: player
+     * @param cube:   color to pay
+     *                CONV:
+     *                doesn't check if can pay (already checked in previous methods)
+     */
+    //_______________________________________________effective pay_______________________________________________________________//
+    public void pay(Player player, AmmoCube cube) {
+<span class="pc bpc" id="L677" title="1 of 4 branches missed.">        switch (cube.getCubeColor()) {</span>
+            case RED:
+<span class="fc" id="L679">                player.setCube(-1, 0, 0);</span>
+<span class="fc" id="L680">                break;</span>
+
+            case BLUE:
+<span class="fc" id="L683">                player.setCube(0, -1, 0);</span>
+<span class="fc" id="L684">                break;</span>
+            case YELLOW:
+<span class="fc" id="L686">                player.setCube(0, 0, -1);</span>
+<span class="fc" id="L687">                break;</span>
+            default:
+        }
+<span class="fc" id="L690">    }</span>
+
+    /**
+     * payPowerUp
+     * this is the method to pay whit cube colors and powerups
+     *
+     * @param player:        player
+     * @param choosenPowerUp : selected powerups
+     * @param weapon:        selected weapon
+     * @param number:        a param used to indicate number of victims or other things
+     * @param effect         : effect to pay
+     *                       CONV:
+     *                       i)doesn't check if can pay (already checked in previous methods)
+     *                       ii)if player selects a powerup that doesn't need to be used that power up is lost
+     */
+    //_____________________________________effective pay with powerUp___________________________________________________//
+    public EffectAndNumber payPowerUp(WeaponCard weapon, List&lt;PowerUpCard&gt; choosenPowerUp, Player player, AmmoCube.Effect effect, int number) {
+<span class="fc" id="L707">        int yellow = 0;</span>
+<span class="fc" id="L708">        int red = 0;</span>
+<span class="fc" id="L709">        int blue = 0;</span>
+
+<span class="fc bfc" id="L711" title="All 2 branches covered.">        for (PowerUpCard power : choosenPowerUp) {</span>
+<span class="pc bpc" id="L712" title="1 of 4 branches missed.">            switch (power.getPowerUpColor()) {</span>
+                case RED:
+<span class="fc" id="L714">                    red++;</span>
+<span class="fc" id="L715">                    break;</span>
+                case YELLOW:
+<span class="fc" id="L717">                    yellow++;</span>
+<span class="fc" id="L718">                    break;</span>
+                case BLUE:
+<span class="fc" id="L720">                    blue++;</span>
+<span class="fc" id="L721">                    break;</span>
+                default://
+            }
+<span class="fc" id="L724">        }</span>
+<span class="fc" id="L725">        payPower(player, weapon.getPrice(), red, blue, yellow, effect);</span>
+
+<span class="fc" id="L727">        return new EffectAndNumber(effect, number);</span>
+    }
+
+    /**
+     * payPower
+     * effective method to pay with powerUp
+     *
+     * @param red     : red &quot;cubes&quot; given by used powerUp
+     * @param blue:   blue &quot;cubes&quot; given by used powerUp
+     * @param yellow: yellow &quot;cubes&quot; given by used powerUp
+     * @param player: player in turn
+     * @param effect: effect to pay
+     * @param price   : price of weaponCard
+     */
+    public void payPower(Player player, List&lt;AmmoCube&gt; price, int red, int blue, int yellow, AmmoCube.Effect effect) {
+
+
+<span class="fc bfc" id="L744" title="All 2 branches covered.">        for (AmmoCube cube : price) {</span>
+
+<span class="pc bpc" id="L746" title="5 of 8 branches missed.">            if (cube.getEffect().equals(effect)||effect.equals(AmmoCube.Effect.GRAB)&amp;&amp;!cube.equals(price.get(0))&amp;&amp;cube.getEffect().equals(AmmoCube.Effect.BASE)) {</span>
+<span class="pc bpc" id="L747" title="1 of 4 branches missed.">                switch (cube.getCubeColor()) {</span>
+                    case RED:
+<span class="fc bfc" id="L749" title="All 2 branches covered.">                        if (red &lt;= 0)</span>
+<span class="fc" id="L750">                            player.setCube(-1, 0, 0);</span>
+                        else
+<span class="fc" id="L752">                            red--;</span>
+<span class="fc" id="L753">                        break;</span>
+
+                    case BLUE:
+<span class="fc bfc" id="L756" title="All 2 branches covered.">                        if (blue &lt;= 0)</span>
+<span class="fc" id="L757">                            player.setCube(0, -1, 0);</span>
+                        else
+<span class="fc" id="L759">                            blue--;</span>
+<span class="fc" id="L760">                        break;</span>
+                    case YELLOW:
+<span class="fc bfc" id="L762" title="All 2 branches covered.">                        if (yellow &lt;= 0)</span>
+<span class="fc" id="L763">                            player.setCube(0, 0, -1);</span>
+                        else
+<span class="fc" id="L765">                            yellow--;</span>
+<span class="fc" id="L766">                        break;</span>
+                    default:
+                }
+            }
+<span class="fc" id="L770">        }}</span>
+
+
+    /**
+     * getEndTurn
+     *
+     * @return boolean: to know if turn is ended
+     */
+    //____________________________getter and setter________________//
+    public boolean getEndturn() {
+<span class="fc" id="L780">        return this.endTurn;</span>
+    }
+
+    /**
+     * setEndTurn
+     * set when turn is ended
+     */
+    public void setEndTurn(boolean bool) {
+<span class="fc" id="L788">        this.endTurn = bool;</span>
+<span class="fc" id="L789">    }</span>
+
+    /**
+     * canGetPoints
+     * this is the method to know if players can get points
+     * if he/they can gives points
+     *
+     * @param allPlayers
+     * @param victims
+     */
+//________________________GIVE POINTS_______&amp; ENDOFTHEGAME___________________________//
+    public void canGetPoints(List&lt;Player&gt; victims, List&lt;Player&gt; allPlayers) {
+<span class="fc" id="L801">        List&lt;Player&gt;playersWhoHaveShoot=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L802">        List&lt;Player&gt;bestShooterOrder=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L803">        List&lt;Player&gt;bestShooterOrderWithPosition=new LinkedList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L805" title="All 2 branches covered.">        for (Player victim: victims</span>
+             ) {
+<span class="fc bfc" id="L807" title="All 2 branches covered.">            for (Figure.PlayerColor color:victim.getTrack()</span>
+                 ) {
+<span class="fc bfc" id="L809" title="All 2 branches covered.">                for (Player player:allPlayers</span>
+                     ) {
+<span class="fc bfc" id="L811" title="All 4 branches covered.">                    if(player.getColor().equals(color)&amp;&amp;!playersWhoHaveShoot.contains(player))</span>
+<span class="fc" id="L812">                        playersWhoHaveShoot.add(player);</span>
+
+<span class="fc" id="L814">                }</span>
+
+            }
+<span class="fc bfc" id="L817" title="All 2 branches covered.">            if(playersWhoHaveShoot.isEmpty())</span>
+<span class="fc" id="L818">                return;</span>
+<span class="fc" id="L819">            bestShooterOrder.addAll(bestShooterOrder(playersWhoHaveShoot,victim));</span>
+<span class="fc" id="L820">            bestShooterOrderWithPosition.addAll(bestShooterOrderWithPosition(bestShooterOrder,victim));</span>
+<span class="fc" id="L821">            System.out.println(&quot;prima di givePoints&quot;+bestShooterOrderWithPosition);</span>
+<span class="fc" id="L822">            givePoints(victim,bestShooterOrderWithPosition);</span>
+
+<span class="fc" id="L824">        }</span>
+
+<span class="fc" id="L826">    }</span>
+    /**
+     * bestShooterOrder
+     * Order by how much damage a player has done to victim
+     *
+     * @param players all players
+     * @param victim: selected victim
+     * @return List&lt;Player&gt;: order list of player
+     **/
+    public List&lt;Player&gt; bestShooterOrder(List&lt;Player&gt; players, Player victim) {
+<span class="fc" id="L836">        System.out.println(&quot;chi ha sparato? &quot;+players);</span>
+<span class="fc" id="L837">        LinkedList&lt;Player&gt; bestShooterOrder = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L838">        int maxDamage = 0;</span>
+<span class="fc bfc" id="L839" title="All 2 branches covered.">        for (int i = 0; i &lt; players.size(); i++) {</span>
+<span class="fc bfc" id="L840" title="All 2 branches covered.">            if (victim.damageByShooter(players.get(i)) &gt; 0) {</span>
+<span class="fc bfc" id="L841" title="All 2 branches covered.">                if (victim.damageByShooter(players.get(i)) &gt;= maxDamage) {</span>
+<span class="fc" id="L842">                    maxDamage = victim.damageByShooter(players.get(i));</span>
+<span class="fc" id="L843">                    bestShooterOrder.addFirst(players.get(i));</span>
+                } else {
+<span class="pc bpc" id="L845" title="1 of 2 branches missed.">                    if (bestShooterOrder.size() == 1) {</span>
+<span class="nc" id="L846">                        bestShooterOrder.add(players.get(i));</span>
+                    } else {
+<span class="pc bpc" id="L848" title="1 of 2 branches missed.">                        for (int indexBestShooterOrder = 0; indexBestShooterOrder &lt; bestShooterOrder.size() - 1; indexBestShooterOrder++) {</span>
+<span class="pc bpc" id="L849" title="1 of 2 branches missed.">                            if (victim.damageByShooter(players.get(i)) &gt;= victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder))) {</span>
+<span class="nc" id="L850">                                bestShooterOrder.add(indexBestShooterOrder, players.get(i));</span>
+<span class="nc" id="L851">                                break;</span>
+<span class="pc bpc" id="L852" title="1 of 2 branches missed.">                            } else if (victim.damageByShooter(players.get(i)) &lt; victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder)) &amp;&amp;</span>
+<span class="pc bpc" id="L853" title="1 of 2 branches missed.">                                    victim.damageByShooter(players.get(i)) &gt;= victim.damageByShooter(bestShooterOrder.get(indexBestShooterOrder++))) {</span>
+<span class="nc" id="L854">                                bestShooterOrder.add(indexBestShooterOrder++, players.get(i));</span>
+<span class="nc" id="L855">                                break;</span>
+<span class="pc bpc" id="L856" title="1 of 2 branches missed.">                            } else if (victim.damageByShooter(players.get(i)) &lt; victim.damageByShooter(bestShooterOrder.getLast())) {</span>
+<span class="fc" id="L857">                                bestShooterOrder.addLast(players.get(i));</span>
+<span class="fc" id="L858">                                break;</span>
+                            }
+                        }
+                    }
+                }
+
+
+                //if ==0 no points to add to the player
+            }
+        }
+
+<span class="fc" id="L869">        return bestShooterOrder;</span>
+    }
+/**
+ * bestShooterOrderWithPosition()
+ * @param bestShooterOrder list of player order by #bloodMark
+ * @param victim who is dead
+ *
+ * @return list of player order by #blooMark and their position
+ * */
+    public LinkedList&lt;Player&gt; bestShooterOrderWithPosition(List&lt;Player&gt; bestShooterOrder, Player victim) {
+<span class="fc" id="L879">        LinkedList&lt;Player&gt; bestShooterOrderWithPosition=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L880">        bestShooterOrderWithPosition.clear();</span>
+<span class="fc" id="L881">        System.out.println(&quot;prima di bestShooter con pos: &quot;+bestShooterOrder);</span>
+        //if bestShooterOrderIsEmptyAddElement
+<span class="fc bfc" id="L883" title="All 2 branches covered.">        for (Player player : bestShooterOrder</span>
+        ) {
+<span class="fc bfc" id="L885" title="All 2 branches covered.">            if (bestShooterOrderWithPosition.isEmpty())</span>
+<span class="fc" id="L886">                bestShooterOrderWithPosition.addFirst(player);</span>
+<span class="pc bpc" id="L887" title="1 of 4 branches missed.">            else if (bestShooterOrderWithPosition.size() == 1 &amp;&amp; !bestShooterOrderWithPosition.contains(player)) {</span>
+<span class="fc bfc" id="L888" title="All 2 branches covered.">                if (victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) &lt; victim.getFirstPositionOnTrack(player))</span>
+<span class="fc" id="L889">                    bestShooterOrderWithPosition.add(player);</span>
+<span class="fc bfc" id="L890" title="All 2 branches covered.">                else if (victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) &gt; victim.getFirstPositionOnTrack(player) &amp;&amp;</span>
+<span class="pc bpc" id="L891" title="1 of 2 branches missed.">                        victim.damageByShooter(bestShooterOrderWithPosition.getFirst()) == victim.damageByShooter(player))</span>
+<span class="nc" id="L892">                    bestShooterOrderWithPosition.addFirst(player);</span>
+            } else {
+<span class="pc bpc" id="L894" title="1 of 2 branches missed.">                for (int i = 1; i &lt; bestShooterOrderWithPosition.size() - 1; i++) {</span>
+
+<span class="nc bnc" id="L896" title="All 4 branches missed.">                    if (!bestShooterOrderWithPosition.contains(player) &amp;&amp; victim.damageByShooter(player) == victim.damageByShooter(bestShooterOrderWithPosition.getFirst())</span>
+<span class="nc bnc" id="L897" title="All 2 branches missed.">                            &amp;&amp; victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getFirst()) &gt; victim.getFirstPositionOnTrack(player)) {</span>
+<span class="nc" id="L898">                        bestShooterOrderWithPosition.addFirst(player);</span>
+<span class="nc" id="L899">                        break;</span>
+<span class="nc bnc" id="L900" title="All 4 branches missed.">                    } else if (!bestShooterOrderWithPosition.contains(player) &amp;&amp; victim.damageByShooter(player) == victim.damageByShooter(bestShooterOrderWithPosition.getLast())</span>
+<span class="nc bnc" id="L901" title="All 2 branches missed.">                            &amp;&amp; victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.getLast()) &lt; victim.getFirstPositionOnTrack(player)) {</span>
+<span class="nc" id="L902">                        bestShooterOrderWithPosition.addLast(player);</span>
+<span class="nc" id="L903">                        break;</span>
+<span class="nc bnc" id="L904" title="All 4 branches missed.">                    } else if (!bestShooterOrderWithPosition.contains(player) &amp;&amp; victim.damageByShooter(player) &lt;= victim.damageByShooter(bestShooterOrderWithPosition.get(i - 1)) &amp;&amp;</span>
+<span class="nc bnc" id="L905" title="All 2 branches missed.">                            victim.damageByShooter(player) &gt;= victim.damageByShooter(bestShooterOrderWithPosition.get(i + 1)) &amp;&amp;</span>
+<span class="nc bnc" id="L906" title="All 2 branches missed.">                            victim.getFirstPositionOnTrack(player) &gt; victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.get(i - 1))</span>
+<span class="nc bnc" id="L907" title="All 2 branches missed.">                            &amp;&amp; victim.getFirstPositionOnTrack(player) &lt; victim.getFirstPositionOnTrack(bestShooterOrderWithPosition.get(i + 1))) {</span>
+<span class="nc" id="L908">                        bestShooterOrderWithPosition.add(i + 1, player);</span>
+<span class="nc" id="L909">                        break;</span>
+
+                    }
+
+
+                    //se uguale punteggio dell ultimo e &gt; pos in coda
+                    //contenuto tra i due
+
+
+                }
+            }
+<span class="fc bfc" id="L920" title="All 2 branches covered.">            if(!bestShooterOrderWithPosition.contains(player))</span>
+<span class="fc" id="L921">                bestShooterOrderWithPosition.addLast(player);</span>
+<span class="fc" id="L922">        }</span>
+
+<span class="fc" id="L924">        System.out.println(&quot;da dare prima di give points:&quot;+bestShooterOrderWithPosition);</span>
+<span class="fc" id="L925">        return bestShooterOrderWithPosition;</span>
+    }
+/**orderSubListByPos()
+ * @param subList a subList where all the players have done same damage
+ * @param victim who is dead
+ * @return list ordered bloodMark positions*/
+    public LinkedList&lt;Player&gt; orderSubListByPos( LinkedList&lt;Player&gt; subList,Player victim) {
+<span class="fc" id="L932">        LinkedList&lt;Player&gt; subListOrder = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L933">        int pos = victim.getTrack().length + 1;</span>
+
+<span class="fc bfc" id="L935" title="All 2 branches covered.">        for (Player player : subList</span>
+        ) {
+<span class="pc bpc" id="L937" title="3 of 6 branches missed.">            if (subListOrder.isEmpty() || subList.size() == 1 &amp;&amp; victim.getFirstPositionOnTrack(player) &gt; victim.getFirstPositionOnTrack(subListOrder.getFirst()))</span>
+<span class="fc" id="L938">                subListOrder.add(player);</span>
+<span class="pc bpc" id="L939" title="1 of 2 branches missed.">            else if (subListOrder.size() == 1)</span>
+<span class="fc" id="L940">                subListOrder.addFirst(player);</span>
+            else {
+<span class="nc bnc" id="L942" title="All 2 branches missed.">                for (int i=0; i&lt;subListOrder.size()-1;i++) {</span>
+
+<span class="nc bnc" id="L944" title="All 4 branches missed.">                        if (victim.getFirstPositionOnTrack(subListOrder.get(i)) &lt; victim.getFirstPositionOnTrack(player) &amp;&amp; victim.getFirstPositionOnTrack(player) &lt; victim.getFirstPositionOnTrack(subListOrder.get(i+1)))</span>
+<span class="nc" id="L945">                        {subListOrder.add(subListOrder.indexOf(subListOrder.get(i+1)), player);</span>
+<span class="nc" id="L946">                            break;}</span>
+<span class="nc bnc" id="L947" title="All 2 branches missed.">                        else if (victim.getFirstPositionOnTrack(subListOrder.get(i)) &gt; victim.getFirstPositionOnTrack(player))</span>
+<span class="nc" id="L948">                        {   subListOrder.add(subListOrder.indexOf(subListOrder.get(i)), player);</span>
+<span class="nc" id="L949">                            break;}</span>
+<span class="nc bnc" id="L950" title="All 2 branches missed.">                        else if(victim.getFirstPositionOnTrack(player)&gt;=victim.getFirstPositionOnTrack(subListOrder.getLast()))</span>
+<span class="nc" id="L951">                            {   subListOrder.addLast(player);</span>
+<span class="nc" id="L952">                            break;}</span>
+
+                    }
+                }
+<span class="fc" id="L956">            }</span>
+
+<span class="fc" id="L958">        return subListOrder;</span>
+    }
+
+
+
+
+
+    /**
+     * givePoints
+     * this is the method to distribute points
+     *
+     * @param victim:   player who has been damaged
+     * @param shooters: all players which have given damage to victim
+     */
+
+    public void givePoints(Player victim, List&lt;Player&gt; shooters) {
+<span class="fc bfc" id="L974" title="All 2 branches covered.">        if (shooters.size() == 0)</span>
+<span class="fc" id="L975">            return;</span>
+<span class="fc" id="L976">        System.out.println(&quot;best&quot;+shooters);</span>
+       //
+<span class="fc" id="L978">        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());</span>
+<span class="fc" id="L979">        int i=victim.getMaxPointAssignableCounter();</span>
+        //first blood &amp; 12th damage &amp; mortal points
+<span class="fc bfc" id="L981" title="All 2 branches covered.">        for (Player shooter: shooters</span>
+        ) {
+<span class="fc bfc" id="L983" title="All 2 branches covered.">            if(victim.getTrack()[0].equals(shooter.getColor()))</span>
+<span class="fc" id="L984">                shooter.setPoints(1);</span>
+<span class="pc bpc" id="L985" title="1 of 2 branches missed.">            if(victim.getTrack()[victim.getTrack().length-2].equals(shooter.getColor()))</span>
+<span class="nc" id="L986">                shooter.setMortalPoints(1);</span>
+<span class="pc bpc" id="L987" title="3 of 4 branches missed.">            if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&amp;&amp;victim.canAddMark(shooter))</span>
+<span class="nc" id="L988">                victim.addMarks(shooter,1);</span>
+
+        //this.pointTrack = new int[]{8,6,4,2,1};
+<span class="pc bpc" id="L991" title="1 of 2 branches missed.">            if(shooters.indexOf(shooter)+i&lt;victim.getPointTrack().length)</span>
+<span class="fc" id="L992">               shooter.setPoints(victim.getPointTrack()[i+shooters.indexOf(shooter)]);</span>
+<span class="nc bnc" id="L993" title="All 2 branches missed.">            else if(shooters.indexOf(shooter)+i&gt;=victim.getPointTrack().length)</span>
+<span class="nc" id="L994">               shooter.setPoints(1);</span>
+<span class="fc" id="L995">        }</span>
+
+<span class="fc" id="L997">        }</span>
+
+
+
+
+
+    /**
+     * endOfTheGame
+     *
+     * @return boolean:to know if the game is over
+     **/
+    public boolean endOfTheGame(GameBoard g) {  //every time a player dies
+        //8||5 skulls
+
+<span class="pc bpc" id="L1011" title="1 of 2 branches missed.">        return (g.getNumSkull() &lt;= 0);</span>
+
+    }
+
+
+
+    public int getRemaingPlayer() {
+<span class="fc" id="L1018">        return numOfRemainingPlayer;</span>
+    }
+
+    public void setRemainigPlayerMinus(int num) {
+<span class="fc" id="L1022">        numOfRemainingPlayer = numOfRemainingPlayer - num;</span>
+<span class="fc" id="L1023">    }</span>
+
+    public GameModel getModel() {
+<span class="fc" id="L1026">        return this.model;</span>
+    }
+
+    //_________________________________ POWER UP______________________________________________________________________//
+
+
+    public LinkedList&lt;CoordinatesWithRoom&gt; canSee(CoordinatesWithRoom c, Player player) {
+<span class="nc" id="L1033">        GameModel m = getModel();</span>
+<span class="nc" id="L1034">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L1035">        GameBoard g = m.getMapUsed().getGameBoard();</span>
+<span class="nc" id="L1036">        int x = c.getRoom().getRoomSizeX();</span>
+<span class="nc" id="L1037">        int y = c.getRoom().getRoomSizeY();</span>
+
+<span class="nc bnc" id="L1039" title="All 2 branches missed.">        for (int i = 1; i &lt;= x; i++) {</span>
+<span class="nc bnc" id="L1040" title="All 2 branches missed.">            for (int j = 1; j &lt;= y; j++) {</span>
+<span class="nc" id="L1041">                list.add(new CoordinatesWithRoom(i, j, c.getRoom()));</span>
+            }
+        }
+<span class="nc bnc" id="L1044" title="All 2 branches missed.">        for (int k = 0; k &lt; g.getDoors().size(); k++) {</span>
+<span class="nc bnc" id="L1045" title="All 2 branches missed.">            if (c.getX() == g.getDoors().get(k).getCoordinates1().getX() &amp;&amp;</span>
+<span class="nc bnc" id="L1046" title="All 2 branches missed.">                    c.getY() == g.getDoors().get(k).getCoordinates1().getY() &amp;&amp;</span>
+<span class="nc bnc" id="L1047" title="All 2 branches missed.">                    c.getRoom().getToken() == g.getDoors().get(k).getCoordinates1().getRoom().getToken()) {</span>
+
+<span class="nc bnc" id="L1049" title="All 2 branches missed.">                for (int i = 1; i &lt;= g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeX(); i++) {</span>
+<span class="nc bnc" id="L1050" title="All 2 branches missed.">                    for (int j = 1; j &lt;= g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeY(); j++) {</span>
+<span class="nc" id="L1051">                        list.add(new CoordinatesWithRoom(i, j, g.getDoors().get(k).getCoordinates2().getRoom()));</span>
+                    }
+                }
+            }
+
+<span class="nc bnc" id="L1056" title="All 2 branches missed.">            if (c.getX() == g.getDoors().get(k).getCoordinates2().getX() &amp;&amp;</span>
+<span class="nc bnc" id="L1057" title="All 2 branches missed.">                    c.getY() == g.getDoors().get(k).getCoordinates2().getY() &amp;&amp;</span>
+<span class="nc bnc" id="L1058" title="All 2 branches missed.">                    c.getRoom().getToken() == g.getDoors().get(k).getCoordinates2().getRoom().getToken()) {</span>
+
+<span class="nc bnc" id="L1060" title="All 2 branches missed.">                for (int i = 1; i &lt;= g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeX(); i++) {</span>
+<span class="nc bnc" id="L1061" title="All 2 branches missed.">                    for (int j = 1; j &lt;= g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeY(); j++) {</span>
+<span class="nc" id="L1062">                        list.add(new CoordinatesWithRoom(i, j, g.getDoors().get(k).getCoordinates1().getRoom()));</span>
+                    }
+                }
+
+            }
+
+        }
+<span class="nc bnc" id="L1069" title="All 2 branches missed.">        for (CoordinatesWithRoom cWr : list</span>
+        ) {
+<span class="nc bnc" id="L1071" title="All 2 branches missed.">            if (cWr.equals(player.getCoordinatesWithRooms())) {</span>
+<span class="nc" id="L1072">                list.remove(cWr);</span>
+<span class="nc bnc" id="L1073" title="All 2 branches missed.">                for (Player p : m.getPlayers()</span>
+                ) {
+<span class="nc bnc" id="L1075" title="All 4 branches missed.">                    if (p.getCoordinatesWithRooms().equals(player.getCoordinatesWithRooms()) &amp;&amp; !p.equals(player)) {</span>
+<span class="nc" id="L1076">                        list.add(cWr);</span>
+<span class="nc" id="L1077">                        break;</span>
+                    }
+
+<span class="nc" id="L1080">                }</span>
+            }
+
+
+<span class="nc" id="L1084">        }</span>
+<span class="nc" id="L1085">        return list;</span>
+    }
+    //____________________________________NEWTON_________________________________________________________________________//
+
+    public LinkedList&lt;CoordinatesWithRoom&gt; newtonChoosePossibleMoveFirstCell(Player victim) {
+<span class="fc" id="L1090">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));</span>
+<span class="fc" id="L1091">        return list;</span>
+    }
+
+    public LinkedList&lt;CoordinatesWithRoom&gt; newtonChoosePossibleMoveFirstAllCells(Player victim) {
+<span class="fc" id="L1095">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 1));</span>
+<span class="fc" id="L1096">        list.addAll(victim.getCoordinatesWithRooms().xTilesDistant(getModel().getMapUsed().getGameBoard(), 2));</span>
+<span class="fc" id="L1097">        return list;</span>
+    }
+
+    public LinkedList&lt;CoordinatesWithRoom&gt; removeDifferentDirection(LinkedList&lt;CoordinatesWithRoom&gt; c, CoordinatesWithRoom cWr) {
+<span class="fc" id="L1101">        c.remove(cWr);</span>
+<span class="fc" id="L1102">        Coordinates coordinates = new Coordinates(cWr.getX(), cWr.getY());</span>
+<span class="fc bfc" id="L1103" title="All 2 branches covered.">        for (CoordinatesWithRoom c1 : c) {</span>
+
+
+<span class="pc bpc" id="L1106" title="3 of 4 branches missed.">            if (!c1.checkSameDirection(cWr, c1, 1, getModel().getMapUsed().getGameBoard(), true) &amp;&amp; !c1.getRoom().equals(cWr.getRoom()))</span>
+<span class="nc" id="L1107">                c.remove(c1);</span>
+<span class="pc bpc" id="L1108" title="2 of 4 branches missed.">            else if (c1.getRoom().equals(cWr.getRoom()) &amp;&amp; !c1.checkSameDirection(cWr, c1, 1, getModel().getMapUsed().getGameBoard(), false))</span>
+<span class="nc" id="L1109">                c.remove(c1);</span>
+<span class="fc" id="L1110">        }</span>
+
+<span class="fc" id="L1112">        return c;</span>
+    }
+
+    public boolean canPayTargetingScope(AmmoCube.CubeColor color, Player player) {
+<span class="fc bfc" id="L1116" title="All 4 branches covered.">        switch (color) {</span>
+            case BLUE:
+<span class="pc bpc" id="L1118" title="1 of 2 branches missed.">                if (player.getCubeBlue() - 1 &gt;= 0) return true;</span>
+                break;
+            case YELLOW:
+<span class="pc bpc" id="L1121" title="1 of 2 branches missed.">                if (player.getCubeYellow() - 1 &gt;= 0) return true;</span>
+                break;
+            case RED:
+<span class="pc bpc" id="L1124" title="1 of 2 branches missed.">                if (player.getCubeRed() - 1 &gt;= 0) return true;</span>
+                break;
+            default:
+<span class="fc" id="L1127">                return false;</span>
+        }
+<span class="fc" id="L1129">        return false;</span>
+    }
+
+    //______________________________________________________SCORING__________________________________________________//
+
+    public void finalScoring() {
+<span class="fc" id="L1135">        LinkedList&lt;Player&gt; mostPointsOrder = new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L1137">        mostPointsOrder = mostPointsOrder(mostPointsOrder);</span>
+<span class="fc" id="L1138">        mostPointsOrder = checkBestOrderScenario(mostPointsOrder);</span>
+<span class="fc" id="L1139">        setPosition(mostPointsOrder);</span>
+
+
+
+<span class="fc" id="L1143">    }</span>
+/**
+ * mostPointsOrder()
+ *
+ * @param players
+ *
+ *
+ * @return a list order by points
+ *
+ * */
+    public LinkedList&lt;Player&gt; mostPointsOrder(LinkedList&lt;Player&gt; players) {
+<span class="fc" id="L1154">        LinkedList&lt;Player&gt; orderedByPoints=new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L1155" title="All 2 branches covered.">        if(players.isEmpty())</span>
+<span class="fc" id="L1156">            return new LinkedList&lt;&gt;();</span>
+
+<span class="fc" id="L1158">        int maxPoint = 0;</span>
+<span class="fc bfc" id="L1159" title="All 2 branches covered.">        for (int i = 0; i &lt; players.size(); i++) {</span>
+<span class="fc bfc" id="L1160" title="All 2 branches covered.">            if (players.get(i).getPoints() &gt; 0) {</span>
+<span class="pc bpc" id="L1161" title="1 of 2 branches missed.">                if (players.get(i).getPoints()  &gt;= maxPoint) {</span>
+<span class="fc" id="L1162">                    maxPoint = players.get(i).getPoints() ;</span>
+<span class="fc" id="L1163">                    orderedByPoints.addFirst(players.get(i));</span>
+                } else {
+<span class="nc bnc" id="L1165" title="All 2 branches missed.">                    if (orderedByPoints.size() == 1) {</span>
+<span class="nc" id="L1166">                        orderedByPoints.add(players.get(i));</span>
+                    } else {
+<span class="nc bnc" id="L1168" title="All 2 branches missed.">                        for (int indexBestShooterOrder = 1; indexBestShooterOrder &lt; orderedByPoints.size() - 1; indexBestShooterOrder++) {</span>
+<span class="nc bnc" id="L1169" title="All 2 branches missed.">                            if (players.get(i).getPoints() &gt;= orderedByPoints.getFirst().getPoints()) {</span>
+<span class="nc" id="L1170">                                orderedByPoints.addFirst(players.get(i));</span>
+<span class="nc" id="L1171">                                break;</span>
+<span class="nc bnc" id="L1172" title="All 2 branches missed.">                            } else if (players.get(i).getPoints() &lt;= orderedByPoints.get(indexBestShooterOrder-1).getPoints() &amp;&amp;</span>
+<span class="nc bnc" id="L1173" title="All 2 branches missed.">                                    players.get(i).getPoints() &gt;= orderedByPoints.get(indexBestShooterOrder+1).getPoints()) {</span>
+<span class="nc" id="L1174">                                orderedByPoints.add(indexBestShooterOrder+1, players.get(i));</span>
+<span class="nc" id="L1175">                                break;</span>
+<span class="nc bnc" id="L1176" title="All 2 branches missed.">                            } else if (players.get(i).getPoints()&lt;=orderedByPoints.getLast().getPoints()) {</span>
+
+<span class="nc" id="L1178">                                    orderedByPoints.addLast(players.get(i));</span>
+                            }
+                            }
+                        }
+                    }
+                }
+
+
+                //if ==0 no points to add to the player
+            }
+
+
+<span class="fc" id="L1190">      return orderedByPoints;</span>
+    }
+
+    //orders by mortalPoints
+    //still don't know FIRST SECOND ECC..
+    /**checkBestOrderScenario()
+     * @param players an ordered list by points
+     * @return a list order by mortalPoints
+     *
+     * */
+    public LinkedList&lt;Player&gt; checkBestOrderScenario(LinkedList&lt;Player&gt; players) {
+<span class="fc" id="L1201">        LinkedList&lt;Player&gt; effectiveOrder = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L1202">        LinkedList&lt;Player&gt; samePointsSubList = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L1203">        LinkedList&lt;Player&gt; playersClone=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L1204">        playersClone.addAll((LinkedList&lt;Player&gt;)players.clone());</span>
+
+<span class="fc bfc" id="L1206" title="All 2 branches covered.">        for (Player player : players</span>
+        ) {
+<span class="fc bfc" id="L1208" title="All 2 branches covered.">            if (effectiveOrder.isEmpty())</span>
+<span class="fc" id="L1209">                effectiveOrder.addFirst(player);</span>
+<span class="pc bpc" id="L1210" title="1 of 4 branches missed.">            else if (effectiveOrder.size() == 1 &amp;&amp; !effectiveOrder.contains(player)) {</span>
+<span class="pc bpc" id="L1211" title="3 of 4 branches missed.">                if (player.getPoints()&lt;effectiveOrder.getFirst().getPoints()||player.getPoints()==effectiveOrder.getFirst().getPoints()&amp;&amp;</span>
+<span class="nc bnc" id="L1212" title="All 2 branches missed.">                        player.getMortalPoints()&lt;effectiveOrder.getFirst().getMortalPoints())</span>
+<span class="fc" id="L1213">                    effectiveOrder.add(player);</span>
+<span class="nc bnc" id="L1214" title="All 4 branches missed.">                else if (player.getPoints()==effectiveOrder.getFirst().getPoints()&amp;&amp;player.getMortalPoints()&gt;=effectiveOrder.getFirst().getMortalPoints())</span>
+<span class="nc" id="L1215">                    effectiveOrder.addFirst(player);</span>
+            } else {
+<span class="pc bpc" id="L1217" title="1 of 2 branches missed.">                for (int i = 1; i &lt; effectiveOrder.size() - 1; i++) {</span>
+
+
+<span class="nc bnc" id="L1220" title="All 4 branches missed.">                    if (!effectiveOrder.contains(player) &amp;&amp; player.getPoints() &lt;= effectiveOrder.get(i-1).getPoints()&amp;&amp;</span>
+<span class="nc bnc" id="L1221" title="All 2 branches missed.">                            player.getPoints()&gt;=effectiveOrder.get(i+1).getPoints()&amp;&amp;</span>
+<span class="nc bnc" id="L1222" title="All 4 branches missed.">                    player.getMortalPoints()&lt;=effectiveOrder.get(i-1).getMortalPoints()&amp;&amp;player.getMortalPoints()&gt;=effectiveOrder.get(i+1).getMortalPoints()) {</span>
+<span class="nc" id="L1223">                        effectiveOrder.add(i + 1, player);</span>
+<span class="nc" id="L1224">                        break;</span>
+
+                    }
+
+<span class="nc bnc" id="L1228" title="All 4 branches missed.">                    else if (!effectiveOrder.contains(player) &amp;&amp; player.getPoints()==effectiveOrder.getFirst().getPoints()</span>
+<span class="nc bnc" id="L1229" title="All 2 branches missed.">                            &amp;&amp;player.getMortalPoints()&gt;=effectiveOrder.getFirst().getMortalPoints()) {</span>
+<span class="nc" id="L1230">                        effectiveOrder.addFirst(player);</span>
+<span class="nc" id="L1231">                        break;</span>
+<span class="nc bnc" id="L1232" title="All 4 branches missed.">                    } else if (!effectiveOrder.contains(player) &amp;&amp; player.getPoints()&lt;=effectiveOrder.getLast().getPoints()&amp;&amp;</span>
+<span class="nc bnc" id="L1233" title="All 2 branches missed.">                    player.getMortalPoints()&lt;=effectiveOrder.getLast().getMortalPoints()) {</span>
+<span class="nc" id="L1234">                        effectiveOrder.addLast(player);</span>
+<span class="nc" id="L1235">                        break;</span>
+                    }
+
+
+                    //se uguale punteggio dell ultimo e &gt; pos in coda
+                    //contenuto tra i due
+
+
+                }
+            }
+<span class="fc bfc" id="L1245" title="All 2 branches covered.">            if(!effectiveOrder.contains(player))</span>
+<span class="fc" id="L1246">                effectiveOrder.addLast(player);</span>
+<span class="fc" id="L1247">        }</span>
+
+<span class="fc" id="L1249">        return effectiveOrder;</span>
+    }
+
+    /**
+     * orderByMortalPoints()
+     * @param subList a subList where all players have same points
+     *
+     * @return a list of player order by points and mortalPoints*/
+    public LinkedList&lt;Player&gt; orderByMortalPoints(LinkedList&lt;Player&gt; subList) {
+<span class="fc" id="L1258">        LinkedList&lt;Player&gt; orderedByMortalPoints=new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L1259" title="All 2 branches covered.">        for (Player player:subList</span>
+             ) {
+
+<span class="pc bpc" id="L1262" title="1 of 6 branches missed.">            if(orderedByMortalPoints.isEmpty()||orderedByMortalPoints.size()==1&amp;&amp;player.getMortalPoints()&lt;orderedByMortalPoints.getFirst().getMortalPoints())</span>
+<span class="fc" id="L1263">                orderedByMortalPoints.add(player);</span>
+<span class="pc bpc" id="L1264" title="1 of 2 branches missed.">            else if(orderedByMortalPoints.size()==1)</span>
+<span class="nc" id="L1265">                orderedByMortalPoints.addFirst(player);</span>
+            else{
+
+
+<span class="pc bpc" id="L1269" title="1 of 2 branches missed.">                for (int i=0; i&lt;orderedByMortalPoints.size()-1;i++) {</span>
+
+<span class="pc bpc" id="L1271" title="3 of 4 branches missed.">                    if (player.getMortalPoints() &lt; orderedByMortalPoints.get(i).getMortalPoints()&amp;&amp;player.getMortalPoints()&gt;=orderedByMortalPoints.get(i+1).getMortalPoints())</span>
+<span class="nc" id="L1272">                    {orderedByMortalPoints.add(orderedByMortalPoints.indexOf(orderedByMortalPoints.get(i+1)),player);</span>
+<span class="nc" id="L1273">                        break;}</span>
+<span class="pc bpc" id="L1274" title="1 of 2 branches missed.">                    else if (player.getMortalPoints() &gt;= orderedByMortalPoints.get(i).getMortalPoints())</span>
+<span class="fc" id="L1275">                    {   orderedByMortalPoints.add(orderedByMortalPoints.indexOf(orderedByMortalPoints.get(i)),player);</span>
+<span class="fc" id="L1276">                        break;}</span>
+<span class="nc bnc" id="L1277" title="All 2 branches missed.">                    else if(player.getMortalPoints()&lt;=orderedByMortalPoints.getLast().getMortalPoints())</span>
+<span class="nc" id="L1278">                    {   orderedByMortalPoints.addLast(player);</span>
+<span class="nc" id="L1279">                        break;}</span>
+
+                }
+
+
+            }
+
+<span class="fc" id="L1286">        }</span>
+<span class="fc" id="L1287">        return orderedByMortalPoints;</span>
+    }
+
+/**setPosition()
+ * @param orderPlayerByPointsPlusMortalPoints
+ * assign player position
+ * */
+    public void setPosition(LinkedList&lt;Player&gt; orderPlayerByPointsPlusMortalPoints){
+<span class="fc bfc" id="L1295" title="All 2 branches covered.">        if(orderPlayerByPointsPlusMortalPoints.isEmpty())</span>
+<span class="fc" id="L1296">            return;</span>
+<span class="fc" id="L1297">        orderPlayerByPointsPlusMortalPoints.getFirst().setPlayerPos(Player.PlayerPos.FIRST);</span>
+
+<span class="fc bfc" id="L1299" title="All 2 branches covered.">            for (Player player : orderPlayerByPointsPlusMortalPoints</span>
+                 ) {
+<span class="fc bfc" id="L1301" title="All 2 branches covered.">                if(player.getMortalPoints()==orderPlayerByPointsPlusMortalPoints.getFirst().getMortalPoints()&amp;&amp;</span>
+<span class="fc bfc" id="L1302" title="All 2 branches covered.">                player.getPoints()==orderPlayerByPointsPlusMortalPoints.getFirst().getPoints())</span>
+<span class="fc" id="L1303">                    player.setPlayerPos(orderPlayerByPointsPlusMortalPoints.getFirst().getPlayerPos());</span>
+                //manca se size==1
+                else {
+<span class="pc bpc" id="L1306" title="1 of 2 branches missed.">                    for(int i=1;i&lt;orderPlayerByPointsPlusMortalPoints.size();i++)</span>
+                    {
+<span class="pc bpc" id="L1308" title="1 of 2 branches missed.">                        if(player.getPoints()==orderPlayerByPointsPlusMortalPoints.get(i-1).getPoints()&amp;&amp;</span>
+<span class="nc bnc" id="L1309" title="All 2 branches missed.">                            player.getMortalPoints()==orderPlayerByPointsPlusMortalPoints.get(i-1).getMortalPoints())</span>
+<span class="nc" id="L1310">                        {player.setPlayerPos(orderPlayerByPointsPlusMortalPoints.get(i-1).getPlayerPos());</span>
+<span class="nc" id="L1311">                            break;}</span>
+                        else   {
+
+<span class="fc bfc" id="L1314" title="All 2 branches covered.">                            for(int j=0; j&lt;player.getAllPlayerPos().length;j++)</span>
+
+<span class="fc bfc" id="L1316" title="All 2 branches covered.">                                if(player.getAllPlayerPos()[j]==orderPlayerByPointsPlusMortalPoints.get(i-1).getPlayerPos())</span>
+                                {
+<span class="pc bpc" id="L1318" title="2 of 4 branches missed.">                                    if(player.getAllPlayerPos()[j]== Player.PlayerPos.FIRST&amp;&amp;j+1&gt;=player.getAllPlayerPos().length)</span>
+<span class="nc" id="L1319">                                        player.setPlayerPos(Player.PlayerPos.FIRST);</span>
+                                    else
+<span class="fc" id="L1321">                                        player.setPlayerPos(player.getAllPlayerPos()[j+1]);</span>
+                                }
+
+                            }
+                        break;
+                        }
+
+                    }
+
+<span class="fc" id="L1330">                    }</span>
+<span class="fc" id="L1331">                }</span>
+
+
+
+
+
+
+
+
+
+        public void grabWeapon(Player player,WeaponCard weaponCard, Spawnpoint s, List&lt;PowerUpCard&gt; playerPowerUpCards, CoordinatesWithRoom spawncoord) {
+               try {
+<span class="fc" id="L1343">                   synchronized (player.getHand()) {</span>
+<span class="fc" id="L1344">                   System.out.println(player.getHand().size());</span>
+<span class="fc" id="L1345">                   player.getHand().add(weaponCard);</span>
+<span class="fc" id="L1346">                   System.out.println(player.getHand().size());</span>
+<span class="fc" id="L1347">                   System.out.println(player.getHand().get((player.getHand().size()) - 1));</span>
+<span class="fc" id="L1348">                   System.out.println(weaponCard.getReload());</span>
+
+<span class="fc bfc" id="L1350" title="All 2 branches covered.">                       for (WeaponCard w : player.getHand()) {</span>
+<span class="fc" id="L1351">                           System.out.println(w.toString());</span>
+<span class="fc" id="L1352">                       }</span>
+
+<span class="fc" id="L1354">                   s.getWeaponCards().remove(weaponCard);</span>
+<span class="fc" id="L1355">                   System.out.println(&quot;test gallina&quot; + player + player.getHand().toString());</span>
+
+<span class="fc" id="L1357">                   player.getPowerUp().removeAll(playerPowerUpCards);</span>
+<span class="fc" id="L1358">                   model.powerUpDeck.getUsedPowerUp().addAll(playerPowerUpCards);</span>
+<span class="fc" id="L1359">                   run(player, spawncoord);</span>
+<span class="fc" id="L1360">                   }</span>
+
+<span class="nc" id="L1362">               }catch (Exception e){</span>
+<span class="nc" id="L1363">                   e.printStackTrace();</span>
+<span class="fc" id="L1364">               }</span>
+
+<span class="fc" id="L1366">            }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

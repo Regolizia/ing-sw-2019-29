@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Spawnpoint.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">Spawnpoint.java</span></div><h1>Spawnpoint.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import java.util.LinkedList;
+
+public class Spawnpoint {
+
+    int x;
+    int y;
+    private LinkedList&lt;WeaponCard&gt; weaponCards;
+    private AmmoCube.CubeColor color;
+
+<span class="fc" id="L12">    public Spawnpoint(){</span>
+<span class="fc" id="L13">        weaponCards=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L14">    }</span>
+
+<span class="fc" id="L16">    public Spawnpoint(int x, int y){</span>
+<span class="fc" id="L17">        this.x = x;</span>
+<span class="fc" id="L18">        this.y = y;</span>
+<span class="fc" id="L19">        this.weaponCards=new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L20">    }</span>
+
+    public int getSpawnpointX( ) {
+
+<span class="fc" id="L24">        return x;</span>
+    }
+
+    public int getSpawnpointY( ) {
+
+<span class="fc" id="L29">        return y;</span>
+    }
+    public void addWeaponCard(WeaponCard weaponCard){
+<span class="fc" id="L32">        this.weaponCards.add(weaponCard);</span>
+<span class="fc" id="L33">    }</span>
+    public LinkedList&lt;WeaponCard&gt; getWeaponCards(){
+<span class="fc" id="L35">        return this.weaponCards;</span>
+    }
+    public void setColor(AmmoCube.CubeColor c){
+<span class="fc" id="L38">        this.color = c;</span>
+<span class="fc" id="L39">    }</span>
+<span class="nc" id="L40">    public AmmoCube.CubeColor getColor(){ return color;}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

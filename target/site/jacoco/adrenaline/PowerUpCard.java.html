@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PowerUpCard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">PowerUpCard.java</span></div><h1>PowerUpCard.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class PowerUpCard extends Card {
+
+    private AmmoCube.CubeColor color;
+    private boolean canBeUsedOnBot;
+<span class="fc" id="L10">    public PowerUpCard(){</span>
+
+<span class="fc" id="L12">    }</span>
+
+<span class="fc" id="L14">    public PowerUpCard(AmmoCube.CubeColor c){</span>
+
+<span class="fc" id="L16">        this.color = c;</span>
+<span class="fc" id="L17">    }</span>
+
+
+    public AmmoCube.CubeColor getPowerUpColor(){
+<span class="fc" id="L21">                return this.color;</span>
+    }
+    public void setPowerUpColor(AmmoCube.CubeColor c){
+<span class="fc" id="L24">        this.color = c;</span>
+<span class="fc" id="L25">    }</span>
+    /**
+     *getCanBeUsedOnBot
+     * @return if a PowerUp can be used on bot
+     **/
+    public boolean getCanBeUsedOnBot() {
+<span class="nc" id="L31">        return canBeUsedOnBot;</span>
+    }
+    /**
+     *setCanBeUsedOnBot
+     * @param canBeUsedOnBot
+     **/
+    public void setCanBeUsedOnBot(boolean canBeUsedOnBot) {
+<span class="fc" id="L38">        this.canBeUsedOnBot = canBeUsedOnBot;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     *plusOneDamage()
+     * @param player
+     * @param target
+     * add one damage to target
+     */
+    public void plusOneDamage(Player player,Object target){
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if(target instanceof Player)</span>
+<span class="nc" id="L49">            ((Player) target).damageByShooter(player);</span>
+
+<span class="nc" id="L51">    }</span>
+    /**
+     *getPossibleCells()
+     * @param p
+     * @param m
+     */
+    public List&lt;CoordinatesWithRoom&gt; getPossibleCells(GameModel m, Player p){
+
+<span class="fc" id="L59">        List&lt;CoordinatesWithRoom&gt;cWr=new LinkedList&lt;CoordinatesWithRoom&gt;();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for (Room r:m.getMapUsed().getGameBoard().getRooms()</span>
+        ) {
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            for (int x=1;x&lt;=r.getRoomSizeX();x++) {</span>
+
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                for (int y=1;y&lt;=r.getRoomSizeY();y++)</span>
+                {
+<span class="fc" id="L66">                    cWr.add(new CoordinatesWithRoom(x,y,r));</span>
+                }
+
+            }
+
+<span class="fc" id="L71">        }</span>
+
+<span class="fc" id="L73">        return cWr;</span>
+    }
+
+    //useless
+    //public void setColor(PowerUpCard card, Color c){
+      //  this.color = c ;}
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

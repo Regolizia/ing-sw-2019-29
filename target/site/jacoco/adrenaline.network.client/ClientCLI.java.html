@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientCLI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.network.client</a> &gt; <span class="el_source">ClientCLI.java</span></div><h1>ClientCLI.java</h1><pre class="source lang-java linenums">package adrenaline.network.client;
+
+// SOCKET
+import adrenaline.Figure;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.*;
+
+public class ClientCLI extends Client{
+
+    static ClientCLI cli;
+    public static Socket socket;
+
+<span class="nc" id="L16">    public static Scanner scanner = new Scanner(System.in);</span>
+
+    private ObjectOutputStream output;
+
+    public static final String ANSI_YELLOW = &quot;\u001B[33m&quot;;
+    public static final String ANSI_RESET = &quot;\u001B[0m&quot;;
+
+    public static String serverAddress;
+    public static final int socketPort = 4321;
+    public static final int rmiPort = 59002;
+
+    public static void main(String[] args){
+
+
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (args.length != 1) {</span>
+<span class="nc" id="L31">            System.err.println(&quot;Pass the server IP as the sole command line argument&quot;);</span>
+<span class="nc" id="L32">            return;</span>
+        }
+<span class="nc" id="L34">        serverAddress = args[0];</span>
+
+        //serverAddress = &quot;192.168.43.171&quot;;//todo change every time
+
+<span class="nc" id="L38">        cli = new ClientCLI(serverAddress, socketPort, rmiPort);</span>
+
+        try {
+<span class="nc" id="L41">            new ClientThread(socket,cli).run();</span>
+<span class="nc" id="L42">        } catch (IOException e) {</span>
+            //e.printStackTrace();
+<span class="nc" id="L44">            reconnect();</span>
+<span class="nc" id="L45">        }</span>
+<span class="nc" id="L46">    }</span>
+
+    public static void startClient(String serverAddress, int socketPort, int rmiPort){
+<span class="nc" id="L49">        startSocketClient(serverAddress,socketPort);</span>
+
+<span class="nc" id="L51">    }</span>
+
+    public static void startSocketClient(String serverAddress, int socketPort){
+        try {
+<span class="nc" id="L55">            socket = new Socket(serverAddress,socketPort);</span>
+<span class="nc" id="L56">            System.out.println(ANSI_YELLOW +</span>
+                    &quot;          _____  _____  ______ _   _          _      _____ _   _ ______ \n&quot; +
+                    &quot;    /\\   |  __ \\|  __ \\|  ____| \\ | |   /\\   | |    |_   _| \\ | |  ____|\n&quot; +
+                    &quot;   /  \\  | |  | | |__) | |__  |  \\| |  /  \\  | |      | | |  \\| | |__   \n&quot; +
+                    &quot;  / /\\ \\ | |  | |  _  /|  __| | . ` | / /\\ \\ | |      | | | . ` |  __|  \n&quot; +
+                    &quot; / ____ \\| |__| | | \\ \\| |____| |\\  |/ ____ \\| |____ _| |_| |\\  | |____ \n&quot; +
+                    &quot;/_/    \\_\\_____/|_|  \\_\\______|_| \\_/_/    \\_\\______|_____|_| \\_|______|&quot;+ ANSI_RESET);
+
+<span class="nc" id="L64">            System.out.println(&quot;Socket Connection&quot;);</span>
+
+<span class="nc" id="L66">        } catch (IOException e) {</span>
+<span class="nc" id="L67">            e.printStackTrace();</span>
+<span class="nc" id="L68">        }</span>
+
+<span class="nc" id="L70">    }</span>
+
+<span class="nc" id="L72">    public ClientCLI(String serverAddress, int socketPort, int rmiPort) {</span>
+<span class="nc" id="L73">        startClient(serverAddress,socketPort,rmiPort);</span>
+
+<span class="nc" id="L75">    }</span>
+    public static void reconnect(){
+        try {
+<span class="nc" id="L78">            socket.close();</span>
+<span class="nc" id="L79">            socket = new Socket(serverAddress,socketPort);</span>
+<span class="nc" id="L80">            new ClientThread(socket,cli).run();</span>
+
+<span class="nc" id="L82">        } catch (IOException ex) {</span>
+<span class="nc" id="L83">            ex.printStackTrace();</span>
+<span class="nc" id="L84">        }</span>
+<span class="nc" id="L85">    }</span>
+
+    public void getOutput(ObjectOutputStream o){
+<span class="nc" id="L88">        this.output=o;</span>
+<span class="nc" id="L89">    }</span>
+
+    public void sendToServer(String message) {
+        try {
+<span class="nc" id="L93">            output.writeObject(message);</span>
+<span class="nc" id="L94">            output.flush();</span>
+<span class="nc" id="L95">        } catch (IOException e) {</span>
+<span class="nc" id="L96">           System.out.println(&quot;You've been disconnected from server, try to reenter the game.&quot;);</span>
+<span class="nc" id="L97">        }</span>
+<span class="nc" id="L98">    }</span>
+
+    public void sendIntToServer(int number){
+        try {
+<span class="nc" id="L102">            output.writeObject(number);</span>
+<span class="nc" id="L103">            output.flush();</span>
+<span class="nc" id="L104">        } catch (IOException e){</span>
+<span class="nc" id="L105">            System.out.println(&quot;You've been disconnected from server, try to reenter the game.&quot;);</span>
+
+<span class="nc" id="L107">        }</span>
+<span class="nc" id="L108">    }</span>
+    public void login(){
+<span class="nc" id="L110">         System.out.println(&quot;Enter nickname: &quot;);</span>
+
+<span class="nc" id="L112">          sendToServer(scanner.nextLine());</span>
+
+<span class="nc" id="L114">     }</span>
+    public String view() {
+<span class="nc" id="L116">        return &quot;CLI&quot;;</span>
+    }
+
+    public void chooseColor(String possibleColors
+     ){
+<span class="nc" id="L121">         System.out.println(&quot;Choose a color: &quot;);</span>
+<span class="nc" id="L122">         System.out.println(possibleColors);</span>
+<span class="nc" id="L123">        sendToServer(scanner.nextLine());</span>
+
+<span class="nc" id="L125">     }</span>
+
+    public void chooseBoard(){
+
+<span class="nc" id="L129">         System.out.println(&quot;Choose board number: 1, 2, 3, 4&quot;);</span>
+<span class="nc" id="L130">         sendIntToServer(scanner.nextInt());</span>
+<span class="nc" id="L131">         scanner.nextLine();</span>
+<span class="nc" id="L132">     }</span>
+
+
+    public void printMessage(String message){
+<span class="nc" id="L136">         System.out.println(message);</span>
+<span class="nc" id="L137">     }</span>
+
+     public void frenzy2(){
+<span class="nc" id="L140">         System.out.println(&quot;\nDo you want to Shoot Frenzy [1] or Grab Frenzy [2] [Default]?&quot;);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">         if(scanner.hasNextInt()){</span>
+<span class="nc" id="L142">             int x = scanner.nextInt();</span>
+<span class="nc" id="L143">             scanner.nextLine();</span>
+<span class="nc bnc" id="L144" title="All 4 branches missed.">             if(x==2||x==1){</span>
+<span class="nc" id="L145">                 sendIntToServer(x);</span>
+<span class="nc" id="L146">             }else sendIntToServer(2);</span>
+<span class="nc" id="L147">         }else sendIntToServer(2);</span>
+<span class="nc" id="L148">     }</span>
+     public void chooseCube(){
+<span class="nc" id="L150">         System.out.println(&quot;\nChoose an AmmoCube to pay: BLUE [1] [Default], RED [2], YELLOW [3]&quot;);</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">         if(scanner.hasNextInt()){</span>
+<span class="nc" id="L152">             int x = scanner.nextInt();</span>
+<span class="nc" id="L153">             scanner.nextLine();</span>
+<span class="nc bnc" id="L154" title="All 6 branches missed.">             if(x==2||x==1|| x==3){</span>
+<span class="nc" id="L155">                 sendIntToServer(x);</span>
+<span class="nc" id="L156">             }else sendIntToServer(1);</span>
+<span class="nc" id="L157">         }else sendIntToServer(1);</span>
+<span class="nc" id="L158">     }</span>
+     public void firstTurn(List&lt;String&gt; list){
+<span class="nc" id="L160">         System.out.println(&quot;\nChoose one card, its color will decide your respawn coordinates. You'll keep the other one:&quot;);</span>
+<span class="nc" id="L161">         System.out.println(list.get(0) + &quot; [1] [Default] or &quot; + list.get(1) + &quot; [2]\n&quot;);</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">         if(scanner.hasNextInt()){</span>
+<span class="nc" id="L163">             int x = scanner.nextInt();</span>
+<span class="nc" id="L164">             scanner.nextLine();</span>
+<span class="nc bnc" id="L165" title="All 4 branches missed.">             if(x==2||x==1){</span>
+<span class="nc" id="L166">                 sendIntToServer(x);</span>
+<span class="nc" id="L167">             }else sendIntToServer(1);</span>
+<span class="nc" id="L168">         }else sendIntToServer(1);</span>
+<span class="nc" id="L169">     }</span>
+     public void respawn(List&lt;String&gt; list){
+<span class="nc" id="L171">         System.out.println(&quot;\nChoose one card, its color will indicate your respawn but the card will be discarded:&quot;);</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">         for(int i=0; i&lt;list.size();i++) {</span>
+<span class="nc" id="L173">             System.out.println(&quot;[&quot; + (i + 1) + &quot;]  &quot; +list.get(i));</span>
+         }
+<span class="nc bnc" id="L175" title="All 2 branches missed.">         if(scanner.hasNextInt()){</span>
+<span class="nc" id="L176">             int x = scanner.nextInt();</span>
+<span class="nc" id="L177">             scanner.nextLine();</span>
+<span class="nc bnc" id="L178" title="All 4 branches missed.">             if(x&gt;=1 &amp;&amp; x&lt;=list.size()){</span>
+<span class="nc" id="L179">                 sendIntToServer(x);</span>
+<span class="nc" id="L180">             }else sendIntToServer(1);</span>
+<span class="nc" id="L181">         }else sendIntToServer(1);</span>
+<span class="nc" id="L182">     }</span>
+
+    public void showMainMenu() {
+<span class="nc" id="L185">            System.out.println(&quot;\nMain Menu:\n&quot; +</span>
+                    //&quot;Z: Exit\n&quot; +
+                    &quot;M: Show Map Info\n&quot; +
+                    &quot;B: Show player boards\n&quot; +
+                    &quot;C: Show scores\n&quot;+
+                    &quot;P: Use one of your powerups\n&quot;+
+                            &quot;S: Shoot\n&quot; +
+                            &quot;G: Grab\n&quot; +
+                            &quot;R: Run [Default]\n&quot;
+                    );
+<span class="nc" id="L195">            String s = scanner.nextLine();</span>
+<span class="nc" id="L196">            s = s.trim().toUpperCase();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">                switch (s) {</span>
+                    case &quot;M&quot;:
+                    case &quot;B&quot;:
+                    case &quot;C&quot;:
+                    case &quot;P&quot;:
+                    case &quot;S&quot;:
+                    case &quot;G&quot;:
+                    case &quot;R&quot;:
+<span class="nc" id="L205">                        sendToServer(s);</span>
+<span class="nc" id="L206">                        break;</span>
+                    default:
+<span class="nc" id="L208">                        sendToServer(&quot;R&quot;);</span>
+                        break;
+                }
+
+<span class="nc" id="L212">    } public void frenzy1() {</span>
+<span class="nc" id="L213">            System.out.println(&quot;\nFrenzy Menu:\n&quot; +</span>
+                    //&quot;Z: Exit\n&quot; +
+                    &quot;M: Show Map Info\n&quot; +
+                    &quot;B: Show player boards\n&quot; +
+                    &quot;C: Show scores\n&quot;+
+                            &quot;S: Shoot Frenzy\n&quot; +
+                            &quot;G: Grab Frenzy\n&quot; +
+                            &quot;R: Run Frenzy[Default]\n&quot;
+                    );
+<span class="nc" id="L222">            String s = scanner.nextLine();</span>
+<span class="nc" id="L223">            s = s.trim().toUpperCase();</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                switch (s) {</span>
+                    case &quot;M&quot;:
+                    case &quot;B&quot;:
+                    case &quot;C&quot;:
+                    case &quot;S&quot;:
+                    case &quot;G&quot;:
+                    case &quot;R&quot;:
+<span class="nc" id="L231">                        sendToServer(s);</span>
+<span class="nc" id="L232">                        break;</span>
+                    default:
+<span class="nc" id="L234">                        sendToServer(&quot;R&quot;);</span>
+                        break;
+                }
+
+<span class="nc" id="L238">    }</span>
+
+
+    public void run(List&lt;String&gt; list) {
+<span class="nc" id="L242">        System.out.println(&quot;\nChoose a cell (first is default):&quot;);</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        for(int i=0; i&lt;list.size();i++) {</span>
+<span class="nc" id="L244">            System.out.println(&quot;[&quot; + (i + 1) + &quot;]  &quot; +list.get(i).toString());</span>
+        }
+<span class="nc bnc" id="L246" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L247">            int x = scanner.nextInt();</span>
+<span class="nc" id="L248">            scanner.nextLine();</span>
+<span class="nc bnc" id="L249" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;list.size()+1){</span>
+<span class="nc" id="L250">                sendIntToServer(x);</span>
+<span class="nc" id="L251">            }else sendIntToServer(1);</span>
+<span class="nc" id="L252">        }else sendIntToServer(1);</span>
+<span class="nc" id="L253">    }</span>
+  public void powerups(List&lt;String&gt; list) {
+<span class="nc" id="L255">        System.out.println(&quot;\nChoose a powerup (first is default):&quot;);</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">        for(int i=0; i&lt;list.size();i++) {</span>
+<span class="nc" id="L257">            System.out.println(&quot;[&quot; + (i + 1) + &quot;]  &quot; +list.get(i).toString());</span>
+        }
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L260">            int x = scanner.nextInt();</span>
+<span class="nc" id="L261">            scanner.nextLine();</span>
+<span class="nc bnc" id="L262" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;list.size()+1){</span>
+<span class="nc" id="L263">                sendIntToServer(x);</span>
+<span class="nc" id="L264">            }else sendIntToServer(1);</span>
+<span class="nc" id="L265">        }else sendIntToServer(1);</span>
+<span class="nc" id="L266">    }</span>
+
+    public void grab(List&lt;String&gt; items,List&lt;String&gt; cells) {
+<span class="nc" id="L269">        System.out.println(&quot;\nChoose an item cell (first is default):&quot;);</span>
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        for(int i=0; i&lt;items.size();i++) {</span>
+<span class="nc" id="L271">            System.out.println(&quot;[&quot; + (i + 1) + &quot;]  &quot; +items.get(i).toString()+&quot; in &quot;+cells.get(i).toString());</span>
+        }
+<span class="nc bnc" id="L273" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L274">            int x = scanner.nextInt();</span>
+<span class="nc" id="L275">            scanner.nextLine();</span>
+<span class="nc bnc" id="L276" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;items.size()+1){</span>
+<span class="nc" id="L277">                sendIntToServer(x);</span>
+<span class="nc" id="L278">            }else sendIntToServer(1);</span>
+<span class="nc" id="L279">        }else sendIntToServer(1);</span>
+<span class="nc" id="L280">    }</span>
+    public void payment(){
+<span class="nc" id="L282">        System.out.println(&quot;\nDo you want to pay with just ammo [1] or also with powerups [2]? ([1] is default): &quot;);</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L284">            int x = scanner.nextInt();</span>
+<span class="nc" id="L285">            scanner.nextLine();</span>
+<span class="nc bnc" id="L286" title="All 4 branches missed.">            if(x==1||x==2){</span>
+<span class="nc" id="L287">                sendIntToServer(x);</span>
+<span class="nc" id="L288">            }else sendIntToServer(1);</span>
+<span class="nc" id="L289">        }else sendIntToServer(1);</span>
+<span class="nc" id="L290">    }</span>
+
+    public void payWithPowerup(String powerup){
+<span class="nc" id="L293">        System.out.println(&quot;\nDo you want to pay with this powerup, [Y] or [N]? ([Y] is default): &quot;+powerup);</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L295">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L296" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L297">                sendToServer(x);</span>
+<span class="nc" id="L298">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L299">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L300">    }</span>
+
+    public void grabWeapon(String weapons){
+<span class="nc" id="L303">        String[] list = weapons.split(&quot; &quot;);</span>
+<span class="nc" id="L304">        System.out.println(&quot;\nChoose a weapon to grab (first is default):&quot;);</span>
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        for(int i =0;i&lt;list.length;i++) {</span>
+<span class="nc" id="L306">            System.out.println(list[i] + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L309">            int x = scanner.nextInt();</span>
+<span class="nc" id="L310">            scanner.nextLine();</span>
+<span class="nc bnc" id="L311" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;4){</span>
+<span class="nc" id="L312">                sendIntToServer(x);</span>
+<span class="nc" id="L313">            }else sendIntToServer(1);</span>
+<span class="nc" id="L314">        }else sendIntToServer(1);</span>
+<span class="nc" id="L315">    }</span>
+
+    public void dropWeapon(List&lt;String&gt; weapons){
+<span class="nc" id="L318">        System.out.println(&quot;\nChoose one of your weapons to drop (first is default):&quot;);</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        for(int i =0;i&lt;weapons.size();i++) {</span>
+<span class="nc" id="L320">            System.out.println(weapons.get(i) + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L322" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L323">            int x = scanner.nextInt();</span>
+<span class="nc" id="L324">            scanner.nextLine();</span>
+<span class="nc bnc" id="L325" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;4){</span>
+<span class="nc" id="L326">                sendIntToServer(x);</span>
+<span class="nc" id="L327">            }else sendIntToServer(1);</span>
+<span class="nc" id="L328">        }else sendIntToServer(1);</span>
+<span class="nc" id="L329">    }</span>
+    public void chooseWeapon(List&lt;String&gt; weapons){
+<span class="nc" id="L331">        System.out.println(&quot;\nChoose one of your weapons (first is default):&quot;);</span>
+<span class="nc bnc" id="L332" title="All 2 branches missed.">        for(int i =0;i&lt;weapons.size();i++) {</span>
+<span class="nc" id="L333">            System.out.println(weapons.get(i) + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L335" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L336">            int x = scanner.nextInt();</span>
+<span class="nc" id="L337">            scanner.nextLine();</span>
+<span class="nc bnc" id="L338" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;4){</span>
+<span class="nc" id="L339">                sendIntToServer(x);</span>
+<span class="nc" id="L340">            }else sendIntToServer(1);</span>
+<span class="nc" id="L341">        }else sendIntToServer(1);</span>
+<span class="nc" id="L342">    }</span>
+
+    public void chooseTarget(List&lt;String&gt; targets){
+<span class="nc" id="L345">        System.out.println(&quot;\nChoose one target (first is default):&quot;);</span>
+<span class="nc bnc" id="L346" title="All 2 branches missed.">        for(int i =0;i&lt;targets.size();i++) {</span>
+<span class="nc" id="L347">            System.out.println(targets.get(i) + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L350">            int x = scanner.nextInt();</span>
+<span class="nc" id="L351">            scanner.nextLine();</span>
+<span class="nc bnc" id="L352" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;=targets.size()){</span>
+<span class="nc" id="L353">                sendIntToServer(x);</span>
+<span class="nc" id="L354">            }else sendIntToServer(1);</span>
+<span class="nc" id="L355">        }else sendIntToServer(1);</span>
+<span class="nc" id="L356">    }</span>
+    public void changeOrder(List&lt;String&gt; effect){
+<span class="nc" id="L358">        System.out.println(&quot;\nChoose one effect (first is default):&quot;);</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        for(int i =0;i&lt;effect.size();i++) {</span>
+<span class="nc" id="L360">            System.out.println(effect.get(i) + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L362" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L363">            int x = scanner.nextInt();</span>
+<span class="nc" id="L364">            scanner.nextLine();</span>
+<span class="nc bnc" id="L365" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;=effect.size()){</span>
+<span class="nc" id="L366">                sendIntToServer(x);</span>
+<span class="nc" id="L367">            }else sendIntToServer(1);</span>
+<span class="nc" id="L368">        }else sendIntToServer(1);</span>
+<span class="nc" id="L369">    }</span>
+
+    public void chooseAnother(){
+<span class="nc" id="L372">        System.out.println(&quot;\nDo you want to choose another one, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L374">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L375" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L376">                sendToServer(x);</span>
+<span class="nc" id="L377">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L378">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L379">    }</span>
+
+    public void frenzy(){
+<span class="nc" id="L382">        System.out.println(&quot;Do you want with Frenzy, [Y] or [N]? ([N] is default): &quot;);</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L384">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L385" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L386">                sendToServer(x);</span>
+<span class="nc" id="L387">            }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L388">        }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L389">    }</span>
+
+    public void op1(){
+<span class="nc" id="L392">        System.out.println(&quot;\nDo you want to use Optional Effect 1, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L393" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L394">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L395" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L396">                sendToServer(x);</span>
+<span class="nc" id="L397">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L398">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L399">    }</span>
+
+    public void op2(){
+<span class="nc" id="L402">        System.out.println(&quot;\nDo you want to use Optional Effect 2, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L404">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L405" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L406">                sendToServer(x);</span>
+<span class="nc" id="L407">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L408">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L409">    }</span>
+    public void alt(){
+<span class="nc" id="L411">        System.out.println(&quot;\nDo you want to use Alternate Effect, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L412" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L413">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L414" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L415">                sendToServer(x);</span>
+<span class="nc" id="L416">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L417">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L418">    }</span>
+    public void change(){
+<span class="nc" id="L420">        System.out.println(&quot;\nDo you want to change the order of the effects, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L421" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L422">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L423" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L424">                sendToServer(x);</span>
+<span class="nc" id="L425">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L426">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L427">    }</span>
+
+    public void reload(String s){
+<span class="nc" id="L430">        System.out.println(&quot;\nDo you want to reload &quot; +s +&quot;, [Y] or [N]? ([N] is default): &quot;);</span>
+<span class="nc bnc" id="L431" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L432">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L433" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L434">                sendToServer(x);</span>
+<span class="nc" id="L435">            }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L436">        }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L437">    }</span>
+
+    public void moveTarget(){
+<span class="nc" id="L440">        System.out.println(&quot;\nDo you want to move the target, [Y] or [N]? ([Y] is default): &quot;);</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L442">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L443" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L444">                sendToServer(x);</span>
+<span class="nc" id="L445">            }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L446">        }else sendToServer(&quot;Y&quot;);</span>
+<span class="nc" id="L447">    }</span>
+    public void tagbackGrenade(){
+<span class="nc" id="L449">        System.out.println(&quot;\nYou've been shot, do you want to use your TagbackGrenade, [Y] or [N]? ([N] is default): &quot;);</span>
+<span class="nc bnc" id="L450" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L451">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L452" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L453">                sendToServer(x);</span>
+<span class="nc" id="L454">            }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L455">        }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L456">    }</span>
+
+    public void targetingScope(){
+<span class="nc" id="L459">        System.out.println(&quot;\nDo you want to use you TargetingScope, [Y] or [N]? ([N] is default): &quot;);</span>
+<span class="nc bnc" id="L460" title="All 2 branches missed.">        if(scanner.hasNextLine()){</span>
+<span class="nc" id="L461">            String x = (String)scanner.nextLine();</span>
+<span class="nc bnc" id="L462" title="All 4 branches missed.">            if(x.toUpperCase().equals(&quot;Y&quot;) ||x.toUpperCase().equals(&quot;N&quot;)){</span>
+<span class="nc" id="L463">                sendToServer(x);</span>
+<span class="nc" id="L464">            }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L465">        }else sendToServer(&quot;N&quot;);</span>
+<span class="nc" id="L466">    }</span>
+
+    public void chooseCell(List&lt;String&gt; cells){
+<span class="nc" id="L469">        System.out.println(&quot;\nChoose a cell (first is default):&quot;);</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">        for(int i =0;i&lt;cells.size();i++) {</span>
+<span class="nc" id="L471">            System.out.println(&quot;[&quot; + (i + 1) + &quot;]  &quot; +cells.get(i));</span>
+        }
+<span class="nc bnc" id="L473" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L474">            int x = scanner.nextInt();</span>
+<span class="nc" id="L475">            scanner.nextLine();</span>
+<span class="nc bnc" id="L476" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;=cells.size()){</span>
+<span class="nc" id="L477">                sendIntToServer(x);</span>
+<span class="nc" id="L478">            }else sendIntToServer(1);</span>
+<span class="nc" id="L479">        }else sendIntToServer(1);</span>
+<span class="nc" id="L480">    }</span>
+    public void chooseRoom(List&lt;String&gt; rooms){
+<span class="nc" id="L482">        System.out.println(&quot;\nChoose a room (first is default):&quot;);</span>
+<span class="nc bnc" id="L483" title="All 2 branches missed.">        for(int i =0;i&lt;rooms.size();i++) {</span>
+<span class="nc" id="L484">            System.out.println(rooms.get(i) + &quot; [&quot;+(i+1)+&quot;] &quot;);</span>
+        }
+<span class="nc bnc" id="L486" title="All 2 branches missed.">        if(scanner.hasNextInt()){</span>
+<span class="nc" id="L487">            int x = scanner.nextInt();</span>
+<span class="nc" id="L488">            scanner.nextLine();</span>
+<span class="nc bnc" id="L489" title="All 4 branches missed.">            if(x&gt;0 &amp;&amp; x&lt;=rooms.size()){</span>
+<span class="nc" id="L490">                sendIntToServer(x);</span>
+<span class="nc" id="L491">            }else sendIntToServer(1);</span>
+<span class="nc" id="L492">        }else sendIntToServer(1);</span>
+<span class="nc" id="L493">    }</span>
+
+    public void waitStart(){
+<span class="nc" id="L496">        System.out.println(&quot;Waiting for other players...&quot;);</span>
+<span class="nc" id="L497">    }</span>
+
+    public void disconnected(){
+<span class="nc" id="L500">        System.out.println(&quot;You've been disconnected!&quot;);</span>
+<span class="nc" id="L501">        reconnect();</span>
+<span class="nc" id="L502">    }</span>
+
+    public void boards(List&lt;String&gt; names, List&lt;String&gt; drops,List&lt;String&gt; marks, List&lt;String&gt; weapons,List&lt;String&gt; powerups,List&lt;String&gt; ammo,List&lt;String&gt; positions){
+<span class="nc" id="L505">        int i=0;</span>
+<span class="nc" id="L506">        System.out.println(&quot;Player Boards&quot;);</span>
+<span class="nc bnc" id="L507" title="All 2 branches missed.">        for(int y=0;y&lt;names.size();y++){</span>
+<span class="nc" id="L508">            System.out.println(names.get(y)+&quot;: &quot;+drops.get(i)+&quot; &quot;+drops.get(i+1)+&quot; &quot;+drops.get(i+2)+&quot; &quot;+drops.get(i+3)+&quot; &quot;+</span>
+<span class="nc" id="L509">                    drops.get(i+4)+&quot; &quot;+drops.get(i+5)+&quot; &quot;+drops.get(i+6)+&quot; &quot;+</span>
+<span class="nc" id="L510">                    drops.get(i+7)+&quot; &quot;+drops.get(i+8)+&quot; &quot;+drops.get(i+9)+&quot; &quot;+drops.get(i+10)+&quot; &quot;+drops.get(i+11));</span>
+<span class="nc" id="L511">            i=i+12;</span>
+        }
+<span class="nc" id="L513">        printMarks(names,marks);</span>
+<span class="nc" id="L514">        printWeapons(names,weapons);</span>
+<span class="nc" id="L515">        printPowerups(names,powerups);</span>
+<span class="nc" id="L516">        printAmmo(names,ammo);</span>
+<span class="nc" id="L517">        printPositions(names,positions);</span>
+<span class="nc" id="L518">    }</span>
+    public void printWeapons(List&lt;String&gt; names,List&lt;String&gt; weapons){
+<span class="nc" id="L520">        int i=0;</span>
+<span class="nc" id="L521">        System.out.println(&quot;Weapons&quot;);</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">        for(int y=0;y&lt;names.size();y++){</span>
+<span class="nc" id="L523">            System.out.println(names.get(y)+&quot;: &quot;+weapons.get(i)+&quot; &quot;+weapons.get(i+1)+&quot; &quot;+weapons.get(i+2)+&quot; &quot;</span>
+<span class="nc" id="L524">                    +weapons.get(i+3)+&quot; &quot;+weapons.get(i+4)+&quot; &quot;+weapons.get(i+5));</span>
+<span class="nc" id="L525">            i=i+6;</span>
+        }
+<span class="nc" id="L527">    }</span>
+
+    public void printPowerups(List&lt;String&gt; names,List&lt;String&gt; powerups){
+<span class="nc" id="L530">        int i=0;</span>
+<span class="nc" id="L531">        System.out.println(&quot;Powerups&quot;);</span>
+<span class="nc bnc" id="L532" title="All 2 branches missed.">        for(int y=0;y&lt;names.size();y++){</span>
+<span class="nc" id="L533">            System.out.println(names.get(y)+&quot;: &quot;+powerups.get(i)+&quot; &quot;+powerups.get(i+1)+&quot; &quot;+powerups.get(i+2));</span>
+<span class="nc" id="L534">            i=i+3;</span>
+        }
+<span class="nc" id="L536">    }</span>
+
+    public void printMarks(List&lt;String&gt; names,List&lt;String&gt; marks){
+<span class="nc" id="L539">        int i=0;</span>
+<span class="nc" id="L540">        System.out.println(&quot;Marks&quot;);</span>
+<span class="nc bnc" id="L541" title="All 2 branches missed.">        for(int y=0;y&lt;names.size();y++){</span>
+<span class="nc" id="L542">            System.out.println(names.get(y)+&quot;: &quot;+marks.get(i)+&quot; &quot;+marks.get(i+1)+&quot; &quot;+marks.get(i+2)+&quot; &quot;</span>
+<span class="nc" id="L543">                    +marks.get(i+3)+&quot; &quot;+marks.get(i+4)+&quot; &quot;+marks.get(i+5)+&quot; &quot;+marks.get(i+6)+&quot; &quot;+marks.get(i+7)+&quot; &quot;+marks.get(i+8)+&quot; &quot;</span>
+<span class="nc" id="L544">                    +marks.get(i+9)+&quot; &quot;+marks.get(i+10)+&quot; &quot;+marks.get(i+11));</span>
+<span class="nc" id="L545">            i=i+12;</span>
+        }
+<span class="nc" id="L547">    }</span>
+
+    public void printAmmo(List&lt;String&gt; names,List&lt;String&gt; ammo){
+<span class="nc" id="L550">        int y=0;</span>
+<span class="nc" id="L551">        System.out.println(&quot;Ammo&quot;);</span>
+<span class="nc bnc" id="L552" title="All 2 branches missed.">        for(int i=0;i&lt;names.size();i++){</span>
+<span class="nc" id="L553">            System.out.println(names.get(i)+&quot;: BLUE &quot;+ammo.get(y)+&quot; - RED &quot;+ammo.get(y+1)+&quot; - YELLOW &quot;+ammo.get(y+2));</span>
+<span class="nc" id="L554">            y=y+3;</span>
+        }
+<span class="nc" id="L556">    }</span>
+    public void printPositions(List&lt;String&gt; names,List&lt;String&gt; positions){
+<span class="nc" id="L558">        System.out.println(&quot;Positions&quot;);</span>
+<span class="nc bnc" id="L559" title="All 2 branches missed.">        for(int i=0;i&lt;names.size();i++){</span>
+<span class="nc" id="L560">            System.out.println(names.get(i)+&quot; in &quot;+positions.get(i));</span>
+        }
+<span class="nc" id="L562">    }</span>
+
+    public void score(List&lt;String&gt; scores){
+<span class="nc" id="L565">        System.out.println(&quot;Scores: &quot;);</span>
+<span class="nc bnc" id="L566" title="All 2 branches missed.">        for(int i=0;i&lt;scores.size();i=i+2){</span>
+<span class="nc" id="L567">            System.out.println(scores.get(i)+&quot;:  &quot;+scores.get(i+1));</span>
+        }
+<span class="nc" id="L569">    }</span>
+
+    public void endgame(List&lt;String&gt; scores){// name score name score...
+<span class="nc" id="L572">        System.out.println(&quot;Endgame: &quot;);</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">        for(int i=0;i&lt;scores.size();i=i+3){</span>
+<span class="nc" id="L574">            System.out.println(scores.get(i)+&quot;: &quot;+scores.get(i+1)+&quot; points &quot;+scores.get(i+2));</span>
+        }
+<span class="nc" id="L576">        System.exit(0);</span>
+<span class="nc" id="L577">    }</span>
+
+    public void boardSetup(int n, List&lt;String&gt; colors, List&lt;String&gt; names, List&lt;String&gt; blue, List&lt;String&gt; red, List&lt;String&gt; yellow,List&lt;String&gt; cells,List&lt;String&gt; items){
+<span class="nc" id="L580">        mapInfo(n);</span>
+<span class="nc" id="L581">        System.out.println(&quot;\nPlayers:&quot;);</span>
+<span class="nc bnc" id="L582" title="All 2 branches missed.">        for(int i =0; i&lt;names.size();i++){</span>
+<span class="nc" id="L583">            System.out.println(names.get(i) + &quot; (&quot;+colors.get(i)+&quot;)&quot;);</span>
+        }
+<span class="nc" id="L585">        System.out.println(&quot;\nWeapons of Spawnpoint BLUE:&quot;);</span>
+<span class="nc bnc" id="L586" title="All 2 branches missed.">        for(int i =0; i&lt;blue.size();i++){</span>
+<span class="nc" id="L587">            System.out.println(blue.get(i));</span>
+        }
+<span class="nc" id="L589">        System.out.println(&quot;\nWeapons of Spawnpoint RED:&quot;);</span>
+<span class="nc bnc" id="L590" title="All 2 branches missed.">        for(int i =0; i&lt;red.size();i++){</span>
+<span class="nc" id="L591">            System.out.println(red.get(i));</span>
+        }
+<span class="nc" id="L593">        System.out.println(&quot;\nWeapons of Spawnpoint YELLOW:&quot;);</span>
+<span class="nc bnc" id="L594" title="All 2 branches missed.">        for(int i =0; i&lt;yellow.size();i++){</span>
+<span class="nc" id="L595">            System.out.println(yellow.get(i));</span>
+        }
+<span class="nc" id="L597">        printItems(cells,items);</span>
+<span class="nc" id="L598">    }</span>
+
+    public void printItems(List&lt;String&gt; cells,List&lt;String&gt; items){
+<span class="nc" id="L601">        System.out.println(&quot;\nItems on map:&quot;);</span>
+<span class="nc bnc" id="L602" title="All 2 branches missed.">        for(int i =0;i&lt;cells.size();i++){</span>
+<span class="nc" id="L603">            System.out.println(cells.get(i) + &quot; &quot;+items.get(i));</span>
+        }
+<span class="nc" id="L605">    }</span>
+
+    public void mapInfo(int n){
+<span class="nc bnc" id="L608" title="All 5 branches missed.">        switch (n){</span>
+            case 1:
+<span class="nc" id="L610">                System.out.println(&quot;MapOne is the first little map in the rules.&quot;);</span>
+<span class="nc" id="L611">                System.out.println(&quot;Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW\n&quot;);</span>
+<span class="nc" id="L612">                break;</span>
+            case 2:
+<span class="nc" id="L614">                System.out.println(&quot;MapTwo is the big map in the rules near the little maps.&quot;);</span>
+<span class="nc" id="L615">                System.out.println(&quot;Room 0 is BLUE -- Room 1 is RED -- Room 2 is PURPLE -- Room 3 is WHITE -- Room 4 is YELLOW\n&quot;);</span>
+<span class="nc" id="L616">                break;</span>
+            case 3:
+<span class="nc" id="L618">                System.out.println(&quot;MapThree is the second little map in the rules.&quot;);</span>
+<span class="nc" id="L619">                System.out.println(&quot;Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW -- Room 4 is GREEN\n&quot;);</span>
+<span class="nc" id="L620">                break;</span>
+            case 4:
+<span class="nc" id="L622">                System.out.println(&quot;MapFour is the third little map in the rules.&quot;);</span>
+<span class="nc" id="L623">                System.out.println(&quot;Room 0 is BLUE -- Room 1 is RED -- Room 2 is WHITE -- Room 3 is YELLOW -- Room 4 is PURPLE -- Room 5 is GREEN\n&quot;);</span>
+                break;
+        }
+<span class="nc" id="L626">        System.out.println(&quot;To read a cell position:  EXAMPLE 1, 2 Room 0&quot;);</span>
+<span class="nc" id="L627">        System.out.println(&quot;The first number is the x coordinate (from left to right)&quot;);</span>
+<span class="nc" id="L628">        System.out.println(&quot;The second number is the y coordinate (from up to down)&quot;);</span>
+<span class="nc" id="L629">        System.out.println(&quot;The third number is the Room number (see above). It depends on the map chosen.&quot;);</span>
+<span class="nc" id="L630">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

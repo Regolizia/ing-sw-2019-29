@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AmmoTileDeck.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">AmmoTileDeck.java</span></div><h1>AmmoTileDeck.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import java.util.Collections;
+import java.util.LinkedList;
+
+public class AmmoTileDeck{
+    private final static int numMaxAmmoTyleForType = 3;
+    private LinkedList&lt;AmmoTile&gt; deck;
+    //here i put every AmmoTile which has already been used
+    //when deck.size() will be 0 i will shaffle usedAmmotile and then deck=usedAmmotile
+    //then i will remove every ammoTile from usedAmmoTile
+    private LinkedList&lt;AmmoTile&gt; usedAmmoTile;
+<span class="fc" id="L13">    public AmmoTileDeck() {</span>
+        LinkedList&lt;AmmoTile&gt;typeOfAmmoTile;
+<span class="fc" id="L15">        deck = new LinkedList&lt;AmmoTile&gt;();</span>
+<span class="fc" id="L16">        usedAmmoTile=new LinkedList&lt;AmmoTile&gt;();</span>
+<span class="fc" id="L17">        typeOfAmmoTile=new LinkedList&lt;AmmoTile&gt;();</span>
+<span class="fc" id="L18">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED,AmmoCube.CubeColor.BLUE,AmmoCube.CubeColor.POWERUP));</span>
+<span class="fc" id="L19">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.POWERUP));</span>
+
+<span class="fc" id="L21">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.RED));</span>
+<span class="fc" id="L22">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.YELLOW));</span>
+<span class="fc" id="L23">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.BLUE));</span>
+<span class="fc" id="L24">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.POWERUP));</span>
+<span class="fc" id="L25">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.RED, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.YELLOW));</span>
+<span class="fc" id="L26">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.BLUE));</span>
+<span class="fc" id="L27">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.POWERUP));</span>
+<span class="fc" id="L28">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.RED));</span>
+<span class="fc" id="L29">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.BLUE, AmmoCube.CubeColor.POWERUP));</span>
+<span class="fc" id="L30">        typeOfAmmoTile.add(new AmmoTile(AmmoCube.CubeColor.YELLOW, AmmoCube.CubeColor.RED, AmmoCube.CubeColor.POWERUP));</span>
+
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        for (int i = 0; i &lt;typeOfAmmoTile.size(); i++) {</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">           for(int j=0;j&lt;numMaxAmmoTyleForType;j++){</span>
+<span class="fc" id="L34">               deck.add(typeOfAmmoTile.get(i));</span>
+           }
+
+
+
+        }
+<span class="fc" id="L40">    }</span>
+    /**
+     *getDeck
+     * @return LinkedList&lt;AmmoTile&gt;
+     */
+public LinkedList&lt;AmmoTile&gt; getDeck(){
+<span class="fc" id="L46">        return this.deck;</span>
+}
+//when there is an empty cell on the map i need to put an ammoTile
+    /**
+     *pickUpAmmoTIle
+     * method to draw an AmmoTile
+     * @return AmmoTile
+     * if there aren't any AmmoTile in the deck
+     * shuffle() whit usedAmmoTile deck
+     */
+public AmmoTile pickUpAmmoTile(){
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if(!deck.isEmpty()){</span>
+<span class="fc" id="L58">            setUsedAmmoTile(this.deck.getFirst());</span>
+<span class="fc" id="L59">            return deck.removeFirst();</span>
+        }
+
+        else {
+<span class="fc" id="L63">            shuffleUsedCards();</span>
+<span class="fc" id="L64">            deck.addAll(usedAmmoTile);</span>
+<span class="fc" id="L65">            usedAmmoTile.clear();</span>
+<span class="fc" id="L66">            return deck.removeFirst();</span>
+        }
+}
+    /**
+     *setUsedAmmoTile
+     * @param ammotile used AmmoTIle
+     */
+public void setUsedAmmoTile(AmmoTile ammotile){
+<span class="fc" id="L74">        usedAmmoTile.add(ammotile);</span>
+<span class="fc" id="L75">}</span>
+
+    /**
+     * Shuffles the given list.
+     */
+    public void shuffleCards() {
+<span class="fc" id="L81">        Collections.shuffle(deck);</span>
+<span class="fc" id="L82">    }</span>
+     /**
+     * Shuffles used cards.
+     */
+    public void shuffleUsedCards() {
+<span class="fc" id="L87">        Collections.shuffle(usedAmmoTile);</span>
+<span class="fc" id="L88">    }</span>
+    /**
+     *getUsedAmmoTile
+     * @return LinkedList&lt;AmmoTIle&gt; all usedAmmoTiles
+     */
+
+    public LinkedList&lt;AmmoTile&gt; getUsedAmmoTile() {
+<span class="fc" id="L95">        return usedAmmoTile;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

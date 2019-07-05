@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapTwo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.gameboard</a> &gt; <span class="el_source">MapTwo.java</span></div><h1>MapTwo.java</h1><pre class="source lang-java linenums">package adrenaline.gameboard;
+
+import adrenaline.*;
+
+import static adrenaline.gameboard.Door.Direction.*;
+import static adrenaline.GameModel.Mode.DEATHMATCH;
+
+/**
+ * MapTwo is the big map in the rules near the little maps.
+ * It extends Map.
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Map
+ */
+public class MapTwo extends Map{
+
+    /**
+     * Constructor with parameter Mode.
+     * Depending on the Mode RoomDeaths or RoomDoms are added
+     * to the Map.
+     * Also Walls, Doors and Spawnpoints are created.
+     *
+     * @param m the Game Mode
+     * @see adrenaline.GameModel.Mode
+     * @see RoomDeath
+     * @see RoomDom
+     */
+<span class="nc" id="L29">    public MapTwo(GameModel.Mode m) {</span>
+
+<span class="nc" id="L31">        arrayX = new int[]{2,1,2,3,1};</span>
+<span class="nc" id="L32">        arrayY = new int[]{1,2,1,1,2};</span>
+<span class="nc" id="L33">        arraySpawnR = new int[]{0,1,4};</span>
+<span class="nc" id="L34">        arraySpawnX = new int[]{2,1,1};</span>
+<span class="nc" id="L35">        arraySpawnY = new int[]{1,2,2};</span>
+<span class="nc" id="L36">        doorR1 = new int[]{1,1,0,0,2,2,4};</span>
+<span class="nc" id="L37">        doorX1 = new int[]{1,1,1,2,1,2,1};</span>
+<span class="nc" id="L38">        doorY1 = new int[]{1,2,1,1,1,1,2};</span>
+<span class="nc" id="L39">        doorR2 = new int[]{0,3,2,2,3,4,3};</span>
+<span class="nc" id="L40">        doorX2 = new int[]{1,1,1,2,2,1,3};</span>
+<span class="nc" id="L41">        doorY2 = new int[]{1,1,1,1,1,1,1};</span>
+<span class="nc" id="L42">        doorDir = new Door.Direction[]{WE, NS, NS, NS, NS, WE, EW};</span>
+<span class="nc" id="L43">        wallR1 = new int[]{1,2};</span>
+<span class="nc" id="L44">        wallX1 = new int[]{1,2};</span>
+<span class="nc" id="L45">        wallY1 = new int[]{2,1};</span>
+<span class="nc" id="L46">        wallR2 = new int[]{2,3};</span>
+<span class="nc" id="L47">        wallX2 = new int[]{1,3};</span>
+<span class="nc" id="L48">        wallY2 = new int[]{1,1};</span>
+<span class="nc" id="L49">        wallDir = new Door.Direction[]{WE, NS};</span>
+
+
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (m.equals(DEATHMATCH)) {</span>
+<span class="nc" id="L53">            setGameBoard(new DeathmatchBoard());</span>
+
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            for(int i=0;i&lt;arrayX.length;i++) {</span>
+
+                //BLUE (getRoom(0))
+                //RED  (getRoom(1))
+                //PURPLE  (getRoom(2))
+                //WHITE  (getRoom(3))
+                //YELLOW  (getRoom(4))
+<span class="nc" id="L62">                getGameBoard().addRoom(new RoomDeath(arrayX[i], arrayY[i]));</span>
+            }
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            for(int j=0;j&lt;arraySpawnR.length;j++){</span>
+                //BLUE
+                //RED
+                //YELLOW
+<span class="nc" id="L68">                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().add(new Spawnpoint(arraySpawnX[j], arraySpawnY[j]));</span>
+<span class="nc" id="L69">                getGameBoard().getRoom(arraySpawnR[j]).getSpawnpoints().get(0).setColor(fromIndexToColor(j));</span>
+            }
+        }
+        else{
+
+<span class="nc" id="L74">            setGameBoard(new DominationBoard());</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            for(int i=0;i&lt;arrayX.length;i++) {</span>
+
+                //BLUE (getRoom(0))
+                //RED  (getRoom(1))
+                //PURPLE  (getRoom(2))
+                //WHITE  (getRoom(3))
+                //YELLOW  (getRoom(4))
+<span class="nc" id="L83">                getGameBoard().addRoom(new RoomDom(arrayX[i], arrayY[i]));</span>
+            }
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            for(int j=0;j&lt;arraySpawnR.length;j++){</span>
+                //BLUE
+                //RED
+                //YELLOW
+<span class="nc" id="L89">                getGameBoard().getRoom(arraySpawnR[j]).addSpawnpoint(new SpawnpointDom(arraySpawnX[j], arraySpawnY[j]));</span>
+                // DA INSERIRE getGameBoard().getRoom(arraySpawnR[j]).getSpawnpointsDom().get(0).setColor(fromIndexToColor(j));
+            }
+
+        }
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        for(int k=0;k&lt;doorR1.length;k++) {</span>
+
+<span class="nc" id="L96">            getGameBoard().addDoor(new Door(getGameBoard().getRoom(doorR1[k]), doorX1[k], doorY1[k], getGameBoard().getRoom(doorR2[k]), doorX2[k], doorY2[k],doorDir[k]));</span>
+
+        }
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        for(int n=0;n&lt;wallR1.length;n++) {</span>
+
+<span class="nc" id="L102">            getGameBoard().addWall(new Wall(getGameBoard().getRoom(wallR1[n]), wallX1[n], wallY1[n], getGameBoard().getRoom(wallR2[n]), wallX2[n], wallY2[n], wallDir[n]));</span>
+
+        }
+
+<span class="nc" id="L106">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

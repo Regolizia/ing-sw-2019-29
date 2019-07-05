@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Player.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">Player.java</span></div><h1>Player.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * player's class
+ * @author Giulia Valcamonica
+ * @author Eleonora Toscano
+ * @version 1.0
+ **/
+public class Player{
+<span class="pc" id="L17">    private final int numMaxCube = 3;</span>
+<span class="pc" id="L18">    private final int trackSize = 12;</span>
+<span class="pc" id="L19">    private final int trackPointSize=5;</span>
+    private int[] pointTrackFren;
+    private Figure.PlayerColor[] track;
+    private int[] pointTrack;
+    private Figure.PlayerColor[] marks;
+    private int[] ammoBox; //BLUE RED YELLOW
+    private CoordinatesWithRoom coordinates;
+    private Figure.PlayerColor color;
+    private CoordinatesWithRoom respawnCoordinates;
+    private List&lt;WeaponCard&gt; hand;
+    private List&lt;PowerUpCard&gt; powerups;
+    private int points;
+    private int indexPointCounter; //to indicate max points assegnable
+    private boolean[] pointsArray;// HOW MANY TIMES PLAYER DIED
+    private boolean[] skullTrack;
+    private String name;
+<span class="pc" id="L35">    private boolean damaged = false;</span>
+<span class="pc" id="L36">    private String shooter = null;</span>
+    private int mortalPoints;
+
+<span class="fc" id="L39">    public static enum PlayerPos {</span>
+<span class="fc" id="L40">        FIRST,SECOND,THIRD,FOURTH,FIFTH,NONE</span>
+    }
+    private PlayerPos playerPos;
+    private PlayerPos[] allPlayerPos;
+
+    public void setDamagedStatus(boolean b){
+<span class="fc" id="L46">        damaged = b;</span>
+<span class="fc" id="L47">    }</span>
+    public boolean damagedStatus(){
+<span class="fc" id="L49">        return damaged;</span>
+    }
+    public void setShooter(String s){
+<span class="fc" id="L52">        shooter = s;</span>
+<span class="fc" id="L53">    }</span>
+    public String getShooter(){
+<span class="fc" id="L55">        return shooter;</span>
+    }
+    /**
+     * Class constructor.
+     *  * @version 1.0
+     */
+<span class="nc" id="L61">    public Player() {</span>
+
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Class constructor with name.
+     *  @version 1.0
+     * @param playerColor color selected by the player
+     *
+     */
+    // Coordinates rsp is the spawnPosition chosen by the player
+<span class="fc" id="L72">    public Player(String name, Figure.PlayerColor playerColor) {</span>
+
+<span class="fc" id="L74">        this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW</span>
+<span class="fc" id="L75">        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE</span>
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+<span class="fc" id="L78">        this.marks = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE</span>
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+        // PUTTING &quot;NONE&quot; VALUE SO WE CAN USE SWITCH CASE
+<span class="fc" id="L82">        this.color = playerColor;</span>
+<span class="fc" id="L83">        this.respawnCoordinates = new CoordinatesWithRoom(0,0,new Room());</span>
+<span class="fc" id="L84">        this.coordinates = new CoordinatesWithRoom(0,0,new Room());</span>
+        // they are lists because we need to add and remove easily
+<span class="fc" id="L86">        this.hand = Collections.synchronizedList(new LinkedList&lt;WeaponCard&gt;());</span>
+<span class="fc" id="L87">        this.powerups = Collections.synchronizedList(new LinkedList&lt;PowerUpCard&gt;());</span>
+<span class="fc" id="L88">        this.pointsArray = new boolean[]{true, true, true, true, true, true};</span>
+<span class="fc" id="L89">        this.points = 0;</span>
+<span class="fc" id="L90">        this.pointTrack = new int[]{8,6,4,2,1};</span>
+<span class="fc" id="L91">        this.pointTrackFren = new int[]{1,2};</span>
+<span class="fc" id="L92">        this.skullTrack = new boolean[]{false, false, false, false, false, false};</span>
+<span class="fc" id="L93">        this.indexPointCounter=0; //it means tha i can give 8 points</span>
+<span class="fc" id="L94">        points=0;</span>
+<span class="fc" id="L95">        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH};</span>
+<span class="fc" id="L96">        mortalPoints=0;</span>
+<span class="fc" id="L97">        this.name=name;</span>
+<span class="fc" id="L98">        this.playerPos=PlayerPos.NONE;</span>
+<span class="fc" id="L99">    }</span>
+
+    /**
+     * Class constructor.
+     *  @version 1.0
+     * @param playerColor color selected by the player
+     * @param rsp spawnpoint selected by the player
+     */
+    // Coordinates rsp is the spawnPosition chosen by the player
+<span class="fc" id="L108">    public Player(CoordinatesWithRoom rsp, Figure.PlayerColor playerColor) {</span>
+
+<span class="fc" id="L110">        this.ammoBox = new int[]{1, 1, 1}; //BLUE RED YELLOW</span>
+<span class="fc" id="L111">        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE</span>
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+<span class="fc" id="L114">        this.marks = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE</span>
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+        // PUTTING &quot;NONE&quot; VALUE SO WE CAN USE SWITCH CASE
+<span class="fc" id="L118">        this.color = playerColor;</span>
+<span class="fc" id="L119">        this.respawnCoordinates = rsp;</span>
+<span class="fc" id="L120">        this.coordinates = rsp;</span>
+        // they are lists because we need to add and remove easily
+<span class="fc" id="L122">        this.hand = new LinkedList&lt;WeaponCard&gt;();</span>
+<span class="fc" id="L123">        this.powerups = new LinkedList&lt;PowerUpCard&gt;();</span>
+<span class="fc" id="L124">         this.pointsArray = new boolean[]{true, true, true, true, true, true};</span>
+<span class="fc" id="L125">        this.points = 0;</span>
+<span class="fc" id="L126">        this.pointTrack = new int[]{8,6,4,2,1};</span>
+<span class="fc" id="L127">        this.skullTrack = new boolean[]{false, false, false, false, false, false};</span>
+<span class="fc" id="L128">        this.indexPointCounter=0; //it means tha i can give 8 points</span>
+<span class="fc" id="L129">        points=0;</span>
+<span class="fc" id="L130">        name=&quot;&quot;;</span>
+<span class="fc" id="L131">        this.pointTrackFren = new int[]{1,2};</span>
+<span class="fc" id="L132">        this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH};</span>
+<span class="fc" id="L133">        mortalPoints=0;</span>
+<span class="fc" id="L134">        this.playerPos=PlayerPos.NONE;</span>
+
+<span class="fc" id="L136">    }</span>
+    /**
+     * toString
+     * message to video
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L143">        return name+&quot;(&quot; + this.color+&quot;)&quot;;</span>
+    }
+    /**
+     * getColor
+     * returns player's color
+     */
+    public Figure.PlayerColor getColor() {
+<span class="fc" id="L150">        return color;</span>
+    }
+    /**
+     * getTrack
+     * returns player's track
+     */
+    public Figure.PlayerColor[] getTrack() {
+<span class="fc" id="L157">        return track;</span>
+    }
+    /**
+     * getMarks
+     * returns player's mark
+     */
+    public Figure.PlayerColor[] getMarks() {
+<span class="fc" id="L164">        return marks;</span>
+    }
+
+    /**
+     * checkDamage
+     * to check if a player can select adrenaline methods to do an action
+     */
+    public int checkDamage() {
+
+<span class="pc bpc" id="L173" title="3 of 4 branches missed.">        if (track[2] != Figure.PlayerColor.NONE &amp;&amp; track[5] == Figure.PlayerColor.NONE)</span>
+<span class="nc" id="L174">            return 1;       //better Grab</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        if (track[5] != Figure.PlayerColor.NONE)</span>
+<span class="nc" id="L176">            return 2;       //better Shoot (and Grab)</span>
+<span class="fc" id="L177">        return 0;</span>
+    }
+
+
+
+    // public void setToken(Player player){}
+
+    // public String getToken(Player player){return &quot;&quot;;} //adrenaline.TokenCLI
+
+
+    //________________________to control player's position____________________________________________________//
+    /**
+     * setPlayerPosition
+     * @param x : x coordinate desired
+     * @param y : y coordinate desired
+     *          set player's position coordinates x,y but remaining in the same room
+     */
+
+    public void setPlayerPosition(int x, int y) {
+<span class="nc" id="L196">        this.coordinates.setCoordinates(x, y);</span>
+<span class="nc" id="L197">    }</span>
+    /**
+     * setPlayerPosition
+     * @param x : x coordinate desired
+     * @param y : y coordinate desired
+     * @param r: room desired
+     *         set player's position chancing room
+     */
+    public void setPlayerPosition(int x, int y, Room r) {
+<span class="fc" id="L206">        this.coordinates.setCoordinates(x, y);</span>
+<span class="fc" id="L207">        this.coordinates.setRoom(r);</span>
+<span class="fc" id="L208">    }</span>
+    /**
+     * setPlayerPosition
+     * @param c: spawnpoint coordinates
+     *         set player's position at the initial spawnpoint
+     */
+    public void setPlayerPositionSpawnpoint(CoordinatesWithRoom c) {
+<span class="fc" id="L215">        this.respawnCoordinates = c;</span>
+
+<span class="fc" id="L217">    }</span>
+    public void setPlayerPosition(CoordinatesWithRoom c) {
+<span class="fc" id="L219">        this.coordinates = c;</span>
+
+<span class="fc" id="L221">    }</span>
+
+
+    // public void list target in that cell (CoordinatesWithRoom c){ } // todo a way to get players name +figures
+
+    /**
+     * getPlayerRoom
+     *
+     * returns player's room
+     */
+    public Room getPlayerRoom() {
+<span class="fc" id="L232">        return coordinates.getRoom();</span>
+    }
+    /**
+     *getPlayerPositionX
+     *returns player's x coordinate
+     */
+    public int getPlayerPositionX() {
+<span class="fc" id="L239">        return coordinates.getX();</span>
+    }
+    /**
+     *getPlayerPositionY
+     *returns player's y coordinate
+     */
+    public int getPlayerPositionY() {
+<span class="fc" id="L246">        return coordinates.getY();</span>
+    }
+    /**
+     *newLife()
+     *respawn the player at his initial spawnpoint
+     */
+    public void newLife() {
+
+<span class="fc" id="L254">        this.track = new Figure.PlayerColor[]{Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE</span>
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE
+                , Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE, Figure.PlayerColor.NONE};
+<span class="fc" id="L257">        setMaxPointAssignableCounter(0);</span>
+<span class="fc" id="L258">        putASkullOnTrack();</span>
+
+<span class="fc" id="L260">    }</span>
+//_________________________________________________________________________________________________________//
+
+/*
+    // I DON'T THINK IT SHOULD BE HERE
+    public void pickWeaponCard(int x, int y){
+        //metod to find the card in that coordinates
+
+
+    }
+
+    public WeaponCard getWeaponCard(Player player){
+        //method to find the card in that coordinates
+        //shows a list of owned card
+        //return only a card
+        WeaponCard card=new WeaponCard();
+        return card;
+    }*/
+    /**
+     *canGrabPowerUp
+     *check if player can pick up another power up
+     */
+    public boolean canGrabPowerUp() {
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">        return (powerups.size() &lt; 3);</span>
+    }
+    /**
+     *canGrabWeapon
+     *check if player can grab another weapon
+     */
+    public boolean canGrabWeapon() {
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        return (hand.size() &lt; 3);</span>
+    }
+
+
+    /**
+     *getPointsArray
+     *returns player's pointsArray
+     */
+    public boolean[] getPointsArray() {
+<span class="nc" id="L299">        return pointsArray;</span>
+    }
+    /**
+     *isDead
+     * @return true if player is dead
+     */
+    public boolean isDead() {
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        return (getTrack()[10] != Figure.PlayerColor.NONE);</span>
+    }
+    /**
+     *getAmmoBox
+     *@return player's ammoBox
+     */
+    public int[] getAmmoBox() {
+<span class="fc" id="L313">        return ammoBox;</span>
+    }
+    /**
+     *getHand
+     * @return player's weapons hand
+     */
+    public synchronized List&lt;WeaponCard&gt; getHand() {
+<span class="fc" id="L320">        return hand;</span>
+    }
+
+    // FINDS FIRST EMPTY CELL OF DAMAGETRACK
+    /**
+     *trackEmptyCell
+     * @return first empty cell founded
+     */
+    public int trackEmptyCell() {
+<span class="fc" id="L329">        int x = 0;</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        for (int i = 0; i &lt; getTrack().length; i++) {</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">            if (getTrack()[i] == Figure.PlayerColor.NONE) {</span>
+<span class="fc" id="L332">                x = i;</span>
+<span class="fc" id="L333">                break;</span>
+            }
+        }
+<span class="fc" id="L336">        return x;</span>
+    }
+
+    public List&lt;PowerUpCard&gt; getPowerUp() {
+<span class="fc" id="L340">        return powerups;</span>
+    }
+
+
+    /**
+     *addDamageToTrack
+     *adds damage done by another player to player's track
+     */
+    public void addDamageToTrack(Player shooter, int i) {
+<span class="fc bfc" id="L349" title="All 4 branches covered.">        for (int x = this.trackEmptyCell(); x &lt; track.length &amp;&amp; i &gt; 0; x++) {</span>
+<span class="fc" id="L350">            this.track[x] = shooter.getColor();</span>
+<span class="fc" id="L351">            i--;</span>
+        }
+
+<span class="fc" id="L354">    }</span>
+    /**
+     *damageByShooter
+     *@return how many damage by shooter to target
+     */
+    public int damageByShooter(Player shooter) {
+<span class="fc" id="L360">        int x = 0;</span>
+<span class="fc bfc" id="L361" title="All 2 branches covered.">        for (int i = 0; i &lt; track.length; i++) {</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">            if (track[i] == shooter.getColor()) {</span>
+<span class="fc" id="L363">                x++;</span>
+            }
+        }
+<span class="fc" id="L366">        return x;</span>
+    }
+
+    /**
+     *marksByShooter
+     * @return how many marks given by shooter to player
+     */
+
+    public int marksByShooter(Player shooter) {
+<span class="fc" id="L375">        int x = 0;</span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">        for (int i = 0; i &lt; marks.length; i++) {</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">            if (marks[i] == shooter.getColor()) {</span>
+<span class="fc" id="L378">                x++;</span>
+            }
+        }
+<span class="fc" id="L381">        return x;</span>
+    }
+
+    /**
+     *canAddMarks
+     *check if can add a mark
+     */
+    public boolean canAddMark(Player shooter) {
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">        return (marksByShooter(shooter) &lt; 3);</span>
+    }
+
+    /**
+     * markEmptyCell
+     * @return index of first empty cell where can add the mark
+     */
+    public int markEmptyCell() {
+<span class="fc" id="L397">        int x = 0;</span>
+<span class="pc bpc" id="L398" title="1 of 2 branches missed.">        for (int i = 0; i &lt; marks.length; i++) {</span>
+<span class="fc bfc" id="L399" title="All 2 branches covered.">            if (marks[i] == Figure.PlayerColor.NONE) {</span>
+<span class="fc" id="L400">                x = i;</span>
+<span class="fc" id="L401">                break;</span>
+            }
+
+        }
+<span class="fc" id="L405">        return x;</span>
+    }
+
+    /**
+     *addMarks
+     *adds i number of marks by shooter to player
+     */
+    public void addMarks(Player shooter, int i) {
+<span class="pc bpc" id="L413" title="1 of 4 branches missed.">        for (int x = this.markEmptyCell(); x &lt; marks.length &amp;&amp; i &gt; 0; x++) {</span>
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">            if (canAddMark(shooter)) { // IF SHOOTER HAS LESS THEN 3 MARKS</span>
+<span class="fc" id="L415">                this.marks[x] = shooter.getColor();</span>
+            } else {
+                break;
+            }
+<span class="fc" id="L419">            i--;</span>
+        }
+<span class="fc" id="L421">    }</span>
+
+
+    ///// FOR CHECKPAYMENT
+
+    /**
+     *setRedCube
+     * @param redCube: number of player's redCube
+     */
+    public void setRedCube(int redCube) {
+<span class="fc" id="L431">        this.ammoBox[1] = redCube;</span>
+<span class="fc" id="L432">    }</span>
+    /**
+     *setBlueCube
+     * @param blueCube: number of player's blueCube
+     */
+    public void setBlueCube(int blueCube) {
+<span class="fc" id="L438">        this.ammoBox[0] = blueCube;</span>
+<span class="fc" id="L439">    }</span>
+    /**
+     *setYellowCube
+     * @param yellowCube: number of player's yellowCube
+     */
+    public void setYellowCube(int yellowCube) {
+<span class="fc" id="L445">        this.ammoBox[2] = yellowCube;</span>
+<span class="fc" id="L446">    }</span>
+/**setCube
+ * @param blue
+ * @param yellow
+ * @param red
+ * add cube to player's cube*/
+    public void setCube(int red, int blue, int yellow) {
+<span class="fc" id="L453">        setBlueCube(getCubeBlue() + blue);</span>
+<span class="fc" id="L454">        setRedCube(getCubeRed() + red);</span>
+<span class="fc" id="L455">        setYellowCube(getCubeYellow() + yellow);</span>
+
+<span class="fc bfc" id="L457" title="All 2 branches covered.">        for (int counter = 0; counter &lt; 3; counter++) {</span>
+<span class="fc bfc" id="L458" title="All 2 branches covered.">            if (this.ammoBox[counter] &gt;= numMaxCube) ammoBox[counter] = numMaxCube;</span>
+        }
+
+<span class="fc" id="L461">    }</span>
+/**getCubeRed
+ * @return number of redCube
+ * */
+    public int getCubeRed() {
+<span class="fc" id="L466">        return ammoBox[1];</span>
+    }
+    /**getCubeYellow
+     * @return number of yellowCube
+     * */
+    public int getCubeYellow() {
+<span class="fc" id="L472">        return ammoBox[2];</span>
+    }
+    /**getCubeBlue
+     * @return number of blueCube
+     * */
+    public int getCubeBlue() {
+<span class="fc" id="L478">        return ammoBox[0];</span>
+    }
+    /**moveToThisSquare
+     * @param c desired position
+     *          moves a player to a specific cell
+     * */
+    public void moveToThisSquare(CoordinatesWithRoom c) {
+<span class="fc" id="L485">        setPlayerPosition(c.getX(), c.getY(), c.getRoom());</span>
+<span class="fc" id="L486">    }</span>
+
+//______________________________________point ________________________________________________________________________//
+
+    /**setPoints
+     * @param points
+     * add points to player
+     * */
+    public void setPoints(int points) {
+<span class="fc" id="L495">        this.points = +points;</span>
+<span class="fc" id="L496">    }</span>
+    /**getPointTrack
+     * @return player's pointTrack
+     * */
+    public int[] getPointTrack() {
+<span class="fc" id="L501">        return this.pointTrack;</span>
+    }
+    public int getPoints(){
+<span class="fc" id="L504">        return  this.points;</span>
+    }
+
+    /**getTrackSize
+     * @return size of player's track
+     * */
+    public int getTrackSize() {
+<span class="fc" id="L511">        return this.trackSize;</span>
+    }
+    /**getSkullTrack
+     * @return skullTrack
+     * */
+    public boolean[] getSkullTrack(){
+<span class="fc" id="L517">        return this.skullTrack;</span>
+    }
+    /**getTrackPointSize
+     * @return size of trackPoint
+     * */
+<span class="fc" id="L522">    public int getTrackPointSize(){return this.trackPointSize;}</span>
+    /**getMaxPointAssignableCounter
+     * @return index of max point assignable
+     * */
+<span class="fc" id="L526">    public int getMaxPointAssignableCounter(){return this.indexPointCounter;}</span>
+    /**setMaxPointAssignableCounter
+     * @param max set index of max point assignable
+     * */
+<span class="fc" id="L530">    public void setMaxPointAssignableCounter(int max){this.indexPointCounter=max;}</span>
+    //______________________________________________putASkullOnTrack__________________________________________________________________________//
+    /**putASkullOnTrack
+     * put a skull on first free position on skullTrack
+     * */
+    public void putASkullOnTrack() {
+<span class="pc bpc" id="L536" title="1 of 2 branches missed.">        for(int i=0;i&lt;getTrackSize();i++){</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">            if(getSkullTrack()[i]==false) {</span>
+<span class="fc" id="L538">                getSkullTrack()[i]=true;</span>
+<span class="fc" id="L539">                break;</span>
+
+            }}
+<span class="fc" id="L542">    }</span>
+//_________________________how Many Deaths____________________________________________________________//
+    /**numberOfDeaths
+     * @return number of skull on his skullTrack
+     * */
+    public int numberOfDeaths(){
+<span class="fc" id="L548">        int death=0;</span>
+
+<span class="fc bfc" id="L550" title="All 2 branches covered.">        for(int i=0; i&lt;getSkullTrack().length;i++)</span>
+        {
+<span class="fc bfc" id="L552" title="All 2 branches covered.">            if (getSkullTrack()[i])</span>
+<span class="fc" id="L553">                death++;</span>
+        }
+<span class="fc" id="L555">    return death;</span>
+    }
+    /**isFirstTurn
+     * @return if player is on his first turn
+     * */
+    public boolean isFirstTurn(){
+<span class="pc bpc" id="L561" title="1 of 2 branches missed.">        return (getPlayerPositionX()==0);</span>
+    }
+    /**returnPoints
+     * @retun number of player's points
+     * */
+<span class="fc" id="L566">    public int returnPoints(){return this.points;}</span>
+    /**getCoordinateWithRooms
+     * @return player's cell on the board
+     * */
+    public CoordinatesWithRoom getCoordinatesWithRooms(){
+<span class="fc" id="L571">        return coordinates;</span>
+    }
+
+<span class="fc" id="L574">    public void setName(String newName){this.name=newName;}</span>
+<span class="fc" id="L575">    public String getName(){return this.name;}</span>
+<span class="fc" id="L576">    public CoordinatesWithRoom getRespawnCoordinates(){return this.respawnCoordinates;}</span>
+
+    public boolean hasTargetingScope(){
+<span class="fc bfc" id="L579" title="All 2 branches covered.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L580" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;TargetingScope, BLUE&quot;) || p.toString().equals(&quot;TargetingScope, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">               p.toString().equals(&quot;TargetingScope, RED&quot;)){</span>
+<span class="nc" id="L582">                return true;</span>
+            }
+<span class="fc" id="L584">        }</span>
+<span class="fc" id="L585">        return false;</span>
+    }
+    public boolean hasTagbackGrenade(){
+<span class="fc bfc" id="L588" title="All 2 branches covered.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L589" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;TagbackGrenade, BLUE&quot;) || p.toString().equals(&quot;TagbackGrenade, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L590" title="1 of 2 branches missed.">               p.toString().equals(&quot;TagbackGrenade, RED&quot;)){</span>
+<span class="nc" id="L591">                return true;</span>
+            }
+<span class="fc" id="L593">        }</span>
+<span class="fc" id="L594">        return false;</span>
+    }
+    public PowerUpCard getTargetingScope(){
+<span class="fc bfc" id="L597" title="All 2 branches covered.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L598" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;TargetingScope, BLUE&quot;) || p.toString().equals(&quot;TargetingScope, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L599" title="1 of 2 branches missed.">               p.toString().equals(&quot;TargetingScope, RED&quot;)){</span>
+<span class="nc" id="L600">                return p;</span>
+            }
+<span class="fc" id="L602">        }</span>
+<span class="fc" id="L603">        return new PowerUpCard();</span>
+    }
+    public PowerUpCard getTeleporter(){
+<span class="fc bfc" id="L606" title="All 2 branches covered.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L607" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;Teleporter, BLUE&quot;) || p.toString().equals(&quot;Teleporter, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L608" title="1 of 2 branches missed.">               p.toString().equals(&quot;Teleporter, RED&quot;)){</span>
+<span class="nc" id="L609">                return p;</span>
+            }
+<span class="fc" id="L611">        }</span>
+<span class="fc" id="L612">        return new PowerUpCard();</span>
+    }
+    public PowerUpCard getNewton(){
+<span class="pc bpc" id="L615" title="1 of 2 branches missed.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L616" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;Newton, BLUE&quot;) || p.toString().equals(&quot;Newton, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L617" title="1 of 2 branches missed.">               p.toString().equals(&quot;Newton, RED&quot;)){</span>
+<span class="fc" id="L618">                return p;</span>
+            }
+<span class="nc" id="L620">        }</span>
+<span class="nc" id="L621">        return new PowerUpCard();</span>
+    }
+    public PowerUpCard getTagbackGrenade(){
+<span class="fc bfc" id="L624" title="All 2 branches covered.">        for(PowerUpCard p : powerups){</span>
+<span class="pc bpc" id="L625" title="2 of 4 branches missed.">            if(p.toString().equals(&quot;TagbackGrenade, BLUE&quot;) || p.toString().equals(&quot;TagbackGrenade, YELLOW&quot;) ||</span>
+<span class="pc bpc" id="L626" title="1 of 2 branches missed.">               p.toString().equals(&quot;TagbackGrenade, RED&quot;)){</span>
+<span class="nc" id="L627">                return p;</span>
+            }
+<span class="fc" id="L629">        }</span>
+<span class="fc" id="L630">        return new PowerUpCard();</span>
+    }
+
+    public int getMortalPoints() {
+<span class="fc" id="L634">        return mortalPoints;</span>
+    }
+
+    public void setMortalPoints(int mortalPoints) {
+<span class="fc" id="L638">        this.mortalPoints += mortalPoints;</span>
+<span class="fc" id="L639">    }</span>
+    public boolean incrementMortalPoints(){
+<span class="pc bpc" id="L641" title="1 of 2 branches missed.">        if(getColor().equals(getTrack()[11]))</span>
+        {
+<span class="nc" id="L643">            return true;</span>
+        }
+<span class="fc" id="L645">        return false;</span>
+    }
+    public PlayerPos getPlayerPos() {
+<span class="fc" id="L648">        return this.playerPos;</span>
+    }
+
+    public void setPlayerPos(PlayerPos playerPos) {
+<span class="fc" id="L652">        this.playerPos = playerPos;</span>
+<span class="fc" id="L653">    }</span>
+    public PlayerPos[] getAllPlayerPos() {
+<span class="fc" id="L655">        return allPlayerPos;</span>
+    }
+    public void addWeaponcard(WeaponCard weaponCard){
+<span class="fc" id="L658">        this.hand.add(weaponCard);</span>
+<span class="fc" id="L659">    }</span>
+
+    public int getFirstPositionOnTrack(Player enemy){
+<span class="fc bfc" id="L662" title="All 2 branches covered.">        for(int i=0; i&lt;getTrack().length;i++){</span>
+<span class="fc bfc" id="L663" title="All 2 branches covered.">            if(track[i].equals(enemy.getColor())){</span>
+<span class="fc" id="L664">                return i;}</span>
+        }
+
+<span class="fc" id="L667">        return getTrack().length+1;</span>
+    }
+    public int[] getPointTrackFren() {
+<span class="fc" id="L670">        return pointTrackFren;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

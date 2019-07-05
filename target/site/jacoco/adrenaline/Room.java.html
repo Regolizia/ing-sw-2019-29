@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Room.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">Room.java</span></div><h1>Room.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import java.util.*;
+
+/**
+ * Is the class that represents the Rooms of the Board.
+ * It contains:
+ * &lt;ul&gt;
+ *     &lt;li&gt; The width and the length as Coordinates
+ *     &lt;li&gt; The list of AmmoTiles inside the Room
+ *     &lt;li&gt; A token representing the Room
+ * &lt;/ul&gt;
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ * @see Coordinates
+ * @see AmmoTile
+ */
+public class Room {
+
+    private Coordinates size;
+    private LinkedList&lt;AmmoTile&gt; tiles;
+    private AmmoTile at;
+    private int token;
+    public LinkedList&lt;Spawnpoint&gt; spawnpoints;
+    public LinkedList&lt;SpawnpointDom&gt; spawnpointsDom;
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L31">    public Room() {</span>
+<span class="fc" id="L32">        this.size = new Coordinates();</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Constructor of a Room of size x y
+     *
+     * @param x the width to set
+     * @param y the length to set
+     */
+<span class="fc" id="L41">    public Room(int x, int y) {</span>
+
+<span class="fc" id="L43">        spawnpoints = new LinkedList&lt;Spawnpoint&gt;();</span>
+<span class="fc" id="L44">        spawnpointsDom = new LinkedList&lt;SpawnpointDom&gt;();</span>
+<span class="fc" id="L45">        this.tiles = new LinkedList&lt;AmmoTile&gt;();</span>
+<span class="fc" id="L46">        this.size = new Coordinates(x,y);</span>
+<span class="fc" id="L47">        at=new AmmoTile(AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE, AmmoCube.CubeColor.FREE);</span>
+<span class="fc" id="L48">        setToken(99);</span>
+<span class="fc" id="L49">    }</span>
+
+
+    //TODO AGGIUNGERE SPAWNPOINT
+    public void addSpawnpoint(Spawnpoint s){
+
+<span class="fc" id="L55">    }</span>
+    //TODO AGGIUNGERE SPAWNPOINT
+    public void addSpawnpointDom(Spawnpoint s){
+
+<span class="fc" id="L59">    }</span>
+
+
+    /**
+     * Gets the list of Spawnpoints inside the Room.
+     * The list could be empty. Usually a Room has at most
+     * one Spawnpoint.
+     *
+     * @return the list of Spawnpoints
+     * @see Spawnpoint
+     */
+    public List&lt;Spawnpoint&gt; getSpawnpoints(){
+<span class="fc" id="L71">        return this.spawnpoints;</span>
+    }
+
+    public List&lt;SpawnpointDom&gt; getSpawnpointDom(){
+<span class="fc" id="L75">        return this.spawnpointsDom;</span>
+    }
+
+    /**
+     * Adds the given AmmoTile to the Room's list.
+     *
+     * @param t the tile to add
+     * @see AmmoTile
+     */
+    public void addAmmoTile(AmmoTile t,int x,int y){
+<span class="fc" id="L85">            t.setCoordinates(x,y);</span>
+<span class="fc" id="L86">            tiles.addFirst(t);</span>
+
+<span class="fc" id="L88">    }</span>
+
+
+    /**
+     * Gets the AmmoTile at the given coordinates.
+     *
+     * @param coordinates a position inside the Room
+     * @return the AmmoTile
+     * @see Coordinates
+     */
+    //conv instead of null sends an empty ammotile
+    public AmmoTile getAmmoTile(CoordinatesWithRoom coordinates){
+       // System.out.println(coordinates.toString());
+<span class="pc bfc" id="L101" title="All 2 branches covered.">        for (int i = 0; i&lt;getTiles().size();i++) {</span>
+         //   System.out.println(getTiles().get(i).toString());
+           // System.out.println(getTiles().get(i).getCoordinates().toString());
+
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &amp;&amp;</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                    getTiles().get(i).getCoordinates().getY()==coordinates.getY()){</span>
+<span class="fc" id="L107">                AmmoTile a = getTiles().get(i);</span>
+<span class="fc" id="L108">                return a;</span>
+
+            }
+        }
+        //return getTiles().get(index);
+<span class="fc" id="L113">        return at;</span>
+    }
+    /**
+     * removeAmmoTile()
+     * @param coordinates
+     * remove Tile in coordinates position
+     */
+
+    public void removeAmmotile(CoordinatesWithRoom coordinates){
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        for (int i = 0; i&lt;getTiles().size();i++) {</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &amp;&amp;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                    getTiles().get(i).getCoordinates().getY()==coordinates.getY()){</span>
+<span class="nc" id="L125">                getTiles().remove(i);</span>
+<span class="nc" id="L126">                return;</span>
+
+            }
+        }
+<span class="fc" id="L130">    }</span>
+    /**
+     *hasAmmoTile()
+     * @param coordinates
+     * check if has an ammoTile in coordinates
+     */
+    public boolean hasAmmoTile(CoordinatesWithRoom coordinates){
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        for (int i = 0; i&lt;getTiles().size();i++) {</span>
+<span class="nc bnc" id="L138" title="All 4 branches missed.">            if (getTiles().get(i).getCoordinates().getX()==coordinates.getX() &amp;&amp; getTiles().get(i).getCoordinates().getY()==coordinates.getY()){</span>
+<span class="nc" id="L139">                return true;</span>
+
+            }
+        }
+<span class="fc" id="L143">        return false;</span>
+    }
+
+
+    /**
+     * Sets the room Token to the parameter i.
+     *
+     * @param i, an &lt;code&gt;int&lt;/code&gt;
+     */
+    public void setToken(int i){
+<span class="fc" id="L153">        this.token = i;</span>
+<span class="fc" id="L154">    }</span>
+
+    /**
+     * Gets the width of the Room.
+     *
+     * @return the x-coordinate
+     */
+    public int getRoomSizeX(){
+<span class="fc" id="L162">        return this.size.getX();</span>
+    }
+
+    /**
+     * Gets the length of the Room.
+     *
+     * @return the y-coordinate
+     */
+    public int getRoomSizeY(){
+<span class="fc" id="L171">        return this.size.getY();</span>
+    }
+
+    /**
+     * Gets the token that represents the Room in the Board.
+     *
+     * @return the token of the Room
+     */
+    public int getToken(){
+<span class="fc" id="L180">        return this.token;</span>
+    }
+
+    /**
+     * Gets the list of AmmoTiles that are in the Room.
+     *
+     * @return the list of AmmoTiles
+     * @see AmmoTile
+     */
+    public LinkedList&lt;AmmoTile&gt; getTiles(){
+<span class="fc" id="L190">        return this.tiles;</span>
+    }
+    /**
+     *getSpawnpoint()
+     * @param y
+     * @param x
+     * @return spawnpoint
+     */
+    public Spawnpoint getSpawnpoint(int x, int y){
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        for (Spawnpoint s: getSpawnpoints()) {</span>
+<span class="pc bpc" id="L200" title="1 of 4 branches missed.">            if(s.getSpawnpointX()==x&amp;&amp; s.getSpawnpointY()== y)</span>
+<span class="fc" id="L201">                return s;</span>
+<span class="fc" id="L202">        }</span>
+<span class="fc" id="L203">        return null;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

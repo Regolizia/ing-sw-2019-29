@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameBoard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.gameboard</a> &gt; <span class="el_source">GameBoard.java</span></div><h1>GameBoard.java</h1><pre class="source lang-java linenums">package adrenaline.gameboard;
+
+import adrenaline.CoordinatesWithRoom;
+import adrenaline.Room;
+import adrenaline.RoomDeath;
+import adrenaline.RoomDom;
+
+import java.util.*;
+import static adrenaline.gameboard.Door.Direction.*;
+
+/**
+ * Is the class that represents the Board.
+ * It contains:
+ * &lt;ul&gt;
+ *     &lt;li&gt; A list of Doors
+ *     &lt;li&gt; A list of Walls
+ * &lt;/ul&gt;
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
+public class GameBoard {
+
+    private LinkedList&lt;Door&gt; doors;
+    private LinkedList&lt;Wall&gt; walls;
+    int numSkull;
+
+    /**
+     * Default constructor
+     */
+    public GameBoard(//int numSkull
+<span class="fc" id="L32">    ) {</span>
+<span class="fc" id="L33">        doors = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L34">        walls = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L35">        this.numSkull=8;</span>
+<span class="fc" id="L36">    }</span>
+
+    public List&lt;RoomDeath&gt; getRooms(){
+<span class="nc" id="L39">        return new LinkedList&lt;&gt;();</span>
+    }
+
+    /**
+     * Overridden.
+     * @return r A Room
+     */
+    public Room getRoom(int i) {
+<span class="nc" id="L47">        return new Room();</span>
+    }
+    /**
+     * Overridden.
+     */
+<span class="fc" id="L52">    public void addRoom(Room r){    }</span>
+    /**
+     * Overridden.
+     */
+<span class="nc" id="L56">    public void addRoom(RoomDeath r){    }</span>
+    /**
+     * Overridden.
+     */
+<span class="nc" id="L60">    public void addRoom(RoomDom r){    }</span>
+    /**
+     * Adds a Door to the list.
+     */
+    public void addDoor(Door d){
+<span class="fc" id="L65">        doors.add(d);</span>
+<span class="fc" id="L66">    }</span>
+    /**
+     * Gets the Doors list
+     */
+    public LinkedList&lt;Door&gt; getDoors(){
+<span class="fc" id="L71">        return doors;</span>
+    }
+    /**
+     * Adds a Wall to the list.
+     */
+    public void addWall(Wall w){
+<span class="fc" id="L77">        walls.add(w);</span>
+<span class="fc" id="L78">    }</span>
+    /**
+     * Gets the Walls list
+     */
+    public LinkedList&lt;Wall&gt; getWalls(){
+<span class="fc" id="L83">        return walls;</span>
+    }
+
+    /**
+     * Gets the Direction between two adjoining cells.
+     * C and C1 need to be adjacent.
+     * The Direction is from C to C1.
+     * The cells can be separated by a Wall or a Door.
+     *
+     * @param c the starting cell
+     * @param c1 the final cell
+     * @return a Direction
+     * @see Door.Direction
+     */
+    public Door.Direction getDirection(CoordinatesWithRoom c, CoordinatesWithRoom c1) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (c.getRoom().getToken() == c1.getRoom().getToken()) {   // SAME ROOM</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">            if (c1.getX() == c.getX() + 1) return WE;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (c1.getX() == c.getX() - 1) return EW;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">            if (c1.getY() == c.getY() + 1) return NS;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            if (c1.getY() == c.getY() - 1) return SN;</span>
+        } else {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            for (int i = 0; i &lt; getDoors().size(); i++) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">                if ((c1.getRoom().getToken() == getDoors().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                        &amp;&amp; c1.getX() == getDoors().get(i).getCoordinates1().getX()</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                        &amp;&amp; c1.getY() == getDoors().get(i).getCoordinates1().getY())</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">                        &amp;&amp; c.getRoom().getToken() == getDoors().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">                        &amp;&amp; c.getX() == getDoors().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                        &amp;&amp; c.getY() == getDoors().get(i).getCoordinates2().getY()) {</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                    if (getDoors().get(i).getDir() == NS) return SN;</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                    if (getDoors().get(i).getDir() == SN) return NS;</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                    if (getDoors().get(i).getDir() == WE) return EW;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                    if (getDoors().get(i).getDir() == EW) return WE;</span>
+                }
+
+
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                if (c1.getRoom().getToken() == getDoors().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                        &amp;&amp; c1.getX() == getDoors().get(i).getCoordinates2().getX()</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                        &amp;&amp; c1.getY() == getDoors().get(i).getCoordinates2().getY()</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">                        &amp;&amp; c.getRoom().getToken() == getDoors().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                        &amp;&amp; c.getX() == getDoors().get(i).getCoordinates1().getX()</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                        &amp;&amp; c.getY() == getDoors().get(i).getCoordinates1().getY()) {</span>
+
+<span class="fc" id="L125">                    return getDoors().get(i).getDir();</span>
+                }
+            }
+
+            //////////////// WALLS
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            for (int i = 0; i &lt; getWalls().size(); i++) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                if ((c1.getRoom().getToken() == getWalls().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                        &amp;&amp; c1.getX() == getWalls().get(i).getCoordinates1().getX()</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">                        &amp;&amp; c1.getY() == getWalls().get(i).getCoordinates1().getY())</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                        &amp;&amp; c.getRoom().getToken() == getWalls().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                        &amp;&amp; c.getX() == getWalls().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                        &amp;&amp; c.getY() == getWalls().get(i).getCoordinates2().getY()) {</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                    if (getWalls().get(i).getDir() == NS) return SN;</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    if (getWalls().get(i).getDir() == SN) return NS;</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                    if (getWalls().get(i).getDir() == WE) return EW;</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                    if (getWalls().get(i).getDir() == EW) return WE;</span>
+                }
+
+
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                if (c1.getRoom().getToken() == getWalls().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                        &amp;&amp; c1.getX() == getWalls().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">                        &amp;&amp; c1.getY() == getWalls().get(i).getCoordinates2().getY()</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                        &amp;&amp; c.getRoom().getToken() == getWalls().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                        &amp;&amp; c.getX() == getWalls().get(i).getCoordinates1().getX()</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                        &amp;&amp; c.getY() == getWalls().get(i).getCoordinates1().getY()) {</span>
+
+<span class="nc" id="L151">                    return getWalls().get(i).getDir();</span>
+                }
+            }
+        }
+<span class="fc" id="L155">        return NS;</span>
+    }
+
+    public int getNumSkull(){
+<span class="fc" id="L159">     return this.numSkull;</span>
+ }
+    public void pickASkull(){
+<span class="fc" id="L162">     this.numSkull--;</span>
+<span class="fc" id="L163">}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

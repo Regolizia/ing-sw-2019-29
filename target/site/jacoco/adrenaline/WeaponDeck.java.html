@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeaponDeck.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">WeaponDeck.java</span></div><h1>WeaponDeck.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import adrenaline.weapons.*;
+
+import java.io.Serializable;
+import java.util.*;
+
+/**
+ * 
+ */
+public class WeaponDeck{
+
+   private LinkedList&lt;WeaponCard&gt; deck;
+
+<span class="fc" id="L15">    public WeaponDeck() {</span>
+<span class="fc" id="L16">        deck =  new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L17">        deck.add(new Cyberblade());</span>
+<span class="fc" id="L18">        deck.add(new Electroscythe());</span>
+<span class="fc" id="L19">        deck.add(new Flamethrower());</span>
+<span class="fc" id="L20">        deck.add(new Furnace());</span>
+<span class="fc" id="L21">        deck.add(new GrenadeLaucher());</span>
+<span class="fc" id="L22">        deck.add(new Heatseeker());</span>
+<span class="fc" id="L23">        deck.add(new Hellion());</span>
+<span class="fc" id="L24">        deck.add(new LockRifle());</span>
+<span class="fc" id="L25">        deck.add(new MachineGun());</span>
+<span class="fc" id="L26">        deck.add(new PlasmaGun());</span>
+<span class="fc" id="L27">        deck.add(new PowerGlove());</span>
+<span class="fc" id="L28">        deck.add(new Railgun());</span>
+<span class="fc" id="L29">        deck.add(new RocketLaucher());</span>
+<span class="fc" id="L30">        deck.add(new Shockwave());</span>
+<span class="fc" id="L31">        deck.add(new Shotgun());</span>
+<span class="fc" id="L32">        deck.add(new Sledgehammer());</span>
+<span class="fc" id="L33">        deck.add(new Thor());</span>
+<span class="fc" id="L34">        deck.add(new TractorBeam());</span>
+<span class="fc" id="L35">        deck.add(new VortexCannon());</span>
+<span class="fc" id="L36">        deck.add(new Whisper());</span>
+<span class="fc" id="L37">        deck.add(new Zx_2());</span>
+<span class="fc" id="L38">    }</span>
+    /**
+     * getList
+     * @return weapon's deck
+     **/
+    public LinkedList&lt;WeaponCard&gt; getList(){
+<span class="fc" id="L44">        return deck;</span>
+    }
+    /**
+     * Shuffles the deck.
+     */
+    public void shuffleCards() {
+<span class="fc" id="L50">        Collections.shuffle(deck);</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * pickUpWeapon
+     * @return first WeaponCard
+     **/
+
+    public WeaponCard pickUpWeapon(){
+<span class="fc" id="L59">            return this.deck.removeFirst();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

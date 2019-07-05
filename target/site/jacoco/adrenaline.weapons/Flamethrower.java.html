@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Flamethrower.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.weapons</a> &gt; <span class="el_source">Flamethrower.java</span></div><h1>Flamethrower.java</h1><pre class="source lang-java linenums">package adrenaline.weapons;
+
+import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
+import java.util.List;
+
+/**
+ * represent Flamethrower WeaponCard
+ */
+public class Flamethrower extends WeaponCard {
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L16">    public Flamethrower() {</span>
+<span class="fc" id="L17">        price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,true));</span>
+<span class="fc" id="L18">        price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.ALT,false));</span>
+<span class="fc" id="L19">        price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.ALT,false));</span>
+<span class="fc" id="L20">    }</span>
+
+    public boolean canShootBase(){
+<span class="fc" id="L23">        return true;</span>
+    }
+    public boolean canShootAlt(){
+<span class="fc" id="L26">        return true;</span>
+    }
+
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+         */
+
+    @Override
+    public List&lt;CoordinatesWithRoom&gt; getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+
+<span class="fc" id="L40">        List&lt;CoordinatesWithRoom&gt; list = c.tilesSameDirection(2,g,false);</span>
+<span class="fc" id="L41">        list.remove(c);</span>
+
+<span class="fc" id="L43">        return list;</span>
+    }
+
+    @Override
+    public List&lt;Object&gt; fromCellsToTargets(List&lt;CoordinatesWithRoom&gt; list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+
+<span class="fc" id="L49">        List&lt;Object&gt; targets= super.fromCellsToTargets(list, c, g, p, m, en);</span>
+<span class="fc" id="L50">        List&lt;CoordinatesWithRoom&gt; listOne = c.oneTileDistant(g, false);</span>
+<span class="fc" id="L51">        en.setNumber(listOne.size());</span>
+
+<span class="fc" id="L53">        return targets;</span>
+    }
+
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
+    @Override
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e) {
+<span class="fc" id="L64">        setDamaged(targetList,p);</span>
+<span class="pc bpc" id="L65" title="1 of 3 branches missed.">        switch (e.getEffect()) {</span>
+            case BASE:  // 1 DAMAGE, 1-2 TARGETS, 2 SQUARES
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                for(int j=0;j&lt;targetList.size();j++){</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">                    if(targetList.get(j) instanceof Player) {</span>
+<span class="fc" id="L69">                        int i =((Player) targetList.get(j)).marksByShooter(p);</span>
+<span class="fc" id="L70">                        i++;</span>
+<span class="fc" id="L71">                        ((Player) targetList.get(j)).addDamageToTrack(p,i);</span>
+                    }
+
+                    else {
+                        // DAMAGE SPAWNPOINT
+                    }
+
+                }
+<span class="fc" id="L79">                break;</span>
+
+            case ALT:   // 2 DAMAGE, EVERY TARGET FIRST SQUARE, 1 DAMAGE EVERY TARGET SECOND SQUARE
+                        //EN.GETNUMBER HAS THE NUMBER OF TARGETS IN FIRST SQUARE
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                for(int j=0;j&lt;targetList.size();j++){</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                    if(targetList.get(j) instanceof Player) {</span>
+<span class="fc" id="L85">                        int i =((Player) targetList.get(j)).marksByShooter(p);</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                        if(j&lt;e.getNumber()){</span>
+<span class="fc" id="L87">                            i++;</span>
+                        }
+<span class="fc" id="L89">                        i++;</span>
+<span class="fc" id="L90">                        ((Player) targetList.get(j)).addDamageToTrack(p,i);</span>
+                    }
+
+                    else {
+                        // DAMAGE SPAWNPOINT
+                    }
+
+                }
+                break;
+
+
+        }
+<span class="fc" id="L102">    }</span>
+    @Override
+    public String toString() {
+<span class="fc" id="L105">        return &quot;Flamethrower&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

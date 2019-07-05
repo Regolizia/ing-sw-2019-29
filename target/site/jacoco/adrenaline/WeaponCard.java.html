@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeaponCard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">WeaponCard.java</span></div><h1>WeaponCard.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import adrenaline.gameboard.GameBoard;
+
+import java.io.Serializable;
+import java.util.*;
+
+public class WeaponCard extends Card{
+
+
+    protected LinkedList&lt;AmmoCube&gt; price;
+    private EffectAndNumber effectAndNumber;
+    private CoordinatesWithRoom coordinates;
+    private boolean reload;
+    private boolean reloadAlt;
+<span class="fc" id="L16">    public WeaponCard() {</span>
+<span class="fc" id="L17">        price = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L18">        reload =false;</span>
+<span class="fc" id="L19">    }</span>
+
+
+    // THEY ARE IN ORDER
+                /*
+                for(int i=0;i&lt;effectsList.size();i++){
+                proposeTargetsShoot(.....effectsList.get(i)...); -&gt; view (SELECT THE APPROPRIATE NUMBER ONLY IF NECESSARY) // selectedTargets = (at least one)
+                view -&gt; list of targets for this effect
+                shoot(....effectsList.get(i)...) (APPLIED DAMAGE)
+                list of targets selected maybe it's removed from possible new targets
+                }
+
+                */
+
+
+    // CELLS IN WEAPON RANGE
+    // TO BE OVERRIDDEN
+    public List&lt;CoordinatesWithRoom&gt; getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g){
+
+        // CELLS OF EVERY ROOM I SEE
+        // MAYBE OVERRIDDEN
+<span class="fc" id="L40">        List&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L41">        int x = c.getRoom().getRoomSizeX();</span>
+<span class="fc" id="L42">        int y = c.getRoom().getRoomSizeY();</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        for(int i=1;i&lt;=x;i++){</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">            for(int j=1;j&lt;=y;j++){</span>
+<span class="fc" id="L46">                list.add(new CoordinatesWithRoom(i,j,c.getRoom()));</span>
+            }
+        }
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        for(int k=0;k&lt;g.getDoors().size();k++){</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">           if(c.getX()==g.getDoors().get(k).getCoordinates1().getX()&amp;&amp;</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">              c.getY()==g.getDoors().get(k).getCoordinates1().getY()&amp;&amp;</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">              c.getRoom().getToken()==g.getDoors().get(k).getCoordinates1().getRoom().getToken()){</span>
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">               for(int i=1;i&lt;=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeX();i++){</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                   for(int j=1;j&lt;=g.getDoors().get(k).getCoordinates2().getRoom().getRoomSizeY();j++){</span>
+<span class="fc" id="L56">                       list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates2().getRoom()));</span>
+                   }
+               }
+           }
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if(c.getX()==g.getDoors().get(k).getCoordinates2().getX()&amp;&amp;</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">              c.getY()==g.getDoors().get(k).getCoordinates2().getY()&amp;&amp;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">              c.getRoom().getToken()==g.getDoors().get(k).getCoordinates2().getRoom().getToken()){</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                for(int i=1;i&lt;=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeX();i++){</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                    for(int j=1;j&lt;=g.getDoors().get(k).getCoordinates1().getRoom().getRoomSizeY();j++){</span>
+<span class="fc" id="L67">                        list.add(new CoordinatesWithRoom(i,j,g.getDoors().get(k).getCoordinates1().getRoom()));</span>
+                    }
+                }
+
+            }
+
+        }
+
+<span class="fc" id="L75">        return list;</span>
+    }
+
+
+    // GETS EVERYBODY IN WEAPON RANGE (DEPENDING ON THE WEAPON getPossibleTargetCells)
+    // IT JUST TRANSFORMS CELLS INTO PLAYERS
+    public List&lt;Object&gt; fromCellsToTargets(List&lt;CoordinatesWithRoom&gt; list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+<span class="fc" id="L82">        LinkedList&lt;Object&gt; targetList = new LinkedList&lt;&gt;();</span>
+
+        // FROM CELLS IN WEAPON RANGE GET ALL THE POSSIBLE TARGETS
+<span class="fc bfc" id="L85" title="All 2 branches covered.">           for(int k=0;k&lt;m.getPlayers().size();k++) {</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">               for (CoordinatesWithRoom coordinatesWithRoom : list) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">                   if (m.getPlayers().get(k).getPlayerRoom() == coordinatesWithRoom.getRoom() &amp;&amp;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                           m.getPlayers().get(k).getPlayerPositionX() == coordinatesWithRoom.getX() &amp;&amp;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                           m.getPlayers().get(k).getPlayerPositionY() == coordinatesWithRoom.getY()) {</span>
+<span class="fc" id="L90">                       targetList.add(m.getPlayers().get(k));</span>
+<span class="fc" id="L91">                       break;</span>
+                   }
+<span class="fc" id="L93">               }</span>
+        }
+        // TODO ADD POSSIBLE SPAWNPOINTS TO TARGETLIST
+
+<span class="fc" id="L97">        targetList.remove(p);</span>
+
+<span class="fc" id="L99">        return targetList;</span>
+    }
+
+
+    public boolean canShootBase(){
+<span class="nc" id="L104">        return false;</span>
+    }
+    public boolean canShootAlt(){
+<span class="fc" id="L107">        return false;</span>
+    }
+    public boolean canShootOp1(){
+<span class="nc" id="L110">        return false;</span>
+    }
+    public boolean canShootOp2(){
+<span class="nc" id="L113">        return false;</span>
+    }
+
+
+    // TO BE OVERRIDDEN
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e){
+<span class="fc" id="L119">    }</span>
+
+    public List&lt;AmmoCube&gt; getPrice(){
+<span class="fc" id="L122">        return price;</span>
+    }
+
+    public void placeWeaponOnMap(CoordinatesWithRoom c){
+<span class="fc" id="L126">        this.coordinates=c;</span>
+<span class="fc" id="L127">    }</span>
+    public CoordinatesWithRoom getCoordinatesOnMap(){
+<span class="fc" id="L129">        return this.coordinates;</span>
+    }
+<span class="fc" id="L131">    public  void setReload(){this.reload=true;}</span>
+<span class="fc" id="L132">    public  void setNotReload(){reload=false;}</span>
+<span class="fc" id="L133">    public  void setReloadAlt(boolean reloadStatus){this.reloadAlt=reloadStatus;}</span>
+<span class="fc" id="L134">    public  boolean getReloadAlt(){return reloadAlt;}</span>
+<span class="fc" id="L135">    public  boolean getReload(){return reload;}</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L139">        return &quot;Generic weapon card&quot;;</span>
+    }
+    /**
+     *setDamaged()
+     * @param shooter
+     * @param targets
+     */
+    public void setDamaged(List&lt;Object&gt; targets,Player shooter){
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for(Object o : targets){</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            if(o instanceof Player){</span>
+<span class="fc" id="L149">                ((Player) o).setDamagedStatus(true);</span>
+<span class="fc" id="L150">                ((Player) o).setShooter(shooter.toString());</span>
+            }
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

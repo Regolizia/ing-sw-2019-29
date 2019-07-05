@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Heatseeker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.weapons</a> &gt; <span class="el_source">Heatseeker.java</span></div><h1>Heatseeker.java</h1><pre class="source lang-java linenums">package adrenaline.weapons;
+
+import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * 
+ */
+public class Heatseeker extends WeaponCard {
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L17">    public Heatseeker() {</span>
+<span class="fc" id="L18">        price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,true));</span>
+<span class="fc" id="L19">        price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE,false));</span>
+<span class="fc" id="L20">        price.add(new AmmoCube(AmmoCube.CubeColor.YELLOW, AmmoCube.Effect.BASE,false));</span>
+<span class="fc" id="L21">    }</span>
+
+    public boolean canShootBase(){
+<span class="fc" id="L24">        return true;</span>
+    }
+/**
+ * fromCellsToTargets()
+ *
+ * @param p player
+ * @param en effect selected
+ * @param g used gameboard
+ * @param c player's coordinates
+ * @param m model
+ * @param list list of coordinates
+ *
+ * @return list of targets
+ * */
+    @Override
+    public List&lt;Object&gt; fromCellsToTargets(List&lt;CoordinatesWithRoom&gt; list, CoordinatesWithRoom c, GameBoard g, Player p, GameModel m, EffectAndNumber en) {
+<span class="fc" id="L40">        List&lt;Object&gt; listOne = super.fromCellsToTargets(list,c, g, p, m, en);</span>
+<span class="fc" id="L41">        List&lt;Object&gt; listOthers = new LinkedList&lt;&gt;();</span>
+
+        // TODO ALL PLAYERS AND SPAWNPOINTS(IF DOMINATION) TO LISTOTHERS
+
+<span class="fc" id="L45">        listOthers.addAll(m.getPlayers());</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for(int k=0;k&lt;listOthers.size();k++){</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            for(Object o: listOne){</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                if(((Player)o).getColor()==((Player)listOthers.get(k)).getColor()){</span>
+<span class="fc" id="L49">                    listOthers.remove(k);</span>
+                }
+<span class="fc" id="L51">            }</span>
+        }
+<span class="fc" id="L53">        listOthers.remove(p);</span>
+
+<span class="fc" id="L55">        return listOthers;</span>
+    }
+
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
+    @Override
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e) {
+<span class="fc" id="L66">        setDamaged(targetList,p);</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        switch (e.getEffect()) {</span>
+            case BASE:  // 3 DAMAGE, 1 TARGET
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                if(targetList.get(0) instanceof Player) {</span>
+<span class="fc" id="L70">                    int i =((Player) targetList.get(0)).marksByShooter(p);</span>
+<span class="fc" id="L71">                    i=i+3;</span>
+<span class="fc" id="L72">                    ((Player) targetList.get(0)).addDamageToTrack(p,i);</span>
+                }
+                else {
+                    // DAMAGE SPAWNPOINT
+                }
+                break;
+
+
+        }
+<span class="fc" id="L81">    }</span>
+    @Override
+    public String toString() {
+<span class="fc" id="L84">        return &quot;Heatseeker&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">GameModel.java</span></div><h1>GameModel.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import adrenaline.gameboard.*;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Is the class that represents a Deck.
+ * It has:
+ * &lt;ul&gt;
+ *     &lt;li&gt; a list of Players
+ *     &lt;li&gt; a Game Mode
+ *     &lt;li&gt; a Map
+ * &lt;/ul&gt;
+ *
+ * @author Eleonora Toscano
+ * @version 1.0
+ */
+public class GameModel{
+
+<span class="fc" id="L23">    final private int numMaxWeaponSpawnpoin=3;</span>
+    private LinkedList&lt;Player&gt; players;
+<span class="fc" id="L25">    public enum Mode {</span>
+<span class="fc" id="L26">        DEATHMATCH, DOMINATION</span>
+    }
+<span class="fc" id="L28">    public enum Bot {</span>
+<span class="fc" id="L29">        BOT, NOBOT</span>
+    }
+<span class="fc" id="L31">    public enum FrenzyMode{</span>
+<span class="fc" id="L32">        ON,OFF</span>
+    }
+    protected Mode mode;
+    private Map mapUsed;
+    protected Bot bot;
+    protected FrenzyMode frenzyMode;
+    private boolean doesntExists;
+    public WeaponDeck weaponDeck;
+    public PowerUpDeck powerUpDeck;
+    public AmmoTileDeck ammoTileDeck;
+
+    /**
+     * Constructor with Mode, Bot and choice of map.
+     *
+     * @param m the mode
+     * @param b the bot choice
+     * @param chosenMap the map chosen
+     */
+    public GameModel(Mode m, Bot b,
+<span class="fc" id="L51">                     int chosenMap, boolean frenzyChoice) {</span>
+
+<span class="fc" id="L53">        players = new LinkedList&lt;&gt;();</span>
+
+<span class="pc bpc" id="L55" title="1 of 4 branches missed.">        switch (chosenMap) {</span>
+            case 1:
+<span class="fc" id="L57">                mapUsed = new MapOne(m);</span>
+<span class="fc" id="L58">                break;</span>
+            case 2:
+<span class="nc" id="L60">                mapUsed = new MapTwo(m);</span>
+<span class="nc" id="L61">                break;</span>
+            case 3:
+<span class="fc" id="L63">                mapUsed = new MapThree(m);</span>
+<span class="fc" id="L64">                break;</span>
+            case 4:
+            default:
+<span class="fc" id="L67">                mapUsed = new MapFour(m);</span>
+                break;
+        }
+<span class="fc" id="L70">        mode = m;</span>
+<span class="fc" id="L71">        bot = b;</span>
+
+
+<span class="fc" id="L74">        weaponDeck = new WeaponDeck();</span>
+<span class="fc" id="L75">        weaponDeck.shuffleCards();</span>
+<span class="fc" id="L76">        powerUpDeck = new PowerUpDeck();</span>
+<span class="fc" id="L77">        powerUpDeck.shuffleCards();</span>
+<span class="fc" id="L78">        ammoTileDeck = new AmmoTileDeck();</span>
+<span class="fc" id="L79">        ammoTileDeck.shuffleCards();</span>
+
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if(frenzyChoice){</span>
+<span class="nc" id="L82">            frenzyMode=FrenzyMode.ON;</span>
+        }else{
+<span class="fc" id="L84">            frenzyMode=FrenzyMode.OFF;</span>
+        }
+
+<span class="fc" id="L87">    }</span>
+
+    public boolean hasFrenzyOn(){
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if(frenzyMode==FrenzyMode.ON){</span>
+<span class="nc" id="L91">            return true;</span>
+        }else{
+<span class="nc" id="L93">            return false;</span>
+        }
+    }
+
+    /**
+     * Adds a Player to the list.
+     *
+     * @param p a player to add
+     */
+    public void addPlayer(Player p){
+<span class="fc" id="L103">        getPlayers().add(p);</span>
+<span class="fc" id="L104">    }</span>
+
+    public Map getMapUsed(){
+<span class="fc" id="L107">        return mapUsed;</span>
+    }
+
+    public List&lt;Player&gt; getPlayers(){
+<span class="fc" id="L111">        return players;</span>
+    }
+
+    /**
+     *startingMap
+     * all AmmoTile of all Rooms get initialized with free color
+     * CONV: free color==there isn't an AmoTile to be draw
+     **/
+    public void startingMap(){
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for(Room room:getMapUsed().getGameBoard().getRooms()){</span>
+
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            for (AmmoTile a:room.getTiles()</span>
+                 ) {
+
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                for (AmmoCube ac: a.getAmmoCubes()</span>
+                     ) {
+<span class="fc" id="L127">                        ac.setCubeColor(AmmoCube.CubeColor.FREE);</span>
+<span class="fc" id="L128">                }</span>
+<span class="fc" id="L129">            }</span>
+
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            for (Spawnpoint spw:room.getSpawnpoints()</span>
+                 ) {
+<span class="fc" id="L133">                spw.getWeaponCards().clear();</span>
+<span class="fc" id="L134">            }</span>
+
+<span class="fc" id="L136">        }</span>
+<span class="fc" id="L137">    }</span>
+
+
+    /**
+     *populateMap
+     * calls populateAmmoTile
+     * assign to every spawnpoint 3 WeaponCards
+     **/
+    public void populateMap() {
+<span class="fc" id="L146">        populateAmmoTile();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for (Room room : getMapUsed().getGameBoard().getRooms()) {</span>
+            //here check all the rooms one by one
+
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            for (Spawnpoint s : room.getSpawnpoints()</span>
+            ) {
+<span class="pc bpc" id="L152" title="1 of 4 branches missed.">                while (s.getWeaponCards().size() &lt; numMaxWeaponSpawnpoin&amp;&amp;!this.weaponDeck.getList().isEmpty()) {</span>
+<span class="fc" id="L153">                    s.getWeaponCards().add(weaponDeck.pickUpWeapon());</span>
+                }
+<span class="fc" id="L155">            }</span>
+<span class="fc" id="L156">        }</span>
+
+<span class="fc" id="L158">    }</span>
+    /**
+     *populateAmmoTile
+     * foreach Room add AmmoTile and set its color
+     **/
+    public void populateAmmoTile(){
+
+<span class="fc bfc" id="L165" title="All 2 branches covered.">     for (Room room : getMapUsed().getGameBoard().getRooms()) {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">         for (int x = 1; x &lt;= room.getRoomSizeX(); x++) {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">             for (int y = 1; y &lt;= room.getRoomSizeY(); y++) {</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                 if(!isSpawnpointCoordinates(x,y,room)){</span>
+<span class="fc" id="L169">                     AmmoTile t = ammoTileDeck.pickUpAmmoTile();</span>
+<span class="fc" id="L170">                     t.setCoordinates(x,y);</span>
+<span class="fc" id="L171">                 room.getTiles().add(t);</span>
+<span class="fc" id="L172">                 System.out.println(t.toString()+&quot; in &quot;+t.getCoordinates().toString());</span>
+                 }
+             }
+         }
+<span class="fc" id="L176">     }</span>
+
+<span class="fc" id="L178">    }</span>
+
+    /**
+     *isSpawnpointCoordinates()
+     * @param x coordinate x
+     * @param y coordinate y
+     * @param room room to check
+     *
+     * return if a spawnpoint's cell
+     */
+    public boolean isSpawnpointCoordinates(int x,int y,Room room){
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        for (Room r: this.getMapUsed().getGameBoard().getRooms()</span>
+        ) {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">            for (Spawnpoint spw:r.getSpawnpoints()</span>
+            ) {
+<span class="fc bfc" id="L193" title="All 6 branches covered.">                if(room.getToken()==r.getToken()&amp;&amp;x==spw.getSpawnpointX()&amp;&amp;y==spw.getSpawnpointY())</span>
+<span class="fc" id="L194">                    return true;</span>
+<span class="fc" id="L195">            }</span>
+<span class="fc" id="L196">        }</span>
+<span class="fc" id="L197">        return false;</span>
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

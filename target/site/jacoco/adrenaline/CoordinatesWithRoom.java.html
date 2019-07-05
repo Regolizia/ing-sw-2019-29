@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoordinatesWithRoom.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline</a> &gt; <span class="el_source">CoordinatesWithRoom.java</span></div><h1>CoordinatesWithRoom.java</h1><pre class="source lang-java linenums">package adrenaline;
+
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static adrenaline.gameboard.Door.Direction.*;
+
+public class CoordinatesWithRoom extends Coordinates {
+    private Room room;
+
+    /**
+     * Default constructor.
+     */
+<span class="fc" id="L16">    public CoordinatesWithRoom() {</span>
+<span class="fc" id="L17">    }</span>
+
+    /**
+     * Constructor with two int and a Room.
+     *
+     * @param x first int
+     * @param y second int
+     * @param r a Room
+     */
+<span class="fc" id="L26">    public CoordinatesWithRoom(int x, int y, Room r) {</span>
+<span class="fc" id="L27">        this.room = r;</span>
+<span class="fc" id="L28">        setX(x);</span>
+<span class="fc" id="L29">        setY(y);</span>
+<span class="fc" id="L30">    }</span>
+
+    public Room getRoom() {
+<span class="fc" id="L33">        return this.room;</span>
+    }
+
+    public void setRoom(Room r) {
+<span class="fc" id="L37">        this.room = r;</span>
+<span class="fc" id="L38">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L42">        return this.getX() + &quot;, &quot; + this.getY() + &quot; Room: &quot; + this.getRoom().getToken();</span>
+    }
+
+    /**
+     * Gets the tiles that are distant 1 from the caller.
+     * Can get also those behind Walls.
+     *
+     * @param g the Gameboard
+     * @param withWalls the indication if with or without Walls
+     * @return a list of Coordinates
+     * @see CoordinatesWithRoom
+     */
+    public List&lt;CoordinatesWithRoom&gt; oneTileDistant(GameBoard g, boolean withWalls) {
+
+<span class="fc" id="L56">        List&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+
+        // COORDINATES OF MY CELL
+<span class="fc" id="L59">        int x = getX();</span>
+<span class="fc" id="L60">        int y = getY();</span>
+        // CHECKS IF NWSE COORDINATES ARE INSIDE THE ROOM
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (x + 1 &lt;= getRoom().getRoomSizeX())</span>
+<span class="fc" id="L63">            list.add(new CoordinatesWithRoom(x + 1, y, getRoom()));</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (y + 1 &lt;= getRoom().getRoomSizeY())</span>
+<span class="fc" id="L66">            list.add(new CoordinatesWithRoom(x, y + 1, getRoom()));</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (x - 1 &gt; 0)</span>
+<span class="fc" id="L69">            list.add(new CoordinatesWithRoom(x - 1, y, getRoom()));</span>
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (y - 1 &gt; 0)</span>
+<span class="fc" id="L72">            list.add(new CoordinatesWithRoom(x, y - 1, getRoom()));</span>
+
+        // CHECKS IF CELL HAS A DOOR
+        // SAME ROOM, SAME COORDINATES AS A ROOM IN THE DOOR CLASS, FOR BOTH SIDES
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for (int i = 0; i &lt; g.getDoors().size(); i++) {</span>
+<span class="pc bpc" id="L77" title="1 of 6 branches missed.">            if ((getRoom().getToken() == g.getDoors().get(i).getCoordinates1().getRoom().getToken() &amp;&amp; getX() == g.getDoors().get(i).getCoordinates1().getX() &amp;&amp; getY() == g.getDoors().get(i).getCoordinates1().getY()))</span>
+<span class="fc" id="L78">                list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(), g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getCoordinates2().getRoom()));</span>
+
+
+<span class="fc bfc" id="L81" title="All 6 branches covered.">            if ((getRoom().getToken() == g.getDoors().get(i).getCoordinates2().getRoom().getToken() &amp;&amp; getX() == g.getDoors().get(i).getCoordinates2().getX() &amp;&amp; getY() == g.getDoors().get(i).getCoordinates2().getY()))</span>
+<span class="fc" id="L82">                list.add(new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates1().getX(), g.getDoors().get(i).getCoordinates1().getY(), g.getDoors().get(i).getCoordinates1().getRoom()));</span>
+        }
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if(withWalls){</span>
+            // CHECKS IF CELL HAS A WALL
+            // SAME ROOM, SAME COORDINATES AS A ROOM IN THE WALL CLASS, FOR BOTH SIDES
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            for (int i = 0; i &lt; g.getWalls().size(); i++) {</span>
+<span class="pc bpc" id="L88" title="3 of 6 branches missed.">                if ((getRoom().getToken() == g.getWalls().get(i).getCoordinates1().getRoom().getToken() &amp;&amp; getX() == g.getWalls().get(i).getCoordinates1().getX() &amp;&amp; getY() == g.getWalls().get(i).getCoordinates1().getY()))</span>
+<span class="nc" id="L89">                    list.add(new CoordinatesWithRoom(g.getWalls().get(i).getCoordinates2().getX(), g.getWalls().get(i).getCoordinates2().getY(), g.getWalls().get(i).getCoordinates2().getRoom()));</span>
+
+
+<span class="pc bpc" id="L92" title="5 of 6 branches missed.">                if ((getRoom().getToken() == g.getWalls().get(i).getCoordinates2().getRoom().getToken() &amp;&amp; getX() == g.getWalls().get(i).getCoordinates2().getX() &amp;&amp; getY() == g.getWalls().get(i).getCoordinates2().getY()))</span>
+<span class="nc" id="L93">                    list.add(new CoordinatesWithRoom(g.getWalls().get(i).getCoordinates1().getX(), g.getWalls().get(i).getCoordinates1().getY(), g.getWalls().get(i).getCoordinates1().getRoom()));</span>
+            }
+        }
+
+<span class="fc" id="L97">        return list;</span>
+
+    }
+
+    /**
+     * Removes the caller from the list passed.
+     *
+     * @param list the list to remove the cell from
+     * @return the list without the cell
+     */
+    public List&lt;CoordinatesWithRoom&gt; removeThisCell(List&lt;CoordinatesWithRoom&gt; list) {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        for (int i = list.size() - 1; i &gt;= 0; i--) {</span>
+<span class="fc bfc" id="L109" title="All 6 branches covered.">            if (list.get(i).getRoom().getToken() == this.getRoom().getToken() &amp;&amp; list.get(i).getX() == this.getX() &amp;&amp; list.get(i).getY() == this.getY()) {</span>
+<span class="fc" id="L110">                list.remove(i);</span>
+            }
+        }
+<span class="fc" id="L113">        return list;</span>
+    }
+
+    /**
+     * Removes the duplicates from the given list.
+     *
+     * @param list the list
+     * @return the list without the duplicates
+     */
+    private List&lt;CoordinatesWithRoom&gt; removeDuplicates(List&lt;CoordinatesWithRoom&gt; list) {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        for (int k = 0; k &lt; list.size(); k++) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            for (int j = k + 1; j &lt; list.size(); j++) {</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                if (list.get(k).getRoom() == list.get(j).getRoom()</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                        &amp;&amp; list.get(k).getX() == list.get(j).getX()</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                        &amp;&amp; list.get(k).getY() == list.get(j).getY()) {</span>
+<span class="fc" id="L128">                    list.remove(j);</span>
+<span class="fc" id="L129">                    j--;</span>
+                }
+            }
+        }
+<span class="fc" id="L133">        return list;</span>
+    }
+
+    /**
+     * Returns a list of cells distant n or less from the caller.
+     * The list is without duplicates and without the caller.
+     *
+     * @param g the Game Board
+     * @param distance the n distance
+     * @return the list of cells
+     */
+    public List&lt;CoordinatesWithRoom&gt; xTilesDistant(GameBoard g, int distance) {
+
+        List&lt;CoordinatesWithRoom&gt; listTemp;
+<span class="fc" id="L147">        List&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+        List&lt;CoordinatesWithRoom&gt; listTemp2;
+<span class="fc" id="L149">        list.add(this);</span>
+
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        for (int i = 1; i &lt;= distance; i++) {</span>
+<span class="fc" id="L152">            listTemp = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            for (CoordinatesWithRoom element : list) {</span>
+<span class="fc" id="L154">                listTemp2 = element.oneTileDistant(g, false);</span>
+<span class="fc" id="L155">                listTemp.addAll(listTemp2);</span>
+<span class="fc" id="L156">            }</span>
+<span class="fc" id="L157">            list.clear();</span>
+<span class="fc" id="L158">            list = listTemp;</span>
+        }
+<span class="fc" id="L160">        list = this.removeDuplicates(list);</span>
+<span class="fc" id="L161">        list = this.removeThisCell(list);</span>
+<span class="fc" id="L162">        return list;</span>
+    }
+
+    /**
+     * Checks if the caller is in both lists.
+     *
+     * @param listMoves the first list
+     * @param listOriginalMoves the second list
+     * @return true if cell in both lists, else false
+     */
+    public boolean isCWRInTwoLists(List&lt;CoordinatesWithRoom&gt; listMoves, List&lt;CoordinatesWithRoom&gt; listOriginalMoves) {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        for (CoordinatesWithRoom listMove : listMoves) {</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            for (CoordinatesWithRoom listOriginalMove : listOriginalMoves) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                if (listMove.getX() == listOriginalMove.getX() &amp;&amp;</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">                        listMove.getY() == listOriginalMove.getY() &amp;&amp;</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                        listMove.getRoom().getToken() == listOriginalMove.getRoom().getToken()) {</span>
+<span class="fc" id="L178">                    return true;</span>
+                }
+<span class="fc" id="L180">            }</span>
+<span class="fc" id="L181">        }</span>
+<span class="nc" id="L182">        return false;</span>
+    }
+
+    /**
+     * Returns a list of cells distant n or less in cardinal directions.
+     *
+     * @param moves the number n
+     * @param g the GameBoard
+     * @param withWalls the indication if it can go through walls(true) or not(false)
+     * @return a list of cells
+     */
+    public List&lt;CoordinatesWithRoom&gt; tilesSameDirection(int moves, GameBoard g, boolean withWalls) {
+        CoordinatesWithRoom c0;
+
+<span class="fc" id="L196">        List&lt;CoordinatesWithRoom&gt; listOne = this.oneTileDistant(g, withWalls); // CELL TO CHECK FOR NEXT</span>
+<span class="fc" id="L197">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(listOne);</span>
+<span class="fc" id="L198">        list.add(this);</span>
+
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        for (CoordinatesWithRoom c1 : listOne) {</span>
+<span class="fc" id="L201">            c0 = this;</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">            for(int j=1;j&lt;moves;j++){</span>
+<span class="fc" id="L203">                CoordinatesWithRoom c2 = getNextCell(c0,c1,g, withWalls);</span>
+
+<span class="pc bpc" id="L205" title="1 of 4 branches missed.">                if(c2.getX()==0 || c2.getY()==0){</span>
+<span class="nc" id="L206">                    break;</span>
+                }
+<span class="fc" id="L208">                list.add(c2);</span>
+<span class="fc" id="L209">                c0 = c1;</span>
+<span class="fc" id="L210">                c1 = c2;</span>
+            }
+<span class="fc" id="L212">        }</span>
+
+<span class="fc" id="L214">        return list;</span>
+    }
+
+    /**
+     * Checks if two cells x and y are in the same direction.
+     *
+     * @param x first cell
+     * @param y second cell
+     * @param moves the number n
+     * @param g the GameBoard
+     * @param withWalls the indication if it can go through walls(true) or not(false)
+     * @return a list of cells
+     */
+    public boolean checkSameDirection(CoordinatesWithRoom x, CoordinatesWithRoom y, int moves, GameBoard g, boolean withWalls) {
+        CoordinatesWithRoom c0;
+
+<span class="fc" id="L230">        List&lt;CoordinatesWithRoom&gt; listOne = this.oneTileDistant(g, withWalls); // CELL TO CHECK FOR NEXT</span>
+<span class="fc" id="L231">        LinkedList&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;(listOne);</span>
+<span class="fc" id="L232">        list.add(this);</span>
+
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        for (CoordinatesWithRoom c1 : listOne) {</span>
+<span class="fc" id="L235">            c0 = this;</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">            for(int j=1;j&lt;moves;j++){</span>
+<span class="nc" id="L237">                CoordinatesWithRoom c2 = getNextCell(c0,c1,g, withWalls);</span>
+
+<span class="nc bnc" id="L239" title="All 4 branches missed.">                if(c2.getX()==0 || c2.getY()==0){</span>
+<span class="nc" id="L240">                    break;</span>
+                }
+<span class="nc" id="L242">                list.add(c2);</span>
+<span class="nc" id="L243">                c0 = c1;</span>
+<span class="nc" id="L244">                c1 = c2;</span>
+            }
+
+<span class="pc bpc" id="L247" title="2 of 4 branches missed.">            if(list.contains(x) &amp;&amp; list.contains(y)){   // USES EQUALS OVERRIDE</span>
+<span class="fc" id="L248">                return true;</span>
+            }
+<span class="nc" id="L250">        }</span>
+
+<span class="nc" id="L252">        return false;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        return (this.getX()==(((CoordinatesWithRoom) obj).getX())</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">                &amp;&amp; this.getY()==(((CoordinatesWithRoom) obj).getY()) &amp;&amp; this.getRoom().getToken()</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">                ==(((CoordinatesWithRoom) obj).getRoom().getToken()));</span>
+    }
+
+    /**
+     * Returns the next cell given the previous and the current one.
+     *
+     * @param c the previous cell
+     * @param c1 the current cell
+     * @param g the Game Board
+     * @param withWalls the indication if it can go through walls
+     * @return the next cell
+     */
+    public CoordinatesWithRoom getNextCell(CoordinatesWithRoom c, CoordinatesWithRoom c1, GameBoard g, boolean withWalls){
+
+<span class="fc bfc" id="L273" title="All 4 branches covered.">                        if ((c1.getX() + 1) &lt;= c1.getRoom().getRoomSizeX() &amp;&amp; g.getDirection(c, c1) == WE) {</span>
+<span class="fc" id="L274">                            return (new CoordinatesWithRoom(c1.getX() + 1, c1.getY(), c1.getRoom()));</span>
+
+                        }
+<span class="pc bpc" id="L277" title="1 of 4 branches missed.">                        if ((c1.getX() - 1) &gt; 0 &amp;&amp; g.getDirection(c, c1) == EW) {</span>
+<span class="nc" id="L278">                            return (new CoordinatesWithRoom(c1.getX() - 1, c1.getY(), c1.getRoom()));</span>
+                        }
+
+<span class="pc bpc" id="L281" title="1 of 4 branches missed.">                        if ((c1.getY() + 1) &lt;= c1.getRoom().getRoomSizeY() &amp;&amp; g.getDirection(c, c1) == NS) {</span>
+<span class="nc" id="L282">                            return (new CoordinatesWithRoom(c1.getX() + 1, c1.getY(), c1.getRoom()));</span>
+
+                        }
+<span class="pc bpc" id="L285" title="1 of 4 branches missed.">                        if ((c1.getY() - 1) &gt; 0 &amp;&amp; g.getDirection(c, c1) == SN) {</span>
+<span class="nc" id="L286">                            return (new CoordinatesWithRoom(c1.getX() - 1, c1.getY(), c1.getRoom()));</span>
+                        }
+
+<span class="fc bfc" id="L289" title="All 2 branches covered.">                        for (int i = 0; i &lt; g.getDoors().size(); i++) {</span>
+
+                            // C1 Room1 -&gt; NOT C
+<span class="fc bfc" id="L292" title="All 2 branches covered.">                            if (c1.getRoom().getToken() == g.getDoors().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="fc bfc" id="L293" title="All 2 branches covered.">                                    &amp;&amp; c1.getX() == g.getDoors().get(i).getCoordinates1().getX()</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">                                    &amp;&amp; c1.getY() == g.getDoors().get(i).getCoordinates1().getY()</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">                                    &amp;&amp; (c.getRoom().getToken() != g.getDoors().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="pc bpc" id="L296" title="1 of 2 branches missed.">                                    || c.getX() != g.getDoors().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">                                    || c.getY() != g.getDoors().get(i).getCoordinates2().getY()) ){</span>
+
+<span class="nc" id="L299">                                CoordinatesWithRoom c2 = new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates2().getX(),</span>
+<span class="nc" id="L300">                                        g.getDoors().get(i).getCoordinates2().getY(), g.getDoors().get(i).getCoordinates2().getRoom());</span>
+
+<span class="nc bnc" id="L302" title="All 4 branches missed.">                                if (g.getDirection(c1, c2) == EW &amp;&amp; g.getDirection(c, c1) == EW ||</span>
+<span class="nc bnc" id="L303" title="All 4 branches missed.">                                        g.getDirection(c1, c2) == WE &amp;&amp; g.getDirection(c, c1) == WE ||</span>
+<span class="nc bnc" id="L304" title="All 4 branches missed.">                                        g.getDirection(c1, c2) == SN &amp;&amp; g.getDirection(c, c1) == SN ||</span>
+<span class="nc bnc" id="L305" title="All 4 branches missed.">                                        g.getDirection(c1, c2) == NS &amp;&amp; g.getDirection(c, c1) == NS ) {</span>
+
+<span class="nc" id="L307">                                    return (new CoordinatesWithRoom(c2.getX(), c2.getY(), c2.getRoom()));</span>
+                                }
+                            }
+                            // C1 Room1 -&gt; NOT C REVERSE
+<span class="fc bfc" id="L311" title="All 2 branches covered.">                            if (c1.getRoom().getToken() == g.getDoors().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">                                    &amp;&amp; c1.getX() == g.getDoors().get(i).getCoordinates2().getX()</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">                                    &amp;&amp; c1.getY() == g.getDoors().get(i).getCoordinates2().getY()</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">                                    &amp;&amp; (c.getRoom().getToken() != g.getDoors().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">                                    || c.getX() != g.getDoors().get(i).getCoordinates1().getX()</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">                                    || c.getY() != g.getDoors().get(i).getCoordinates1().getY()) ) {</span>
+
+<span class="fc" id="L318">                                CoordinatesWithRoom c3 = new CoordinatesWithRoom(g.getDoors().get(i).getCoordinates1().getX(),</span>
+<span class="fc" id="L319">                                        g.getDoors().get(i).getCoordinates1().getY(), g.getDoors().get(i).getCoordinates1().getRoom());</span>
+
+<span class="pc bpc" id="L321" title="1 of 4 branches missed.">                                if (g.getDirection(c1, c3) == EW &amp;&amp; g.getDirection(c, c1) == EW ||</span>
+<span class="pc bpc" id="L322" title="3 of 4 branches missed.">                                        g.getDirection(c1, c3) == WE &amp;&amp; g.getDirection(c, c1) == WE ||</span>
+<span class="pc bpc" id="L323" title="2 of 4 branches missed.">                                        g.getDirection(c1, c3) == SN &amp;&amp; g.getDirection(c, c1) == SN ||</span>
+<span class="nc bnc" id="L324" title="All 4 branches missed.">                                        g.getDirection(c1, c3) == NS &amp;&amp; g.getDirection(c, c1) == NS ) {</span>
+
+<span class="fc" id="L326">                                    return (new CoordinatesWithRoom(c3.getX(), c3.getY(), c3.getRoom()));</span>
+                                }
+
+                            }
+                        }
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">                if(withWalls) {</span>
+                    /////////////////////// WALLS
+<span class="fc bfc" id="L333" title="All 2 branches covered.">                    for (int i = 0; i &lt; g.getWalls().size(); i++) {</span>
+
+                        // C1 Room1 -&gt; NOT C
+<span class="fc bfc" id="L336" title="All 2 branches covered.">                        if (c1.getRoom().getToken() == g.getWalls().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">                                &amp;&amp; c1.getX() == g.getWalls().get(i).getCoordinates1().getX()</span>
+<span class="pc bpc" id="L338" title="1 of 2 branches missed.">                                &amp;&amp; c1.getY() == g.getWalls().get(i).getCoordinates1().getY()</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">                                &amp;&amp; (c.getRoom().getToken() != g.getWalls().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">                                || c.getX() != g.getWalls().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">                                || c.getY() != g.getWalls().get(i).getCoordinates2().getY()) ) {</span>
+
+<span class="nc" id="L343">                            CoordinatesWithRoom c2 = new CoordinatesWithRoom(g.getWalls().get(i).getCoordinates2().getX(),</span>
+<span class="nc" id="L344">                                    g.getWalls().get(i).getCoordinates2().getY(), g.getWalls().get(i).getCoordinates2().getRoom());</span>
+
+<span class="nc bnc" id="L346" title="All 6 branches missed.">                            if (g.getDirection(c1, c2) == EW &amp;&amp; g.getDirection(c, c1) == EW &amp;&amp; g.getWalls().get(i).getDir() == EW ||</span>
+<span class="nc bnc" id="L347" title="All 6 branches missed.">                                    g.getDirection(c1, c2) == WE &amp;&amp; g.getDirection(c, c1) == WE &amp;&amp; g.getWalls().get(i).getDir() == WE ||</span>
+<span class="nc bnc" id="L348" title="All 6 branches missed.">                                    g.getDirection(c1, c2) == SN &amp;&amp; g.getDirection(c, c1) == SN &amp;&amp; g.getWalls().get(i).getDir() == SN ||</span>
+<span class="nc bnc" id="L349" title="All 6 branches missed.">                                    g.getDirection(c1, c2) == NS &amp;&amp; g.getDirection(c, c1) == NS &amp;&amp; g.getWalls().get(i).getDir() == NS) {</span>
+
+<span class="nc" id="L351">                                return (new CoordinatesWithRoom(c2.getX(), c2.getY(), c2.getRoom()));</span>
+                            }
+                        }
+                        // C1 Room1 -&gt; NOT C REVERSE
+<span class="fc bfc" id="L355" title="All 2 branches covered.">                        if (c1.getRoom().getToken() == g.getWalls().get(i).getCoordinates2().getRoom().getToken()</span>
+<span class="fc bfc" id="L356" title="All 2 branches covered.">                                &amp;&amp; c1.getX() == g.getWalls().get(i).getCoordinates2().getX()</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">                                &amp;&amp; c1.getY() == g.getWalls().get(i).getCoordinates2().getY()</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">                                &amp;&amp; (c.getRoom().getToken() != g.getWalls().get(i).getCoordinates1().getRoom().getToken()</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">                                || c.getX() != g.getWalls().get(i).getCoordinates1().getX()</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">                                || c.getY() != g.getWalls().get(i).getCoordinates1().getY()) ){</span>
+
+<span class="fc" id="L362">                            CoordinatesWithRoom c3 = new CoordinatesWithRoom(g.getWalls().get(i).getCoordinates1().getX(),</span>
+<span class="fc" id="L363">                                    g.getWalls().get(i).getCoordinates1().getY(), g.getWalls().get(i).getCoordinates1().getRoom());</span>
+
+<span class="pc bpc" id="L365" title="5 of 6 branches missed.">                            if (g.getDirection(c1, c3) == EW &amp;&amp; g.getDirection(c, c1) == EW &amp;&amp; g.getWalls().get(i).getDir() == WE ||</span>
+<span class="pc bpc" id="L366" title="5 of 6 branches missed.">                                    g.getDirection(c1, c3) == WE &amp;&amp; g.getDirection(c, c1) == WE &amp;&amp; g.getWalls().get(i).getDir() == EW ||</span>
+<span class="pc bpc" id="L367" title="3 of 6 branches missed.">                                    g.getDirection(c1, c3) == SN &amp;&amp; g.getDirection(c, c1) == SN &amp;&amp; g.getWalls().get(i).getDir() == NS ||</span>
+<span class="nc bnc" id="L368" title="All 6 branches missed.">                                    g.getDirection(c1, c3) == NS &amp;&amp; g.getDirection(c, c1) == NS &amp;&amp; g.getWalls().get(i).getDir() == SN) {</span>
+
+<span class="fc" id="L370">                                return (new CoordinatesWithRoom(c3.getX(), c3.getY(), c3.getRoom()));</span>
+                            }
+
+                        }
+                    }
+                }
+
+<span class="fc" id="L377">                    return (new CoordinatesWithRoom(0, 0, c.getRoom()));</span>
+            }
+
+    public boolean containsSpawnpoint(GameModel model){
+<span class="fc bfc" id="L381" title="All 2 branches covered.">        for(Room r : model.getMapUsed().getGameBoard().getRooms()){</span>
+<span class="fc bfc" id="L382" title="All 4 branches covered.">            if(!r.getSpawnpoints().isEmpty() &amp;&amp; (r.getSpawnpoints().get(0).getSpawnpointX()==this.getX() &amp;&amp;</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">                        r.getSpawnpoints().get(0).getSpawnpointY()==this.getY() &amp;&amp;</span>
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">                        r.getToken()==this.getRoom().getToken())){</span>
+<span class="nc" id="L385">                    return true;</span>
+            }
+<span class="fc" id="L387">        }</span>
+<span class="fc" id="L388">        return false;</span>
+    }
+
+    public Spawnpoint getSpawnpoint(GameModel model){
+<span class="fc bfc" id="L392" title="All 2 branches covered.">        for(Room r : model.getMapUsed().getGameBoard().getRooms()){</span>
+<span class="fc bfc" id="L393" title="All 4 branches covered.">            if(!r.getSpawnpoints().isEmpty() &amp;&amp; (r.getSpawnpoints().get(0).getSpawnpointX()==this.getX() &amp;&amp;</span>
+<span class="fc bfc" id="L394" title="All 2 branches covered.">                    r.getSpawnpoints().get(0).getSpawnpointY()==this.getY() &amp;&amp;</span>
+<span class="pc bpc" id="L395" title="1 of 2 branches missed.">                    r.getToken()==this.getRoom().getToken())){</span>
+<span class="nc" id="L396">                return r.getSpawnpoint(this.getX(),this.getY());</span>
+            }
+<span class="fc" id="L398">        }</span>
+<span class="fc" id="L399">        return new Spawnpoint();</span>
+    }
+    /**
+     *isSpawnpointCoordinates()
+     * @param model
+     *
+     * return if current coordinateWithRooms is a spawnpoint
+     */
+    public boolean isSpawnpointCoordinates(GameModel model){
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        for (Room r: model.getMapUsed().getGameBoard().getRooms()</span>
+        ) {
+<span class="nc bnc" id="L410" title="All 2 branches missed.">            for (Spawnpoint spw:r.getSpawnpoints()</span>
+            ) {
+<span class="nc bnc" id="L412" title="All 6 branches missed.">                if(getRoom().getToken()==(r.getToken())&amp;&amp;getX()==spw.getSpawnpointX()&amp;&amp;getY()==spw.getSpawnpointY())</span>
+<span class="nc" id="L413">                    return true;</span>
+<span class="nc" id="L414">            }</span>
+<span class="nc" id="L415">        }</span>
+<span class="nc" id="L416">        return false;</span>
+    }
+    /**
+     * hasAmmoTile()
+     * check if current coordinateWithRooms has an ammoTile
+     */
+
+    public boolean hasAmmoTile(){
+<span class="nc bnc" id="L424" title="All 2 branches missed.">        for(AmmoTile t : this.getRoom().getTiles()){</span>
+<span class="nc bnc" id="L425" title="All 4 branches missed.">            if(this.getX()==t.getCoordinates().getX()&amp;&amp;this.getY()==t.getCoordinates().getY()){</span>
+<span class="nc" id="L426">                return true;</span>
+            }
+<span class="nc" id="L428">        }</span>
+<span class="nc" id="L429">        return false;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

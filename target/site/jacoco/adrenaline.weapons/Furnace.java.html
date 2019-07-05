@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="it"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Furnace.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Ing-sw-2019-29</a> &gt; <a href="index.source.html" class="el_package">adrenaline.weapons</a> &gt; <span class="el_source">Furnace.java</span></div><h1>Furnace.java</h1><pre class="source lang-java linenums">package adrenaline.weapons;
+
+import adrenaline.*;
+import adrenaline.gameboard.GameBoard;
+
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * represent Furnace WeaponCard
+ */
+public class Furnace extends WeaponCard {
+
+    /**
+     * Default constructor
+     */
+<span class="fc" id="L17">    public Furnace() {</span>
+<span class="fc" id="L18">        price.add(new AmmoCube(AmmoCube.CubeColor.RED, AmmoCube.Effect.BASE, true));</span>
+<span class="fc" id="L19">        price.add(new AmmoCube(AmmoCube.CubeColor.BLUE, AmmoCube.Effect.BASE, false));</span>
+<span class="fc" id="L20">    }</span>
+
+    public boolean canShootBase(){
+<span class="fc" id="L23">        return true;</span>
+    }
+    public boolean canShootAlt(){
+<span class="fc" id="L26">        return true;</span>
+    }
+
+    /**
+     * getPossibleTargetCells()
+     * @param c player coordinates
+     * @param g used gameboard
+     * @param en selected effect
+     * @return possible cells where to shoot
+       */
+
+    @Override
+    public List&lt;CoordinatesWithRoom&gt; getPossibleTargetCells(CoordinatesWithRoom c, EffectAndNumber en, GameBoard g) {
+<span class="fc" id="L39">        List&lt;CoordinatesWithRoom&gt; list = new LinkedList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if(en.getEffect()== AmmoCube.Effect.BASE) {</span>
+
+<span class="fc" id="L43">            int x = c.getRoom().getRoomSizeX();</span>
+<span class="fc" id="L44">            int y = c.getRoom().getRoomSizeY();</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            for (int i = 1; i &lt;= x; i++) {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                for (int j = 1; j &lt;= y; j++) {</span>
+<span class="fc" id="L48">                    list.add(new CoordinatesWithRoom(i, j, c.getRoom()));</span>
+                }
+            }
+<span class="fc" id="L51">            return list;</span>
+        }
+        else{
+<span class="fc" id="L54">            list = c.oneTileDistant(g, false);</span>
+
+<span class="fc" id="L56">            return list;</span>
+        }
+    }
+
+    /**
+     * applyDamage()
+     * @param p player who is doing damage
+     * @param e selected effect
+     * @param targetList selected targets
+     */
+    @Override
+    public void applyDamage(List&lt;Object&gt; targetList, Player p, EffectAndNumber e) {
+<span class="fc" id="L68">        setDamaged(targetList,p);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        switch (e.getEffect()) {</span>
+
+            case BASE:  // 1 DAMAGE, EVERY PLAYER
+            case ALT:   // 1 DAMAGE, 1 MARK, EVERY PLAYER
+<span class="fc bfc" id="L73" title="All 2 branches covered.">                for (Object o : targetList) {</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">                    if (o instanceof Player) {</span>
+<span class="fc" id="L75">                        int i = ((Player)o).marksByShooter(p);</span>
+<span class="fc" id="L76">                        i++;</span>
+
+<span class="fc" id="L78">                        ((Player)o).addDamageToTrack(p, i);</span>
+
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                        if (e.getEffect() == AmmoCube.Effect.ALT) {</span>
+<span class="fc" id="L81">                            ((Player)o).addMarks(p, 1);</span>
+
+                        }
+                    } else {
+                        // DAMAGE SPAWNPOINT
+                    }
+
+<span class="fc" id="L88">                }</span>
+                break;
+
+        }
+<span class="fc" id="L92">    }</span>
+    @Override
+    public String toString() {
+<span class="fc" id="L95">        return &quot;Furnace&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
