@@ -1357,6 +1357,7 @@ public class Server {
                         }
                     }
                 }
+                System.out.println("-----NEXT PLAYER IS NUMBER "+currentPlayer);
             }catch (Exception e){
                 //
             }
@@ -1400,7 +1401,10 @@ public class Server {
                 while (!isCurrentPlayer()) {
 
                 }
+                lock.lock();
                 setRespawning(false);
+                nextPlayer();
+                lock.unlock();
             }
             // ENDGAME
             if (action.endOfTheGame(model.getMapUsed().getGameBoard())){
