@@ -814,8 +814,8 @@ public class Action {
                 }
 
             }
-            if(playersWhoHaveShoot.size()==0)
-                break;
+            if(playersWhoHaveShoot.isEmpty())
+                return;
             bestShooterOrder.addAll(bestShooterOrder(playersWhoHaveShoot,victim));
             bestShooterOrderWithPosition.addAll(bestShooterOrderWithPosition(bestShooterOrder,victim));
             givePoints(victim,bestShooterOrderWithPosition);
@@ -948,6 +948,9 @@ public class Action {
      */
 
     public void givePoints(Player victim, List<Player> shooters) {
+        LinkedList<Player>sameDamage=new LinkedList<>();
+        LinkedList<Player>sameDamagePlusOrdered=new LinkedList<>();
+        LinkedList<Player>effectiveOredr=new LinkedList<>();
         if (shooters.size() == 0)
             return;
         int i=0;
@@ -961,20 +964,64 @@ public class Action {
             if(victim.getTrack()[victim.getTrack().length-1].equals(shooter.getColor())&&victim.canAddMark(shooter))
                 victim.addMarks(shooter,1);
         }
-        victim.setMaxPointAssignableCounter(victim.numberOfDeaths());
-        for (Player player: shooters
+        //this.pointTrack = new int[]{8,6,4,2,1};
+        victim.setMaxPointAssignableCounter(victim.numberOfDeaths()-1);
+
+        //1 subList same damage then order by
+        for (Player player:shooters
              ) {
-            i=shooters.indexOf(player);
-        if(victim.getMaxPointAssignableCounter() < victim.getTrackPointSize()&&i<victim.getMaxPointAssignableCounter()){
-           player.setPoints(victim.getPointTrack().length-1-i);
-        } else {
-            for (int indexPlayer = 0; indexPlayer < shooters.size(); indexPlayer++) {
-                shooters.get(indexPlayer).setPoints(1); //every player get 1 points
+            for (Player p:shooters
+                 ) {
+                if(victim.damageByShooter(p)==victim.damageByShooter(player))
+                    sameDamage.add(p);
+
+            }
+            for (Player p:sameDamage)
+            {
+                if(sameDamagePlusOrdered.isEmpty()||sameDamagePlusOrdered.size()==1
+                        &&victim.getFirstPositionOnTrack(p)<victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getFirst()))
+                    sameDamagePlusOrdered.addFirst(player);
+                else if(sameDamagePlusOrdered.size()==1)
+                    sameDamagePlusOrdered.add(player);
+                else{
+                    for(int j=1;i<victim.getPointTrack().length-1;j++){
+                        if(victim.damageByShooter(sameDamagePlusOrdered.getLast())>victim.damageByShooter(player)){
+                            sameDamagePlusOrdered.addLast(player);
+                                break;}
+                       else if(victim.damageByShooter(sameDamagePlusOrdered.getLast())==victim.damageByShooter(player)
+                                    && victim.getFirstPositionOnTrack(player) < victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getLast())) {
+                            sameDamagePlusOrdered.add(sameDamagePlusOrdered.indexOf(sameDamagePlusOrdered.getLast()), player);
+                                    break;}
+                       else if(victim.damageByShooter(player)>victim.damageByShooter(sameDamagePlusOrdered.getFirst())||
+                                victim.damageByShooter(player)==victim.damageByShooter(sameDamagePlusOrdered.getFirst())
+                                        &&victim.getFirstPositionOnTrack(player)<victim.getFirstPositionOnTrack(sameDamagePlusOrdered.getFirst())){
+                            sameDamagePlusOrdered.addFirst(player);
+                                break;}
+                       else if(victim.damageByShooter(sameDamagePlusOrdered.get(i-1))>=victim.damageByShooter(player)&&
+                                victim.damageByShooter(sameDamagePlusOrdered.get(i+1))<=victim.damageByShooter(player))
+                        sameDamagePlusOrdered.add(i++,player);
+                    }
+
+
+
+
+                }
+
+            }
+            i=0;
+            victim.setMaxPointAssignableCounter(victim.numberOfDeaths()-1);
+            //ordered list now give points
+            while (!sameDamagePlusOrdered.isEmpty()){
+                if(i+victim.getMaxPointAssignableCounter()<victim.getPointTrack().length-1)
+                    sameDamagePlusOrdered.getFirst().setPoints(victim.getPointTrack()[i+victim.getMaxPointAssignableCounter()]);
+                else
+                    sameDamagePlusOrdered.getFirst().setPoints(1);
+                i++;
+                sameDamagePlusOrdered.removeFirst();
             }
         }
 
-        }
-        }
+    }
 
 
     /**
@@ -1267,7 +1314,7 @@ public class Action {
                             else
                             {
                                 i++;
-                                if(player.getAllPlayerPos().length-i-1>0)
+                                if(player.getAllPlayerPos().length-i-1>=0)
                                 {
                                     playerTo.setPlayerPos(player.getAllPlayerPos()[player.getAllPlayerPos().length-1-i]);
                                 }
