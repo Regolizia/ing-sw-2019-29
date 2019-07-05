@@ -22,7 +22,19 @@
         import java.util.concurrent.ExecutorService;
         import java.util.concurrent.Executors;
 
-// RMI
+
+/**
+ * This is a socket server. It is also the main controller.
+ * It contains mainly:
+ * <ul>
+ *     <li> The model
+ *     <li> Action, another little controller that helps the main controller.
+ * </ul>
+ *
+ * @author Eleonora Toscano
+ * @author Giulia Valcamonica
+ * @version 1.0
+ */
 
 public class Server {
 
@@ -121,6 +133,9 @@ public class Server {
         handler.interrupt();
     }
 
+    /**
+     * This is a Thread that controls a socket connection with one client.
+     */
     public class RequestHandler extends Thread {
 
         Figure.PlayerColor color;
@@ -178,6 +193,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the disconnection of a socket
+         */
         public void disconnect(){
             try {
                 if(nickname!=null) {
@@ -219,6 +237,10 @@ public class Server {
             }
         }
 
+        /**
+         * This sends a message (String) to the client.
+         * @param message to send
+         */
         public void sendToClient(String message){
             try {
                 outputStream.writeObject(message);
@@ -228,21 +250,37 @@ public class Server {
             }
 
         }
+
+        /**
+         * This sends a list of Strings to the Client
+         * @param messages list to send
+         * @throws IOException
+         */
         public void sendListToClient(List<String> messages) throws IOException {
             outputStream.writeObject(messages);
             outputStream.flush();
         }
 
+        /**
+         * To add one to the connections.
+         */
         public void countConnections(){
 
             Server.connectionsCount++;
         }
+
+        /**
+         * To remove one from the connectionsCount.
+         */
         public void removeOneConnection(){
 
             Server.connectionsCount--;
         }
 
 
+        /**
+         * This handles the login. Gets the client's name and color, also gets board number and frenzy option.
+         */
         public void clientLogin(){
             try {
                 if(!isGameOn()) {
@@ -340,6 +378,10 @@ public class Server {
             }
 
         }
+
+        /**
+         * This handles the reconnection to the server
+         */
         public void reconnect(){
             try {
                 writers.put(nickname, outputStream);
@@ -358,6 +400,10 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the nickname acceptance.
+         * @return the nickname
+         */
         public String loginName(){
             try {
                 sendToClient("LOGIN");
@@ -390,6 +436,10 @@ public class Server {
             return null;
         }
 
+        /**
+         * This handles the color choice.
+         * @return the color chosen
+         */
         public Figure.PlayerColor checkColor(){
             try {
                 while (true) {
@@ -420,6 +470,11 @@ public class Server {
             return Figure.PlayerColor.NONE;
         }
 
+        /**
+         * This method adds a Player to the Game.
+         * @param name nickname of the player
+         * @param color color of the player
+         */
         public void addPlayerToGame(String name, Figure.PlayerColor color){
             try {
                 lock.lock();
@@ -442,6 +497,11 @@ public class Server {
             }
         }
 
+        /**
+         * This method broadcasts messages to the writers (list of Server).
+         *
+         * @param s message to broadcast
+         */
         public synchronized void broadcast(String s){
             lock.lock();
             for (Map.Entry me : writers.entrySet()) {
@@ -492,6 +552,9 @@ public class Server {
             lock.unlock();
         }
 
+        /**
+         * This handles the end of the game.
+         */
         public void ending(){
 
             if(model.hasFrenzyOn()){
@@ -506,6 +569,10 @@ public class Server {
             }
         }
 
+        /**
+         * This handle the map choice.
+         * @param name of the player
+         */
         public void chooseBoard(String name){
             lock.lock();
             try {
@@ -536,6 +603,10 @@ public class Server {
                 System.out.println("--Board disconnection");
             }
         }
+
+        /**
+         * This handles the frenzy option choice.
+         */
         public void chooseFrenzy(){
             try {
                 if(!frenzy){
@@ -569,6 +640,9 @@ public class Server {
         ////
 
 
+        /**
+         * This handles the uses of TagbackGrenade, a powerup.
+         */
         public void tagbackGrenade() {
             // CAN SEE SHOOTER
             Player me = fromNameToPlayer(nickname);
@@ -603,17 +677,31 @@ public class Server {
             }
         }
 
+        /**
+         * This checks the current player
+         * @return the current player
+         */
         public boolean isCurrentPlayer(){
             synchronized (model.getPlayers().get(currentPlayer)){
                 return model.getPlayers().get(currentPlayer).getName().equals(nickname);
             }
         }
+
+        /**
+         * This checks if a Player if a player has been damaged.
+         * @return boolean if damaged
+         */
         public boolean hasBeenDamaged(){
             synchronized (model.getPlayers()){
                 return fromNameToPlayer(nickname).damagedStatus();
             }
         }
 
+        /**
+         * This gets a Player out of the nickname.
+         * @param s nickname
+         * @return Player
+         */
         public Player fromNameToPlayer(String s){
             lock.lock();
             for (Player p : model.getPlayers()){
@@ -626,33 +714,64 @@ public class Server {
             return new Player();
         }
 
+        /**
+         * If Game is ready to start, everybody added, connected.
+         *
+         * @return boolean starting
+         */
         public boolean isGameOn(){
             synchronized (this){
                 return gameIsOn;
             }
         }
 
+        /**
+         *If Game is ending.
+         *
+         * @return boolean ending
+         */
         public boolean isEndgame(){
             synchronized (this){
                 return endgame;
             }
         }
+
+        /**
+         * Checks if first player has played his/her frenzy turn.
+         *
+         * @return boolean
+         */
         public boolean hasFirstPlayerPlayedFrenzy(){
             synchronized (this){
                 return firstPlayerFrenzy;
             }
         }
+
+        /**
+         * If Frenzy has started.
+         *
+         * @return boolean
+         */
         public boolean isFrenzyOn(){
             synchronized (this){
                 return frenzyState;
             }
         }
+
+        /**
+         * Sets that first player has played frenzy.
+         */
         public void firstPlayerPlayedFrenzy(){
             synchronized (this){
                 firstPlayerFrenzy=true;
             }
         }
 
+        /**
+         * Startts turn countdown.
+         *
+         * @param handler of current player
+         */
         public synchronized void startCountdown(RequestHandler handler){
             countdown = new PlayerCountdown(handler);
             System.out.println(handler.nickname + " "+ handler);
@@ -690,6 +809,11 @@ public class Server {
             w.setReload();
         }
 
+        /**
+         * This handles the turn of the client.
+         * It waits until it is the current player before it sends info to the client.
+         * Th input comes in in the clients turn or not if it's broadcast.
+         */
         public void handleTurns(){
             setNumberofActions(0);
             boolean counterOn=false;
@@ -1026,11 +1150,17 @@ public class Server {
             //System.exit(0);
         }
 
+        /**
+         * This handles Grab if Frenzy on.
+         */
         public void grabFrenzy(){
 
                 grab(true,false);
         }
 
+        /**
+         * This handles Run if Frenzy on.
+         */
         public void runFrenzy() {
             try {
                 Player p =model.getPlayers().get(currentPlayer);
@@ -1045,6 +1175,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles Shoot if Frenzy on.
+         */
         public void shootFrenzy(){
             Player p = model.getPlayers().get(currentPlayer);
             try {
@@ -1072,6 +1205,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the second option of Shoot if Frenzy on.
+         */
         public void shootFrenzy2(){
             Player p = model.getPlayers().get(currentPlayer);
             try {
@@ -1100,11 +1236,17 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the second option of Grab if Frenzy on.
+         */
         public void grabFrenzy2(){
                 grab(true,true);
         }
 
 
+        /**
+         * This sets all the players that have been damaged to non damaged.
+         */
         public void setNotDamaged(){
             for (Player p : model.getPlayers()){
                 p.setDamagedStatus(false);
@@ -1112,6 +1254,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles some exceptions. It disconnects from server.
+         */
         public void handleException() {
             lock.lock();
             sendToClient("DISCONNECTED");
@@ -1142,6 +1287,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends some info about the map.
+         */
         public void sendForBoardSetup(){
             sendToClient(Integer.toString(boardChosen));
             try {
@@ -1156,6 +1304,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends the positions of the Players.
+         */
         public void sendPositions(){
             List<String> positions = new LinkedList<>();
             for(Player p : model.getPlayers()){
@@ -1172,6 +1323,9 @@ public class Server {
         }
         }
 
+        /**
+         * This sends info about AmmoTile to the client.
+         */
         public void sendAmmoTiles(){
             List<String> listOfCells = new LinkedList<>();
             List<String> listOfItems = new LinkedList<>();
@@ -1189,7 +1343,6 @@ public class Server {
                             listOfItems.add(c.getRoom().getAmmoTile(c).toString());
                         }else { // IT DOESN'T HAVE AN AMMOTILE
                             listOfItems.add("No tile");
-                            doThis(c);
                         }
                     }
                 }
@@ -1208,14 +1361,9 @@ public class Server {
             }
         }
 
-        public void doThis(CoordinatesWithRoom c){
-            System.out.println("Coord "+ c.getX()+ " "+c.getY()+ " "+c.getRoom().getToken());
-            for (AmmoTile t : c.getRoom().getTiles()){
-                System.out.println(t.getCoordinates().getX()+ " "+t.getCoordinates().getY());
-            }
-        }
-
-
+        /**
+         * This replaces the weapons at the end of the turn.
+         */
         public void replaceWeapons(){
             System.out.println("Replacing weapons...");
             int weaponNum =getSpawnpoint(AmmoCube.CubeColor.BLUE).getWeaponCards().size();
@@ -1234,6 +1382,10 @@ public class Server {
                 weaponNum++;
             }
         }
+
+        /**
+         * This replaces grabbed AmmoTiles
+         */
         public void replaceAmmo(){
             System.out.println("Replacing ammo...");
             for(CoordinatesWithRoom c : cellsWithoutTiles){
@@ -1242,18 +1394,11 @@ public class Server {
             cellsWithoutTiles.clear();
         }
 
-        public Player getPlayerFromName(String s){
-        lock.lock();
-            for(Player p : model.getPlayers()){
-                if(p.getName().equals(s)){
-                    lock.unlock();
-                    return p;
-                }
-            }
-            lock.unlock();
-            return new Player();
-        }
 
+        /**
+         * This method send Respawn request to the players that have died during the current player's turn.
+         * @param p victim
+         */
         public synchronized void respawn(Player p){
             p.getPowerUp().add(model.powerUpDeck.pickPowerUp());
             List<String> toSend = fromPowerupsToNames(p.getPowerUp());
@@ -1279,6 +1424,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the first turn, the choice of Respawn position.
+         */
         public synchronized void firstTurn(){
             synchronized (model.getPlayers().get(currentPlayer)) {
                 lock.lock();
@@ -1363,6 +1511,12 @@ public class Server {
             }
         }
 
+        /**
+         * This sets the initial position of a Player.
+         *
+         * @param c position
+         * @param p player
+         */
         public synchronized void setInitialPosition(AmmoCube.CubeColor c, Player p){
             for (Room r: model.getMapUsed().getGameBoard().getRooms()){
                 for (Spawnpoint s:r.getSpawnpoints()
@@ -1380,7 +1534,9 @@ public class Server {
             }
         }
 
-        // EVERY TURN
+        /**
+         * This handles the scoring at the end of the turn.
+         */
         public void scoring(){
             List<Player> victims = new LinkedList<>();
             for(Player p : model.getPlayers()){
@@ -1414,6 +1570,9 @@ public class Server {
 
         }
 
+        /**
+         * This sends the scoring to the client.
+         */
         public void sendScoring(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1428,6 +1587,9 @@ public class Server {
         }
 
 
+        /**
+         * This sends the final scoring at the end of the game.
+         */
         public void sendFinalScoring(){
             lock.lock();
             action.canGetPoints(model.getPlayers(),model.getPlayers());
@@ -1459,6 +1621,9 @@ public class Server {
         }
 
 
+        /**
+         * This method handles the request and actions of reloading at the end of the turn.
+         */
         public void reload(){
             System.out.println("Current player reload "+ model.getPlayers().get(currentPlayer).getName());
             Player player = model.getPlayers().get(currentPlayer);
@@ -1520,6 +1685,9 @@ public class Server {
 
         }
 
+        /**
+         * This handles the use of two powerup in between actions during a turn.
+         */
         public void powerup(){
             Player player = model.getPlayers().get(currentPlayer);
             if(!player.getPowerUp().isEmpty()){
@@ -1558,6 +1726,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles the teleporter powerup.
+         */
         public void teleporter(){
             try {
                 Player player = model.getPlayers().get(currentPlayer);
@@ -1579,7 +1750,9 @@ public class Server {
                 System.out.println("Couldn't use Teleporter.");
             }
         }
-
+        /**
+         * This handles the newton powerup.
+         */
         public void newton(){
             try {
                 Player player = model.getPlayers().get(currentPlayer);
@@ -1617,6 +1790,12 @@ public class Server {
             }
         }
 
+        /**
+         * This gets a Spawnpoint out of a CubeColor. Just Spawnpoints in BLUE, RED, YELLOW rooms.
+         * Just one spawnpoint per room. Just three Spawnpoints on board.
+         * @param c color
+         * @return Spawnpoint
+         */
         public Spawnpoint getSpawnpoint(AmmoCube.CubeColor c) {
             for (Room r : model.getMapUsed().getGameBoard().getRooms()) {
                 if (!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).getColor().equals(c)) {
@@ -1625,6 +1804,12 @@ public class Server {
             }
             return new Spawnpoint();
         }
+
+        /**
+         * This gets the coordinates of a spawnpoint.
+         * @param s the spawnpoint
+         * @return the coordinates
+         */
         public CoordinatesWithRoom getSpawnpointCoordinates(Spawnpoint s) {
             for (Room r : model.getMapUsed().getGameBoard().getRooms()) {
                 if (!r.getSpawnpoints().isEmpty() && r.getSpawnpoints().get(0).equals(s)) {
@@ -1634,6 +1819,9 @@ public class Server {
             return new CoordinatesWithRoom();
         }
 
+        /**
+         * This sends info about weapons in spawnpoint BLUE.
+         */
         public void sendSpawnpointWeaponsBlue(){
             try {
                 List<String> weapons = new LinkedList<>();
@@ -1646,6 +1834,9 @@ public class Server {
                 System.out.println("Couldn't send BLUE weapons.");
             }
         }
+        /**
+         * This sends info about weapons in spawnpoint RED.
+         */
         public void sendSpawnpointWeaponsRed(){
             try {
                 List<String> weapons = new LinkedList<>();
@@ -1658,6 +1849,9 @@ public class Server {
                 System.out.println("Couldn't send RED weapons.");
             }
         }
+        /**
+         * This sends info about weapons in spawnpoint YELLOW.
+         */
         public void sendSpawnpointWeaponsYellow(){
             try {
 
@@ -1671,6 +1865,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends info about player boards.
+         */
         public void playerBoards(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1686,6 +1883,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends info about marks.
+         */
         public void sendMarks(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1702,6 +1902,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends info about weapons.
+         */
         public void sendWeapons(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1724,6 +1927,9 @@ public class Server {
             }
         }
 
+        /**
+         * This sends info about powerups.
+         */
         public void sendPowerUps(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1743,6 +1949,10 @@ public class Server {
                 System.out.println("Couldn't send hand weapons.");
             }
         }
+
+        /**
+         * This sends info about player ammo.
+         */
         public void sendAmmo(){
             try {
                 List<String> list = new LinkedList<>();
@@ -1757,6 +1967,9 @@ public class Server {
             }
         }
 
+        /**
+         * This handles Run action.
+         */
         public void playerRun(){
             System.out.println("RUN");
 //            System.out.println("PREVIOUS POSITION "+model.getPlayers().get(currentPlayer).getCoordinatesWithRooms().toString());
@@ -1780,6 +1993,11 @@ public class Server {
             }
         }
 
+        /**
+         * This handles Grab action.
+         * @param frenzy if frenzy grab or not
+         * @param second if second frenzy grab or first
+         */
          public void grab(boolean frenzy, boolean second){
                     Player player = model.getPlayers().get(currentPlayer);
                     List<CoordinatesWithRoom> possibleCells = new LinkedList<>();
@@ -1852,7 +2070,9 @@ public class Server {
         }
 
 
-
+        /**
+         * This handles the requests and actions of Shoot action.
+         */
         public void shoot(){
             synchronized (model){
             Player player = model.getPlayers().get(currentPlayer);
@@ -1986,6 +2206,13 @@ public class Server {
             }}
         }
 
+        /**
+         * This handles the payment of secondary effects (non base) of a weapon
+         * @param e effect to pay for
+         * @param weaponCard weapon
+         * @param player player
+         * @param paidEffects list where to add effect if paid
+         */
         public void shootOtherEffect(AmmoCube.Effect e, WeaponCard weaponCard, Player player, List<EffectAndNumber> paidEffects) {
 
             LinkedList<PowerUpCard> playerPowerUpCards = new LinkedList<>();
@@ -2027,10 +2254,20 @@ public class Server {
             }
         }
 
+        /**
+         * This adds base effect, already paid to be able to shoot.
+         * @param number usefu for some weapons
+         * @return base effect
+         */
         public EffectAndNumber shootBase(int number){
             return  new EffectAndNumber(AmmoCube.Effect.BASE,number);
         }
 
+        /**
+         * This handles the possibility of changing order of effects
+         * @param list of effects
+         * @param w weapon
+         */
         public void changeOrderOfEffects(List<EffectAndNumber> list, WeaponCard w){
             // SOME WEAPONS MUST HAVE A CERTAIN ORDER
             // ASK ONLY IF I CAN CHANGE IT
@@ -2066,6 +2303,13 @@ public class Server {
         }
 
 
+        /**
+         * This handles the weapon grab.
+         * @param chosenCell of spawnpoint
+         * @param player that wants the weapon
+         * @param cellItems of what's inside the spawnpoint
+         * @return boolean if player got the weapon
+         */
    public boolean grabFromSpawnpoint(CoordinatesWithRoom chosenCell, Player player,String cellItems){
             /*
              * controllo io se può pagarla + ricarica ma tu devi:
@@ -2177,6 +2421,11 @@ public class Server {
             return chosenPower;
         }
 
+        /**
+         * This transforms Powerups to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromPowerupsToNames(List<PowerUpCard> list){
             List<String> pows = new LinkedList<>();
             for (PowerUpCard o : list) {
@@ -2184,6 +2433,11 @@ public class Server {
             }
             return pows;
         }
+        /**
+         * This transforms Rooms to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromRoomsToNames(List<Room> list){
             List<String> rooms = new LinkedList<>();
             for (Room o : list) {
@@ -2191,6 +2445,11 @@ public class Server {
             }
             return rooms;
         }
+        /**
+         * This transforms Targets to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromTargetsToNames(List<Object> list){
             List<String> targets = new LinkedList<>();
             for (Object o : list) {
@@ -2198,6 +2457,11 @@ public class Server {
             }
             return targets;
         }
+        /**
+         * This transforms Players to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromPlayersToNames(List<Player> list){
             List<String> targets = new LinkedList<>();
             for (Player o : list) {
@@ -2205,6 +2469,11 @@ public class Server {
             }
             return targets;
         }
+        /**
+         * This transforms cells to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromCellsToNames(List<CoordinatesWithRoom> list){
             List<String> cells = new LinkedList<>();
             for (CoordinatesWithRoom c : list) {
@@ -2212,6 +2481,11 @@ public class Server {
             }
             return cells;
         }
+        /**
+         * This transforms weapons to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromWeaponsToNames(List<WeaponCard> weapons){
             List<String> list = new LinkedList<>();
             for (WeaponCard c : weapons) {
@@ -2219,6 +2493,11 @@ public class Server {
             }
             return list;
         }
+        /**
+         * This transforms effects and number to Strings.
+         * @param list to transform
+         * @return list of Strings
+         */
         public List<String> fromEffectsAndNumberToNames(List<EffectAndNumber> e){
             List<String> list = new LinkedList<>();
             for (EffectAndNumber c : e) {
@@ -2228,6 +2507,17 @@ public class Server {
         }
 
 
+        /**
+         * This method handles the actual shooting and its requests.
+         *
+         * @param e effect to do
+         * @param w weaponcard
+         * @param p shooter
+         * @param g gameboard
+         * @param model gamemodel
+         * @param pastTargets list of targets that is used sometimes in between effects of the same weapon
+         * @return a list if the other effects may need it or an empty list if it's not important to check anything
+         */
         public List<Object> requestsForEveryWeapon(EffectAndNumber e, WeaponCard w, Player p, GameBoard g, GameModel model, List<Object> pastTargets){
             CoordinatesWithRoom playerPosition = p.getCoordinatesWithRooms();
             List<CoordinatesWithRoom> cells;
@@ -3543,6 +3833,12 @@ public class Server {
             return new LinkedList<>(); // SE NON DIVERSAMENTE SPECIFICATO
         }
 
+        /**
+         * This handles the TargetingScope powerup
+         *
+         * @param p player
+         * @param targets possible targets
+         */
         public void useTargetingScope(Player p, List<Object> targets){
             if(p.hasTargetingScope()){
                 try {
@@ -3584,8 +3880,10 @@ public class Server {
     } // REQUEST HANDLER
 
 
-
-    // TIMER
+    /**
+     * This Timer handles the Server countdown before the game starts.
+     * It reads the TIME parameter that is given with the main in StartServer
+     */
     private static class Countdown{
         public Countdown(){
             final Timer timer = new Timer();
@@ -3622,12 +3920,16 @@ public class Server {
         }
     }
 
+    /**
+     * This Timer handles the turns after the game starts.
+     * It reads the same TIME parameter as the other timer but more seconds are given to the player.
+     */
  private static class PlayerCountdown{
      final Timer timer = new Timer();
         public PlayerCountdown(RequestHandler handler){
             try {
                 timer.scheduleAtFixedRate(new TimerTask() {
-                    int i = time*20;
+                    int i = time*30;
 
                     public void run() {
                         System.out.println(i--);
@@ -3678,6 +3980,10 @@ public class Server {
         boardChosen = i;
     }
 
+    /**
+     * This handles the creation of the map, of the action controller and of the frenetic action controller
+     * @param frenzyChoice
+     */
     public void createBoard(boolean frenzyChoice){
         model = new GameModel(GameModel.Mode.DEATHMATCH, GameModel.Bot.NOBOT,boardChosen, frenzyChoice);
         //model.startingMap();
