@@ -1506,8 +1506,10 @@ public class Server {
                     }
                 }
                 System.out.println("-----NEXT PLAYER IS NUMBER "+currentPlayer);
-            }catch (Exception e){
-                //
+            System.out.println(currentPlayer);}catch (Exception e){
+                 while (lock.getHoldCount() > 0) {
+                                                            lock.unlock();
+                                                        }
             }
         }
 
@@ -2079,6 +2081,7 @@ public class Server {
             LinkedList<WeaponCard>playerWeaponCards=new LinkedList<>();
             WeaponCard weaponCard=new WeaponCard();
             LinkedList<EffectAndNumber> paidEffectAndNumber=new LinkedList<>();
+            CoordinatesWithRoom cp=player.getCoordinatesWithRooms();
             int z = 0;
 
             if(player.checkDamage()==2) {
@@ -2124,6 +2127,7 @@ public class Server {
                     sendToClient("MESSAGE");
                     sendToClient("Sorry, you don't have reloaded weapons in your hand");
                     numberofActionsMinusOne(new WeaponCard());
+                    action.run(player,cp);
                     lock.unlock();
                 } else {
                     lock.lock();

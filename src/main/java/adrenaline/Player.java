@@ -87,7 +87,7 @@ public class Player{
         this.powerups = Collections.synchronizedList(new LinkedList<PowerUpCard>());
         this.pointsArray = new boolean[]{true, true, true, true, true, true};
         this.points = 0;
-        this.pointTrack = new int[]{1,2,4,6,8};
+        this.pointTrack = new int[]{8,6,4,2,1};
         this.pointTrackFren = new int[]{1,2};
         this.skullTrack = new boolean[]{false, false, false, false, false, false};
         this.indexPointCounter=0; //it means tha i can give 8 points
@@ -128,6 +128,7 @@ public class Player{
         this.indexPointCounter=0; //it means tha i can give 8 points
         points=0;
         name="";
+        this.pointTrackFren = new int[]{1,2};
         this.allPlayerPos=new PlayerPos[]{PlayerPos.FIRST,PlayerPos.SECOND,PlayerPos.THIRD,PlayerPos.FOURTH,PlayerPos.FIFTH};
         mortalPoints=0;
         this.playerPos=PlayerPos.NONE;

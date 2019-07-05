@@ -106,7 +106,7 @@ public class FreneticAction extends Action {
             ) {
                 for (Player player : allPlayers
                 ) {
-                    if (player.getColor().equals(color))
+                    if (player.getColor().equals(color)&&!playersWhoHaveShoot.contains(player))
                         playersWhoHaveShoot.add(player);
 
                 }
@@ -127,10 +127,12 @@ public class FreneticAction extends Action {
         if(playersWhoHaveShoot.size()==1)
         { playersWhoHaveShoot.get(0).setPoints(2);
             return;}
-        whoHasDoneMoreDamage(playersWhoHaveShoot,victim).setPoints(victim.getPointTrackFren().length-1);
-        playersWhoHaveShoot.remove(whoHasDoneMoreDamage(playersWhoHaveShoot,victim));
-        for (Player shooter:playersWhoHaveShoot
-             ) {
+        LinkedList<Player>savePlayers=new LinkedList<>();
+        savePlayers.addAll(playersWhoHaveShoot);
+        whoHasDoneMoreDamage(playersWhoHaveShoot,victim).setPoints(2);
+        savePlayers.remove(whoHasDoneMoreDamage(playersWhoHaveShoot,victim));
+        for (Player shooter:savePlayers
+        ) {
             shooter.setPoints(1);
 
         }
@@ -142,9 +144,9 @@ public class FreneticAction extends Action {
      */
     public Player whoHasDoneMoreDamage(List<Player> playersWhoHaveShoot, Player victim) {
         int max=0;
-        Player pMax=new Player();
-        if(max==0) {max=victim.damageByShooter(playersWhoHaveShoot.get(0));
-        pMax=playersWhoHaveShoot.get(0);
+        Player pMax=playersWhoHaveShoot.get(0);
+        {max=victim.damageByShooter(playersWhoHaveShoot.get(0));
+
         playersWhoHaveShoot.remove(0);
         }
         for (Player player:playersWhoHaveShoot
@@ -153,11 +155,11 @@ public class FreneticAction extends Action {
             {
                 max=victim.damageByShooter(player);
                 pMax=player;
-                playersWhoHaveShoot.remove(player);
+
             }
             else if(victim.damageByShooter(player)==max){
                 pMax=chooseOne(player,pMax,victim);
-                playersWhoHaveShoot.remove(player);
+
             }
         }
         return pMax;
