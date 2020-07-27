@@ -1,5 +1,5 @@
 # ing-sw-2019-29
-This project is part of the course Software Engineering (2018-2019) of the Politecnico di Milano. 
+This project is part of the course Software Engineering (2018-2019) at Politecnico di Milano. 
 
 Complete Rules version - fully implemented CLI - partially implemented GUI
 
